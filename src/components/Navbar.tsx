@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { BUSINESS_INFO, BLOG_POSTS } from '../constants';
 import { useSiteContent } from '../SiteContext';
-import { NavMenuItem } from '../types';
+import type { NavMenuItem } from '../types';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useAppStore } from '../store/useAppStore';
@@ -89,8 +89,11 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
     }
   }, [isMobileMenuOpen]);
 
-  /* close on route change */
-  useEffect(() => { setIsMobileMenuOpen(false); }, [location.pathname]);
+  /* close on route change — wrapped in microtask to avoid sync setState in effect */
+  useEffect(() => {
+    const id = setTimeout(() => setIsMobileMenuOpen(false), 0);
+    return () => clearTimeout(id);
+  }, [location.pathname]);
 
   const toggleSubmenu = (id: string) =>
     setExpandedItems(prev =>
