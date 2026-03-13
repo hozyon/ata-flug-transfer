@@ -1,0 +1,2588 @@
+import React, { useState, useEffect, useRef, useMemo, useCallback, Suspense, lazy } from 'react';
+import ParticlesBackground from './ParticlesBackground';
+import { usePullToRefresh } from '../hooks/usePullToRefresh';
+import { MobileSpotlight } from './admin/MobileSpotlight';
+import { KpiCarousel } from './admin/KpiCarousel';
+import { Sparkline } from './admin/Sparkline';
+import { AnimatedNumber } from './admin/AnimatedNumber';
+import { ContextMenu } from './admin/ContextMenu';
+import { MobileBookingItem } from './admin/MobileBookingItem';
+
+import { haptic } from '../utils/haptic';
+import { Booking, SiteContent, NavMenuItem, Vehicle, BusinessSettings, BlogPost, UserReview } from '../types';
+import {
+  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
+  PieChart, Pie, Legend, AreaChart, Area, BarChart, Bar
+} from 'recharts';
+
+// Lazy-loaded admin views for code splitting
+const BookingsView = lazy(() => import('./admin/views/BookingsView').then(m => ({ default: m.BookingsView })));
+const SiteSettingsView = lazy(() => import('./admin/views/SiteSettingsView').then(m => ({ default: m.SiteSettingsView })));
+const RegionsView = lazy(() => import('./admin/views/RegionsView').then(m => ({ default: m.RegionsView })));
+const PricingView = lazy(() => import('./admin/views/PricingView').then(m => ({ default: m.PricingView })));
+const FAQView = lazy(() => import('./admin/views/FAQView').then(m => ({ default: m.FAQView })));
+const BusinessSettingsView = lazy(() => import('./admin/views/BusinessSettingsView').then(m => ({ default: m.BusinessSettingsView })));
+const FleetView = lazy(() => import('./admin/views/FleetView').then(m => ({ default: m.FleetView })));
+const AccountView = lazy(() => import('./admin/views/AccountView').then(m => ({ default: m.AccountView })));
+const AboutView = lazy(() => import('./admin/views/AboutView').then(m => ({ default: m.AboutView })));
+const VisionMissionView = lazy(() => import('./admin/views/VisionMissionView').then(m => ({ default: m.VisionMissionView })));
+const BlogView = lazy(() => import('./admin/views/BlogView').then(m => ({ default: m.BlogView })));
+const ReviewsView = lazy(() => import('./admin/views/ReviewsView').then(m => ({ default: m.ReviewsView })));
+const HeroImagesView = lazy(() => import('./admin/views/HeroImagesView').then(m => ({ default: m.HeroImagesView })));
+import { DESTINATIONS, BLOG_POSTS, REVIEWS, SCRAPED_REGIONS } from '../constants';
+
+interface AdminPanelProps {
+  bookings: Booking[];
+  onUpdateStatus: (id: string, status: Booking['status']) => void;
+  onAddBooking: (booking: Partial<Booking>) => void;
+  siteContent: SiteContent;
+  onUpdateSiteContent: (content: SiteContent) => void;
+  onExitAdmin: () => void;
+  onDeleteBooking: (id: string) => void;
+}
+
+type DashboardView = 'overview' | 'bookings' | 'site-settings' | 'hero-images' | 'regions' | 'fleet' | 'blog' | 'reviews' | 'faq' | 'business' | 'pricing' | 'about' | 'visionMission' | 'account';
+
+const COUNTRY_NAMES: Record<string, string> = {
+  '🇩🇪': 'Almanya', '🇹🇷': 'Türkiye', '🇬🇧': 'İngiltere', '🇺🇸': 'ABD', '🇷🇺': 'Rusya',
+  '🇦🇹': 'Avusturya', '🇨🇭': 'İsviçre', '🇳🇱': 'Hollanda', '🇸🇦': 'Suudi Arabistan',
+  '🇦🇪': 'BAE', '🇦🇺': 'Avustralya', '🇨🇦': 'Kanada', '🇫🇷': 'Fransa', '🇮🇹': 'İtalya',
+  '🇵🇱': 'Polonya', '🇺🇦': 'Ukrayna', '🇸🇪': 'İsveç', '🇳🇴': 'Norveç', '🇩🇰': 'Danimarka'
+};
+
+const ADMIN_AVATARS = [
+  'https://api.dicebear.com/7.x/notionists/svg?seed=Admin1&backgroundColor=c5a059',
+  'https://api.dicebear.com/7.x/notionists/svg?seed=Admin2&backgroundColor=3b82f6',
+  'https://api.dicebear.com/7.x/notionists/svg?seed=Admin3&backgroundColor=10b981',
+  'https://api.dicebear.com/7.x/notionists/svg?seed=Admin4&backgroundColor=ef4444',
+  'https://api.dicebear.com/7.x/notionists/svg?seed=Admin5&backgroundColor=8b5cf6',
+  'https://api.dicebear.com/7.x/notionists/svg?seed=Admin6&backgroundColor=f59e0b',
+  'https://api.dicebear.com/7.x/notionists/svg?seed=Admin7&backgroundColor=ec4899',
+  'https://api.dicebear.com/7.x/notionists/svg?seed=Admin8&backgroundColor=14b8a6',
+  'https://api.dicebear.com/7.x/notionists/svg?seed=Admin9&backgroundColor=6366f1',
+  'https://api.dicebear.com/7.x/notionists/svg?seed=Admin10&backgroundColor=64748b',
+  'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20fill%3D%22%231e293b%22%2F%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2245%22%20r%3D%2225%22%20fill%3D%22%23fcd5ce%22%2F%3E%3Cpath%20d%3D%22M%2022%2045%20C%2022%2015%2C%2078%2015%2C%2078%2045%20Z%22%20fill%3D%22%23111827%22%2F%3E%3Crect%20x%3D%2230%22%20y%3D%2238%22%20width%3D%2218%22%20height%3D%2210%22%20rx%3D%222%22%20fill%3D%22%23000%22%2F%3E%3Crect%20x%3D%2252%22%20y%3D%2238%22%20width%3D%2218%22%20height%3D%2210%22%20rx%3D%222%22%20fill%3D%22%23000%22%2F%3E%3Cline%20x1%3D%2248%22%20y1%3D%2243%22%20x2%3D%2252%22%20y2%3D%2243%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%2F%3E%3Cpath%20d%3D%22M%2045%2060%20Q%2050%2062%2055%2060%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%2F%3E%3Crect%20x%3D%2252%22%20y%3D%2258%22%20width%3D%2220%22%20height%3D%223%22%20fill%3D%22%23fff%22%20transform%3D%22rotate%28-15%2052%2058%29%22%2F%3E%3Crect%20x%3D%2270%22%20y%3D%2258%22%20width%3D%224%22%20height%3D%223%22%20fill%3D%22%23ff4500%22%20transform%3D%22rotate%28-15%2052%2058%29%22%2F%3E%3Cpath%20d%3D%22M%2072%2052%20Q%2075%2040%2070%2030%20T%2075%2015%22%20fill%3D%22none%22%20stroke%3D%22%23cbd5e1%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20opacity%3D%220.6%22%2F%3E%3Cpath%20d%3D%22M%2074%2053%20Q%2078%2045%2074%2035%20T%2078%2020%22%20fill%3D%22none%22%20stroke%3D%22%2394a3b8%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20opacity%3D%220.4%22%2F%3E%3Cpath%20d%3D%22M%2020%20100%20L%2020%2085%20C%2020%2075%2C%2080%2075%2C%2080%2085%20L%2080%20100%20Z%22%20fill%3D%22%230f172a%22%2F%3E%3Cpath%20d%3D%22M%2040%2078%20L%2050%2095%20L%2060%2078%20Z%22%20fill%3D%22%23fff%22%2F%3E%3Cpath%20d%3D%22M%2048%2083%20L%2052%2083%20L%2050%20100%20Z%22%20fill%3D%22%23dc2626%22%2F%3E%3C%2Fsvg%3E',
+  'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20fill%3D%22%230f172a%22%20%2F%3E%3Cpath%20d%3D%22M%2040%20100%20L%2048%2060%20L%2052%2060%20L%2060%20100%20Z%22%20fill%3D%22%23334155%22%20opacity%3D%220.3%22%20%2F%3E%3Cpath%20d%3D%22M%2025%20100%20C%2025%2065%2C%2075%2065%2C%2075%20100%20Z%22%20fill%3D%22%231e293b%22%20%2F%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2220%22%20fill%3D%22%23fcd5ce%22%20%2F%3E%3Crect%20x%3D%2235%22%20y%3D%2242%22%20width%3D%2212%22%20height%3D%226%22%20rx%3D%221%22%20fill%3D%22%23000%22%20%2F%3E%3Crect%20x%3D%2253%22%20y%3D%2242%22%20width%3D%2212%22%20height%3D%226%22%20rx%3D%221%22%20fill%3D%22%23000%22%20%2F%3E%3Cline%20x1%3D%2247%22%20y1%3D%2245%22%20x2%3D%2253%22%20y2%3D%2245%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20%2F%3E%3Cpath%20d%3D%22M%2033%2044%20Q%2030%2040%2028%2042%22%20stroke%3D%22%23000%22%20fill%3D%22none%22%20stroke-width%3D%222%22%2F%3E%3Cpath%20d%3D%22M%2067%2044%20Q%2070%2040%2072%2042%22%20stroke%3D%22%23000%22%20fill%3D%22none%22%20stroke-width%3D%222%22%2F%3E%3Cpath%20d%3D%22M%2010%20100%20C%2015%2070%2C%2085%2070%2C%2090%20100%22%20fill%3D%22none%22%20stroke%3D%22%23c5a059%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%20%2F%3E%3Cpath%20d%3D%22M%2050%2082%20L%2050%20100%22%20fill%3D%22none%22%20stroke%3D%22%23c5a059%22%20stroke-width%3D%228%22%20%2F%3E%3CradialGradient%20id%3D%22dash%22%20cx%3D%2250%25%22%20cy%3D%22100%25%22%20r%3D%2250%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23c5a059%22%20stop-opacity%3D%220.4%22%20%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23c5a059%22%20stop-opacity%3D%220%22%20%2F%3E%3C%2FradialGradient%3E%3Crect%20x%3D%220%22%20y%3D%2280%22%20width%3D%22100%22%20height%3D%2220%22%20fill%3D%22url%28%23dash%29%22%20%2F%3E%3C%2Fsvg%3E',
+  'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20fill%3D%22%23171717%22%20%2F%3E%3CradialGradient%20id%3D%22glow%22%20cx%3D%2250%25%22%20cy%3D%2250%25%22%20r%3D%2250%25%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23c5a059%22%20stop-opacity%3D%220.3%22%20%2F%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23c5a059%22%20stop-opacity%3D%220%22%20%2F%3E%3C%2FradialGradient%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20fill%3D%22url%28%23glow%29%22%20%2F%3E%3Cpath%20d%3D%22M%2020%2080%20L%2015%2065%20C%2015%2045%2C%2025%2030%2C%2035%2025%20L%2065%2025%20C%2075%2030%2C%2085%2045%2C%2085%2065%20L%2080%2080%20Z%22%20fill%3D%22%23000%22%20%2F%3E%3Cpath%20d%3D%22M%2022%2055%20L%2026%2035%20C%2032%2030%2C%2068%2030%2C%2074%2035%20L%2078%2055%20Z%22%20fill%3D%22%231e293b%22%20%2F%3E%3Cpath%20d%3D%22M%2024%2053%20L%2028%2035%20C%2032%2030%2C%2068%2030%2C%2068%2035%20L%2050%2053%20Z%22%20fill%3D%22%23334155%22%20opacity%3D%220.5%22%20%2F%3E%3Cpath%20d%3D%22M%2035%2065%20L%2065%2065%20L%2060%2075%20L%2040%2075%20Z%22%20fill%3D%22%23111827%22%20%2F%3E%3Cline%20x1%3D%2242%22%20y1%3D%2267%22%20x2%3D%2242%22%20y2%3D%2273%22%20stroke%3D%22%23374151%22%20stroke-width%3D%221%22%20%2F%3E%3Cline%20x1%3D%2246%22%20y1%3D%2267%22%20x2%3D%2246%22%20y2%3D%2273%22%20stroke%3D%22%23374151%22%20stroke-width%3D%221%22%20%2F%3E%3Cline%20x1%3D%2250%22%20y1%3D%2267%22%20x2%3D%2250%22%20y2%3D%2273%22%20stroke%3D%22%23374151%22%20stroke-width%3D%221%22%20%2F%3E%3Cline%20x1%3D%2254%22%20y1%3D%2267%22%20x2%3D%2254%22%20y2%3D%2273%22%20stroke%3D%22%23374151%22%20stroke-width%3D%221%22%20%2F%3E%3Cline%20x1%3D%2258%22%20y1%3D%2267%22%20x2%3D%2258%22%20y2%3D%2273%22%20stroke%3D%22%23374151%22%20stroke-width%3D%221%22%20%2F%3E%3Cpath%20d%3D%22M%2017%2060%20L%2025%2062%20L%2028%2065%20L%2017%2065%20Z%22%20fill%3D%22%23fff%22%20%2F%3E%3Cpath%20d%3D%22M%2083%2060%20L%2075%2062%20L%2072%2065%20L%2083%2065%20Z%22%20fill%3D%22%23fff%22%20%2F%3E%3Cpath%20d%3D%22M%2017%2062%20L%200%2070%20L%200%2080%20L%2017%2065%20Z%22%20fill%3D%22%23fef08a%22%20opacity%3D%220.2%22%20%2F%3E%3Cpath%20d%3D%22M%2083%2062%20L%20100%2070%20L%20100%2080%20L%2083%2065%20Z%22%20fill%3D%22%23fef08a%22%20opacity%3D%220.2%22%20%2F%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2258%22%20r%3D%223%22%20fill%3D%22none%22%20stroke%3D%22%23c5a059%22%20stroke-width%3D%221%22%20%2F%3E%3Cpath%20d%3D%22M%2050%2055%20L%2050%2061%20M%2050%2058%20L%2047%2060%20M%2050%2058%20L%2053%2060%22%20stroke%3D%22%23c5a059%22%20stroke-width%3D%220.5%22%20%2F%3E%3C%2Fsvg%3E'
+];
+
+const getCountryName = (flag: string) => COUNTRY_NAMES[flag] || 'Bilinmiyor';
+const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAddBooking, siteContent, onUpdateSiteContent, onExitAdmin, onDeleteBooking }) => {
+  // Theme Toggle
+  const [isDarkTheme, setIsDarkTheme] = useState(() => {
+    const saved = localStorage.getItem('ata_admin_theme');
+    return saved ? saved === 'dark' : true;
+  });
+
+  const toggleTheme = () => {
+    setIsDarkTheme(prev => {
+      const next = !prev;
+      localStorage.setItem('ata_admin_theme', next ? 'dark' : 'light');
+      return next;
+    });
+  };
+
+  // Live Clock
+  const [currentTime, setCurrentTime] = useState(new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+
+  // Initialize View from Hash
+  const getInitialView = (): DashboardView => {
+    const hash = window.location.hash;
+    const prefix = '#/admin/';
+    if (hash.startsWith(prefix)) {
+      const view = hash.substring(prefix.length) as DashboardView;
+      return view || 'overview';
+    }
+    return 'overview';
+  };
+
+  const [activeView, setActiveView] = useState<DashboardView>(getInitialView);
+
+  // Sync Hash with View
+  useEffect(() => {
+    window.location.hash = `#/admin/${activeView}`;
+  }, [activeView]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isCorporateOpen, setIsCorporateOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [editContent, setEditContent] = useState<SiteContent>(siteContent);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isAddBookingModalOpen, setIsAddBookingModalOpen] = useState(false);
+  const [selectedBookingForView, setSelectedBookingForView] = useState<Booking | null>(null);
+
+  // Blog States — persisted to localStorage
+  const [blogPosts, setBlogPostsState] = useState<BlogPost[]>(() => {
+    try {
+      const saved = localStorage.getItem('ata_blog_posts_v1');
+      return saved ? JSON.parse(saved) : BLOG_POSTS;
+    } catch { return BLOG_POSTS; }
+  });
+  const setBlogPosts = (posts: BlogPost[] | ((prev: BlogPost[]) => BlogPost[])) => {
+    setBlogPostsState(prev => {
+      const next = typeof posts === 'function' ? posts(prev) : posts;
+      localStorage.setItem('ata_blog_posts_v1', JSON.stringify(next));
+      return next;
+    });
+  };
+  const [editingBlogPost, setEditingBlogPost] = useState<BlogPost | null>(null);
+  const [isAddBlogModalOpen, setIsAddBlogModalOpen] = useState(false);
+  const [newBlogPost, setNewBlogPost] = useState<Partial<BlogPost>>({
+    title: '',
+    slug: '',
+    excerpt: '',
+    content: '',
+    category: 'Havalimanı Transfer',
+    featuredImage: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800',
+    isPublished: false
+  });
+  const [showBlogPreview, setShowBlogPreview] = useState(false);
+  const [blogTab, setBlogTab] = useState<'published' | 'draft'>('published');
+  const [selectedBlogs, setSelectedBlogs] = useState<string[]>([]);
+  const [blogSearchTerm, setBlogSearchTerm] = useState('');
+  const [blogCategories, setBlogCategories] = useState<string[]>([
+    'Havalimanı Transfer',
+    'Antalya Gezi Rehberi',
+    'VIP Hizmetler',
+    'Seyahat İpuçları',
+    'Destinasyonlar'
+  ]);
+  // Hero Images State
+  const [selectedHeroImages, setSelectedHeroImages] = useState<number[]>([]);
+  const heroBackgrounds = editContent.hero?.backgrounds || [];
+  const updateHeroBackgrounds = (newBackgrounds: string[]) => {
+    setEditContent({ ...editContent, hero: { ...editContent.hero, backgrounds: newBackgrounds } });
+  };
+
+  useEffect(() => { setSelectedBlogs([]); }, [blogTab]);
+  useEffect(() => { setSelectedHeroImages([]); }, [heroBackgrounds.length]);
+
+  const DEFAULT_USER_REVIEWS: UserReview[] = [
+    { id: 'ur1', name: 'Hans Müller', country: '🇩🇪', lang: 'de', rating: 5, text: 'Sehr pünktlich und professionell. Der Fahrer war freundlich und das Auto war sehr sauber. Empfehle ich weiter!', status: 'pending', createdAt: '2026-02-18T14:30:00Z' },
+    { id: 'ur2', name: 'Sophie Laurent', country: '🇫🇷', lang: 'fr', rating: 4, text: 'Bon service de transfert depuis l\'aéroport. Le chauffeur était à l\'heure et très poli. Je recommande.', status: 'pending', createdAt: '2026-02-18T10:15:00Z' },
+    { id: 'ur3', name: 'James Wilson', country: '🇬🇧', lang: 'en', rating: 5, text: 'Excellent airport transfer service! Driver was waiting for us at the terminal. Very comfortable Mercedes van.', status: 'pending', createdAt: '2026-02-17T22:45:00Z' },
+    { id: 'ur4', name: 'Marco Rossi', country: '🇮🇹', lang: 'it', rating: 4, text: 'Servizio di trasferimento molto buono. Autista puntuale e gentile. L\'auto era pulita e confortevole.', status: 'pending', createdAt: '2026-02-17T16:20:00Z' },
+    { id: 'ur5', name: 'Elena Petrova', country: '🇷🇺', lang: 'ru', rating: 5, text: 'Отличный трансфер из аэропорта Анталии! Водитель был очень вежливый и пунктуальный. Рекомендую!', status: 'pending', createdAt: '2026-02-17T09:00:00Z' },
+    { id: 'ur6', name: 'Anna Kowalska', country: '🇵🇱', lang: 'pl', rating: 3, text: 'Transfer był OK, ale samochód mógłby być nowszy. Kierowca był miły i punktualny.', status: 'pending', createdAt: '2026-02-16T19:30:00Z' },
+    { id: 'ur7', name: 'Pieter de Vries', country: '🇳🇱', lang: 'nl', rating: 5, text: 'Top service! Chauffeur stond al klaar bij de luchthaven. Comfortabele rit naar het hotel. Aanrader!', status: 'pending', createdAt: '2026-02-16T12:10:00Z' },
+    { id: 'ur8', name: 'Katarina Novak', country: '🇨🇿', lang: 'cs', rating: 4, text: 'Velmi dobrý transfer z letiště. Řidič byl přátelský a auto bylo čisté. Doporučuji tuto službu.', status: 'pending', createdAt: '2026-02-15T20:45:00Z' },
+    { id: 'ur9', name: 'Yuki Tanaka', country: '🇯🇵', lang: 'ja', rating: 5, text: '空港からホテルまでのスムーズな送迎でした。ドライバーも時間通りで、車も快適でした。おすすめです！', status: 'pending', createdAt: '2026-02-15T08:30:00Z' },
+    { id: 'ur10', name: 'Ahmed Al-Rashid', country: '🇸🇦', lang: 'ar', rating: 4, text: 'خدمة نقل ممتازة من المطار. السائق كان محترفاً والسيارة نظيفة ومريحة. أنصح بهذه الخدمة.', status: 'pending', createdAt: '2026-02-14T15:00:00Z' },
+  ];
+
+  // Review States — persisted to localStorage
+  const [userReviews, setUserReviewsState] = useState<UserReview[]>(() => {
+    try {
+      const saved = localStorage.getItem('ata_user_reviews_v1');
+      return saved ? JSON.parse(saved) : DEFAULT_USER_REVIEWS;
+    } catch { return DEFAULT_USER_REVIEWS; }
+  });
+  const setUserReviews = (reviews: UserReview[] | ((prev: UserReview[]) => UserReview[])) => {
+    setUserReviewsState(prev => {
+      const next = typeof reviews === 'function' ? reviews(prev) : reviews;
+      localStorage.setItem('ata_user_reviews_v1', JSON.stringify(next));
+      return next;
+    });
+  };
+  const [siteReviews, setSiteReviews] = useState(REVIEWS);
+  const [editableReviewsTab, setEditableReviewsTab] = useState<'pending' | 'approved' | 'rejected' | 'deleted'>('pending');
+  const [selectedReviews, setSelectedReviews] = useState<string[]>([]);
+
+  useEffect(() => { setSelectedReviews([]); }, [editableReviewsTab]);
+
+  // Vehicle Modal State
+  const VEHICLE_FEATURES = ['Ücretsiz Wifi', 'Klima', 'Deri Koltuk', 'Buzdolabı', 'TV Ünitesi', 'Araç İçi İkram', 'USB Şarj', 'Özel Şoför', 'TÜRSAB Sigorta'];
+  const [isVehicleModalOpen, setIsVehicleModalOpen] = useState(false);
+  const [vehicleForm, setVehicleForm] = useState<Partial<Vehicle>>({
+    id: '', name: '', category: 'VIP', capacity: 4, luggage: 4, image: '', features: []
+  });
+
+  const [highlightedFaqId, setHighlightedFaqId] = useState<string | null>(null);
+  const [faqFilter, setFaqFilter] = useState<'all' | 'answered' | 'unanswered'>('all');
+
+  // Drag & Drop State
+  const [draggedItem, setDraggedItem] = useState<number | null>(null);
+
+  // Toast Notification State
+  const [toast, setToast] = useState<{ message: string; type: 'delete' | 'success' | 'warning' | 'error' | 'info' } | null>(null);
+
+  // Context Menu State
+  const [contextMenu, setContextMenu] = useState<{ isOpen: boolean; position: { top: number; left: number }; booking: Booking | null }>({ isOpen: false, position: { top: 0, left: 0 }, booking: null });
+
+  const showToast = (message: string, type: 'delete' | 'success' | 'warning' | 'error' | 'info' = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 3000);
+  };
+
+
+
+
+
+  // New Booking Form State
+  const [newBookingData, setNewBookingData] = useState<Partial<Booking>>({
+    customerName: '',
+    phone: '',
+    pickup: DESTINATIONS[0],
+    destination: DESTINATIONS[1],
+    date: new Date().toISOString().split('T')[0],
+    time: '12:00',
+    passengers: 1,
+    vehicleId: editContent.vehicles[0]?.id || ''
+  });
+
+  // Stats calculation
+  const stats = useMemo(() => {
+    const today = new Date().toISOString().split('T')[0];
+    const activeBookings = bookings.filter(b => b.status !== 'Deleted');
+    const totalRevenue = activeBookings.reduce((sum, b) => b.status !== 'Cancelled' ? sum + b.totalPrice : sum, 0);
+    const confirmed = activeBookings.filter(b => b.status === 'Confirmed').length;
+    const pending = activeBookings.filter(b => b.status === 'Pending').length;
+    const completed = activeBookings.filter(b => b.status === 'Completed').length;
+    const todayBookings = activeBookings.filter(b => b.date === today).length;
+
+    // Real weekly data from bookings
+    const dayNames = ['Paz', 'Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt'];
+    const now = new Date();
+    const weeklyData = Array.from({ length: 7 }, (_, i) => {
+      const d = new Date(now);
+      d.setDate(d.getDate() - (6 - i));
+      const dateStr = d.toISOString().split('T')[0];
+      return {
+        name: dayNames[d.getDay()],
+        v: activeBookings.filter(b => b.createdAt?.startsWith(dateStr)).length
+      };
+    });
+
+    // Revenue trend: this week vs last week
+    const thisWeekStart = new Date(now);
+    thisWeekStart.setDate(thisWeekStart.getDate() - 7);
+    const lastWeekStart = new Date(thisWeekStart);
+    lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+    const thisWeekRevenue = activeBookings
+      .filter(b => new Date(b.createdAt) >= thisWeekStart && b.status !== 'Cancelled')
+      .reduce((s, b) => s + b.totalPrice, 0);
+    const lastWeekRevenue = activeBookings
+      .filter(b => new Date(b.createdAt) >= lastWeekStart && new Date(b.createdAt) < thisWeekStart && b.status !== 'Cancelled')
+      .reduce((s, b) => s + b.totalPrice, 0);
+    const revenueTrend = lastWeekRevenue > 0 ? ((thisWeekRevenue - lastWeekRevenue) / lastWeekRevenue * 100) : 0;
+
+    // Popular Areas (Bölgeler)
+    const areaCounts: Record<string, number> = {};
+    activeBookings.forEach(b => {
+      // Split by comma and take the first part to normalize area names (e.g. "Antalya Airport, Terminal 1" -> "Antalya Airport")
+      const pickupArea = b.pickup.split(',')[0].trim();
+      const destArea = b.destination.split(',')[0].trim();
+
+      areaCounts[pickupArea] = (areaCounts[pickupArea] || 0) + 1;
+      areaCounts[destArea] = (areaCounts[destArea] || 0) + 1;
+    });
+
+    // Sort and take top 4 areas
+    const popularAreas = Object.entries(areaCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 4)
+      .map(([name, count]) => ({ name, count }));
+
+    // Monthly comparison
+    const thisMonth = now.getMonth();
+    const thisYear = now.getFullYear();
+    const thisMonthBookings = activeBookings.filter(b => {
+      const d = new Date(b.createdAt);
+      return d.getMonth() === thisMonth && d.getFullYear() === thisYear;
+    }).length;
+    const lastMonthBookings = activeBookings.filter(b => {
+      const d = new Date(b.createdAt);
+      return d.getMonth() === (thisMonth === 0 ? 11 : thisMonth - 1) && d.getFullYear() === (thisMonth === 0 ? thisYear - 1 : thisYear);
+    }).length;
+    const monthlyTrend = lastMonthBookings > 0 ? ((thisMonthBookings - lastMonthBookings) / lastMonthBookings * 100) : 0;
+
+    // Returning customer rate
+    const phoneCounts: Record<string, number> = {};
+    activeBookings.forEach(b => { if (b.phone) phoneCounts[b.phone] = (phoneCounts[b.phone] || 0) + 1; });
+    const uniqueCustomers = Object.keys(phoneCounts).length;
+    const returningCustomers = Object.values(phoneCounts).filter(c => c > 1).length;
+    const returningRate = uniqueCustomers > 0 ? Math.round((returningCustomers / uniqueCustomers) * 100) : 0;
+
+    // Vehicle occupancy rate
+    const vehicleOccupancy = editContent.vehicles.map(v => {
+      const vBookings = activeBookings.filter(b => b.vehicleId === v.id);
+      const avgPassengers = vBookings.length > 0
+        ? Math.round(vBookings.reduce((s, b) => s + b.passengers, 0) / vBookings.length * 10) / 10
+        : 0;
+      return { name: v.name.split(' ').slice(-1)[0], capacity: v.capacity, avg: avgPassengers, pct: v.capacity > 0 ? Math.round((avgPassengers / v.capacity) * 100) : 0 };
+    });
+
+    const categoryData = editContent.vehicles.map(v => ({
+      name: v.name,
+      value: activeBookings.filter(b => b.vehicleId === v.id).length || 0
+    }));
+
+    // 30-day booking trend
+    const monthlyTrendData = Array.from({ length: 30 }, (_, i) => {
+      const d = new Date(now);
+      d.setDate(d.getDate() - (29 - i));
+      const dateStr = d.toISOString().split('T')[0];
+      return {
+        day: `${d.getDate()}/${d.getMonth() + 1}`,
+        count: activeBookings.filter(b => b.createdAt?.startsWith(dateStr)).length
+      };
+    });
+
+    // Status distribution
+    const statusData = [
+      { name: 'Beklemede', value: pending, fill: '#f59e0b' },
+      { name: 'Onaylı', value: confirmed, fill: '#3b82f6' },
+      { name: 'Tamamlandı', value: completed, fill: '#10b981' },
+      { name: 'İptal', value: activeBookings.filter(b => b.status === 'Cancelled').length, fill: '#ef4444' },
+      { name: 'Reddedildi', value: activeBookings.filter(b => b.status === 'Rejected').length, fill: '#64748b' },
+    ].filter(d => d.value > 0);
+
+    // Vehicle revenue
+    const vehicleRevenue = editContent.vehicles.map(v => {
+      const revenue = activeBookings.filter(b => b.vehicleId === v.id && b.status === 'Completed').reduce((s, b) => s + b.totalPrice, 0);
+      return { name: v.name.split(' ').slice(-1)[0] || v.name, revenue };
+    }).filter(v => v.revenue > 0);
+
+    // Country Stats
+    const allReviews = [...userReviews, ...REVIEWS];
+    const countryStats: Record<string, number> = {};
+    allReviews.forEach(r => {
+      if (r.country) countryStats[r.country] = (countryStats[r.country] || 0) + 1;
+    });
+    const totalReviews = allReviews.length;
+    const topCountries = Object.entries(countryStats)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([name, count]) => ({ name, count, percent: totalReviews > 0 ? (count / totalReviews) * 100 : 0 }));
+
+    return {
+      totalRevenue, confirmed, pending, completed, todayBookings,
+      weeklyData, categoryData, topCountries,
+      revenueTrend, popularAreas,
+      thisMonthBookings, lastMonthBookings, monthlyTrend,
+      returningRate, uniqueCustomers, returningCustomers,
+      vehicleOccupancy,
+      monthlyTrendData, statusData, vehicleRevenue
+    };
+  }, [bookings, editContent.vehicles, userReviews]);
+
+  // Seed Mock Bookings if DB is empty or very low (< 10)
+  useEffect(() => {
+    if (bookings.length <= 10 && editContent.vehicles.length > 0) {
+      const vehicles = editContent.vehicles;
+      const newMocks: Booking[] = [];
+      const statuses: ('Confirmed' | 'Pending' | 'Completed')[] = ['Confirmed', 'Completed', 'Completed', 'Completed', 'Confirmed', 'Pending'];
+      const mockNames = ['Ahmet Yılmaz', 'John Smith', 'Elena Ivanova', 'Hans Müller', 'Ayşe Demir'];
+
+      for (let i = 0; i < 10; i++) {
+        const pickup = DESTINATIONS[Math.floor(Math.random() * DESTINATIONS.length)];
+        let dest = DESTINATIONS[Math.floor(Math.random() * DESTINATIONS.length)];
+        while (dest === pickup) dest = DESTINATIONS[Math.floor(Math.random() * DESTINATIONS.length)];
+
+        const vehicle = vehicles[Math.floor(Math.random() * vehicles.length)];
+        const status = statuses[Math.floor(Math.random() * statuses.length)];
+
+        // Generate date within last 7 days
+        const d = new Date();
+        d.setDate(d.getDate() - Math.floor(Math.random() * 7));
+        const dateStr = d.toISOString().split('T')[0];
+
+        onAddBooking({
+          id: `MOCK-${Date.now()}-${i}`,
+          customerName: mockNames[Math.floor(Math.random() * mockNames.length)],
+          phone: `+90555${Math.floor(1000000 + Math.random() * 9000000)}`,
+          email: 'mock@example.com',
+          pickup,
+          destination: dest,
+          date: dateStr,
+          time: `${Math.floor(10 + Math.random() * 8)}:00`,
+          passengers: Math.floor(1 + Math.random() * vehicle.capacity) || 1,
+          vehicleId: vehicle.id,
+          status,
+          totalPrice: Math.floor(50 + Math.random() * 150),
+          createdAt: d.toISOString()
+        });
+      }
+    }
+  }, [bookings.length, editContent.vehicles, onAddBooking]);
+
+  // Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Skip if user is typing in an input/textarea
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement) return;
+      const key = e.key.toLowerCase();
+      if (key === 'd') setActiveView('overview');
+      else if (key === 'b') setActiveView('bookings');
+      else if (key === 'r') setActiveView('reviews');
+      else if (key === 'n') { setActiveView('bookings'); setTimeout(() => setIsAddBookingModalOpen(true), 100); }
+      else if (key === 'escape') onExitAdmin();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onExitAdmin]);
+
+  // --- Ordering Logic ---
+  const moveItem = <T,>(list: T[], index: number, direction: 'up' | 'down'): T[] => {
+    const newList = [...list];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= newList.length) return newList;
+    [newList[index], newList[targetIndex]] = [newList[targetIndex], newList[index]];
+    return newList;
+  };
+
+  const handleMoveMenu = (index: number, direction: 'up' | 'down') => {
+    setEditContent({ ...editContent, navbar: moveItem(editContent.navbar, index, direction) });
+  };
+
+  const handleMoveSubMenu = (menuIndex: number, subIndex: number, direction: 'up' | 'down') => {
+    const nav = [...editContent.navbar];
+    if (nav[menuIndex].subMenus) {
+      nav[menuIndex].subMenus = moveItem(nav[menuIndex].subMenus!, subIndex, direction);
+      setEditContent({ ...editContent, navbar: nav });
+    }
+  };
+
+  // Auto-save
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    setSaveStatus('saving');
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(() => {
+      onUpdateSiteContent(editContent);
+      setSaveStatus('saved');
+      setTimeout(() => setSaveStatus('idle'), 2000);
+    }, 1500);
+    return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
+  }, [editContent]);
+
+  // ── UNDO / REDO ──
+  const undoStackRef = useRef<SiteContent[]>([]);
+  const redoStackRef = useRef<SiteContent[]>([]);
+  const pushUndo = (prev: SiteContent) => {
+    undoStackRef.current = [...undoStackRef.current.slice(-19), prev];
+    redoStackRef.current = [];
+  };
+  const handleUndo = () => {
+    if (undoStackRef.current.length === 0) return;
+    const prev = undoStackRef.current.pop()!;
+    redoStackRef.current.push(editContent);
+    isFirstRender.current = true;
+    setEditContent(prev);
+    setTimeout(() => { isFirstRender.current = false; }, 100);
+    showToast('Geri alındı', 'success');
+  };
+  const handleRedo = () => {
+    if (redoStackRef.current.length === 0) return;
+    const next = redoStackRef.current.pop()!;
+    undoStackRef.current.push(editContent);
+    isFirstRender.current = true;
+    setEditContent(next);
+    setTimeout(() => { isFirstRender.current = false; }, 100);
+    showToast('Yeniden yapıldı', 'success');
+  };
+  // Wrap setEditContent to auto-push undo
+  const updateContent = (newContent: SiteContent) => {
+    pushUndo(editContent);
+    setEditContent(newContent);
+  };
+
+  // ── PULL TO REFRESH ──
+  const mainRef = useRef<HTMLElement>(null);
+  const handlePullRefresh = useCallback(() => {
+    haptic.success();
+    // Simulate data refresh
+    showToast('Veriler güncellendi', 'success');
+  }, []);
+  const { pullDistance, isRefreshing, handlers: pullHandlers } = usePullToRefresh(handlePullRefresh, mainRef);
+
+  // ── COMMAND PALETTE ──
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [commandSearch, setCommandSearch] = useState('');
+  const commandInputRef = useRef<HTMLInputElement>(null);
+
+  const VIEW_LABELS: Record<string, { label: string; icon: string; description: string }> = {
+    'overview': { label: 'Dashboard', icon: 'fa-chart-pie', description: 'Genel bakış ve istatistikler' },
+    'bookings': { label: 'Rezervasyonlar', icon: 'fa-calendar-check', description: 'Rezervasyon yönetimi' },
+    'blog': { label: 'Blog Yönetimi', icon: 'fa-newspaper', description: 'Blog yazıları' },
+    'reviews': { label: 'Yorumlar', icon: 'fa-star', description: 'Yorum moderasyonu' },
+    'hero-images': { label: 'Anasayfa Banner Yönetimi', icon: 'fa-images', description: 'Slider görselleri' },
+    'site-settings': { label: 'Menü', icon: 'fa-bars', description: 'Site menü yapısı' },
+    'regions': { label: 'Bölgeler', icon: 'fa-map-location-dot', description: 'Transfer bölgeleri' },
+    'pricing': { label: 'Fiyatlar', icon: 'fa-tag', description: 'Fiyat tablosu' },
+    'fleet': { label: 'Araçlar', icon: 'fa-car-side', description: 'Araç filosu' },
+    'faq': { label: 'S.S.S', icon: 'fa-circle-question', description: 'Sıkça sorulan sorular' },
+    'business': { label: 'İşletme', icon: 'fa-building', description: 'İşletme bilgileri' },
+    'about': { label: 'Hakkımızda', icon: 'fa-info-circle', description: 'Hakkımızda sayfası içeriği' },
+    'visionMission': { label: 'Vizyon & Misyon', icon: 'fa-bullseye', description: 'Vizyon ve misyon sayfası' },
+    'account': { label: 'Hesap Ayarları', icon: 'fa-user', description: 'Profil ve güvenlik tercihlerinizi merkezden yönetin.' },
+  };
+
+  const commandItems = useMemo(() => {
+    const pages = Object.entries(VIEW_LABELS).map(([id, v]) => ({ id, type: 'page' as const, ...v }));
+    const actions = [
+      { id: 'action-new-booking', type: 'action' as const, label: 'Yeni Rezervasyon', icon: 'fa-plus', description: 'Yeni rezervasyon ekle' },
+      { id: 'action-new-blog', type: 'action' as const, label: 'Yeni Blog Yazısı', icon: 'fa-pen', description: 'Yeni blog oluştur' },
+      { id: 'action-new-faq', type: 'action' as const, label: 'Yeni S.S.S', icon: 'fa-circle-question', description: 'Yeni soru ekle' },
+      { id: 'action-undo', type: 'action' as const, label: 'Geri Al', icon: 'fa-rotate-left', description: 'Son değişikliği geri al' },
+      { id: 'action-redo', type: 'action' as const, label: 'Yeniden Yap', icon: 'fa-rotate-right', description: 'Geri alınanı tekrar uygula' },
+    ];
+    const all = [...pages, ...actions];
+    if (!commandSearch.trim()) return all;
+    const q = commandSearch.toLowerCase();
+    return all.filter(i => i.label.toLowerCase().includes(q) || i.description.toLowerCase().includes(q));
+  }, [commandSearch]);
+
+  const handleCommandSelect = (item: typeof commandItems[0]) => {
+    setIsCommandPaletteOpen(false);
+    setCommandSearch('');
+    if (item.type === 'page') {
+      setActiveView(item.id as DashboardView);
+    } else if (item.id === 'action-new-booking') {
+      setIsAddBookingModalOpen(true);
+    } else if (item.id === 'action-new-blog') {
+      setIsAddBlogModalOpen(true);
+    } else if (item.id === 'action-new-faq') {
+      const newId = Date.now().toString();
+      updateContent({ ...editContent, faq: [...editContent.faq, { id: newId, q: 'Yeni Soru', a: '' }] });
+      setActiveView('faq' as DashboardView);
+    } else if (item.id === 'action-undo') {
+      handleUndo();
+    } else if (item.id === 'action-redo') {
+      handleRedo();
+    }
+  };
+
+  // ── ACCOUNT SETTINGS STATE ──
+  const [accountForm, setAccountForm] = useState({
+    fullName: 'Admin',
+    email: 'admin@system.com',
+    phone: '+90 555 123 4567',
+    avatar: ADMIN_AVATARS[0],
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+    notifyEmail: true,
+    notifySms: false,
+    notifySystem: true
+  });
+
+  // ── USER MANAGEMENT STATE ──
+  const [accountTab, setAccountTab] = useState<'profile' | 'users'>('profile');
+  const [systemUsers, setSystemUsers] = useState([
+    { id: 'usr-admin', name: 'Admin', email: 'admin@system.com', role: 'Sistem Yöneticisi', isDeletable: false, lastLogin: '2 dk önce', status: 'Aktif' },
+    { id: 'usr-1', name: 'Ahmet Yılmaz', email: 'ahmet@system.com', role: 'Editör', isDeletable: true, lastLogin: '1 saat önce', status: 'Aktif' },
+    { id: 'usr-2', name: 'Ayşe Kaya', email: 'ayse@system.com', role: 'Transfer Görevlisi', isDeletable: true, lastLogin: 'Dün', status: 'Pasif' }
+  ]);
+  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+  const [editingUserId, setEditingUserId] = useState<string | null>(null);
+  const [newUserForm, setNewUserForm] = useState({ name: '', email: '', role: 'Editör', password: '', confirmPassword: '' });
+
+  const handleDeleteUser = (id: string, isDeletable: boolean) => {
+    if (!isDeletable) {
+      showToast('Sistem yöneticisi (Admin) silinemez!', 'delete');
+      return;
+    }
+    setSystemUsers(systemUsers.filter(u => u.id !== id));
+    showToast('Kullanıcı başarıyla silindi', 'success');
+  };
+
+  const handleSaveUser = () => {
+    if (!newUserForm.name || !newUserForm.email) {
+      showToast('Lütfen Ad Soyad ve E-posta alanlarını doldurun', 'delete');
+      return;
+    }
+
+    // Add password matching validation
+    if (newUserForm.password && newUserForm.password !== newUserForm.confirmPassword) {
+      showToast('Şifreler eşleşmiyor', 'delete');
+      return;
+    }
+
+    if (editingUserId) {
+      // Update existing user
+      setSystemUsers(systemUsers.map(u => {
+        if (u.id === editingUserId) {
+          return { ...u, name: newUserForm.name, email: newUserForm.email, role: newUserForm.role };
+        }
+        return u;
+      }));
+      showToast('Kullanıcı bilgileri güncellendi', 'success');
+      if (newUserForm.password) {
+        showToast('Kullanıcı şifresi başarıyla değiştirildi', 'success');
+      }
+    } else {
+      // Create new user
+      if (!newUserForm.password) {
+        showToast('Lütfen yeni kullanıcı için bir şifre belirleyin', 'delete');
+        return;
+      }
+      const newUser = {
+        id: `usr-${Date.now()}`,
+        name: newUserForm.name,
+        email: newUserForm.email,
+        role: newUserForm.role,
+        isDeletable: true,
+        lastLogin: 'Hiç girmedi',
+        status: 'Aktif'
+      };
+      setSystemUsers([...systemUsers, newUser]);
+      showToast('Yeni kullanıcı eklendi', 'success');
+    }
+
+    setIsAddUserModalOpen(false);
+    setEditingUserId(null);
+    setNewUserForm({ name: '', email: '', role: 'Editör', password: '', confirmPassword: '' });
+  };
+
+  // ── ACTIVITY LOG ──
+  const [activityLog, setActivityLog] = useState<{ id: string; action: string; detail: string; time: Date }[]>([]);
+  const addActivity = (action: string, detail: string) => {
+    setActivityLog(prev => [{ id: Date.now().toString(), action, detail, time: new Date() }, ...prev.slice(0, 49)]);
+  };
+
+  // ── SKELETON LOADING ──
+  const [isPageTransitioning, setIsPageTransitioning] = useState(false);
+  const prevViewRef = useRef(activeView);
+  useEffect(() => {
+    if (prevViewRef.current !== activeView) {
+      setIsPageTransitioning(true);
+      addActivity('Sayfa Değiştirildi', VIEW_LABELS[activeView]?.label || activeView);
+      const t = setTimeout(() => setIsPageTransitioning(false), 400);
+      prevViewRef.current = activeView;
+      return () => clearTimeout(t);
+    }
+  }, [activeView]);
+
+  // ── KEYBOARD SHORTCUTS ──
+  const [showShortcutsHelp, setShowShortcutsHelp] = useState(false);
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      const isInput = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable;
+
+      // ⌘K / Ctrl+K — Command Palette
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen(prev => !prev);
+        return;
+      }
+      // Ctrl+Z — Undo
+      if ((e.metaKey || e.ctrlKey) && e.key === 'z' && !e.shiftKey) {
+        if (!isInput) { e.preventDefault(); handleUndo(); return; }
+      }
+      // Ctrl+Shift+Z — Redo
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'z') {
+        if (!isInput) { e.preventDefault(); handleRedo(); return; }
+      }
+      // Escape — Close overlays
+      if (e.key === 'Escape') {
+        if (isCommandPaletteOpen) { setIsCommandPaletteOpen(false); return; }
+        if (showShortcutsHelp) { setShowShortcutsHelp(false); return; }
+      }
+
+      if (isInput) return; // Skip shortcuts when typing
+
+      // ? — Show shortcuts help
+      if (e.key === '?') { e.preventDefault(); setShowShortcutsHelp(prev => !prev); return; }
+      // N — New item (context-aware)
+      if (e.key.toLowerCase() === 'n') {
+        e.preventDefault();
+        if (activeView === 'bookings') setIsAddBookingModalOpen(true);
+        else if (activeView === 'blog') setIsAddBlogModalOpen(true);
+        else if (activeView === 'faq') {
+          const newId = Date.now().toString();
+          updateContent({ ...editContent, faq: [...editContent.faq, { id: newId, q: 'Yeni Soru', a: '' }] });
+        }
+        return;
+      }
+      // 1-9 — Navigate to pages
+      const navKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+      const navViews = ['overview', 'bookings', 'blog', 'reviews', 'hero-images', 'site-settings', 'regions', 'pricing', 'fleet'];
+      const keyIdx = navKeys.indexOf(e.key);
+      if (keyIdx !== -1 && navViews[keyIdx]) {
+        e.preventDefault();
+        setActiveView(navViews[keyIdx] as DashboardView);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [activeView, editContent, isCommandPaletteOpen, showShortcutsHelp]);
+
+  // Image Upload
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, callback: (base64: string) => void) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => callback(reader.result as string);
+      reader.readAsDataURL(file);
+    }
+  };
+
+  /* ----------------------------------------------------------------------------------
+   * STATE: Weather & Currency
+   * ---------------------------------------------------------------------------------- */
+  const [weather, setWeather] = useState<{ temp: number; icon: string } | null>(null);
+  const [rates, setRates] = useState<{ usd: number; eur: number }>({ usd: 0, eur: 0 });
+  const [userIp, setUserIp] = useState<string>('');
+
+  useEffect(() => {
+    // 1. Weather Fetch
+    fetch('https://wttr.in/Antalya?format=j1')
+      .then((res) => res.json())
+      .then((data) => {
+        const temp = data.current_condition[0].temp_C;
+        const weatherIcon = data.current_condition[0].weatherCode;
+        setWeather({ temp: parseInt(temp), icon: weatherIcon });
+      })
+      .catch((err) => console.error('Weather fetch error:', err));
+
+    // 2. Currency Fetch
+    const fetchRates = async () => {
+      try {
+        const [usdRes, eurRes] = await Promise.all([
+          fetch('https://api.frankfurter.app/latest?from=USD&to=TRY'),
+          fetch('https://api.frankfurter.app/latest?from=EUR&to=TRY')
+        ]);
+        const usdData = await usdRes.json();
+        const eurData = await eurRes.json();
+        setRates({ usd: usdData.rates.TRY, eur: eurData.rates.TRY });
+      } catch (e) {
+        console.error('Currency fetch error:', e);
+      }
+    };
+    fetchRates();
+
+    // 3. IP Fetch
+    fetch('https://api.ipify.org?format=json')
+      .then(res => res.json())
+      .then(data => setUserIp(data.ip))
+      .catch(err => console.error('IP fetch error:', err));
+  }, []);
+
+  const handleCreateBooking = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Normalize customer name - remove newlines and extra spaces
+    const normalizedBooking = {
+      ...newBookingData,
+      customerName: newBookingData.customerName?.replace(/[\n\r]+/g, ' ').replace(/\s+/g, ' ').trim() || ''
+    };
+    onAddBooking(normalizedBooking);
+    setIsAddBookingModalOpen(false);
+    // Reset form
+    setNewBookingData({
+      customerName: '',
+      phone: '',
+      pickup: DESTINATIONS[0],
+      destination: DESTINATIONS[1],
+      date: new Date().toISOString().split('T')[0],
+      time: '12:00',
+      passengers: 1,
+      vehicleId: editContent.vehicles[0]?.id || ''
+    });
+  };
+
+  const COLORS = ['#c5a059', '#0f172a', '#64748b', '#2563eb', '#10b981'];
+
+  // Time-based greeting
+  const getGreeting = () => {
+    const h = currentTime.getHours();
+    if (h < 6) return { text: 'İyi Geceler', emoji: '🌙' };
+    if (h < 12) return { text: 'Günaydın', emoji: '☀️' };
+    if (h < 18) return { text: 'İyi Günler', emoji: '🌤️' };
+    return { text: 'İyi Akşamlar', emoji: '🌆' };
+  };
+  const greeting = getGreeting();
+
+  // Notification badge counts
+  const pendingCount = bookings.filter(b => b.status === 'Pending').length;
+  const pendingReviews = userReviews.filter(r => r.status === 'pending').length;
+
+  return (
+    <div className="flex h-screen overflow-hidden relative bg-[#06080F] text-slate-200 selection:bg-[#c5a059] selection:text-white">
+      {/* 2026 SaaS Static Premium Background */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        {/* Deep Ambient Base Gradient */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#111827_0%,#06080F_100%)]"></div>
+        {/* Static Subtle Color Accents */}
+        <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-[#c5a059]/5 to-transparent"></div>
+        <div className="absolute -top-[10%] -right-[10%] w-[50%] h-[50%] rounded-full bg-indigo-500/5 blur-[120px]"></div>
+        {/* Subtle Noise Texture Overlay (Static) */}
+        <div className="absolute inset-0 opacity-[0.015] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
+      </div>
+
+      {/* Toast Notification - macOS Style */}
+      {toast && (
+        <div className="fixed top-safe mt-4 left-4 right-4 sm:left-auto sm:right-6 sm:top-6 sm:mt-0 z-[300] animate-in slide-in-from-top-4 fade-in duration-300">
+          <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-white/50 px-4 py-3 flex items-center gap-3 sm:min-w-[320px] max-w-full">
+            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${['delete', 'error'].includes(toast.type) ? 'bg-red-500' : toast.type === 'success' ? 'bg-emerald-500' : toast.type === 'info' ? 'bg-blue-500' : 'bg-amber-500'
+              }`}>
+              <i className={`fa-solid ${toast.type === 'delete' ? 'fa-trash' : toast.type === 'error' ? 'fa-circle-xmark' : toast.type === 'success' ? 'fa-check' : toast.type === 'info' ? 'fa-circle-info' : 'fa-triangle-exclamation'} text-white`}></i>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-slate-900 text-sm">{toast.type === 'delete' ? 'Öğe Silindi' : toast.type === 'error' ? 'Hata' : toast.type === 'success' ? 'Başarılı' : toast.type === 'info' ? 'Bilgi' : 'Uyarı'}</p>
+              <p className="text-slate-500 text-xs truncate">{toast.message}</p>
+            </div>
+            <button onClick={() => setToast(null)} className="w-7 h-7 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors shrink-0">
+              <i className="fa-solid fa-xmark text-xs"></i>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* View Booking Details - Sidebar Drawer */}
+      {selectedBookingForView && (
+        <div className="fixed inset-0 z-[210]">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
+            onClick={() => setSelectedBookingForView(null)}
+          />
+
+          {/* Drawer Panel */}
+          <div className="absolute right-0 top-0 h-full w-full max-w-lg bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 shadow-2xl animate-in slide-in-from-right duration-300 border-l border-white/10 flex flex-col">
+
+            {/* Header */}
+            <div className="p-6 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
+              <div>
+                <h3 className="text-xl font-black text-white flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#c5a059] to-amber-600 flex items-center justify-center">
+                    <i className="fa-solid fa-calendar-check text-white"></i>
+                  </div>
+                  Rezervasyon Detayları
+                </h3>
+                <p className="text-xs text-slate-400 mt-1 ml-[52px]">ID: <span className="text-[#c5a059] font-mono">{selectedBookingForView.id}</span></p>
+              </div>
+              <button
+                onClick={() => setSelectedBookingForView(null)}
+                className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all flex items-center justify-center"
+              >
+                <i className="fa-solid fa-xmark text-lg"></i>
+              </button>
+            </div>
+
+            {/* Content - Scrollable */}
+            <div className="flex-1 overflow-y-auto overscroll-y-contain p-6 space-y-6">
+
+              {/* Status Badge - Top */}
+              <div className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10">
+                <div>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase">Durum</p>
+                  <span className={`inline-block mt-1 px-4 py-1.5 rounded-full text-xs font-black uppercase ${selectedBookingForView.status === 'Confirmed' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' :
+                    selectedBookingForView.status === 'Cancelled' ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
+                      selectedBookingForView.status === 'Completed' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
+                        selectedBookingForView.status === 'Rejected' ? 'bg-slate-500/20 text-slate-400 border border-slate-500/30' :
+                          'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                    }`}>
+                    {{
+                      'Pending': 'Beklemede',
+                      'Confirmed': 'Onaylandı',
+                      'Completed': 'Tamamlandı',
+                      'Cancelled': 'İptal',
+                      'Rejected': 'Reddedildi'
+                    }[selectedBookingForView.status] || selectedBookingForView.status}
+                  </span>
+                </div>
+                <div className="text-right">
+                  <p className="text-[10px] font-bold text-slate-500 uppercase">Toplam</p>
+                  <p className="text-2xl font-black text-[#c5a059]">€{selectedBookingForView.totalPrice}</p>
+                </div>
+              </div>
+
+              {/* Customer Info */}
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                    <i className="fa-solid fa-user text-blue-400 text-sm"></i>
+                  </div>
+                  <span className="text-xs font-bold text-slate-400 uppercase">Müşteri Bilgileri</span>
+                </div>
+                <div className="space-y-3 pl-11">
+                  <div>
+                    <p className="text-lg font-bold text-white">{selectedBookingForView.customerName.replace(/[\n\r]+/g, ' ').trim()}</p>
+                  </div>
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 text-slate-400">
+                      <i className="fa-solid fa-phone text-xs text-emerald-400"></i>
+                      <span className="text-sm font-medium">{selectedBookingForView.phone}</span>
+                    </div>
+                    <a
+                      href={`https://wa.me/${selectedBookingForView.phone.replace(/\D/g, '')}?text=${encodeURIComponent(
+                        `Merhaba ${selectedBookingForView.customerName.replace(/[\n\r]+/g, ' ').trim()}, ATA FLUG TRANSFER rezervasyonunuz onaylandı.\n📅 ${selectedBookingForView.date} ${selectedBookingForView.time}\n📍 ${selectedBookingForView.pickup} → ${selectedBookingForView.destination}`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={e => e.stopPropagation()}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold hover:bg-emerald-500/20 transition-all shrink-0">
+                      <i className="fa-brands fa-whatsapp text-sm"></i>
+                      WhatsApp
+                    </a>
+                  </div>
+                  {selectedBookingForView.email && (
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 text-slate-400">
+                        <i className="fa-solid fa-envelope text-xs text-blue-400"></i>
+                        <span className="text-sm font-medium">{selectedBookingForView.email}</span>
+                      </div>
+                      <a
+                        href={`mailto:${selectedBookingForView.email}?subject=Rezervasyon%20Onay%C4%B1%20-%20ATA%20FLUG%20TRANSFER&body=${encodeURIComponent(
+                          `Sayın ${selectedBookingForView.customerName.replace(/[\n\r]+/g, ' ').trim()},\n\nRezervasyon bilgileriniz:\nTarih: ${selectedBookingForView.date} ${selectedBookingForView.time}\nKalkış: ${selectedBookingForView.pickup}\nVarış: ${selectedBookingForView.destination}\n\nATA FLUG TRANSFER`
+                        )}`}
+                        onClick={e => e.stopPropagation()}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-bold hover:bg-blue-500/20 transition-all shrink-0">
+                        <i className="fa-solid fa-paper-plane text-xs"></i>
+                        E-posta
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Route Info */}
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
+                    <i className="fa-solid fa-route text-emerald-400 text-sm"></i>
+                  </div>
+                  <span className="text-xs font-bold text-slate-400 uppercase">Güzergah</span>
+                </div>
+                <div className="pl-11 flex items-center gap-3">
+                  <div className="flex-1">
+                    <p className="text-xs text-slate-500 mb-1">Alış</p>
+                    <p className="text-sm font-bold text-white">{selectedBookingForView.pickup}</p>
+                  </div>
+                  <div className="w-8 h-8 rounded-full bg-[#c5a059]/20 flex items-center justify-center">
+                    <i className="fa-solid fa-arrow-right text-[#c5a059] text-xs"></i>
+                  </div>
+                  <div className="flex-1 text-right">
+                    <p className="text-xs text-slate-500 mb-1">Bırakış</p>
+                    <p className="text-sm font-bold text-white">{selectedBookingForView.destination}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Date & Time */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10">
+                  <div className="flex items-center gap-2 mb-2">
+                    <i className="fa-solid fa-calendar text-purple-400 text-sm"></i>
+                    <span className="text-xs font-bold text-slate-400 uppercase">Tarih</span>
+                  </div>
+                  <p className="text-lg font-bold text-white">{selectedBookingForView.date.split('-').reverse().join('/')}</p>
+                </div>
+                <div className="p-4 rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10">
+                  <div className="flex items-center gap-2 mb-2">
+                    <i className="fa-solid fa-clock text-amber-400 text-sm"></i>
+                    <span className="text-xs font-bold text-slate-400 uppercase">Saat</span>
+                  </div>
+                  <p className="text-lg font-bold text-white">{selectedBookingForView.time}</p>
+                </div>
+              </div>
+
+              {/* Vehicle Info */}
+              <div className="p-4 rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 rounded-lg bg-[#c5a059]/20 flex items-center justify-center">
+                    <i className="fa-solid fa-car text-[#c5a059] text-sm"></i>
+                  </div>
+                  <span className="text-xs font-bold text-slate-400 uppercase">Araç Bilgisi</span>
+                </div>
+                {(() => {
+                  const vehicle = editContent.vehicles.find(v => v.id === selectedBookingForView.vehicleId);
+                  return (
+                    <div className="pl-11">
+                      <p className="text-base font-bold text-white mb-3">{vehicle?.name || 'Bilinmiyor'}</p>
+                      <div className="flex gap-4">
+                        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/5">
+                          <i className="fa-solid fa-users text-[#c5a059] text-xs"></i>
+                          <span className="text-xs font-bold text-slate-300">{selectedBookingForView.passengers} / {vehicle?.capacity}</span>
+                        </div>
+                        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/5">
+                          <i className="fa-solid fa-suitcase text-[#c5a059] text-xs"></i>
+                          <span className="text-xs font-bold text-slate-300">Max {vehicle?.luggage}</span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+
+              {/* Flight Number */}
+              {selectedBookingForView.flightNumber && (
+                <div className="p-4 rounded-2xl bg-gradient-to-br from-sky-500/[0.08] to-white/[0.02] border border-sky-500/20">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-sky-500/20 flex items-center justify-center">
+                      <i className="fa-solid fa-plane text-sky-400 text-sm"></i>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-slate-500 uppercase">Uçuş Numarası</p>
+                      <p className="text-base font-bold text-sky-400 tracking-wider">{selectedBookingForView.flightNumber}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Notes */}
+              {selectedBookingForView.notes && (
+                <div className="p-4 rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-8 h-8 rounded-lg bg-slate-500/20 flex items-center justify-center">
+                      <i className="fa-solid fa-note-sticky text-slate-400 text-sm"></i>
+                    </div>
+                    <span className="text-xs font-bold text-slate-400 uppercase">Notlar</span>
+                  </div>
+                  <p className="text-sm text-slate-300 pl-11">{selectedBookingForView.notes}</p>
+                </div>
+              )}
+
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 border-t border-white/10 bg-black/20">
+              <div className="flex items-center justify-between">
+                <div className="text-[10px] text-slate-500 font-bold uppercase">
+                  Kayıt: {new Date(selectedBookingForView.createdAt).toLocaleString('tr-TR')}
+                </div>
+                <div className="flex gap-2">
+                  <select
+                    value={selectedBookingForView.status}
+                    onChange={(e) => {
+                      onUpdateStatus(selectedBookingForView.id, e.target.value as Booking['status']);
+                      setSelectedBookingForView({ ...selectedBookingForView, status: e.target.value as Booking['status'] });
+                    }}
+                    className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none focus:border-[#c5a059]"
+                  >
+                    <option value="Pending">Beklemede</option>
+                    <option value="Confirmed">Onayla</option>
+                    <option value="Completed">Tamamlandı</option>
+                    <option value="Cancelled">İptal</option>
+                    <option value="Rejected">Reddet</option>
+                  </select>
+                  <button
+                    onClick={() => setSelectedBookingForView(null)}
+                    className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#c5a059] to-amber-600 text-white text-xs font-bold uppercase hover:from-amber-600 hover:to-amber-700 transition-all"
+                  >
+                    Kapat
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Booking Modal */}
+      {
+        isAddBookingModalOpen && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setIsAddBookingModalOpen(false)}></div>
+            <div className="relative bg-white w-full max-w-lg rounded-[32px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+              <div className="p-8 border-b border-slate-100 flex justify-between items-center">
+                <h3 className="text-xl font-black text-slate-900">Yeni Rezervasyon Ekle</h3>
+                <button onClick={() => setIsAddBookingModalOpen(false)} className="w-10 h-10 rounded-full hover:bg-slate-50 text-slate-400">
+                  <i className="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+              <form onSubmit={handleCreateBooking} className="p-8 space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Müşteri Adı</label>
+                    <input required className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold" value={newBookingData.customerName} onChange={e => setNewBookingData({ ...newBookingData, customerName: e.target.value })} />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Telefon</label>
+                    <input required className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold" value={newBookingData.phone} onChange={e => setNewBookingData({ ...newBookingData, phone: e.target.value })} />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nereden</label>
+                    <select className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold" value={newBookingData.pickup} onChange={e => setNewBookingData({ ...newBookingData, pickup: e.target.value })}>
+                      <option value="Antalya Havalimanı (AYT)">Antalya Havalimanı (AYT)</option>
+                      {editContent.regions.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nereye</label>
+                    <select className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold" value={newBookingData.destination} onChange={e => setNewBookingData({ ...newBookingData, destination: e.target.value })}>
+                      <option value="Antalya Havalimanı (AYT)">Antalya Havalimanı (AYT)</option>
+                      {editContent.regions.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Tarih</label>
+                    <input type="date" className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold" value={newBookingData.date} onChange={e => setNewBookingData({ ...newBookingData, date: e.target.value })} />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Saat</label>
+                    <input type="time" className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold" value={newBookingData.time} onChange={e => setNewBookingData({ ...newBookingData, time: e.target.value })} />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Kişi</label>
+                    <input type="number" className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold" value={newBookingData.passengers} onChange={e => setNewBookingData({ ...newBookingData, passengers: parseInt(e.target.value) })} />
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Araç Seçimi</label>
+                  <select className="w-full bg-slate-50 border-none rounded-xl p-3 text-sm font-bold" value={newBookingData.vehicleId} onChange={e => setNewBookingData({ ...newBookingData, vehicleId: e.target.value })}>
+                    {editContent.vehicles.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
+                  </select>
+                </div>
+                <button type="submit" className="w-full bg-[#c5a059] text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-gold/20 hover:bg-[#b08d4a] transition-all mt-4">Rezervasyonu Kaydet</button>
+              </form>
+            </div>
+          </div>
+        )
+      }
+
+
+      {/* Sidebar — Dynamic Expandable Icon Dock (Desktop Only) */}
+      <aside
+        className={`hidden xl:flex ${isSidebarOpen ? 'w-64' : 'w-[72px]'} transition-all duration-300 relative flex-col z-50 h-screen border-r border-white/[0.12] shadow-2xl shadow-black/30`}
+        style={{ background: 'rgba(15, 23, 42, 0.05)', backdropFilter: 'blur(80px)', WebkitBackdropFilter: 'blur(80px)' }}
+      >
+        {/* Logo & Toggle */}
+        <div className={`h-16 flex items-center ${isSidebarOpen ? 'justify-between px-6' : 'justify-center'} border-b border-white/5 shrink-0 transition-all duration-300 overflow-hidden`}>
+          <div className="flex items-center gap-3">
+            <img src="/logo.png" alt="Logo" className="w-8 h-8 object-contain shrink-0" />
+            {isSidebarOpen && <span className="text-white font-bold tracking-wider text-sm whitespace-nowrap">Transfer Panel</span>}
+          </div>
+          {isSidebarOpen && (
+            <button onClick={() => setIsSidebarOpen(false)} className="text-slate-500 hover:text-white transition-colors shrink-0">
+              <i className="fa-solid fa-chevron-left text-xs"></i>
+            </button>
+          )}
+        </div>
+
+        {/* Show Expand Button when Closed */}
+        {!isSidebarOpen && (
+          <button onClick={() => setIsSidebarOpen(true)} className="absolute -right-3 top-20 w-6 h-6 bg-[#c5a059] rounded-full flex items-center justify-center text-white shadow-lg shadow-black/20 text-[10px] hover:bg-amber-600 transition-colors z-[60]">
+            <i className="fa-solid fa-chevron-right"></i>
+          </button>
+        )}
+
+        {/* Nav Items — Grouped */}
+        <nav className="flex-1 flex flex-col py-2 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+          {/* Main Group */}
+          <div className="space-y-0 px-2">
+            {[
+              { id: 'overview', label: 'Dashboard', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></svg> },
+              { id: 'bookings', label: 'Rezervasyonlar', badge: pendingCount, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 2v4" /><path d="M16 2v4" /><rect width="18" height="18" x="3" y="4" rx="2" /><path d="M3 10h18" /><path d="M8 14h.01" /><path d="M12 14h.01" /><path d="M16 14h.01" /><path d="M8 18h.01" /><path d="M12 18h.01" /><path d="M16 18h.01" /></svg> },
+              { id: 'blog', label: 'Blog Yönetimi', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" /><path d="M18 14h-8" /><path d="M15 18h-5" /><path d="M10 6h8v4h-8V6Z" /></svg> },
+              { id: 'reviews', label: 'Yorumlar', badge: pendingReviews, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg> },
+              { id: 'hero-images', label: 'Anasayfa Banner', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></svg> },
+            ].map(item => (
+              <div key={item.id} className="relative group">
+                <button
+                  onClick={() => setActiveView(item.id as DashboardView)}
+                  className={`w-full py-2.5 rounded-xl flex items-center ${isSidebarOpen ? 'justify-start px-4 gap-3' : 'justify-center'} transition-all group relative ${activeView === item.id ? 'bg-gradient-to-r from-white/[0.08] to-transparent text-white shadow-[inset_1px_0_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                >
+                  {/* Elegant Active Indicator Line */}
+                  {activeView === item.id && (
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[#c5a059] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
+                  )}
+
+                  <div className={`shrink-0 transition-transform duration-300 ${activeView === item.id ? 'scale-110 text-[#c5a059]' : 'group-hover:scale-110 group-hover:text-white'}`}>
+                    {item.icon}
+                  </div>
+
+                  {isSidebarOpen && <span className="text-[13px] font-bold whitespace-nowrap truncate">{item.label}</span>}
+
+                  {/* Badge */}
+                  {item.badge > 0 && (
+                    <span className={`flex items-center justify-center text-[8px] font-black rounded-full bg-red-500 text-white ring-2 ring-[#020617] ${isSidebarOpen ? 'ml-auto shrink-0 w-[18px] h-[18px]' : 'absolute top-1 right-1.5 w-[14px] h-[14px]'}`}>
+                      {item.badge > 9 ? '9+' : item.badge}
+                    </span>
+                  )}
+                </button>
+                {/* Tooltip */}
+                {!isSidebarOpen && (
+                  <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
+                    <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[#c5a059] to-amber-600" />
+                    <div className="flex items-center gap-2.5">
+                      <span>{item.label}</span>
+                      {item.badge > 0 && <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 text-[10px] font-black">{item.badge}</span>}
+                    </div>
+                    <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[#0f172a]/95" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Separator */}
+          <div className="mx-4 my-2 h-px bg-white/5 shrink-0" />
+
+          {/* Management Group */}
+          <div className="space-y-0 px-2 pb-2">
+            {[
+              {
+                id: 'corporate',
+                label: 'Kurumsal',
+                icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /><rect width="20" height="14" x="2" y="6" rx="2" /></svg>,
+                subItems: [
+                  { id: 'about', label: 'Hakkımızda' },
+                  { id: 'visionMission', label: 'Vizyon & Misyon' }
+                ]
+              },
+              { id: 'site-settings', label: 'Menü Yönetimi', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg> },
+              { id: 'regions', label: 'Bölgeler', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg> },
+              { id: 'pricing', label: 'Fiyatlar', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42l-8.704-8.704z" /><circle cx="7.5" cy="7.5" r=".5" fill="currentColor" /></svg> },
+              { id: 'fleet', label: 'Araçlar', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2" /><circle cx="7" cy="17" r="2" /><path d="M9 17h6" /><circle cx="17" cy="17" r="2" /></svg> },
+              { id: 'faq', label: 'S.S.S', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><path d="M12 17h.01" /></svg> },
+              { id: 'business', label: 'İşletme', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2" /><path d="M9 22v-4h6v4" /><path d="M8 6h.01" /><path d="M16 6h.01" /><path d="M12 6h.01" /><path d="M12 10h.01" /><path d="M12 14h.01" /><path d="M16 10h.01" /><path d="M16 14h.01" /><path d="M8 10h.01" /><path d="M8 14h.01" /></svg> },
+              { id: 'account', label: 'Hesap Ayarları', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg> },
+            ].map(item => {
+              const isActiveGroup = item.subItems
+                ? item.subItems.some(sub => sub.id === activeView)
+                : activeView === item.id;
+
+              return (
+                <div key={item.id} className="relative group">
+                  <button
+                    onClick={() => {
+                      if (item.subItems) {
+                        if (!isSidebarOpen) setIsSidebarOpen(true);
+                        setIsCorporateOpen(!isCorporateOpen);
+                        setActiveView('about'); // Default to about as requested
+                      } else {
+                        setActiveView(item.id as DashboardView);
+                      }
+                    }}
+                    className={`w-full py-2.5 rounded-xl flex items-center ${isSidebarOpen ? 'justify-start px-4 gap-3' : 'justify-center'} transition-all group relative ${isActiveGroup ? 'bg-gradient-to-r from-white/[0.08] to-transparent text-white shadow-[inset_1px_0_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                  >
+                    {/* Elegant Active Indicator Line */}
+                    {isActiveGroup && (
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[#c5a059] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
+                    )}
+
+                    <div className={`shrink-0 transition-transform duration-300 ${isActiveGroup ? 'scale-110 text-[#c5a059]' : 'group-hover:scale-110 group-hover:text-white'}`}>
+                      {item.icon}
+                    </div>
+
+                    {isSidebarOpen && <span className="text-[13px] font-bold whitespace-nowrap truncate flex-1 text-left">{item.label}</span>}
+
+                    {isSidebarOpen && item.subItems && (
+                      <i className={`fa-solid fa-chevron-down text-[10px] transition-transform duration-300 ${isCorporateOpen ? 'rotate-180 text-[#c5a059]' : 'opacity-50'}`}></i>
+                    )}
+                  </button>
+
+                  {/* Submenu Items */}
+                  {isSidebarOpen && item.subItems && isCorporateOpen && (
+                    <div className="mt-1 space-y-1 pl-11 pr-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                      {item.subItems.map(subItem => (
+                        <button
+                          key={subItem.id}
+                          onClick={() => setActiveView(subItem.id as DashboardView)}
+                          className={`w-full text-left py-2 px-3 rounded-lg text-[12px] transition-all relative ${activeView === subItem.id ? 'text-[#c5a059] bg-white/[0.04] font-semibold' : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'}`}
+                        >
+                          <span className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full transition-all ${activeView === subItem.id ? 'bg-[#c5a059] shadow-[0_0_5px_rgba(197,160,89,0.8)]' : 'bg-transparent'}`}></span>
+                          <span className={activeView === subItem.id ? 'pl-2' : ''}>{subItem.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Tooltip */}
+                  {!isSidebarOpen && (
+                    <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
+                      <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[#c5a059] to-amber-600" />
+                      {item.label}
+                      <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[#0f172a]/95" />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </nav>
+
+        {/* Bottom — Site Link */}
+        <div className="px-2 py-2 border-t border-white/5 shrink-0 space-y-0">
+          <div className="relative group">
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-2.5 rounded-xl flex items-center justify-start px-4 gap-3 transition-all group relative text-slate-400 hover:text-white hover:bg-white/5"
+            >
+              <div className="shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" x2="21" y1="14" y2="3" /></svg>
+              </div>
+              {isSidebarOpen && <span className="text-[13px] font-bold whitespace-nowrap truncate">Siteyi Görüntüle</span>}
+            </a>
+            {!isSidebarOpen && (
+              <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
+                <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[#c5a059] to-amber-600" />
+                Siteyi Görüntüle
+                <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[#0f172a]/95" />
+              </div>
+            )}
+          </div>
+        </div>
+      </aside>
+
+      {/* Mobile Bottom Tab Bar */}
+      <nav
+        className="xl:hidden fixed bottom-0 left-0 right-0 z-[60] safe-area-bottom"
+        style={{ background: 'rgba(6, 8, 15, 0.85)', backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)' }}
+      >
+        <div className="h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        <div className="flex items-center justify-around h-[60px] px-1">
+          {[
+            { id: 'overview', label: 'Panel', icon: 'fa-chart-pie', badge: 0 },
+            { id: 'bookings', label: 'Rez.', icon: 'fa-calendar-check', badge: pendingCount },
+            { id: 'reviews', label: 'Yorum', icon: 'fa-star', badge: pendingReviews },
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => { setActiveView(tab.id as DashboardView); setIsMobileMenuOpen(false); }}
+              className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-all relative ${activeView === tab.id && !isMobileMenuOpen ? 'text-[#c5a059]' : 'text-slate-600 active:text-slate-400'}`}
+            >
+              {activeView === tab.id && !isMobileMenuOpen && (
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2px] bg-[#c5a059] rounded-full shadow-[0_0_8px_rgba(197,160,89,0.5)]" />
+              )}
+              <div className="relative">
+                <i className={`fa-solid ${tab.icon} text-[16px]`}></i>
+                {tab.badge > 0 && (
+                  <span className="absolute -top-1.5 -right-2 w-[14px] h-[14px] flex items-center justify-center text-[7px] font-black rounded-full bg-red-500 text-white shadow-lg shadow-red-500/30">
+                    {tab.badge > 9 ? '9+' : tab.badge}
+                  </span>
+                )}
+              </div>
+              <span className="text-[9px] font-bold tracking-wide">{tab.label}</span>
+            </button>
+          ))}
+
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-all relative ${isMobileMenuOpen ? 'text-[#c5a059]' : 'text-slate-600 active:text-slate-400'}`}
+          >
+            {isMobileMenuOpen && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2px] bg-[#c5a059] rounded-full" />}
+            {isMobileMenuOpen ? (
+              <i className="fa-solid fa-xmark text-[16px] transition-transform duration-200 rotate-90"></i>
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" className="transition-transform duration-200">
+                <rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor" />
+                <rect x="11" y="1" width="6" height="6" rx="1.5" fill="currentColor" />
+                <rect x="1" y="11" width="6" height="6" rx="1.5" fill="currentColor" />
+                <rect x="11" y="11" width="6" height="6" rx="1.5" fill="currentColor" />
+              </svg>
+            )}
+            <span className="text-[9px] font-bold tracking-wide">{isMobileMenuOpen ? 'Kapat' : 'Menü'}</span>
+          </button>
+        </div>
+
+        {isMobileMenuOpen && (
+          <>
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-[-1]" onClick={() => setIsMobileMenuOpen(false)} />
+            <div className="absolute bottom-full left-0 right-0 rounded-t-[28px] p-5 pt-3 animate-in slide-in-from-bottom-4 duration-300 shadow-2xl max-h-[75vh] overflow-y-auto scrollbar-hide border-t border-white/[0.06]"
+              style={{ background: 'rgba(6, 8, 15, 0.95)', backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)' }}>
+              <div className="w-9 h-1 rounded-full bg-white/15 mx-auto mb-4" />
+
+              <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.15em] px-1 mb-2">Ana Modüller</p>
+              <div className="grid grid-cols-4 gap-2 mb-4">
+                {[
+                  { id: 'overview', label: 'Dashboard', icon: 'fa-chart-pie', color: 'text-blue-400' },
+                  { id: 'bookings', label: 'Rezervasyon', icon: 'fa-calendar-check', color: 'text-emerald-400', badge: pendingCount },
+                  { id: 'reviews', label: 'Yorumlar', icon: 'fa-star', color: 'text-amber-400', badge: pendingReviews },
+                  { id: 'regions', label: 'Bölgeler', icon: 'fa-map-location-dot', color: 'text-teal-400' },
+                ].map(item => (
+                  <button key={item.id} onClick={() => { setActiveView(item.id as DashboardView); setIsMobileMenuOpen(false); }}
+                    className={`flex flex-col items-center gap-1.5 py-3 px-1 rounded-2xl transition-all active:scale-95 ${activeView === item.id ? 'bg-[#c5a059]/10 ring-1 ring-[#c5a059]/20' : 'bg-white/[0.03]'}`}>
+                    <div className="relative">
+                      <i className={`fa-solid ${item.icon} ${activeView === item.id ? 'text-[#c5a059]' : item.color} text-[17px]`}></i>
+                      {(item as any).badge > 0 && <span className="absolute -top-1 -right-2.5 w-[13px] h-[13px] flex items-center justify-center text-[7px] font-black rounded-full bg-red-500 text-white">{(item as any).badge}</span>}
+                    </div>
+                    <span className={`text-[9px] font-bold leading-tight text-center ${activeView === item.id ? 'text-[#c5a059]' : 'text-slate-500'}`}>{item.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.15em] px-1 mb-2">İçerik Yönetimi</p>
+              <div className="grid grid-cols-4 gap-2 mb-4">
+                {[
+                  { id: 'blog', label: 'Blog', icon: 'fa-newspaper', color: 'text-purple-400' },
+                  { id: 'hero-images', label: 'Banner', icon: 'fa-images', color: 'text-pink-400' },
+                  { id: 'fleet', label: 'Araçlar', icon: 'fa-car-side', color: 'text-red-400' },
+                  { id: 'pricing', label: 'Fiyatlar', icon: 'fa-tag', color: 'text-yellow-400' },
+                  { id: 'faq', label: 'S.S.S', icon: 'fa-circle-question', color: 'text-indigo-400' },
+                  { id: 'about', label: 'Hakkımızda', icon: 'fa-info-circle', color: 'text-sky-400' },
+                  { id: 'visionMission', label: 'Vizyon', icon: 'fa-bullseye', color: 'text-violet-400' },
+                  { id: 'site-settings', label: 'Menü', icon: 'fa-bars', color: 'text-cyan-400' },
+                ].map(item => (
+                  <button key={item.id} onClick={() => { setActiveView(item.id as DashboardView); setIsMobileMenuOpen(false); }}
+                    className={`flex flex-col items-center gap-1.5 py-3 px-1 rounded-2xl transition-all active:scale-95 ${activeView === item.id ? 'bg-[#c5a059]/10 ring-1 ring-[#c5a059]/20' : 'bg-white/[0.03]'}`}>
+                    <i className={`fa-solid ${item.icon} ${activeView === item.id ? 'text-[#c5a059]' : item.color} text-[17px]`}></i>
+                    <span className={`text-[9px] font-bold leading-tight text-center ${activeView === item.id ? 'text-[#c5a059]' : 'text-slate-500'}`}>{item.label}</span>
+                  </button>
+                ))}
+              </div>
+
+              <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.15em] px-1 mb-2">Sistem</p>
+              <div className="flex gap-2">
+                {[
+                  { id: 'business', label: 'İşletme', icon: 'fa-building' },
+                  { id: 'account', label: 'Hesap', icon: 'fa-user-gear' },
+                ].map(item => (
+                  <button key={item.id} onClick={() => { setActiveView(item.id as DashboardView); setIsMobileMenuOpen(false); }}
+                    className={`flex-1 flex items-center gap-2.5 py-3 px-3.5 rounded-2xl transition-all active:scale-[0.97] ${activeView === item.id ? 'bg-[#c5a059]/10 ring-1 ring-[#c5a059]/20' : 'bg-white/[0.03]'}`}>
+                    <i className={`fa-solid ${item.icon} ${activeView === item.id ? 'text-[#c5a059]' : 'text-slate-500'} text-sm`}></i>
+                    <span className={`text-[11px] font-bold ${activeView === item.id ? 'text-[#c5a059]' : 'text-slate-500'}`}>{item.label}</span>
+                  </button>
+                ))}
+                <a href="/" target="_blank" rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 py-3 px-3.5 rounded-2xl bg-white/[0.03] transition-all active:scale-[0.97]">
+                  <i className="fa-solid fa-arrow-up-right-from-square text-[#c5a059] text-sm"></i>
+                  <span className="text-[11px] font-bold text-slate-500">Site</span>
+                </a>
+              </div>
+            </div>
+          </>
+        )}
+      </nav>
+
+
+      {/* Mobile Spotlight FAB */}
+      <MobileSpotlight items={commandItems} onExecute={handleCommandSelect} />
+
+      {/* Global Context Menu */}
+      <ContextMenu
+        isOpen={contextMenu.isOpen}
+        onClose={() => setContextMenu({ ...contextMenu, isOpen: false })}
+        position={contextMenu.position}
+        actions={
+          contextMenu.booking ? [
+            { id: 'view', label: 'Görüntüle', icon: 'fa-eye', color: 'text-slate-400', onClick: () => setSelectedBookingForView(contextMenu.booking) },
+            ...(contextMenu.booking.status === 'Pending' ? [
+              { id: 'confirm', label: 'Onayla', icon: 'fa-check', color: 'text-emerald-400', onClick: () => onUpdateStatus(contextMenu.booking!.id, 'Confirmed') },
+              { id: 'reject', label: 'Reddet', icon: 'fa-xmark', color: 'text-red-400', onClick: () => onUpdateStatus(contextMenu.booking!.id, 'Rejected') },
+            ] : []),
+            ...(contextMenu.booking.status === 'Confirmed' ? [
+              { id: 'complete', label: 'Tamamlandı İşaretle', icon: 'fa-flag-checkered', color: 'text-violet-400', onClick: () => onUpdateStatus(contextMenu.booking!.id, 'Completed') },
+            ] : []),
+            { id: 'delete', label: 'Sil', icon: 'fa-trash-can', color: '', destructive: true, onClick: () => onDeleteBooking(contextMenu.booking!.id) }
+          ] : []
+        }
+      >
+        {/* Render a clone of the item being long-pressed so it visually stays "lifted" in the menu */}
+        {contextMenu.booking && (
+          <div className="bg-[#1e293b]/95 backdrop-blur-3xl rounded-2xl overflow-hidden border border-white/10 opacity-60">
+            <MobileBookingItem booking={contextMenu.booking} onClick={() => { }} onContextMenu={() => { }} isToday={false} />
+          </div>
+        )}
+      </ContextMenu>
+
+      {/* Main Content */}
+      {/* Main Content - Scrollable */}
+      <main
+        ref={mainRef}
+        className="flex-1 h-full overflow-y-auto overflow-x-hidden p-4 md:px-8 md:py-4 pb-24 xl:pb-4 scrollbar-thin relative z-10 overscroll-y-contain touch-pan-y"
+        {...pullHandlers}
+      >
+        {/* Pull-to-Refresh Indicator */}
+        {(pullDistance > 0 || isRefreshing) && (
+          <div
+            className="flex items-center justify-center transition-all duration-200 overflow-hidden"
+            style={{ height: pullDistance || (isRefreshing ? 48 : 0), opacity: Math.min(1, pullDistance / 60) }}
+          >
+            <div className={`w-8 h-8 rounded-full border-2 border-[#c5a059] flex items-center justify-center ${isRefreshing ? 'animate-spin' : ''}`}>
+              {isRefreshing ? (
+                <i className="fa-solid fa-circle-notch text-[#c5a059] text-sm"></i>
+              ) : (
+                <i className={`fa-solid fa-arrow-down text-[#c5a059] text-xs transition-transform ${pullDistance >= 80 ? 'rotate-180' : ''}`}></i>
+              )}
+            </div>
+          </div>
+        )}
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 relative z-50">
+          <div className="relative z-10">
+            {/* Breadcrumb */}
+            {activeView !== 'overview' && (
+              <div className="flex items-center gap-1.5 mb-2 text-[10px] font-bold uppercase tracking-wider">
+                <button onClick={() => setActiveView('overview')} className="text-slate-500 hover:text-[#c5a059] transition-colors">Panel</button>
+                <i className="fa-solid fa-chevron-right text-[7px] text-slate-600"></i>
+                <span className="text-[#c5a059]">{VIEW_LABELS[activeView]?.label || activeView}</span>
+              </div>
+            )}
+            {activeView === 'overview' && (
+              <p className="text-slate-400 font-bold text-[10px] mb-1 uppercase tracking-wider">{currentTime.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long' })}</p>
+            )}
+            <h1 className={`text-3xl font-black capitalize tracking-tight ${isDarkTheme ? 'text-white' : 'text-slate-900'} leading-tight`}>
+              {activeView === 'overview' ? (
+                <>{greeting.emoji} {greeting.text}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#c5a059] to-amber-300">Admin</span></>
+              ) : (
+                VIEW_LABELS[activeView]?.label || activeView.replace('-', ' ')
+              )}
+            </h1>
+            <p className={`text-sm mt-1 ${isDarkTheme ? 'text-slate-400' : 'text-slate-500'} max-w-lg`}>
+              {activeView === 'overview'
+                ? 'Panel üzerinden tüm operasyonları hızlıca yönetebilirsiniz.'
+                : (VIEW_LABELS[activeView]?.description || 'Operasyonel veriler ve site kontrol merkezi.')}
+            </p>
+          </div>
+          <div className="flex space-x-2 relative z-10 items-center">
+
+
+            {/* Undo/Redo */}
+            <button onClick={handleUndo} className="w-9 h-9 rounded-lg bg-white/5 text-slate-500 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center" title="Geri Al (⌘Z)">
+              <i className="fa-solid fa-rotate-left text-xs"></i>
+            </button>
+            <button onClick={handleRedo} className="w-9 h-9 rounded-lg bg-white/5 text-slate-500 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center" title="Yeniden Yap (⌘⇧Z)">
+              <i className="fa-solid fa-rotate-right text-xs"></i>
+            </button>
+
+            {/* Command Palette Trigger */}
+            <button
+              onClick={() => setIsCommandPaletteOpen(true)}
+              className="hidden md:flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
+            >
+              <i className="fa-solid fa-search text-slate-400 text-xs"></i>
+              <span className="text-[11px] text-slate-500 hidden md:inline">Ara veya git...</span>
+              <kbd className="hidden md:inline text-[9px] font-mono font-bold text-slate-600 bg-white/5 px-1.5 py-0.5 rounded border border-white/10">⌘K</kbd>
+            </button>
+
+            {/* Auto-save Status Indicator */}
+            <div className="flex items-center gap-2">
+              {saveStatus === 'saving' && (
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 animate-pulse">
+                  <i className="fa-solid fa-circle-notch fa-spin text-[#c5a059] text-xs"></i>
+                  <span className="text-[11px] font-bold text-slate-400">Kaydediliyor...</span>
+                </div>
+              )}
+              {saveStatus === 'saved' && (
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 animate-in fade-in duration-300">
+                  <i className="fa-solid fa-check text-emerald-400 text-xs"></i>
+                  <span className="text-[11px] font-bold text-emerald-400">Kaydedildi</span>
+                </div>
+              )}
+              {saveStatus === 'idle' && activeView !== 'overview' && (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
+                  <span className="text-[10px] font-bold text-slate-500">Otomatik Kayıt</span>
+                </div>
+              )}
+            </div>
+            {/* User Profile Dropdown */}
+            <div className="relative group z-50">
+              <button className="flex items-center gap-2 pl-2 md:pl-4 border-l border-white/10 outline-none">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#c5a059] to-amber-600 p-[2px] shadow-lg shadow-black/20 group-hover:shadow-[#c5a059]/30 transition-shadow">
+                  <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center border-2 border-[#020617] relative overflow-hidden">
+                    <img src={accountForm.avatar} alt="Admin Profil" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors"></div>
+                  </div>
+                </div>
+              </button>
+              {/* Dropdown Menu */}
+              <div className="absolute right-0 top-full mt-3 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 transform origin-top-right">
+                <div className="bg-[#0f172a]/95 backdrop-blur-3xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden py-1.5 flex flex-col">
+                  {/* Pointer arrow */}
+                  <div className="absolute -top-1.5 right-4 w-3 h-3 bg-[#0f172a] border-t border-l border-white/10 rotate-45"></div>
+
+                  <div className="px-4 py-3 border-b border-white/5 bg-white/[0.02]">
+                    <p className="text-white text-xs font-bold truncate">Admin</p>
+                    <p className="text-slate-400 text-[10px] truncate">admin@system.com</p>
+                  </div>
+                  <div className="p-1.5">
+                    <button
+                      onClick={() => setActiveView('account')}
+                      className="w-full text-left px-3 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors flex items-center gap-2"
+                    >
+                      <i className="fa-solid fa-user-gear text-[#c5a059] w-3"></i> Hesap Ayarları
+                    </button>
+                    <button
+                      onClick={onExitAdmin}
+                      className="w-full text-left px-3 py-2 text-xs font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors flex items-center gap-2 mt-0.5"
+                    >
+                      <i className="fa-solid fa-arrow-right-from-bracket w-3"></i> Güvenli Çıkış
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Skeleton Loading */}
+        {isPageTransitioning && (
+          <div className="animate-pulse space-y-4 mb-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[1, 2, 3, 4].map(i => <div key={i} className="h-20 rounded-2xl bg-white/5" />)}
+            </div>
+            <div className="h-14 rounded-2xl bg-white/5" />
+            <div className="space-y-3">
+              {[1, 2, 3].map(i => <div key={i} className="h-16 rounded-2xl bg-white/5" />)}
+            </div>
+          </div>
+        )}
+
+        {activeView === 'overview' && (
+          <div className="space-y-5">
+
+            {/* Info Strip — Live Clock, Hava, Döviz, IP */}
+            <div className="flex flex-wrap items-center gap-3 text-xs">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.06]">
+                <i className="fa-regular fa-clock text-slate-500"></i>
+                <span className="font-mono font-bold text-white tabular-nums">{currentTime.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+                <span className="text-slate-500 hidden sm:inline">{currentTime.toLocaleDateString('tr-TR', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
+              </div>
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.06]">
+                <i className={`fa-solid ${weather?.icon === '113' ? 'fa-sun text-amber-400' : 'fa-cloud text-sky-400'} text-sm`}></i>
+                <span className="font-bold text-white">{weather?.temp || '--'}°C</span>
+                <span className="text-slate-500">Antalya</span>
+              </div>
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.06]">
+                <span className="text-slate-500">$</span>
+                <span className="font-bold text-white tabular-nums">{rates.usd ? rates.usd.toFixed(2) : '--'}</span>
+                <span className="text-slate-600">|</span>
+                <span className="text-slate-500">€</span>
+                <span className="font-bold text-white tabular-nums">{rates.eur ? rates.eur.toFixed(2) : '--'}</span>
+                <span className="text-slate-600 text-[10px]">₺</span>
+              </div>
+              {userIp && (
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.06] hidden md:flex">
+                  <i className="fa-solid fa-shield-halved text-slate-500 text-[10px]"></i>
+                  <span className="font-mono text-slate-400 text-[11px]">{userIp}</span>
+                </div>
+              )}
+              {/* Keyboard shortcuts hint */}
+              <div className="ml-auto hidden lg:flex items-center gap-1.5 text-[10px] text-slate-600">
+                <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/[0.04] font-mono">D</kbd>
+                <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/[0.04] font-mono">B</kbd>
+                <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/[0.04] font-mono">R</kbd>
+                <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/[0.04] font-mono">N</kbd>
+                <span className="text-slate-600">kısayollar</span>
+              </div>
+            </div>
+
+            {/* KPI Cards — Flat, Minimal + Today + Trend — Mobile: horizontal scroll snap carousel */}
+            {(() => {
+              const kpiItems = [
+                { label: 'Toplam Ciro', val: `€${stats.totalRevenue.toLocaleString()}`, icon: 'fa-coins', color: 'text-amber-400', bg: 'bg-amber-400/10', trend: stats.revenueTrend !== 0 ? `${stats.revenueTrend > 0 ? '+' : ''}${stats.revenueTrend.toFixed(0)}%` : null, trendUp: stats.revenueTrend > 0 },
+                { label: 'Onaylı', val: stats.confirmed, icon: 'fa-circle-check', color: 'text-emerald-400', bg: 'bg-emerald-400/10', trend: null, trendUp: false },
+                { label: 'Bekleyen', val: stats.pending, icon: 'fa-clock', color: 'text-blue-400', bg: 'bg-blue-400/10', trend: null, trendUp: false },
+                { label: 'Tamamlanan', val: stats.completed, icon: 'fa-check-double', color: 'text-violet-400', bg: 'bg-violet-400/10', trend: null, trendUp: false },
+                { label: 'Bugün', val: stats.todayBookings, icon: 'fa-calendar-day', color: 'text-rose-400', bg: 'bg-rose-400/10', trend: null, trendUp: false },
+              ];
+              return (
+                <>
+                  {/* Desktop Bento Grid */}
+                  <div className="hidden lg:grid grid-cols-4 xl:grid-cols-6 gap-4">
+                    {/* Bento Box 1: Revenue (Hero KPI) */}
+                    <div className="col-span-2 row-span-2 p-5 rounded-3xl bg-gradient-to-br from-[#c5a059]/10 via-[#c5a059]/5 to-transparent border border-white/[0.08] hover:border-[#c5a059]/30 hover:shadow-2xl hover:shadow-[#c5a059]/20 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between min-h-[160px]" style={{ boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.05), inset 1px 0 0 0 rgba(255, 255, 255, 0.02)' }}>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-50 z-0 pointer-events-none"></div>
+                      <div className="relative z-10 flex items-start justify-between mb-4">
+                        <div>
+                          <p className="text-[12px] font-bold text-[#c5a059] uppercase tracking-wider mb-1 opacity-80">Toplam Ciro</p>
+                          <p className="text-4xl font-black text-white tracking-tight flex items-baseline gap-1">€<span className="tabular-nums"><AnimatedNumber value={stats.totalRevenue} /></span></p>
+                        </div>
+                        <div className="w-12 h-12 rounded-2xl bg-[#c5a059]/20 flex items-center justify-center backdrop-blur-md border border-[#c5a059]/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
+                          <i className="fa-solid fa-coins text-[#c5a059] text-xl"></i>
+                        </div>
+                      </div>
+
+                      {/* Sparkline & Trend */}
+                      <div className="relative z-10 flex items-end justify-between mt-auto">
+                        <div className="flex-1 max-w-[140px] h-10 opacity-70 group-hover:opacity-100 transition-opacity">
+                          <Sparkline data={[1200, 1500, 1100, 1800, 2400, 1900, stats.totalRevenue || 2500]} color="amber-500" />
+                        </div>
+                        {stats.revenueTrend !== 0 && (
+                          <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full backdrop-blur-md border shadow-lg ${stats.revenueTrend > 0 ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-red-500/10 border-red-500/20 text-red-400'}`}>
+                            <i className={`fa-solid ${stats.revenueTrend > 0 ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'} text-[10px]`}></i>
+                            <span className="text-[11px] font-bold">{stats.revenueTrend > 0 ? '+' : ''}{stats.revenueTrend.toFixed(0)}%</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Other KPIs as standard minimal bento boxes */}
+                    {kpiItems.slice(1).map((kpi, idx) => (
+                      <div
+                        key={idx}
+                        onPointerEnter={() => haptic.tap()}
+                        className="col-span-1 p-4 rounded-3xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.05] hover:border-white/10 hover:shadow-xl hover:shadow-black/50 hover:-translate-y-1 transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col justify-between"
+                        style={{ boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.05)' }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                        <div className="flex items-start justify-between mb-3 relative z-10">
+                          <div className={`w-10 h-10 rounded-2xl ${kpi.bg} flex items-center justify-center shadow-lg transition-transform group-hover:scale-110 group-hover:rotate-3`}>
+                            <i className={`fa-solid ${kpi.icon} ${kpi.color} text-sm`}></i>
+                          </div>
+                          {idx === 0 && ( /* Optional mini sparkline for first item */
+                            <div className="w-12 h-6 opacity-30 group-hover:opacity-60 transition-opacity">
+                              <Sparkline data={[50, 60, 45, 80, 75, 90]} color="emerald-400" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="relative z-10">
+                          <p className="text-2xl font-black text-white tracking-tight tabular-nums mb-0.5">
+                            {typeof kpi.val === 'number' ? <AnimatedNumber value={kpi.val} /> : kpi.val}
+                          </p>
+                          <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">{kpi.label}</p>
+                        </div>
+                      </div>
+                    ))}
+
+                    {/* Additional Bento Box: AI / Quick Action */}
+                    <div className="col-span-2 xl:col-span-1 row-span-2 xl:row-span-1 p-4 rounded-3xl bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-transparent border border-indigo-500/20 flex flex-col items-center justify-center text-center group cursor-pointer hover:border-indigo-500/40 transition-all hover:-translate-y-1 relative overflow-hidden" onClick={() => setIsCommandPaletteOpen(true)}>
+                      <div className="absolute inset-0 bg-[#06080F]/40 backdrop-blur-[2px] z-0 pointer-events-none group-hover:backdrop-blur-0 transition-all"></div>
+                      <div className="w-12 h-12 rounded-full bg-indigo-500/20 flex items-center justify-center mb-2 shadow-[0_0_15px_rgba(99,102,241,0.3)] group-hover:shadow-[0_0_25px_rgba(99,102,241,0.5)] transition-all z-10 group-hover:scale-110">
+                        <i className="fa-solid fa-wand-magic-sparkles text-indigo-400 text-lg"></i>
+                      </div>
+                      <p className="text-sm font-bold text-white mb-1 z-10">Hızlı Asistan</p>
+                      <p className="text-[10px] text-slate-400 flex items-center gap-1.5 z-10"><kbd className="bg-white/10 border border-white/20 px-1.5 py-0.5 rounded font-mono shadow-sm">⌘</kbd> <kbd className="bg-white/10 border border-white/20 px-1.5 py-0.5 rounded font-mono shadow-sm">K</kbd></p>
+                    </div>
+                  </div>
+                  {/* Mobile horizontal scroll snap carousel */}
+                  <KpiCarousel items={kpiItems} />
+                </>
+              );
+            })()}
+
+            {/* Main Grid — 8+4 Layout */}
+            <div className="grid grid-cols-12 gap-4">
+
+              {/* Son Rezervasyonlar — Today Highlight + Quick Actions */}
+              <div className="col-span-12 lg:col-span-8 rounded-2xl bg-white/[0.03] border border-white/[0.06] overflow-hidden">
+                <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.06]">
+                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                    <i className="fa-solid fa-list text-slate-500 text-xs"></i>
+                    Son Rezervasyonlar
+                    {stats.todayBookings > 0 && (
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-400">
+                        Bugün {stats.todayBookings}
+                      </span>
+                    )}
+                  </h3>
+                  <button onClick={() => setActiveView('bookings')} className="text-[11px] font-semibold text-slate-400 hover:text-[#c5a059] transition-colors">
+                    Tümü <i className="fa-solid fa-arrow-right ml-1 text-[9px]"></i>
+                  </button>
+                </div>
+
+                <div className="hidden sm:block overflow-x-auto scrollbar-hide">
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr className="text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-white/[0.04]">
+                        <th className="px-5 py-3">Müşteri</th>
+                        <th className="px-3 py-3 hidden sm:table-cell">Güzergah</th>
+                        <th className="px-3 py-3 hidden md:table-cell">Tarih</th>
+                        <th className="px-3 py-3">Tutar</th>
+                        <th className="px-3 py-3">Durum</th>
+                        <th className="px-3 py-3 hidden lg:table-cell">İşlem</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {(() => {
+                        const today = new Date().toISOString().split('T')[0];
+                        return bookings
+                          .filter(b => b.status !== 'Deleted')
+                          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                          .slice(0, 8)
+                          .map((b) => {
+                            const isToday = b.date === today;
+                            return (
+                              <tr
+                                key={b.id}
+                                onClick={() => setSelectedBookingForView(b)}
+                                className={`border-b cursor-pointer transition-colors group ${isToday
+                                  ? 'border-l-2 border-l-[#c5a059] border-b-white/[0.05] bg-[#c5a059]/[0.04] hover:bg-[#c5a059]/[0.08]'
+                                  : 'border-b-white/[0.03] hover:bg-white/[0.03]'
+                                  }`}
+                              >
+                                <td className="px-5 py-3">
+                                  <div className="flex items-center gap-2">
+                                    <p className="text-xs font-semibold text-white group-hover:text-[#c5a059] transition-colors truncate max-w-[140px]">{b.customerName.replace(/[\n\r]+/g, ' ').trim()}</p>
+                                    {isToday && b.status !== 'Completed' && (
+                                      <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[8px] font-black uppercase px-1.5 py-0.5 rounded shadow-[0_0_5px_rgba(16,185,129,0.2)] animate-pulse shrink-0">Bugün</span>
+                                    )}
+                                  </div>
+                                  <div className="flex items-center gap-2 mt-0.5">
+                                    <p className="text-[10px] text-slate-500">{b.phone}</p>
+                                    {b.flightNumber && (
+                                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                                        <i className="fa-solid fa-plane text-[7px] mr-1"></i>{b.flightNumber}
+                                      </span>
+                                    )}
+                                  </div>
+                                </td>
+                                <td className="px-3 py-3 hidden sm:table-cell">
+                                  <p className="text-[11px] text-slate-400 truncate max-w-[180px]">{b.pickup} → {b.destination}</p>
+                                </td>
+                                <td className="px-3 py-3 hidden md:table-cell">
+                                  <p className="text-[11px] text-slate-400 tabular-nums">{b.date.split('-').reverse().join('.')}</p>
+                                </td>
+                                <td className="px-3 py-3">
+                                  <span className="text-xs font-bold text-white">€{b.totalPrice}</span>
+                                </td>
+                                <td className="px-3 py-3">
+                                  <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${b.status === 'Confirmed' ? 'bg-blue-500/15 text-blue-400' :
+                                    b.status === 'Completed' ? 'bg-emerald-500/15 text-emerald-400' :
+                                      b.status === 'Cancelled' ? 'bg-red-500/15 text-red-400' :
+                                        b.status === 'Rejected' ? 'bg-slate-500/15 text-slate-400' :
+                                          'bg-amber-500/15 text-amber-400'
+                                    }`}>
+                                    {{
+                                      'Pending': 'Beklemede',
+                                      'Confirmed': 'Onaylı',
+                                      'Completed': 'Tamamlandı',
+                                      'Cancelled': 'İptal',
+                                      'Rejected': 'Reddedildi'
+                                    }[b.status] || b.status}
+                                  </span>
+                                </td>
+                                <td className="px-3 py-3 hidden lg:table-cell">
+                                  <div className="flex gap-1" onClick={e => e.stopPropagation()}>
+                                    {b.status === 'Pending' && (
+                                      <>
+                                        <button onClick={() => onUpdateStatus(b.id, 'Confirmed')} className="w-6 h-6 rounded-md bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/30 flex items-center justify-center transition-colors" title="Onayla">
+                                          <i className="fa-solid fa-check text-[9px]"></i>
+                                        </button>
+                                        <button onClick={() => onUpdateStatus(b.id, 'Rejected')} className="w-6 h-6 rounded-md bg-red-500/15 text-red-400 hover:bg-red-500/30 flex items-center justify-center transition-colors" title="Reddet">
+                                          <i className="fa-solid fa-xmark text-[9px]"></i>
+                                        </button>
+                                      </>
+                                    )}
+                                    {b.status === 'Confirmed' && (
+                                      <button onClick={() => onUpdateStatus(b.id, 'Completed')} className="w-6 h-6 rounded-md bg-violet-500/15 text-violet-400 hover:bg-violet-500/30 flex items-center justify-center transition-colors" title="Tamamla">
+                                        <i className="fa-solid fa-flag-checkered text-[9px]"></i>
+                                      </button>
+                                    )}
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          });
+                      })()}
+                    </tbody>
+                  </table>
+                  {bookings.filter(b => b.status !== 'Deleted').length === 0 && (
+                    <div className="py-12 text-center text-slate-500">
+                      <i className="fa-solid fa-inbox text-2xl mb-2 block opacity-40"></i>
+                      <p className="text-xs">Henüz rezervasyon yok</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* ── MOBILE LIST VIEW ── */}
+                <div className="sm:hidden flex flex-col divide-y divide-white/[0.04]">
+                  {(() => {
+                    const today = new Date().toISOString().split('T')[0];
+                    const recent = bookings.filter(b => b.status !== 'Deleted').sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 8);
+
+                    if (recent.length === 0) {
+                      return (
+                        <div className="py-8 text-center text-slate-500">
+                          <i className="fa-solid fa-inbox text-xl mb-2 block opacity-40"></i>
+                          <p className="text-xs">Henüz rezervasyon yok</p>
+                        </div>
+                      );
+                    }
+
+                    return recent.map(b => (
+                      <MobileBookingItem
+                        key={b.id}
+                        booking={b}
+                        onClick={setSelectedBookingForView}
+                        onContextMenu={(e, booking) => setContextMenu({ isOpen: true, position: { top: e.clientY, left: e.clientX }, booking })}
+                        isToday={b.date === today}
+                      />
+                    ));
+                  })()}
+                </div>
+              </div>
+
+              {/* Right Column — Pie + Countries */}
+              <div className="col-span-12 xl:col-span-4 space-y-4">
+
+                {/* Activity Log */}
+                <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <i className="fa-solid fa-clock-rotate-left text-slate-500 text-[10px]"></i>
+                    Son Aktiviteler
+                  </h3>
+                  {activityLog.length === 0 ? (
+                    <p className="text-slate-600 text-xs text-center py-4">Henüz aktivite yok. Panel kullanıldıkça burada görünür.</p>
+                  ) : (
+                    <div className="space-y-2 max-h-48 overflow-y-auto">
+                      {activityLog.slice(0, 10).map(log => (
+                        <div key={log.id} className="flex items-center gap-2.5 py-1.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#c5a059] shrink-0"></div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[11px] text-slate-300 truncate">{log.action}: <span className="text-slate-500">{log.detail}</span></p>
+                          </div>
+                          <span className="text-[9px] text-slate-600 font-mono shrink-0">
+                            {(() => {
+                              const diff = Math.round((Date.now() - log.time.getTime()) / 1000);
+                              if (diff < 10) return 'şimdi';
+                              if (diff < 60) return `${diff}sn`;
+                              if (diff < 3600) return `${Math.floor(diff / 60)}dk`;
+                              return `${Math.floor(diff / 3600)}sa`;
+                            })()}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Ülke Dağılımı */}
+                <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <i className="fa-solid fa-globe text-slate-500 text-[10px]"></i>
+                    Ülke Dağılımı
+                  </h3>
+                  <div className="space-y-3">
+                    {stats.topCountries.slice(0, 4).map((c, i) => (
+                      <div key={i}>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="flex items-center gap-2">
+                            <span className="text-base">{c.name}</span>
+                            <span className="text-[11px] text-slate-400">{getCountryName(c.name)}</span>
+                          </span>
+                          <span className="text-[10px] font-bold text-slate-500">{c.count}</span>
+                        </div>
+                        <div className="h-1 bg-white/[0.06] rounded-full overflow-hidden">
+                          <div className="h-full bg-[#c5a059] rounded-full" style={{ width: `${Math.min(c.percent, 100)}%` }}></div>
+                        </div>
+                      </div>
+                    ))}
+                    {stats.topCountries.length === 0 && <p className="text-slate-600 text-xs text-center py-3">Henüz veri yok</p>}
+                  </div>
+                </div>
+
+                {/* Aylık Karşılaştırma + Dönüş Oranı */}
+                <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <i className="fa-solid fa-arrow-right-arrow-left text-slate-500 text-[10px]"></i>
+                    Aylık Karşılaştırma
+                  </h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="p-3 rounded-xl bg-white/[0.03]">
+                      <p className="text-[10px] text-slate-500 mb-1">Bu Ay</p>
+                      <p className="text-xl font-black text-white">{stats.thisMonthBookings}</p>
+                      {stats.monthlyTrend !== 0 && (
+                        <p className={`text-[10px] font-bold mt-1 ${stats.monthlyTrend > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                          {stats.monthlyTrend > 0 ? '+' : ''}{stats.monthlyTrend.toFixed(0)}%
+                        </p>
+                      )}
+                    </div>
+                    <div className="p-3 rounded-xl bg-white/[0.03]">
+                      <p className="text-[10px] text-slate-500 mb-1">Dönen Müşteri</p>
+                      <p className="text-xl font-black text-white">%{stats.returningRate}</p>
+                      <p className="text-[10px] text-slate-500 mt-1">
+                        {stats.returningCustomers}/{stats.uniqueCustomers}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Araç Dağılımı — Compact Pie */}
+                <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <i className="fa-solid fa-chart-pie text-slate-500 text-[10px]"></i>
+                    Araç Dağılımı
+                  </h3>
+                  <ResponsiveContainer width="100%" height={160}>
+                    <PieChart>
+                      <Pie data={stats.categoryData} cx="50%" cy="50%" innerRadius={40} outerRadius={58} paddingAngle={3} dataKey="value" strokeWidth={0}>
+                        {stats.categoryData.map((_, index) => <Cell key={`cell-${index}`} fill={['#c5a059', '#3b82f6', '#10b981', '#8b5cf6', '#f59e0b'][index % 5]} />)}
+                      </Pie>
+                      <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', fontSize: '11px' }} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="mt-3 space-y-1.5">
+                    {stats.categoryData.slice(0, 4).map((item, i) => (
+                      <div key={i} className="flex items-center justify-between text-[11px]">
+                        <span className="flex items-center gap-2 text-slate-400">
+                          <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: ['#c5a059', '#3b82f6', '#10b981', '#8b5cf6'][i % 4] }}></span>
+                          {item.name}
+                        </span>
+                        <span className="font-bold text-slate-300">{item.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* 30-Day Trend Chart — Full Width */}
+              <div className="col-span-12 p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                    <i className="fa-solid fa-chart-area text-slate-500 text-[10px]"></i>
+                    Son 30 Gün — Rezervasyon Trendi
+                  </h3>
+                  <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#c5a059]"></span> Transfer
+                  </div>
+                </div>
+                <div className="h-[180px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <AreaChart data={stats.monthlyTrendData}>
+                      <defs>
+                        <linearGradient id="goldGrad30" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="5%" stopColor="#c5a059" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="#c5a059" stopOpacity={0} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.04)" />
+                      <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 9 }} interval={4} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10 }} width={25} allowDecimals={false} />
+                      <Tooltip contentStyle={{ background: '#0f172a', border: '1px solid rgba(197,160,89,0.2)', borderRadius: '10px', fontSize: '11px' }} />
+                      <Area type="monotone" dataKey="count" name="Rezervasyon" stroke="#c5a059" strokeWidth={2} fillOpacity={1} fill="url(#goldGrad30)" />
+                    </AreaChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Status Distribution + Vehicle Revenue — 2 column */}
+              <div className="col-span-12 lg:col-span-5 p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <i className="fa-solid fa-chart-pie text-slate-500 text-[10px]"></i>
+                  Durum Dağılımı
+                </h3>
+                {stats.statusData.length === 0 ? (
+                  <div className="flex items-center justify-center py-8 text-slate-600 text-xs">Veri yok</div>
+                ) : (
+                  <>
+                    <ResponsiveContainer width="100%" height={150}>
+                      <PieChart>
+                        <Pie data={stats.statusData} cx="50%" cy="50%" innerRadius={38} outerRadius={58} paddingAngle={3} dataKey="value" strokeWidth={0}>
+                          {stats.statusData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.fill} />)}
+                        </Pie>
+                        <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', fontSize: '11px' }} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <div className="mt-2 space-y-1.5">
+                      {stats.statusData.map((item, i) => (
+                        <div key={i} className="flex items-center justify-between text-[11px]">
+                          <span className="flex items-center gap-2 text-slate-400">
+                            <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: item.fill }}></span>
+                            {item.name}
+                          </span>
+                          <span className="font-bold text-slate-300">{item.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className="col-span-12 lg:col-span-7 p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <i className="fa-solid fa-chart-bar text-slate-500 text-[10px]"></i>
+                  Araç Bazlı Tamamlanan Gelir
+                </h3>
+                {stats.vehicleRevenue.length === 0 ? (
+                  <div className="flex items-center justify-center py-8 text-slate-600 text-xs">Tamamlanan rezervasyon yok</div>
+                ) : (
+                  <ResponsiveContainer width="100%" height={180}>
+                    <BarChart data={stats.vehicleRevenue} barSize={20}>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.04)" />
+                      <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10 }} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10 }} width={45} tickFormatter={v => `€${v}`} />
+                      <Tooltip contentStyle={{ background: '#0f172a', border: '1px solid rgba(197,160,89,0.2)', borderRadius: '10px', fontSize: '11px' }} formatter={(v: number) => [`€${v}`, 'Gelir']} />
+                      <Bar dataKey="revenue" name="Gelir" fill="#c5a059" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                )}
+              </div>
+
+              {/* Bottom Row — Popular Areas + Vehicle Occupancy */}
+              <div className="col-span-12 lg:col-span-6 p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex flex-col">
+                <div className="flex items-center justify-between mb-5">
+                  <h3 className="text-xs font-bold text-slate-400 gap-2 flex items-center uppercase tracking-wider">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-500"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" /><circle cx="12" cy="10" r="3" /></svg>
+                    Popüler Bölgeler
+                  </h3>
+                </div>
+
+                {stats.popularAreas.length > 0 ? (
+                  <div className="flex-1 flex flex-col justify-between gap-3">
+                    {stats.popularAreas.map((area, idx) => {
+                      // Calculate percentage based on the top area
+                      const maxCount = stats.popularAreas[0].count;
+                      const percentage = Math.round((area.count / maxCount) * 100);
+
+                      return (
+                        <div key={idx} className="group relative flex flex-col p-3.5 rounded-xl bg-white/[0.015] hover:bg-white/[0.04] border border-white/5 transition-colors cursor-pointer overflow-hidden gap-1.5">
+                          {/* Background Progress Bar */}
+                          <div className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#c5a059]/15 to-transparent transition-all duration-700 ease-out" style={{ width: `${percentage}%` }} />
+
+                          <div className="flex items-center justify-between relative z-10 w-full">
+                            <div className="flex items-center gap-3 w-full pr-2">
+                              {/* Rank Indicator */}
+                              <div className={`w-7 h-7 shrink-0 rounded-full flex items-center justify-center text-[11px] font-black ${idx === 0 ? 'bg-[#c5a059] text-white shadow-[0_0_12px_rgba(197,160,89,0.5)]' : 'bg-slate-800 text-slate-400'}`}>
+                                {idx + 1}
+                              </div>
+
+                              {/* Area Info */}
+                              <div className="flex flex-col gap-0.5 flex-1 min-w-0">
+                                <span className="text-[14px] font-bold text-slate-100 whitespace-normal break-words leading-tight">
+                                  {area.name}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Trip Count */}
+                            <div className="text-right shrink-0 pl-3">
+                              <div className="text-[16px] font-black text-white">{area.count} <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider block mt-0.5">İşlem</span></div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="flex-1 flex flex-col items-center justify-center py-8">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="text-slate-600 mb-3"><circle cx="12" cy="12" r="10" /><line x1="12" x2="12" y1="8" y2="12" /><line x1="12" x2="12.01" y1="16" y2="16" /></svg>
+                    <p className="text-slate-500 text-xs text-center font-medium">Henüz yeterli veri yok</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="col-span-12 lg:col-span-6 p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <i className="fa-solid fa-gauge-high text-slate-500 text-[10px]"></i>
+                  Araç Doluluk Oranı
+                </h3>
+                <div className="space-y-3">
+                  {stats.vehicleOccupancy.map((v, i) => (
+                    <div key={i}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-[11px] text-slate-400">{v.name}</span>
+                        <span className="text-[10px] font-bold text-slate-500">{v.avg}/{v.capacity} <span className="text-slate-600">(%{v.pct})</span></span>
+                      </div>
+                      <div className="h-1.5 bg-white/[0.06] rounded-full overflow-hidden">
+                        <div className={`h-full rounded-full transition-all ${v.pct > 70 ? 'bg-emerald-400' : v.pct > 40 ? 'bg-amber-400' : 'bg-slate-500'}`} style={{ width: `${Math.min(v.pct, 100)}%` }}></div>
+                      </div>
+                    </div>
+                  ))}
+                  {stats.vehicleOccupancy.length === 0 && <p className="text-slate-600 text-xs text-center py-3">Henüz veri yok</p>}
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+        }
+
+        <Suspense fallback={<div className="flex items-center justify-center p-20"><i className="fa-solid fa-circle-notch fa-spin text-3xl text-[#c5a059]"></i></div>}>
+          {
+            activeView === 'bookings' && (
+              <BookingsView
+                bookings={bookings}
+                onUpdateStatus={onUpdateStatus}
+                onDeleteBooking={onDeleteBooking}
+                setSelectedBookingForView={setSelectedBookingForView}
+              />
+            )
+          }
+
+          {
+            activeView === 'site-settings' && (
+              <SiteSettingsView
+                editContent={editContent}
+                setEditContent={setEditContent}
+                handleMoveMenu={handleMoveMenu}
+                moveItem={moveItem}
+              />
+            )
+          }
+
+          {
+            activeView === 'regions' && (
+              <RegionsView
+                editContent={editContent}
+                setEditContent={setEditContent}
+                showToast={showToast}
+                moveItem={moveItem}
+                isDarkTheme={isDarkTheme}
+              />
+            )
+          }
+
+          {/* Pricing View */}
+          {
+            activeView === 'pricing' && (
+              <PricingView editContent={editContent} />
+            )
+          }
+
+          {
+            activeView === 'fleet' && (
+              <FleetView
+                editContent={editContent}
+                setEditContent={setEditContent}
+                setVehicleForm={setVehicleForm}
+                setIsVehicleModalOpen={setIsVehicleModalOpen}
+                moveItem={moveItem}
+              />
+            )
+          }
+
+
+
+          {
+            activeView === 'faq' && (
+              <FAQView
+                editContent={editContent}
+                setEditContent={setEditContent}
+                faqFilter={faqFilter}
+                setFaqFilter={setFaqFilter}
+                highlightedFaqId={highlightedFaqId}
+                setHighlightedFaqId={setHighlightedFaqId}
+                moveItem={moveItem}
+              />
+            )
+          }
+
+
+          {
+            activeView === 'business' && (
+              <BusinessSettingsView
+                editContent={editContent}
+                setEditContent={setEditContent}
+              />
+            )
+          }
+
+          {
+            activeView === 'account' && (
+              <AccountView
+                accountForm={accountForm}
+                setAccountForm={setAccountForm}
+                accountTab={accountTab}
+                setAccountTab={setAccountTab}
+                ADMIN_AVATARS={ADMIN_AVATARS}
+                showToast={showToast}
+                onExitAdmin={onExitAdmin}
+                systemUsers={systemUsers}
+                setIsAddUserModalOpen={setIsAddUserModalOpen}
+                setEditingUserId={setEditingUserId}
+                setNewUserForm={setNewUserForm}
+                handleDeleteUser={handleDeleteUser}
+              />
+            )
+          }
+
+          {
+            activeView === 'about' && (
+              <AboutView
+                editContent={editContent}
+                setEditContent={setEditContent}
+              />
+            )
+          }
+
+          {
+            activeView === 'visionMission' && (
+              <VisionMissionView
+                editContent={editContent}
+                setEditContent={setEditContent}
+              />
+            )
+          }
+
+          {
+            activeView === 'blog' && (
+              <BlogView
+                blogPosts={blogPosts}
+                setBlogPosts={setBlogPosts}
+                blogTab={blogTab}
+                setBlogTab={setBlogTab}
+                blogCategories={blogCategories}
+                setBlogCategories={setBlogCategories}
+                blogSearchTerm={blogSearchTerm}
+                setBlogSearchTerm={setBlogSearchTerm}
+                selectedBlogs={selectedBlogs}
+                setSelectedBlogs={setSelectedBlogs}
+                showToast={showToast}
+              />
+            )
+          }
+
+          {/* Reviews View */}
+          {
+            activeView === 'reviews' && (
+              <ReviewsView
+                userReviews={userReviews}
+                setUserReviews={setUserReviews}
+                siteReviews={siteReviews}
+                editableReviewsTab={editableReviewsTab}
+                setEditableReviewsTab={setEditableReviewsTab}
+                selectedReviews={selectedReviews}
+                setSelectedReviews={setSelectedReviews}
+              />
+            )
+          }
+          {
+
+            activeView === 'hero-images' && (
+              <HeroImagesView
+                heroBackgrounds={heroBackgrounds}
+                updateHeroBackgrounds={updateHeroBackgrounds}
+                selectedHeroImages={selectedHeroImages}
+                setSelectedHeroImages={setSelectedHeroImages}
+              />
+            )
+          }
+        </Suspense>
+      </main >
+
+      {/* Vehicle Modal (Global) - Features & Edit */}
+      {
+        isVehicleModalOpen && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-[100] flex items-center justify-center p-4 overflow-hidden">
+            <div className="w-full max-w-4xl max-h-[90vh] rounded-[32px] bg-[#0f172a] shadow-2xl flex flex-col overflow-hidden border border-white/10 animate-in zoom-in-95 duration-300">
+              {/* Modal Header */}
+              <div className="p-8 border-b border-white/5 flex items-center justify-between shrink-0 bg-white/5">
+                <div>
+                  <h3 className="text-2xl font-black text-white">
+                    {vehicleForm.id ? 'Aracı Düzenle' : 'Yeni Araç Ekle'}
+                  </h3>
+                  <p className="text-slate-400 text-sm mt-1">Araç detaylarını ve özelliklerini belirleyin.</p>
+                </div>
+                <button onClick={() => setIsVehicleModalOpen(false)} className="w-10 h-10 rounded-full hover:bg-white/10 text-white transition-colors">
+                  <i className="fa-solid fa-xmark text-xl"></i>
+                </button>
+              </div>
+              {/* Modal Content */}
+              <div className="p-8 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                  {/* Image Upload */}
+                  <div className="md:col-span-1">
+                    <label className="text-xs font-bold uppercase text-slate-400 block mb-3">Araç Görseli</label>
+                    <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-800 border border-white/5 group">
+                      <img src={vehicleForm.image} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer">
+                        <input type="file" className="hidden" onChange={(e) => handleImageUpload(e, (b) => setVehicleForm({ ...vehicleForm, image: b }))} />
+                        <i className="fa-solid fa-camera text-2xl text-white mb-2"></i>
+                        <span className="text-xs font-bold text-white">Görseli Değiştir</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Main Inputs */}
+                  <div className="md:col-span-2 space-y-5">
+                    <div>
+                      <label className="text-xs font-bold uppercase text-slate-400 block mb-2">Araç Adı (Model)</label>
+                      <input className="w-full bg-slate-800 border border-white/5 rounded-xl p-4 text-white font-bold focus:ring-2 focus:ring-[#c5a059] transition-all" value={vehicleForm.name} onChange={e => setVehicleForm({ ...vehicleForm, name: e.target.value })} placeholder="Örn: Mercedes Vito VIP" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-5">
+                      <div>
+                        <label className="text-xs font-bold uppercase text-slate-400 block mb-2">Kategori</label>
+                        <select className="w-full bg-slate-800 border border-white/5 rounded-xl p-4 text-white font-bold" value={vehicleForm.category} onChange={e => setVehicleForm({ ...vehicleForm, category: e.target.value as any })}>
+                          <option value="VIP">VIP Transfer</option>
+                          <option value="Business">Business Class</option>
+                          <option value="Large Group">Büyük Grup</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-xs font-bold uppercase text-slate-400 block mb-2">Kapasite</label>
+                        <div className="flex items-center gap-2">
+                          <i className="fa-solid fa-user text-slate-500"></i>
+                          <input type="number" className="w-full bg-slate-800 border border-white/5 rounded-xl p-4 text-white font-bold" value={vehicleForm.capacity} onChange={e => setVehicleForm({ ...vehicleForm, capacity: parseInt(e.target.value) })} />
+                        </div>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-xs font-bold uppercase text-slate-400 block mb-2">Bagaj Kapasitesi</label>
+                      <div className="flex items-center gap-2">
+                        <i className="fa-solid fa-suitcase text-slate-500"></i>
+                        <input type="number" className="w-full bg-slate-800 border border-white/5 rounded-xl p-4 text-white font-bold" value={vehicleForm.luggage} onChange={e => setVehicleForm({ ...vehicleForm, luggage: parseInt(e.target.value) })} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Features */}
+                <div className="p-6 rounded-3xl bg-slate-800/50 border border-white/5">
+                  <h4 className="text-sm font-black text-white uppercase tracking-widest mb-6 border-b border-white/5 pb-4">
+                    <i className="fa-solid fa-star text-[#c5a059] mr-2"></i>Araç Donanımları
+                  </h4>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {VEHICLE_FEATURES.map(f => (
+                      <label key={f} className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${vehicleForm.features?.includes(f) ? 'bg-[#c5a059]/10 border-[#c5a059] shadow-lg shadow-[#c5a059]/10' : 'bg-slate-800 border-white/5 hover:bg-slate-700'}`}>
+                        <div className={`w-6 h-6 rounded-lg flex items-center justify-center border ${vehicleForm.features?.includes(f) ? 'bg-[#c5a059] border-[#c5a059]' : 'border-slate-500'}`}>
+                          {vehicleForm.features?.includes(f) && <i className="fa-solid fa-check text-white text-xs"></i>}
+                        </div>
+                        <input type="checkbox" className="hidden" checked={vehicleForm.features?.includes(f)} onChange={(e) => {
+                          const feats = vehicleForm.features || [];
+                          if (e.target.checked) setVehicleForm({ ...vehicleForm, features: [...feats, f] });
+                          else setVehicleForm({ ...vehicleForm, features: feats.filter(item => item !== f) });
+                        }} />
+                        <span className={`text-sm font-bold ${vehicleForm.features?.includes(f) ? 'text-[#c5a059]' : 'text-slate-400'}`}>{f}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="p-6 border-t border-white/5 flex gap-4 shrink-0 bg-white/5">
+                <button onClick={() => {
+                  const newVehicle = { ...vehicleForm, id: vehicleForm.id || Date.now().toString(), basePrice: 0 } as Vehicle;
+                  if (vehicleForm.id && editContent.vehicles.find(v => v.id === vehicleForm.id)) {
+                    setEditContent({ ...editContent, vehicles: editContent.vehicles.map(v => v.id === vehicleForm.id ? newVehicle : v) });
+                    showToast('Araç güncellendi', 'success');
+                  } else {
+                    setEditContent({ ...editContent, vehicles: [...editContent.vehicles, newVehicle] });
+                    showToast('Yeni araç eklendi', 'success');
+                  }
+                  setIsVehicleModalOpen(false);
+                }} className="flex-1 bg-[#c5a059] hover:bg-amber-600 text-white py-4 rounded-2xl font-bold text-lg shadow-xl shadow-amber-500/20 transition-all">
+                  <i className="fa-solid fa-save mr-2"></i> Kaydet ve Kapat
+                </button>
+              </div>
+            </div>
+          </div>)
+      }
+
+      {/* ── COMMAND PALETTE OVERLAY ── */}
+      {
+        isCommandPaletteOpen && (
+          <div className="fixed inset-0 z-[200] flex items-start justify-center pt-[15vh]" onClick={() => setIsCommandPaletteOpen(false)}>
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+            <div
+              className="relative rounded-2xl border border-white/[0.12] shadow-2xl shadow-black/30 w-full max-w-lg overflow-hidden"
+              style={{ background: 'rgba(15, 23, 42, 0.05)', backdropFilter: 'blur(80px)', WebkitBackdropFilter: 'blur(80px)' }}
+              onClick={e => e.stopPropagation()}
+            >
+              {/* Search Input */}
+              <div className="flex items-center gap-3 p-4 border-b border-white/[0.08]">
+                <i className="fa-solid fa-search text-white/50 text-sm"></i>
+                <input
+                  ref={commandInputRef}
+                  autoFocus
+                  className="flex-1 bg-transparent border-none outline-none text-sm text-white placeholder-white/40"
+                  placeholder="Sayfa ara veya komut yaz..."
+                  value={commandSearch}
+                  onChange={e => setCommandSearch(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === 'Escape') setIsCommandPaletteOpen(false);
+                    if (e.key === 'Enter' && commandItems.length > 0) handleCommandSelect(commandItems[0]);
+                  }}
+                />
+                <kbd className="text-[9px] font-mono font-bold text-white/40 bg-white/5 px-1.5 py-0.5 rounded border border-white/10">ESC</kbd>
+              </div>
+
+              {/* Results */}
+              <div className="max-h-72 overflow-y-auto py-2 bg-transparent">
+                {commandItems.length === 0 ? (
+                  <div className="text-center py-8 text-white/40 text-sm">Sonuç bulunamadı</div>
+                ) : (
+                  <>
+                    {/* Pages */}
+                    {commandItems.filter(i => i.type === 'page').length > 0 && (
+                      <div className="px-4 py-1.5"><span className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Sayfalar</span></div>
+                    )}
+                    {commandItems.filter(i => i.type === 'page').map(item => (
+                      <button
+                        key={item.id}
+                        onClick={() => handleCommandSelect(item)}
+                        className="w-full px-4 py-2.5 flex items-center gap-3 hover:bg-white/[0.06] transition-colors text-left"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/5 flex items-center justify-center shrink-0">
+                          <i className={`fa-solid ${item.icon} text-white/60 text-xs`}></i>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-white font-medium">{item.label}</p>
+                          <p className="text-[10px] text-white/40">{item.description}</p>
+                        </div>
+                        {activeView === item.id && <span className="text-[9px] font-bold text-[#c5a059] bg-[#c5a059]/10 px-1.5 py-0.5 rounded shadow-[0_0_8px_rgba(197,160,89,0.2)]">Aktif</span>}
+                      </button>
+                    ))}
+                    {/* Actions */}
+                    {commandItems.filter(i => i.type === 'action').length > 0 && (
+                      <div className="px-4 py-1.5 mt-1 border-t border-white/[0.08]"><span className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Aksiyonlar</span></div>
+                    )}
+                    {commandItems.filter(i => i.type === 'action').map(item => (
+                      <button
+                        key={item.id}
+                        onClick={() => handleCommandSelect(item)}
+                        className="w-full px-4 py-2.5 flex items-center gap-3 hover:bg-white/[0.06] transition-colors text-left"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-[#c5a059]/10 flex items-center justify-center shrink-0">
+                          <i className={`fa-solid ${item.icon} text-[#c5a059] text-xs`}></i>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-white font-medium">{item.label}</p>
+                          <p className="text-[10px] text-white/40">{item.description}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="px-4 py-2.5 border-t border-white/5 flex items-center gap-4 text-[9px] text-slate-600">
+                <span><kbd className="font-mono bg-white/5 px-1 py-0.5 rounded border border-white/10 mr-1">↵</kbd> Seç</span>
+                <span><kbd className="font-mono bg-white/5 px-1 py-0.5 rounded border border-white/10 mr-1">ESC</kbd> Kapat</span>
+                <span><kbd className="font-mono bg-white/5 px-1 py-0.5 rounded border border-white/10 mr-1">?</kbd> Kısayollar</span>
+              </div>
+            </div>
+          </div>
+        )
+      }
+
+      {/* ── KEYBOARD SHORTCUTS HELP ── */}
+      {
+        showShortcutsHelp && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center" onClick={() => setShowShortcutsHelp(false)}>
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+            <div className="relative bg-[#0f172a] border border-white/10 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden" onClick={e => e.stopPropagation()}>
+              <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between">
+                <h3 className="text-white font-bold text-sm flex items-center gap-2">
+                  <i className="fa-solid fa-keyboard text-[#c5a059]"></i> Klavye Kısayolları
+                </h3>
+                <button onClick={() => setShowShortcutsHelp(false)} className="w-7 h-7 rounded-lg bg-white/5 text-slate-400 hover:text-white flex items-center justify-center">
+                  <i className="fa-solid fa-xmark text-xs"></i>
+                </button>
+              </div>
+              <div className="p-5 space-y-1 max-h-80 overflow-y-auto">
+                {[
+                  { key: '⌘K', desc: 'Komut paleti aç' },
+                  { key: '⌘Z', desc: 'Geri al' },
+                  { key: '⌘⇧Z', desc: 'Yeniden yap' },
+                  { key: '?', desc: 'Bu yardımı göster' },
+                  { key: 'N', desc: 'Yeni öğe ekle (sayfaya göre)' },
+                  { key: 'ESC', desc: 'Açık pencereyi kapat' },
+                  { key: '1', desc: 'Dashboard' },
+                  { key: '2', desc: 'Rezervasyonlar' },
+                  { key: '3', desc: 'Blog' },
+                  { key: '4', desc: 'Yorumlar' },
+                  { key: '5', desc: 'Banner' },
+                  { key: '6', desc: 'Menü' },
+                  { key: '7', desc: 'Bölgeler' },
+                  { key: '8', desc: 'Fiyatlar' },
+                  { key: '9', desc: 'Araçlar' },
+                ].map(s => (
+                  <div key={s.key} className="flex items-center justify-between py-2 px-1 rounded-lg hover:bg-white/[0.02]">
+                    <span className="text-sm text-slate-300">{s.desc}</span>
+                    <kbd className="text-[10px] font-mono font-bold text-slate-500 bg-white/5 px-2 py-1 rounded border border-white/10 min-w-[32px] text-center">{s.key}</kbd>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )
+      }
+    </div >
+
+  );
+};
+
+export default AdminPanel;

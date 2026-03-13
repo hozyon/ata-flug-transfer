@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-gold: #c5a059;
+  --color-brand-dark: #0f172a;
+  --color-brand-darker: #020617;
+  --backdrop-blur-3xl: 64px;
+  --animate-gradient-xy: gradient-xy 15s ease infinite;
+  --animate-heartbeat: heartbeat 1.5s ease-in-out infinite;
+  --animate-ripple: ripple 3s linear infinite;
+  --animate-shine: shine 1s linear infinite;
+}
+
+@layer base {
+  html, body, #root {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  .font-playfair {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.1) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.2);
+  }
+
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
+@keyframes shine {
+  0% { transform: translateX(-100%) skewX(-12deg); }
+  100% { transform: translateX(200%) skewX(-12deg); }
+}
+@keyframes gradient-xy {
+  0%, 100% { background-size: 400% 400%; background-position: left center; }
+  50% { background-size: 200% 200%; background-position: right center; }
+}
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+@keyframes ripple {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(4); opacity: 0; }
+}

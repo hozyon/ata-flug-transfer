@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# macOS
+.DS_Store
+
+# Dev scripts (not part of the app)
+*.py
+*.cjs
+*.mjs
+
+# Editor
+.vscode/
+.idea/

@@ -1,0 +1,18 @@
+{
+    "name": "Ata Flug Transfer - Admin Panel",
+    "short_name": "ATA Panel",
+    "description": "VIP Havalimanı Transfer Yönetim Paneli",
+    "start_url": "/#/admin",
+    "display": "standalone",
+    "background_color": "#0f172a",
+    "theme_color": "#c5a059",
+    "orientation": "any",
+    "icons": [
+        {
+            "src": "/logo.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

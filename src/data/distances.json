@@ -1,0 +1,245 @@
+Fetching distances for 48 regions...
+✓ Antalya (Merkez): 35 km, 40 dk
+✓ Kundu: 16 km, 19 dk
+✓ Konyaaltı: 32 km, 40 dk
+✓ Belek: 33 km, 32 dk
+✓ Çolaklı: 57 km, 52 dk
+✓ Evrenseki: 60 km, 53 dk
+✓ Kumköy: 61 km, 55 dk
+✓ Side: 68 km, 65 dk
+✓ Beldibi: 47 km, 52 dk
+✓ Göynük: 54 km, 59 dk
+✓ Kemer: 7 km, 11 dk
+✓ Tekirova: 75 km, 69 dk
+✓ Kızılağaç: 209 km, 3 sa
+✓ Okurcalar: 97 km, 82 dk
+✓ İncekum: 100 km, 83 dk
+✓ Türkler: 107 km, 92 dk
+✓ Konaklı: 113 km, 98 dk
+✓ Alanya: 118 km, 101 dk
+✓ Mahmutlar: 140 km, 125 dk
+✓ Kargıcak: 143 km, 130 dk
+✓ Adrasan: 110 km, 103 dk
+✓ Lara: 15 km, 26 dk
+✓ Bodrum: 195 km, 2.8 sa
+✓ Dalaman: 8 km, 15 dk
+✓ Fethiye: 126 km, 96 dk
+✓ Göcek: 191 km, 2.8 sa
+✓ Marmaris: 128 km, 111 dk
+✓ Ölüdeniz: 209 km, 2.7 sa
+✓ Avsallar: 102 km, 86 dk
+✓ Boğazkent: 43 km, 43 dk
+✓ Çamyuva: 67 km, 65 dk
+✓ Çıralı: 97 km, 95 dk
+✓ Demre: 156 km, 140 dk
+✓ Denizyaka: 44 km, 42 dk
+✓ Finike: 129 km, 108 dk
+✓ Gündoğdu: 56 km, 55 dk
+✓ Kalkan: 215 km, 3 sa
+✓ Kaş: 215 km, 2.6 sa
+✓ Kestel: 134 km, 120 dk
+✓ Kızılot: 82 km, 72 dk
+✓ Kiriş: 67 km, 67 dk
+✓ Kumluca: 95 km, 81 dk
+✓ Manavgat: 62 km, 58 dk
+✓ Olimpos: 99 km, 94 dk
+✓ Sorgun: 73 km, 68 dk
+✓ Titreyengöl: 73 km, 68 dk
+✓ Kadriye: 27 km, 27 dk
+
+FINAL MAP:
+
+{
+    "Antalya Havalimanı (AYT)": {
+        "dist": "0 km",
+        "time": "0 dk"
+    },
+    "Antalya (Merkez)": {
+        "dist": "35 km",
+        "time": "40 dk"
+    },
+    "Kundu": {
+        "dist": "16 km",
+        "time": "19 dk"
+    },
+    "Konyaaltı": {
+        "dist": "32 km",
+        "time": "40 dk"
+    },
+    "Belek": {
+        "dist": "33 km",
+        "time": "32 dk"
+    },
+    "Çolaklı": {
+        "dist": "57 km",
+        "time": "52 dk"
+    },
+    "Evrenseki": {
+        "dist": "60 km",
+        "time": "53 dk"
+    },
+    "Kumköy": {
+        "dist": "61 km",
+        "time": "55 dk"
+    },
+    "Side": {
+        "dist": "68 km",
+        "time": "65 dk"
+    },
+    "Beldibi": {
+        "dist": "47 km",
+        "time": "52 dk"
+    },
+    "Göynük": {
+        "dist": "54 km",
+        "time": "59 dk"
+    },
+    "Kemer": {
+        "dist": "7 km",
+        "time": "11 dk"
+    },
+    "Tekirova": {
+        "dist": "75 km",
+        "time": "69 dk"
+    },
+    "Kızılağaç": {
+        "dist": "209 km",
+        "time": "3 sa"
+    },
+    "Okurcalar": {
+        "dist": "97 km",
+        "time": "82 dk"
+    },
+    "İncekum": {
+        "dist": "100 km",
+        "time": "83 dk"
+    },
+    "Türkler": {
+        "dist": "107 km",
+        "time": "92 dk"
+    },
+    "Konaklı": {
+        "dist": "113 km",
+        "time": "98 dk"
+    },
+    "Alanya": {
+        "dist": "118 km",
+        "time": "101 dk"
+    },
+    "Mahmutlar": {
+        "dist": "140 km",
+        "time": "125 dk"
+    },
+    "Kargıcak": {
+        "dist": "143 km",
+        "time": "130 dk"
+    },
+    "Adrasan": {
+        "dist": "110 km",
+        "time": "103 dk"
+    },
+    "Lara": {
+        "dist": "15 km",
+        "time": "26 dk"
+    },
+    "Bodrum": {
+        "dist": "195 km",
+        "time": "2.8 sa"
+    },
+    "Dalaman": {
+        "dist": "8 km",
+        "time": "15 dk"
+    },
+    "Fethiye": {
+        "dist": "126 km",
+        "time": "96 dk"
+    },
+    "Göcek": {
+        "dist": "191 km",
+        "time": "2.8 sa"
+    },
+    "Marmaris": {
+        "dist": "128 km",
+        "time": "111 dk"
+    },
+    "Ölüdeniz": {
+        "dist": "209 km",
+        "time": "2.7 sa"
+    },
+    "Avsallar": {
+        "dist": "102 km",
+        "time": "86 dk"
+    },
+    "Boğazkent": {
+        "dist": "43 km",
+        "time": "43 dk"
+    },
+    "Çamyuva": {
+        "dist": "67 km",
+        "time": "65 dk"
+    },
+    "Çıralı": {
+        "dist": "97 km",
+        "time": "95 dk"
+    },
+    "Demre": {
+        "dist": "156 km",
+        "time": "140 dk"
+    },
+    "Denizyaka": {
+        "dist": "44 km",
+        "time": "42 dk"
+    },
+    "Finike": {
+        "dist": "129 km",
+        "time": "108 dk"
+    },
+    "Gündoğdu": {
+        "dist": "56 km",
+        "time": "55 dk"
+    },
+    "Kalkan": {
+        "dist": "215 km",
+        "time": "3 sa"
+    },
+    "Kaş": {
+        "dist": "215 km",
+        "time": "2.6 sa"
+    },
+    "Kestel": {
+        "dist": "134 km",
+        "time": "120 dk"
+    },
+    "Kızılot": {
+        "dist": "82 km",
+        "time": "72 dk"
+    },
+    "Kiriş": {
+        "dist": "67 km",
+        "time": "67 dk"
+    },
+    "Kumluca": {
+        "dist": "95 km",
+        "time": "81 dk"
+    },
+    "Manavgat": {
+        "dist": "62 km",
+        "time": "58 dk"
+    },
+    "Olimpos": {
+        "dist": "99 km",
+        "time": "94 dk"
+    },
+    "Sorgun": {
+        "dist": "73 km",
+        "time": "68 dk"
+    },
+    "Titreyengöl": {
+        "dist": "73 km",
+        "time": "68 dk"
+    },
+    "Kadriye": {
+        "dist": "27 km",
+        "time": "27 dk"
+    }
+}
