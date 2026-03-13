@@ -178,7 +178,7 @@ const App: React.FC = () => {
                     <link rel="icon" type="image/png" href={siteContent.business.logo || '/logo.png'} />
                     <link rel="apple-touch-icon" href={siteContent.business.logo || '/logo.png'} />
                   </Helmet>
-                  <section id="home" className="relative h-screen lg:min-h-screen bg-[#020617] overflow-hidden">
+                  <section id="home" className="relative min-h-[100svh] flex flex-col bg-[#020617] overflow-hidden">
                     {/* Background Layer: Ken Burns Zoom */}
                     <div className="absolute inset-0 z-0 overflow-hidden">
                       {heroBgs.map((bg, idx) => (
@@ -197,7 +197,7 @@ const App: React.FC = () => {
                     </div>
 
                     {/* Content Layer */}
-                    <div className="relative z-20 max-w-7xl mx-auto px-5 lg:px-10 w-full h-full flex flex-col justify-end lg:justify-center pb-32 lg:pb-20 pt-28 lg:pt-20">
+                    <div className="relative z-20 max-w-7xl mx-auto px-5 lg:px-10 w-full flex-1 flex flex-col justify-end lg:justify-center pb-32 lg:pb-20 pt-24 lg:pt-20">
                       <div className="flex flex-col lg:flex-row items-start lg:items-center gap-10 lg:gap-16 w-full">
 
                         {/* Left: Text Content */}
@@ -257,7 +257,7 @@ const App: React.FC = () => {
 
                     {/* Universal Overlay Form (Modal) */}
                     {isBookingFormOpen && (
-                      <div className="fixed inset-0 z-[200] flex items-end justify-center lg:items-center p-0 lg:p-4">
+                      <div className="fixed inset-0 z-[200] flex items-end justify-center lg:items-center p-0 lg:p-4" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
                         <div
                           className="absolute inset-0 bg-black/80 backdrop-blur-lg"
                           onClick={() => setIsBookingFormOpen(false)}
@@ -338,8 +338,8 @@ const App: React.FC = () => {
                         <div className="w-px h-3 bg-white/10"></div>
                         <div className="flex items-center gap-2 text-white/50 text-xs md:text-sm">
                           <i className="fa-solid fa-location-dot text-[#c5a059] text-sm"></i>
-                          <div className="w-[140px]">
-                            <span className={`block transition-opacity duration-300 whitespace-nowrap ${isFading ? 'opacity-0' : 'opacity-100'}`}>
+                          <div className="w-[100px] sm:w-[140px] overflow-hidden">
+                            <span className={`block transition-opacity duration-300 whitespace-nowrap text-ellipsis overflow-hidden ${isFading ? 'opacity-0' : 'opacity-100'}`}>
                               {siteContent.regions[currentRegionIndex]?.name || 'Antalya'}
                             </span>
                           </div>
@@ -458,7 +458,7 @@ const App: React.FC = () => {
                           <Link
                             key={`r1-${region.id}-${index}`}
                             to={`/blog/${region.name.toLowerCase().replace(/ /g, '-').replace(/[ğĞ]/g, 'g').replace(/[üÜ]/g, 'u').replace(/[şŞ]/g, 's').replace(/[ıİ]/g, 'i').replace(/[öÖ]/g, 'o').replace(/[çÇ]/g, 'c').replace(/[^a-z0-9-]/g, '')}-transfer-rehberi`}
-                            className="group relative w-[200px] md:w-[260px] aspect-square rounded-lg overflow-hidden flex-shrink-0"
+                            className="group relative w-[160px] sm:w-[200px] md:w-[260px] aspect-square rounded-lg overflow-hidden flex-shrink-0"
                           >
                             <img src={region.image} alt={region.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
@@ -485,7 +485,7 @@ const App: React.FC = () => {
                           <Link
                             key={`r2-${region.id}-${index}`}
                             to={`/blog/${region.name.toLowerCase().replace(/ /g, '-').replace(/[ğĞ]/g, 'g').replace(/[üÜ]/g, 'u').replace(/[şŞ]/g, 's').replace(/[ıİ]/g, 'i').replace(/[öÖ]/g, 'o').replace(/[çÇ]/g, 'c').replace(/[^a-z0-9-]/g, '')}-transfer-rehberi`}
-                            className="group relative w-[200px] md:w-[260px] aspect-square rounded-lg overflow-hidden flex-shrink-0"
+                            className="group relative w-[160px] sm:w-[200px] md:w-[260px] aspect-square rounded-lg overflow-hidden flex-shrink-0"
                           >
                             <img src={region.image} alt={region.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
@@ -771,8 +771,8 @@ const App: React.FC = () => {
             href={`https://wa.me/${siteContent.business.whatsapp}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="fixed bottom-6 left-6 z-[90] lg:bottom-8 lg:left-8 group"
-            style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+            className="fixed left-6 z-[90] lg:left-8 group"
+            style={{ bottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}
           >
             <div className="relative">
               {/* Pulse ring */}

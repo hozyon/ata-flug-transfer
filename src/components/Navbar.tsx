@@ -204,7 +204,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin, content }) => {
               <LanguageSwitcher />
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className={`w-10 h-10 flex items-center justify-center rounded-xl transition-colors z-[10001] relative ${isMobileMenuOpen ? "text-white bg-white/10" : "text-white/70 bg-white/5 hover:bg-white/10"}`}
+                className={`w-11 h-11 flex items-center justify-center rounded-xl transition-colors z-[10001] relative ${isMobileMenuOpen ? "text-white bg-white/10" : "text-white/70 bg-white/5 hover:bg-white/10"}`}
               >
                 <i className={`fa-solid ${isMobileMenuOpen ? "fa-xmark" : "fa-bars"} text-lg transition-transform duration-300 ${isMobileMenuOpen ? "rotate-90" : "rotate-0"}`}></i>
               </button>
@@ -223,8 +223,8 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin, content }) => {
 
         {/* Drawer Panel */}
         <div
-          className={`absolute top-0 right-0 h-full w-[85vw] max-w-[360px] shadow-2xl border-l border-white/[0.12] transform transition-transform duration-500 flex flex-col z-[10000] ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
-          style={{ transitionTimingFunction: 'cubic-bezier(0.32, 0.72, 0, 1)', background: 'rgba(15, 23, 42, 0.05)', backdropFilter: 'blur(80px)', WebkitBackdropFilter: 'blur(80px)' }}
+          className={`absolute top-0 right-0 h-full w-[88vw] max-w-[360px] shadow-2xl border-l border-white/[0.12] transform transition-transform duration-500 flex flex-col z-[10000] ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
+          style={{ transitionTimingFunction: 'cubic-bezier(0.32, 0.72, 0, 1)', background: 'rgba(15, 23, 42, 0.05)', backdropFilter: 'blur(80px)', WebkitBackdropFilter: 'blur(80px)', paddingRight: 'env(safe-area-inset-right)' }}
         >
           {/* Header */}
           <div className="px-6 py-6 border-b border-white/10 flex items-center justify-between shrink-0">
@@ -410,7 +410,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin, content }) => {
           </div>
 
           {/* Footer */}
-          <div className="p-4 border-t border-white/10 shrink-0">
+          <div className="p-4 border-t border-white/10 shrink-0 safe-area-bottom">
             <div className="flex justify-center gap-4">
               {siteContent.business.instagram && (
                 <a href={siteContent.business.instagram} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-white/[0.06] border border-white/10 text-white/30 flex items-center justify-center text-sm transition-all hover:scale-110 hover:bg-white/10 hover:text-pink-500">

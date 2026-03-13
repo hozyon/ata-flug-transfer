@@ -67,7 +67,7 @@ const BlogPost: React.FC = () => {
             </Helmet>
 
             {/* Immersive Hero */}
-            <div className="relative h-[50vh] min-h-[400px] w-full overflow-hidden">
+            <div className="relative h-[50vh] min-h-[280px] sm:min-h-[360px] md:min-h-[400px] w-full overflow-hidden">
                 <div className="absolute inset-0">
                     <img src={post.featuredImage} alt={post.title} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-slate-900/30"></div>
@@ -147,7 +147,7 @@ const BlogPost: React.FC = () => {
                         {/* Sidebar (Sticky) */}
                         <div className="lg:col-span-4 space-y-8">
                             {/* Booking Card */}
-                            <div className="bg-white rounded-3xl p-8 shadow-xl border border-slate-100 sticky top-32">
+                            <div className="bg-white rounded-3xl p-8 shadow-xl border border-slate-100 lg:sticky lg:top-32">
                                 <div className="text-center mb-6">
                                     <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4 text-green-500 text-2xl">
                                         <i className="fa-brands fa-whatsapp"></i>

@@ -69,7 +69,7 @@ const Blog: React.FC = () => {
             <section className="py-20 relative z-10">
                 <TextureBackground />
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-10">
                         {currentPosts.map((post) => {
                             const tp = translatePost(post);
                             return (
@@ -125,7 +125,7 @@ const Blog: React.FC = () => {
                             <button
                                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                                 disabled={currentPage === 1}
-                                className="w-10 h-10 rounded-full flex items-center justify-center border border-slate-200 text-slate-500 hover:border-[#c5a059] hover:text-[#c5a059] disabled:opacity-50 disabled:hover:border-slate-200 disabled:hover:text-slate-500 transition-colors"
+                                className="w-11 h-11 rounded-full flex items-center justify-center border border-slate-200 text-slate-500 hover:border-[#c5a059] hover:text-[#c5a059] disabled:opacity-50 disabled:hover:border-slate-200 disabled:hover:text-slate-500 transition-colors"
                             >
                                 <i className="fa-solid fa-chevron-left"></i>
                             </button>
@@ -134,7 +134,7 @@ const Blog: React.FC = () => {
                                 <button
                                     key={page}
                                     onClick={() => setCurrentPage(page)}
-                                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${currentPage === page
+                                    className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${currentPage === page
                                         ? 'bg-[#c5a059] text-white shadow-lg shadow-[#c5a059]/30 scale-110'
                                         : 'bg-white border border-slate-200 text-slate-600 hover:border-[#c5a059] hover:text-[#c5a059]'
                                         }`}
@@ -146,7 +146,7 @@ const Blog: React.FC = () => {
                             <button
                                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                                 disabled={currentPage === totalPages}
-                                className="w-10 h-10 rounded-full flex items-center justify-center border border-slate-200 text-slate-500 hover:border-[#c5a059] hover:text-[#c5a059] disabled:opacity-50 disabled:hover:border-slate-200 disabled:hover:text-slate-500 transition-colors"
+                                className="w-11 h-11 rounded-full flex items-center justify-center border border-slate-200 text-slate-500 hover:border-[#c5a059] hover:text-[#c5a059] disabled:opacity-50 disabled:hover:border-slate-200 disabled:hover:text-slate-500 transition-colors"
                             >
                                 <i className="fa-solid fa-chevron-right"></i>
                             </button>

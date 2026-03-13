@@ -246,7 +246,7 @@ const Bolgeler: React.FC = () => {
             <section className="pt-6 pb-16 relative z-20 overflow-hidden">
                 <TextureBackground />
                 <div className="max-w-7xl mx-auto px-4 relative z-10">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
                         {currentItems.length > 0 ? (
                             currentItems.map((region) => {
                                 const distInfo = DISTANCE_MAP[region.name] || { dist: '-- km', time: '-- dk' };

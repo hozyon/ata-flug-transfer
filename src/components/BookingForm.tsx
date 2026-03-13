@@ -179,7 +179,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
     setTimeout(() => setShowToast(false), 4000);
   };
 
-  const card = "rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 focus-within:border-[#c5a059]/30 transition-colors";
+  const card = "rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 min-h-[52px] focus-within:border-[#c5a059]/30 transition-colors";
   const lbl = "block text-[9px] font-bold text-[#c5a059]/60 uppercase tracking-[0.15em] mb-0.5";
   const inp = "w-full bg-transparent outline-none text-[12px] text-white font-medium placeholder-white/20";
 
@@ -254,7 +254,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
           <div className="flex items-center gap-1.5">
             <i className="fa-solid fa-phone text-[#c5a059] text-[9px] flex-shrink-0"></i>
             <select name="countryCode" value={formData.countryCode} onChange={handleChange}
-              className="bg-transparent outline-none text-[12px] text-white font-medium appearance-none cursor-pointer shrink-0" style={{ width: '78px' }}>
+              className="w-[72px] bg-transparent outline-none text-[12px] text-white font-medium appearance-none cursor-pointer shrink-0">
               {COUNTRY_CODES.map(cc => (
                 <option key={cc.code} value={cc.code} className="bg-[#0a0a0e] text-white">{cc.flag} {cc.code}</option>
               ))}
@@ -287,7 +287,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
         </div>
 
         {/* Yolcu + Araç + Uçuş */}
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
           <div className={card}>
             <label className={lbl}>{t('Yolcu')}</label>
             <div className="flex items-center gap-1.5">

@@ -43,7 +43,7 @@ const Iletisim: React.FC = () => {
                     <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col lg:flex-row">
                         <div className="w-full lg:w-1/2 p-8 md:p-12 lg:p-16 flex flex-col justify-center order-1 lg:order-2">
                             <h2 className="text-2xl md:text-3xl font-bold text-slate-800 tracking-wide mb-8">{t('contact.formTitle')}</h2>
-                            <div className="flex flex-wrap gap-x-8 gap-y-4 mb-10 text-sm">
+                            <div className="flex flex-wrap gap-x-4 gap-y-3 mb-8 text-sm">
                                 <div className="flex items-center gap-2">
                                     <div className="w-8 h-8 rounded-full bg-[#c5a059]/10 flex items-center justify-center"><i className="fa-solid fa-location-dot text-[#c5a059]"></i></div>
                                     <span className="text-slate-600">{business.address}</span>
