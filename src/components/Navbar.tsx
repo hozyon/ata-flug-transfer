@@ -549,20 +549,6 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                 {/* ── divider ── */}
                 <div className="my-4 border-t border-white/[0.06]" />
 
-                {/* ── Language row ── */}
-                <div
-                  className="nav-row visible flex items-center justify-between px-4 py-3.5 rounded-2xl border border-white/[0.05]"
-                  style={{ background: 'rgba(255,255,255,0.03)', animationDelay: `${80 + menuItems.length * 45 + 40}ms` }}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-white/[0.06] border border-white/[0.06] flex items-center justify-center text-white/35">
-                      <i className="fa-solid fa-globe text-[15px]" />
-                    </div>
-                    <span className="text-[14px] font-bold text-white/50">{t('nav.language') || 'Dil'}</span>
-                  </div>
-                  <LanguageSwitcher />
-                </div>
-
                 {/* ── Contact row ── */}
                 <div className="mt-2 grid grid-cols-2 gap-2">
                   <a
