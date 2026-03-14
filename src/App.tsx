@@ -32,6 +32,7 @@ const App: React.FC = () => {
   } = useAppStore();
 
   const [reviewRating, setReviewRating] = useState(0);
+  const [authChecking, setAuthChecking] = useState(isSupabaseConfigured);
   const { t, language } = useLanguage();
 
   // Handle successful login
@@ -58,16 +59,15 @@ const App: React.FC = () => {
   useEffect(() => {
     if (!isSupabaseConfigured) return;
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session) {
+      if (event === 'INITIAL_SESSION') {
+        setIsAdmin(!!session);
+        setAuthChecking(false);
+      } else if (event === 'SIGNED_IN' && session) {
         setIsAdmin(true);
       } else if (event === 'SIGNED_OUT') {
         setIsAdmin(false);
         navigate('/');
       }
-    });
-    // Check for existing session on mount
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) setIsAdmin(true);
     });
     return () => subscription.unsubscribe();
   }, []);
@@ -144,6 +144,14 @@ const App: React.FC = () => {
 
   // Memoize random blog posts outside of JSX
   const randomBlogPosts = useMemo(() => [...BLOG_POSTS].sort(() => 0.5 - Math.random()).slice(0, 4), []);
+  if (authChecking) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-[#0f172a]">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#c5a059] border-t-transparent" />
+      </div>
+    );
+  }
+
   return (
     <SiteProvider value={{ siteContent, updateSiteContent: handleUpdateSiteContent }}>
       <div className={`flex flex-col ${isLoginPage ? 'h-screen overflow-hidden' : 'min-h-screen'} ${isAdmin ? 'bg-slate-900' : isLoginPage ? 'bg-[#030712]' : 'bg-white'}`}>

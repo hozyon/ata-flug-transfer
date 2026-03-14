@@ -1614,16 +1614,16 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
             {activeView === 'overview' && (
               <p className="text-slate-400 font-bold text-[10px] mb-1 uppercase tracking-wider">{currentTime.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long' })}</p>
             )}
-            <h1 className={`text-3xl font-black capitalize tracking-tight ${isDarkTheme ? 'text-white' : 'text-slate-900'} leading-tight`}>
+            <h1 className={`text-3xl font-black tracking-tight ${isDarkTheme ? 'text-white' : 'text-slate-900'} leading-tight`}>
               {activeView === 'overview' ? (
-                <>{greeting.emoji} {greeting.text}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-amber-300">Admin</span></>
+                <>Dashboard</>
               ) : (
                 VIEW_LABELS[activeView]?.label || activeView.replace('-', ' ')
               )}
             </h1>
             <p className={`text-sm mt-1 ${isDarkTheme ? 'text-slate-400' : 'text-slate-500'} max-w-lg`}>
               {activeView === 'overview'
-                ? 'Panel üzerinden tüm operasyonları hızlıca yönetebilirsiniz.'
+                ? <>{greeting.emoji} {greeting.text}, <span className="font-semibold text-[var(--color-primary)]">Admin</span> — Tüm operasyonları buradan yönetebilirsiniz.</>
                 : (VIEW_LABELS[activeView]?.description || 'Operasyonel veriler ve site kontrol merkezi.')}
             </p>
           </div>
@@ -1725,40 +1725,104 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
         {activeView === 'overview' && (
           <div className="space-y-5">
 
-            {/* Info Strip — Live Clock, Hava, Döviz, IP */}
-            <div className="flex flex-wrap items-center gap-3 text-xs">
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.06]">
-                <i className="fa-regular fa-clock text-slate-500"></i>
-                <span className="font-mono font-bold text-white tabular-nums">{currentTime.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
-                <span className="text-slate-500 hidden sm:inline">{currentTime.toLocaleDateString('tr-TR', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
-              </div>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.06]">
-                <i className={`fa-solid ${weather?.icon === '113' ? 'fa-sun text-amber-400' : 'fa-cloud text-sky-400'} text-sm`}></i>
-                <span className="font-bold text-white">{weather?.temp || '--'}°C</span>
-                <span className="text-slate-500">Antalya</span>
-              </div>
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.06]">
-                <span className="text-slate-500">$</span>
-                <span className="font-bold text-white tabular-nums">{rates.usd ? rates.usd.toFixed(2) : '--'}</span>
-                <span className="text-slate-600">|</span>
-                <span className="text-slate-500">€</span>
-                <span className="font-bold text-white tabular-nums">{rates.eur ? rates.eur.toFixed(2) : '--'}</span>
-                <span className="text-slate-600 text-[10px]">₺</span>
-              </div>
-              {userIp && (
-                <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.04] border border-white/[0.06] hidden md:flex">
-                  <i className="fa-solid fa-shield-halved text-slate-500 text-[10px]"></i>
-                  <span className="font-mono text-slate-400 text-[11px]">{userIp}</span>
+            {/* Live Status Bar */}
+            <div className="rounded-2xl border border-white/[0.07] px-5 py-3 flex flex-wrap items-center justify-between gap-3" style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.01) 100%)' }}>
+              {/* Left: Status */}
+              <div className="flex items-center gap-3 text-[11px]">
+                <div className="flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse"></span>
+                  <span className="font-bold text-emerald-400 uppercase tracking-wider">Sistem Aktif</span>
                 </div>
-              )}
-              {/* Keyboard shortcuts hint */}
-              <div className="ml-auto hidden lg:flex items-center gap-1.5 text-[10px] text-slate-600">
-                <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/[0.04] font-mono">D</kbd>
-                <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/[0.04] font-mono">B</kbd>
-                <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/[0.04] font-mono">R</kbd>
-                <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/[0.04] font-mono">N</kbd>
-                <span className="text-slate-600">kısayollar</span>
+                {stats.pending > 0 && (
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-400/10 border border-amber-400/20">
+                    <i className="fa-solid fa-clock text-amber-400 text-[10px]"></i>
+                    <span className="font-semibold text-amber-400">{stats.pending} bekleyen rezervasyon</span>
+                  </div>
+                )}
+                {stats.pending === 0 && stats.confirmed + stats.completed > 0 && (
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-400/10 border border-emerald-400/20">
+                    <i className="fa-solid fa-check text-emerald-400 text-[10px]"></i>
+                    <span className="font-semibold text-emerald-400">Tüm rezervasyonlar işlendi</span>
+                  </div>
+                )}
               </div>
+              {/* Right: Live Metrics */}
+              <div className="flex flex-wrap items-center gap-2 text-[11px] shrink-0">
+                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.07] text-white font-mono font-bold tabular-nums">
+                  <i className="fa-regular fa-clock text-slate-500 text-[10px]"></i>
+                  {currentTime.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                </div>
+                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.07]">
+                  <i className={`fa-solid ${weather?.icon === '113' ? 'fa-sun text-amber-400' : 'fa-cloud text-sky-400'} text-[10px]`}></i>
+                  <span className="font-bold text-white">{weather?.temp || '--'}°C</span>
+                  <span className="text-slate-500">Antalya</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.07]">
+                  <span className="text-slate-500 font-medium">USD</span>
+                  <span className="font-bold text-white tabular-nums">{rates.usd ? rates.usd.toFixed(2) : '--'}</span>
+                  <span className="text-white/20">·</span>
+                  <span className="text-slate-500 font-medium">EUR</span>
+                  <span className="font-bold text-white tabular-nums">{rates.eur ? rates.eur.toFixed(2) : '--'}</span>
+                  <span className="text-slate-500 text-[9px]">₺</span>
+                </div>
+                {userIp && (
+                  <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.07]">
+                    <i className="fa-solid fa-shield-halved text-emerald-500 text-[9px]"></i>
+                    <span className="font-mono text-slate-400">{userIp}</span>
+                  </div>
+                )}
+                <div className="hidden xl:flex items-center gap-1 text-[10px] ml-1">
+                  {['D','B','R','N'].map(k => (
+                    <kbd key={k} className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/[0.04] font-mono text-slate-500">{k}</kbd>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Actions Bar */}
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={() => { setActiveView('bookings'); }}
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-[var(--color-primary)] text-[#06080F] text-xs font-bold hover:brightness-110 active:scale-95 transition-all shadow-[0_4px_12px_rgba(197,160,89,0.3)]"
+              >
+                <i className="fa-solid fa-plus text-[10px]"></i>
+                Yeni Rezervasyon
+              </button>
+              <button
+                onClick={() => setActiveView('bookings')}
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/[0.07] text-xs font-semibold text-slate-300 hover:bg-white/[0.08] hover:text-white active:scale-95 transition-all"
+              >
+                <i className="fa-solid fa-calendar-check text-slate-500 text-[10px]"></i>
+                Rezervasyonlar
+                {pendingCount > 0 && (
+                  <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-amber-500 text-[9px] font-black text-white">{pendingCount}</span>
+                )}
+              </button>
+              <button
+                onClick={() => setActiveView('blog')}
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/[0.07] text-xs font-semibold text-slate-300 hover:bg-white/[0.08] hover:text-white active:scale-95 transition-all"
+              >
+                <i className="fa-solid fa-pen-nib text-slate-500 text-[10px]"></i>
+                Blog Yazısı Ekle
+              </button>
+              <button
+                onClick={() => setActiveView('reviews')}
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/[0.07] text-xs font-semibold text-slate-300 hover:bg-white/[0.08] hover:text-white active:scale-95 transition-all"
+              >
+                <i className="fa-solid fa-star text-slate-500 text-[10px]"></i>
+                Yorumlar
+                {pendingReviews > 0 && (
+                  <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-rose-500 text-[9px] font-black text-white">{pendingReviews}</span>
+                )}
+              </button>
+              <button
+                onClick={() => setIsCommandPaletteOpen(true)}
+                className="hidden sm:inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/[0.05] border border-white/[0.07] text-xs font-semibold text-slate-400 hover:bg-white/[0.08] hover:text-white active:scale-95 transition-all ml-auto"
+              >
+                <i className="fa-solid fa-wand-magic-sparkles text-indigo-400 text-[10px]"></i>
+                Asistan
+                <kbd className="bg-white/10 border border-white/20 px-1 py-0.5 rounded font-mono text-[9px] text-slate-500">⌘K</kbd>
+              </button>
             </div>
 
             {/* KPI Cards — Flat, Minimal + Today + Trend — Mobile: horizontal scroll snap carousel */}
@@ -1829,14 +1893,22 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                       </div>
                     ))}
 
-                    {/* Additional Bento Box: AI / Quick Action */}
-                    <div className="col-span-2 xl:col-span-1 row-span-2 xl:row-span-1 p-4 rounded-3xl bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-transparent border border-indigo-500/20 flex flex-col items-center justify-center text-center group cursor-pointer hover:border-indigo-500/40 transition-all hover:-translate-y-1 relative overflow-hidden" onClick={() => setIsCommandPaletteOpen(true)}>
-                      <div className="absolute inset-0 bg-[#06080F]/40 backdrop-blur-[2px] z-0 pointer-events-none group-hover:backdrop-blur-0 transition-all"></div>
-                      <div className="w-12 h-12 rounded-full bg-indigo-500/20 flex items-center justify-center mb-2 shadow-[0_0_15px_rgba(99,102,241,0.3)] group-hover:shadow-[0_0_25px_rgba(99,102,241,0.5)] transition-all z-10 group-hover:scale-110">
-                        <i className="fa-solid fa-wand-magic-sparkles text-indigo-400 text-lg"></i>
+                    {/* Additional Bento Box: Conversion / Completion Rate */}
+                    <div className="col-span-2 xl:col-span-1 row-span-2 xl:row-span-1 p-4 rounded-3xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] hover:border-white/10 hover:shadow-xl hover:shadow-black/50 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between" style={{ boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.05)' }}>
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="w-10 h-10 rounded-2xl bg-sky-400/10 flex items-center justify-center shadow-lg transition-transform group-hover:scale-110 group-hover:rotate-3">
+                          <i className="fa-solid fa-arrow-trend-up text-sky-400 text-sm"></i>
+                        </div>
                       </div>
-                      <p className="text-sm font-bold text-white mb-1 z-10">Hızlı Asistan</p>
-                      <p className="text-[10px] text-slate-400 flex items-center gap-1.5 z-10"><kbd className="bg-white/10 border border-white/20 px-1.5 py-0.5 rounded font-mono shadow-sm">⌘</kbd> <kbd className="bg-white/10 border border-white/20 px-1.5 py-0.5 rounded font-mono shadow-sm">K</kbd></p>
+                      <div>
+                        <p className="text-2xl font-black text-white tracking-tight tabular-nums mb-0.5">
+                          {stats.completed + stats.confirmed > 0
+                            ? `%${Math.round((stats.completed / Math.max(stats.completed + stats.confirmed + stats.pending, 1)) * 100)}`
+                            : '%0'}
+                        </p>
+                        <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Tamamlanma</p>
+                        <p className="text-[10px] text-slate-600 mt-1">{stats.completed} / {stats.completed + stats.confirmed + stats.pending} transfer</p>
+                      </div>
                     </div>
                   </div>
                   {/* Mobile horizontal scroll snap carousel */}
@@ -1851,17 +1923,22 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               {/* Son Rezervasyonlar — Today Highlight + Quick Actions */}
               <div className="col-span-12 lg:col-span-8 rounded-2xl bg-white/[0.03] border border-white/[0.06] overflow-hidden">
                 <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.06]">
-                  <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                    <i className="fa-solid fa-list text-slate-500 text-xs"></i>
-                    Son Rezervasyonlar
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-lg bg-[var(--color-primary)]/10 flex items-center justify-center">
+                      <i className="fa-solid fa-calendar-lines text-[var(--color-primary)] text-[11px]"></i>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-white leading-none">Son Rezervasyonlar</h3>
+                      <p className="text-[10px] text-slate-500 mt-0.5">{bookings.filter(b => b.status !== 'Deleted').length} toplam rezervasyon</p>
+                    </div>
                     {stats.todayBookings > 0 && (
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-400">
-                        Bugün {stats.todayBookings}
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-400 border border-rose-500/20 ml-1">
+                        <span className="w-1 h-1 rounded-full bg-rose-400 inline-block mr-1 animate-pulse"></span>Bugün {stats.todayBookings}
                       </span>
                     )}
-                  </h3>
-                  <button onClick={() => setActiveView('bookings')} className="text-[11px] font-semibold text-slate-400 hover:text-[var(--color-primary)] transition-colors">
-                    Tümü <i className="fa-solid fa-arrow-right ml-1 text-[9px]"></i>
+                  </div>
+                  <button onClick={() => setActiveView('bookings')} className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-400 hover:text-[var(--color-primary)] transition-colors px-2.5 py-1.5 rounded-lg hover:bg-white/[0.04]">
+                    Tümünü Gör <i className="fa-solid fa-arrow-right text-[9px]"></i>
                   </button>
                 </div>
 
@@ -1896,19 +1973,29 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                                   }`}
                               >
                                 <td className="px-5 py-3">
-                                  <div className="flex items-center gap-2">
-                                    <p className="text-xs font-semibold text-white group-hover:text-[var(--color-primary)] transition-colors truncate max-w-[140px]">{b.customerName.replace(/[\n\r]+/g, ' ').trim()}</p>
-                                    {isToday && b.status !== 'Completed' && (
-                                      <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[8px] font-black uppercase px-1.5 py-0.5 rounded shadow-[0_0_5px_rgba(16,185,129,0.2)] animate-pulse shrink-0">Bugün</span>
-                                    )}
-                                  </div>
-                                  <div className="flex items-center gap-2 mt-0.5">
-                                    <p className="text-[10px] text-slate-500">{b.phone}</p>
-                                    {b.flightNumber && (
-                                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-400 border border-sky-500/20">
-                                        <i className="fa-solid fa-plane text-[7px] mr-1"></i>{b.flightNumber}
+                                  <div className="flex items-center gap-2.5">
+                                    {/* Avatar initials */}
+                                    <div className="w-7 h-7 rounded-full bg-[var(--color-primary)]/15 border border-[var(--color-primary)]/20 flex items-center justify-center shrink-0">
+                                      <span className="text-[10px] font-black text-[var(--color-primary)]">
+                                        {b.customerName.replace(/[\n\r]+/g, ' ').trim().split(' ').map((n: string) => n[0]).slice(0,2).join('').toUpperCase()}
                                       </span>
-                                    )}
+                                    </div>
+                                    <div className="min-w-0">
+                                      <div className="flex items-center gap-1.5">
+                                        <p className="text-xs font-semibold text-white group-hover:text-[var(--color-primary)] transition-colors truncate max-w-[120px]">{b.customerName.replace(/[\n\r]+/g, ' ').trim()}</p>
+                                        {isToday && b.status !== 'Completed' && (
+                                          <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[8px] font-black uppercase px-1.5 py-0.5 rounded shadow-[0_0_5px_rgba(16,185,129,0.2)] animate-pulse shrink-0">Bugün</span>
+                                        )}
+                                      </div>
+                                      <div className="flex items-center gap-1.5 mt-0.5">
+                                        <p className="text-[10px] text-slate-500">{b.phone}</p>
+                                        {b.flightNumber && (
+                                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                                            <i className="fa-solid fa-plane text-[7px] mr-1"></i>{b.flightNumber}
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
                                   </div>
                                 </td>
                                 <td className="px-3 py-3 hidden sm:table-cell">
@@ -2000,23 +2087,37 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               {/* Right Column — Pie + Countries */}
               <div className="col-span-12 xl:col-span-4 space-y-4">
 
-                {/* Activity Log */}
+                {/* Activity Log — Timeline */}
                 <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
-                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-                    <i className="fa-solid fa-clock-rotate-left text-slate-500 text-[10px]"></i>
-                    Son Aktiviteler
-                  </h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                      <i className="fa-solid fa-clock-rotate-left text-[var(--color-primary)] text-[10px]"></i>
+                      Son Aktiviteler
+                    </h3>
+                    {activityLog.length > 0 && (
+                      <span className="text-[10px] text-slate-600 font-mono">{activityLog.length} kayıt</span>
+                    )}
+                  </div>
                   {activityLog.length === 0 ? (
-                    <p className="text-slate-600 text-xs text-center py-4">Henüz aktivite yok. Panel kullanıldıkça burada görünür.</p>
+                    <div className="flex flex-col items-center justify-center py-6 gap-2">
+                      <div className="w-8 h-8 rounded-full bg-white/[0.04] flex items-center justify-center">
+                        <i className="fa-regular fa-clock text-slate-600 text-sm"></i>
+                      </div>
+                      <p className="text-slate-600 text-[11px] text-center">Panel kullanıldıkça aktiviteler burada görünür.</p>
+                    </div>
                   ) : (
-                    <div className="space-y-2 max-h-48 overflow-y-auto">
-                      {activityLog.slice(0, 10).map(log => (
-                        <div key={log.id} className="flex items-center gap-2.5 py-1.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] shrink-0"></div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-[11px] text-slate-300 truncate">{log.action}: <span className="text-slate-500">{log.detail}</span></p>
+                    <div className="relative max-h-52 overflow-y-auto pr-1 space-y-0">
+                      {/* Vertical timeline line */}
+                      <div className="absolute left-[7px] top-2 bottom-2 w-px bg-white/[0.06]"></div>
+                      {activityLog.slice(0, 10).map((log, idx) => (
+                        <div key={log.id} className="relative flex items-start gap-3 py-2">
+                          {/* Timeline dot */}
+                          <div className={`relative z-10 w-3.5 h-3.5 rounded-full border-2 border-[#06080F] shrink-0 mt-0.5 ${idx === 0 ? 'bg-[var(--color-primary)] shadow-[0_0_6px_rgba(197,160,89,0.5)]' : 'bg-slate-700'}`}></div>
+                          <div className="flex-1 min-w-0 pb-0.5">
+                            <p className="text-[11px] font-semibold text-slate-300 leading-tight">{log.action}</p>
+                            <p className="text-[10px] text-slate-500 truncate mt-0.5">{log.detail}</p>
                           </div>
-                          <span className="text-[9px] text-slate-600 font-mono shrink-0">
+                          <span className="text-[9px] text-slate-600 font-mono shrink-0 mt-0.5 tabular-nums">
                             {(() => {
                               const diff = Math.round((Date.now() - log.time.getTime()) / 1000);
                               if (diff < 10) return 'şimdi';
@@ -2033,59 +2134,70 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
                 {/* Ülke Dağılımı */}
                 <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
-                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <i className="fa-solid fa-globe text-slate-500 text-[10px]"></i>
-                    Ülke Dağılımı
+                  <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <i className="fa-solid fa-globe text-[var(--color-primary)] text-[10px]"></i>
+                    Müşteri Ülkeleri
                   </h3>
-                  <div className="space-y-3">
+                  <div className="space-y-2.5">
                     {stats.topCountries.slice(0, 4).map((c, i) => (
-                      <div key={i}>
-                        <div className="flex items-center justify-between mb-1">
+                      <div key={i} className="group">
+                        <div className="flex items-center justify-between mb-1.5">
                           <span className="flex items-center gap-2">
-                            <span className="text-base">{c.name}</span>
-                            <span className="text-[11px] text-slate-400">{getCountryName(c.name)}</span>
+                            <span className="text-lg leading-none">{c.name}</span>
+                            <span className="text-[11px] font-medium text-slate-300">{getCountryName(c.name)}</span>
                           </span>
-                          <span className="text-[10px] font-bold text-slate-500">{c.count}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-[10px] text-slate-500">{c.count} transfer</span>
+                            <span className="text-[10px] font-bold text-slate-400 w-8 text-right">{Math.round(c.percent)}%</span>
+                          </div>
                         </div>
                         <div className="h-1 bg-white/[0.06] rounded-full overflow-hidden">
-                          <div className="h-full bg-[var(--color-primary)] rounded-full" style={{ width: `${Math.min(c.percent, 100)}%` }}></div>
+                          <div className="h-full rounded-full transition-all duration-700"
+                            style={{ width: `${Math.min(c.percent, 100)}%`, background: `linear-gradient(90deg, var(--color-primary), var(--color-primary)99)` }}
+                          ></div>
                         </div>
                       </div>
                     ))}
-                    {stats.topCountries.length === 0 && <p className="text-slate-600 text-xs text-center py-3">Henüz veri yok</p>}
+                    {stats.topCountries.length === 0 && (
+                      <div className="flex flex-col items-center py-4 gap-2">
+                        <i className="fa-solid fa-globe text-slate-700 text-xl"></i>
+                        <p className="text-slate-600 text-xs">Henüz yorum verisi yok</p>
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 {/* Aylık Karşılaştırma + Dönüş Oranı */}
                 <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
-                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-                    <i className="fa-solid fa-arrow-right-arrow-left text-slate-500 text-[10px]"></i>
-                    Aylık Karşılaştırma
+                  <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <i className="fa-solid fa-chart-simple text-[var(--color-primary)] text-[10px]"></i>
+                    Performans
                   </h3>
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="p-3 rounded-xl bg-white/[0.03]">
-                      <p className="text-[10px] text-slate-500 mb-1">Bu Ay</p>
-                      <p className="text-xl font-black text-white">{stats.thisMonthBookings}</p>
-                      {stats.monthlyTrend !== 0 && (
-                        <p className={`text-[10px] font-bold mt-1 ${stats.monthlyTrend > 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                          {stats.monthlyTrend > 0 ? '+' : ''}{stats.monthlyTrend.toFixed(0)}%
-                        </p>
-                      )}
+                    <div className="p-3 rounded-xl bg-white/[0.04] border border-white/[0.05] hover:bg-white/[0.06] transition-colors">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wide">Bu Ay</p>
+                        {stats.monthlyTrend !== 0 && (
+                          <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${stats.monthlyTrend > 0 ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400'}`}>
+                            {stats.monthlyTrend > 0 ? '↑' : '↓'}{Math.abs(stats.monthlyTrend).toFixed(0)}%
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-2xl font-black text-white tabular-nums">{stats.thisMonthBookings}</p>
+                      <p className="text-[10px] text-slate-600 mt-1">geçen ay: {stats.lastMonthBookings}</p>
                     </div>
-                    <div className="p-3 rounded-xl bg-white/[0.03]">
-                      <p className="text-[10px] text-slate-500 mb-1">Dönen Müşteri</p>
-                      <p className="text-xl font-black text-white">%{stats.returningRate}</p>
-                      <p className="text-[10px] text-slate-500 mt-1">
-                        {stats.returningCustomers}/{stats.uniqueCustomers}
-                      </p>
+                    <div className="p-3 rounded-xl bg-white/[0.04] border border-white/[0.05] hover:bg-white/[0.06] transition-colors">
+                      <p className="text-[10px] text-slate-500 font-medium uppercase tracking-wide mb-2">Sadakat</p>
+                      <p className="text-2xl font-black text-white tabular-nums">%{stats.returningRate}</p>
+                      <p className="text-[10px] text-slate-600 mt-1">{stats.returningCustomers} dönen / {stats.uniqueCustomers} müşteri</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Araç Dağılımı — Compact Pie */}
                 <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
-                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <i className="fa-solid fa-chart-pie text-slate-500 text-[10px]"></i>
+                  <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <i className="fa-solid fa-chart-pie text-[var(--color-primary)] text-[10px]"></i>
                     Araç Dağılımı
                   </h3>
                   <ResponsiveContainer width="100%" height={160}>
@@ -2112,13 +2224,18 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
               {/* 30-Day Trend Chart — Full Width */}
               <div className="col-span-12 p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                    <i className="fa-solid fa-chart-area text-slate-500 text-[10px]"></i>
-                    Son 30 Gün — Rezervasyon Trendi
-                  </h3>
-                  <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)]"></span> Transfer
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-lg bg-[var(--color-primary)]/10 flex items-center justify-center">
+                      <i className="fa-solid fa-chart-area text-[var(--color-primary)] text-[11px]"></i>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-white leading-none">Rezervasyon Trendi</h3>
+                      <p className="text-[10px] text-slate-500 mt-0.5">Son 30 günlük transfer aktivitesi</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-[10px] text-slate-500 px-2.5 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.05]">
+                    <span className="w-2 h-2 rounded-full bg-[var(--color-primary)]"></span> Transfer
                   </div>
                 </div>
                 <div className="h-[180px]">
@@ -2142,8 +2259,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
               {/* Status Distribution + Vehicle Revenue — 2 column */}
               <div className="col-span-12 lg:col-span-5 p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <i className="fa-solid fa-chart-pie text-slate-500 text-[10px]"></i>
+                <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <i className="fa-solid fa-chart-pie text-[var(--color-primary)] text-[10px]"></i>
                   Durum Dağılımı
                 </h3>
                 {stats.statusData.length === 0 ? (
@@ -2174,9 +2291,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               </div>
 
               <div className="col-span-12 lg:col-span-7 p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <i className="fa-solid fa-chart-bar text-slate-500 text-[10px]"></i>
-                  Araç Bazlı Tamamlanan Gelir
+                <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <i className="fa-solid fa-chart-bar text-[var(--color-primary)] text-[10px]"></i>
+                  Araç Bazlı Gelir
                 </h3>
                 {stats.vehicleRevenue.length === 0 ? (
                   <div className="flex items-center justify-center py-8 text-slate-600 text-xs">Tamamlanan rezervasyon yok</div>
@@ -2247,8 +2364,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               </div>
 
               <div className="col-span-12 lg:col-span-6 p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <i className="fa-solid fa-gauge-high text-slate-500 text-[10px]"></i>
+                <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <i className="fa-solid fa-gauge-high text-[var(--color-primary)] text-[10px]"></i>
                   Araç Doluluk Oranı
                 </h3>
                 <div className="space-y-3">
