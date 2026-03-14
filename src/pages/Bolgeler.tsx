@@ -165,6 +165,26 @@ const Bolgeler: React.FC = () => {
                 <meta name="twitter:site" content={seo.twitterHandle} />
                 <meta name="twitter:title" content={pageTitle} />
                 <meta name="twitter:description" content={pageDesc} />
+                <script type="application/ld+json">{JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        { "@type": "ListItem", "position": 1, "name": "Ana Sayfa", "item": canonical || "https://ataflugtransfer.com" },
+                        { "@type": "ListItem", "position": 2, "name": "Transfer Bölgeleri", "item": `${canonical}/bolgeler` }
+                    ]
+                })}</script>
+                <script type="application/ld+json">{JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "ItemList",
+                    "name": "Antalya Transfer Bölgeleri",
+                    "description": "Antalya Havalimanı'ndan transfer hizmeti sunulan tüm bölgeler",
+                    "itemListElement": regions.slice(0, 20).map((region, index) => ({
+                        "@type": "ListItem",
+                        "position": index + 1,
+                        "name": `${region.name} Transfer`,
+                        "url": `${canonical}/bolgeler#${region.name.toLowerCase().replace(/\s+/g, '-').replace(/[ğ]/g, 'g').replace(/[ü]/g, 'u').replace(/[ş]/g, 's').replace(/[ı]/g, 'i').replace(/[ö]/g, 'o').replace(/[ç]/g, 'c')}`
+                    }))
+                })}</script>
             </Helmet>
             {/* Custom Animation Styles */}
             <style>{`

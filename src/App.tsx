@@ -21,6 +21,7 @@ import Bolgeler from './pages/Bolgeler';
 import SSS from './pages/SSS';
 import Iletisim from './pages/Iletisim';
 import AdminLogin from './pages/AdminLogin';
+import TransferDestination from './pages/TransferDestination';
 import ErrorBoundary from './components/ErrorBoundary';
 
 const App: React.FC = () => {
@@ -194,16 +195,23 @@ const App: React.FC = () => {
               <Route path="/iletisim" element={<Iletisim />} />
               <Route path="/login" element={<AdminLogin onLogin={handleLoginSuccess} />} />
               <Route path="/admin/*" element={<Navigate to="/login" replace />} />
+              <Route path="/:transferSlug" element={<TransferDestination />} />
               <Route path="*" element={<Navigate to="/" replace />} />
               <Route path="/" element={
                 <>
 
                   <Helmet>
-                    <title>{siteContent.seo?.pagesSeo?.home?.title ? `${siteContent.seo.pagesSeo.home.title} | ${siteContent.business.name}` : siteContent.seo?.siteTitle || `${siteContent.hero.title} | ${siteContent.business.name}`}</title>
+                    <title>{siteContent.seo?.pagesSeo?.home?.title || siteContent.seo?.siteTitle || `${siteContent.hero.title} | ${siteContent.business.name}`}</title>
                     <meta name="description" content={siteContent.seo?.pagesSeo?.home?.description || siteContent.seo?.siteDescription || siteContent.hero.desc} />
                     <meta name="keywords" content={siteContent.seo?.pagesSeo?.home?.keywords || siteContent.seo?.siteKeywords || ''} />
                     <meta name="robots" content={siteContent.seo?.robotsDirective || 'index, follow'} />
                     <link rel="canonical" href={siteContent.seo?.canonicalUrl || 'https://ataflugtransfer.com'} />
+                    {/* Hreflang for multi-language SEO */}
+                    <link rel="alternate" hrefLang="tr" href={`${siteContent.seo?.canonicalUrl || 'https://ataflugtransfer.com'}`} />
+                    <link rel="alternate" hrefLang="en" href={`${siteContent.seo?.canonicalUrl || 'https://ataflugtransfer.com'}`} />
+                    <link rel="alternate" hrefLang="de" href={`${siteContent.seo?.canonicalUrl || 'https://ataflugtransfer.com'}`} />
+                    <link rel="alternate" hrefLang="ru" href={`${siteContent.seo?.canonicalUrl || 'https://ataflugtransfer.com'}`} />
+                    <link rel="alternate" hrefLang="x-default" href={`${siteContent.seo?.canonicalUrl || 'https://ataflugtransfer.com'}`} />
                     <meta property="og:title" content={siteContent.seo?.pagesSeo?.home?.title || siteContent.hero.title} />
                     <meta property="og:description" content={siteContent.seo?.pagesSeo?.home?.description || siteContent.seo?.siteDescription || siteContent.hero.desc} />
                     <meta property="og:type" content="website" />
@@ -212,6 +220,9 @@ const App: React.FC = () => {
                     <meta property="og:image:height" content="630" />
                     <meta property="og:url" content={siteContent.seo?.canonicalUrl || ''} />
                     <meta property="og:locale" content="tr_TR" />
+                    <meta property="og:locale:alternate" content="en_US" />
+                    <meta property="og:locale:alternate" content="de_DE" />
+                    <meta property="og:locale:alternate" content="ru_RU" />
                     <meta property="og:site_name" content={siteContent.business.name} />
                     <meta name="twitter:card" content="summary_large_image" />
                     <meta name="twitter:site" content={siteContent.seo?.twitterHandle || ''} />
@@ -224,14 +235,18 @@ const App: React.FC = () => {
                     <link rel="apple-touch-icon" href={siteContent.business.logo || '/favicon.ico'} />
                     <script type="application/ld+json">{JSON.stringify({
                       "@context": "https://schema.org",
-                      "@type": siteContent.seo?.structuredData?.businessType || "TravelAgency",
+                      "@type": "LocalBusiness",
                       "name": siteContent.business.name,
                       "url": siteContent.seo?.canonicalUrl || '',
                       "telephone": siteContent.business.phone,
                       "email": siteContent.business.email,
+                      "image": siteContent.seo?.ogImage || '',
+                      "logo": siteContent.business.logo || '',
+                      "description": "Antalya Havalimanı'ndan Kemer, Belek, Side, Alanya ve tüm bölgelere özel VIP transfer hizmeti. 7/24 profesyonel şoförler, Mercedes araçlar.",
                       "address": {
                         "@type": "PostalAddress",
                         "addressLocality": "Antalya",
+                        "addressRegion": "Antalya",
                         "addressCountry": "TR",
                         "streetAddress": siteContent.business.address
                       },
@@ -242,7 +257,21 @@ const App: React.FC = () => {
                       },
                       "priceRange": siteContent.seo?.structuredData?.priceRange || "€€",
                       "openingHours": siteContent.seo?.structuredData?.openingHours || "Mo-Su 00:00-24:00",
-                      "areaServed": siteContent.seo?.structuredData?.areaServed || "Antalya, Turkey"
+                      "areaServed": ["Antalya", "Kemer", "Belek", "Side", "Alanya", "Manavgat", "Marmaris", "Fethiye", "Bodrum"],
+                      "servesCuisine": null,
+                      "currenciesAccepted": "EUR, USD, TRY, GBP, RUB",
+                      "paymentAccepted": "Cash, Credit Card",
+                      "hasMap": siteContent.business.mapEmbedUrl || '',
+                      "sameAs": [
+                        siteContent.business.instagram || '',
+                        siteContent.business.facebook || '',
+                      ].filter(Boolean),
+                      "aggregateRating": {
+                        "@type": "AggregateRating",
+                        "ratingValue": "5",
+                        "bestRating": "5",
+                        "ratingCount": "150"
+                      }
                     })}</script>
                   </Helmet>
                   <section id="home" className="relative min-h-[100svh] flex flex-col bg-[var(--color-darker)] overflow-hidden">

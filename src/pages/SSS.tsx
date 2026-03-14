@@ -51,6 +51,14 @@ const SSS: React.FC = () => {
                         "acceptedAnswer": { "@type": "Answer", "text": faq.a }
                     }))
                 })}</script>
+                <script type="application/ld+json">{JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        { "@type": "ListItem", "position": 1, "name": "Ana Sayfa", "item": canonical || "https://ataflugtransfer.com" },
+                        { "@type": "ListItem", "position": 2, "name": "Sıkça Sorulan Sorular", "item": `${canonical}/sss` }
+                    ]
+                })}</script>
             </Helmet>
             <section className="relative pt-28 pb-12 flex items-center justify-center overflow-hidden border-b border-white/5">
                 <div className="absolute inset-0 z-0">

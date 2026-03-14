@@ -177,10 +177,10 @@ export const INITIAL_SITE_CONTENT: SiteContent = {
     { id: 'add-5', q: 'Ödemeyi nasıl yapabilirim?', a: 'Nakit (TL, EUR, USD, GBP, RUB), kredi kartı veya havale ile ödeme yapabilirsiniz. Ödeme genellikle transfer sonrasında alınır.' }
   ],
   seo: {
-    siteTitle: 'VIP Havalimanı Transfer Hizmeti',
-    titleTemplate: '%s | VIP Transfer',
-    siteDescription: 'Antalya Havalimanı\'ndan tüm Türkiye\'ye VIP ve özel transfer hizmeti. 7/24 profesyonel sürücüler, konforlu araçlar, uygun fiyatlar.',
-    siteKeywords: 'antalya transfer, antalya havalimanı transfer, vip transfer antalya, airport transfer turkey, antalya taxi, özel transfer',
+    siteTitle: 'Antalya Havalimanı Transfer | Antalya VIP Transfer',
+    titleTemplate: '%s | Ata Flug Transfer',
+    siteDescription: 'Antalya Havalimanı\'ndan Kemer, Belek, Side, Alanya ve tüm bölgelere özel VIP transfer hizmeti. 7/24 profesyonel şoförler, Mercedes araçlar, uygun fiyat garantisi.',
+    siteKeywords: 'antalya havalimanı transfer, antalya vip transfer, antalya otel transfer, antalya transfer, kemer transfer, belek transfer, side transfer, alanya transfer, antalya airport transfer, özel transfer antalya',
     ogImage: 'https://ataflugtransfer.com/og-image.jpg',
     canonicalUrl: 'https://ataflugtransfer.com',
     googleSiteVerification: '',
@@ -188,7 +188,7 @@ export const INITIAL_SITE_CONTENT: SiteContent = {
     twitterHandle: '@ataflugtransfer',
     robotsDirective: 'index, follow',
     structuredData: {
-      businessType: 'TravelAgency',
+      businessType: 'LocalBusiness',
       priceRange: '€€',
       areaServed: 'Antalya, Turkey',
       openingHours: 'Mo-Su 00:00-24:00',
@@ -196,12 +196,12 @@ export const INITIAL_SITE_CONTENT: SiteContent = {
       longitude: '30.7056',
     },
     pagesSeo: {
-      home:    { title: 'Antalya VIP Havalimanı Transfer', description: 'Antalya Havalimanı\'ndan tüm Türkiye\'ye VIP ve özel transfer hizmeti. 7/24 profesyonel sürücüler, konforlu araçlar.', keywords: 'antalya transfer, vip transfer, havalimanı transfer' },
-      about:   { title: 'Hakkımızda', description: '10+ yıllık deneyimimizle Antalya\'da güvenilir VIP transfer hizmeti sunuyoruz.', keywords: 'antalya transfer firması, vip transfer hakkında' },
-      regions: { title: 'Transfer Bölgeleri', description: 'Antalya Havalimanı\'ndan Kemer, Alanya, Side, Belek ve tüm bölgelere uygun fiyatlı transfer hizmetleri.', keywords: 'kemer transfer, alanya transfer, side transfer, belek transfer' },
-      blog:    { title: 'Transfer Rehberi & Blog', description: 'Antalya transfer rehberleri, bölge bilgileri ve seyahat ipuçları.', keywords: 'antalya rehber, transfer blog, antalya gezi' },
-      faq:     { title: 'Sıkça Sorulan Sorular', description: 'Antalya transfer hizmeti hakkında merak ettiğiniz tüm sorular ve cevapları.', keywords: 'transfer sss, antalya transfer fiyat, nasıl rezervasyon' },
-      contact: { title: 'İletişim', description: '7/24 iletişime geçin.', keywords: 'antalya transfer iletişim, transfer telefon' },
+      home:    { title: 'Antalya Havalimanı Transfer | Antalya VIP Transfer | Antalya Otel Transfer', description: 'Antalya Havalimanı\'ndan Kemer, Belek, Side, Alanya ve tüm bölgelere özel VIP transfer hizmeti. 7/24 profesyonel şoförler, Mercedes araçlar, uygun fiyat garantisi.', keywords: 'antalya havalimanı transfer, antalya vip transfer, antalya otel transfer, antalya transfer, airport transfer antalya' },
+      about:   { title: 'Hakkımızda | Ata Flug VIP Transfer Antalya', description: 'Ata Flug Transfer; Antalya\'da profesyonel VIP havalimanı transfer hizmeti sunan köklü bir firmadır. Güvenilir şoförler, modern Mercedes araç filosu.', keywords: 'ata flug transfer hakkında, antalya transfer firması, vip transfer antalya hakkında' },
+      regions: { title: 'Antalya Transfer Bölgeleri | Kemer, Belek, Side, Alanya Transfer Fiyatları', description: 'Antalya Havalimanı\'ndan Kemer, Alanya, Side, Belek, Manavgat, Marmaris ve tüm bölgelere uygun fiyatlı VIP transfer hizmetleri. Fiyat listesi ve rezervasyon.', keywords: 'kemer transfer fiyatı, alanya transfer fiyatı, side transfer fiyatı, belek transfer fiyatı, antalya bölge transfer' },
+      blog:    { title: 'Antalya Transfer Rehberi & Blog | VIP Transfer Bilgileri', description: 'Antalya transfer rehberleri, bölge bilgileri, otel transferleri ve seyahat ipuçları. Kemer, Belek, Side, Alanya için kapsamlı transfer rehberi.', keywords: 'antalya transfer rehberi, kemer transfer bilgi, belek transfer blog, antalya gezi rehberi' },
+      faq:     { title: 'Antalya Transfer Sıkça Sorulan Sorular | VIP Transfer SSS', description: 'Antalya VIP transfer hizmeti hakkında sıkça sorulan sorular: fiyatlar, rezervasyon, ödeme, araç özellikleri ve daha fazlası.', keywords: 'antalya transfer sss, transfer fiyat sorular, antalya havalimanı transfer nasıl, vip transfer rezervasyon' },
+      contact: { title: 'İletişim | Antalya VIP Transfer Rezervasyon', description: '7/24 Antalya VIP transfer rezervasyonu için bizimle iletişime geçin. WhatsApp, telefon veya e-posta ile ulaşın.', keywords: 'antalya transfer iletişim, vip transfer rezervasyon, antalya transfer telefon, transfer whatsapp' },
     },
   },
   branding: {
