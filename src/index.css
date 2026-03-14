@@ -1,9 +1,15 @@
+:root {
+  --color-primary: #c5a059;
+  --color-dark: #0f172a;
+  --color-darker: #020617;
+}
+
 @import "tailwindcss";
 
 @theme {
-  --color-brand-gold: #c5a059;
-  --color-brand-dark: #0f172a;
-  --color-brand-darker: #020617;
+  --color-brand-gold: var(--color-primary);
+  --color-brand-dark: var(--color-dark);
+  --color-brand-darker: var(--color-darker);
   --backdrop-blur-3xl: 64px;
   --animate-gradient-xy: gradient-xy 15s ease infinite;
   --animate-heartbeat: heartbeat 1.5s ease-in-out infinite;

@@ -25,7 +25,7 @@ export const KpiCarousel: React.FC<KpiCarouselProps> = ({ items }) => {
                 <div
                     key={idx}
                     onClick={() => haptic.tap()}
-                    className="snap-center snap-always w-[280px] sm:w-[320px] shrink-0 p-5 rounded-3xl bg-white/[0.03] border border-white/[0.06] hover:-translate-y-1 hover:shadow-xl hover:shadow-[#c5a059]/10 transition-all duration-300 relative overflow-hidden group cursor-pointer"
+                    className="snap-center snap-always w-[280px] sm:w-[320px] shrink-0 p-5 rounded-3xl bg-white/[0.03] border border-white/[0.06] hover:-translate-y-1 hover:shadow-xl hover:shadow-[var(--color-primary)]/10 transition-all duration-300 relative overflow-hidden group cursor-pointer"
                 >
                     {/* Depth Effect Background */}
                     <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>

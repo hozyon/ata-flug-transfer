@@ -15,7 +15,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ icon, title, description
         {action && (
             <button
                 onClick={action.onClick}
-                className="mt-5 px-4 py-2 rounded-xl bg-[#c5a059]/10 text-[#c5a059] border border-[#c5a059]/20 text-xs font-bold hover:bg-[#c5a059]/20 transition-all"
+                className="mt-5 px-4 py-2 rounded-xl bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20 text-xs font-bold hover:bg-[var(--color-primary)]/20 transition-all"
             >
                 {action.label}
             </button>

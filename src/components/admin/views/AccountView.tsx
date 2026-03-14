@@ -15,7 +15,7 @@ interface AccountViewProps {
     handleDeleteUser: (id: string, isDeletable: boolean) => void;
 }
 
-const INPUT = "w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-[#c5a059]/60 focus:ring-1 focus:ring-[#c5a059]/20 transition-all";
+const INPUT = "w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-[var(--color-primary)]/60 focus:ring-1 focus:ring-[var(--color-primary)]/20 transition-all";
 const LABEL = "text-[10px] font-black text-slate-500 uppercase tracking-widest";
 
 export const AccountView: React.FC<AccountViewProps> = ({
@@ -37,13 +37,13 @@ export const AccountView: React.FC<AccountViewProps> = ({
             {/* ── Profile Hero ── */}
             <div className="relative rounded-3xl border border-white/[0.06] bg-gradient-to-br from-white/[0.04] to-transparent">
                 {/* Background decoration */}
-                <div className="absolute top-0 right-0 w-80 h-80 bg-[#c5a059]/10 blur-[120px] rounded-full pointer-events-none" />
+                <div className="absolute top-0 right-0 w-80 h-80 bg-[var(--color-primary)]/10 blur-[120px] rounded-full pointer-events-none" />
                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-indigo-500/10 blur-[80px] rounded-full pointer-events-none" />
 
                 <div className="relative p-6 flex flex-col sm:flex-row items-start sm:items-center gap-5">
                     {/* Avatar */}
                     <div className="relative group shrink-0 z-10">
-                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#c5a059] to-amber-700 p-[2px] shadow-xl shadow-amber-900/30">
+                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-amber-700 p-[2px] shadow-xl shadow-amber-900/30">
                             <div className="w-full h-full rounded-2xl overflow-hidden bg-slate-900 relative">
                                 <img src={accountForm.avatar} alt="Avatar" className="w-full h-full object-cover" />
                                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -51,7 +51,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                                 </div>
                             </div>
                         </div>
-                        <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-lg bg-emerald-500 flex items-center justify-center shadow-lg border-2 border-[#020617]">
+                        <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-lg bg-emerald-500 flex items-center justify-center shadow-lg border-2 border-[var(--color-darker)]">
                             <i className="fa-solid fa-check text-white text-[8px]"></i>
                         </div>
 
@@ -62,7 +62,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                             <div className="flex flex-wrap justify-center gap-2">
                                 {ADMIN_AVATARS.map((av, i) => (
                                     <button key={i} onClick={() => setAccountForm({ ...accountForm, avatar: av })}
-                                        className={`w-11 h-11 rounded-xl overflow-hidden border-2 transition-all hover:scale-110 ${accountForm.avatar === av ? 'border-[#c5a059] scale-110 ring-2 ring-[#c5a059]/30' : 'border-white/10 opacity-60 hover:opacity-100'}`}>
+                                        className={`w-11 h-11 rounded-xl overflow-hidden border-2 transition-all hover:scale-110 ${accountForm.avatar === av ? 'border-[var(--color-primary)] scale-110 ring-2 ring-[var(--color-primary)]/30' : 'border-white/10 opacity-60 hover:opacity-100'}`}>
                                         <img src={av} alt="" className="w-full h-full object-cover" />
                                     </button>
                                 ))}
@@ -75,7 +75,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                         <div className="flex items-start justify-between gap-3 flex-wrap">
                             <div>
                                 <h2 className="text-2xl font-black text-white tracking-tight">{accountForm.fullName || 'Admin'}</h2>
-                                <p className="text-[#c5a059] text-sm font-bold mt-0.5">{accountForm.email}</p>
+                                <p className="text-[var(--color-primary)] text-sm font-bold mt-0.5">{accountForm.email}</p>
                             </div>
                             <button onClick={onExitAdmin}
                                 className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white text-xs font-black transition-all shrink-0">
@@ -83,7 +83,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                             </button>
                         </div>
                         <div className="flex flex-wrap gap-2 mt-3">
-                            <span className="px-3 py-1 rounded-full bg-[#c5a059]/10 border border-[#c5a059]/20 text-[#c5a059] text-[10px] font-black flex items-center gap-1.5">
+                            <span className="px-3 py-1 rounded-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 text-[var(--color-primary)] text-[10px] font-black flex items-center gap-1.5">
                                 <i className="fa-solid fa-crown"></i> SİSTEM YÖNETİCİSİ
                             </span>
                             <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black flex items-center gap-1.5">
@@ -122,7 +122,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                 ].map(tab => (
                     <button key={tab.id} onClick={() => setAccountTab(tab.id)}
                         className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-[11px] font-black tracking-wide transition-all ${accountTab === tab.id
-                            ? 'bg-gradient-to-r from-[#c5a059] to-amber-600 text-white shadow-lg shadow-amber-900/30'
+                            ? 'bg-gradient-to-r from-[var(--color-primary)] to-amber-600 text-white shadow-lg shadow-amber-900/30'
                             : 'text-slate-500 hover:text-white hover:bg-white/5'}`}>
                         <i className={`fa-solid ${tab.icon} text-xs`}></i>
                         {tab.label}
@@ -140,8 +140,8 @@ export const AccountView: React.FC<AccountViewProps> = ({
                         {/* Personal Info */}
                         <div className="rounded-2xl overflow-hidden border border-white/[0.06] bg-white/[0.02]">
                             <div className="px-5 py-3.5 border-b border-white/[0.05] flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-xl bg-[#c5a059]/10 flex items-center justify-center">
-                                    <i className="fa-solid fa-id-card text-[#c5a059] text-xs"></i>
+                                <div className="w-8 h-8 rounded-xl bg-[var(--color-primary)]/10 flex items-center justify-center">
+                                    <i className="fa-solid fa-id-card text-[var(--color-primary)] text-xs"></i>
                                 </div>
                                 <h3 className="text-sm font-black text-white tracking-wide">KİŞİSEL BİLGİLER</h3>
                             </div>
@@ -165,7 +165,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                                 </div>
                                 <div className="flex justify-end pt-1">
                                     <button onClick={() => showToast('Kişisel bilgiler kaydedildi', 'success')}
-                                        className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#c5a059] to-amber-600 text-white text-[11px] font-black tracking-wide hover:from-amber-600 hover:to-amber-700 transition-all shadow-lg shadow-amber-900/20">
+                                        className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-[var(--color-primary)] to-amber-600 text-white text-[11px] font-black tracking-wide hover:from-amber-600 hover:to-amber-700 transition-all shadow-lg shadow-amber-900/20">
                                         <i className="fa-solid fa-floppy-disk text-xs"></i> KAYDET
                                     </button>
                                 </div>
@@ -330,14 +330,14 @@ export const AccountView: React.FC<AccountViewProps> = ({
                         {/* Account Summary */}
                         <div className="rounded-2xl overflow-hidden border border-white/[0.06] bg-white/[0.02]">
                             <div className="px-5 py-3.5 border-b border-white/[0.05] flex items-center gap-3">
-                                <div className="w-8 h-8 rounded-xl bg-[#c5a059]/10 flex items-center justify-center">
-                                    <i className="fa-solid fa-chart-bar text-[#c5a059] text-xs"></i>
+                                <div className="w-8 h-8 rounded-xl bg-[var(--color-primary)]/10 flex items-center justify-center">
+                                    <i className="fa-solid fa-chart-bar text-[var(--color-primary)] text-xs"></i>
                                 </div>
                                 <h3 className="text-sm font-black text-white tracking-wide">HESAP ÖZETİ</h3>
                             </div>
                             <div className="p-4">
                                 {[
-                                    { label: 'Hesap Türü', value: 'Admin', icon: 'fa-crown', color: 'text-[#c5a059]' },
+                                    { label: 'Hesap Türü', value: 'Admin', icon: 'fa-crown', color: 'text-[var(--color-primary)]' },
                                     { label: 'Panel Sürümü', value: 'v2.4.0', icon: 'fa-code-branch', color: 'text-violet-400' },
                                     { label: 'Aktif Kullanıcı', value: `${systemUsers.filter(u => u.status === 'Aktif').length}/${systemUsers.length}`, icon: 'fa-users', color: 'text-blue-400' },
                                     { label: 'Arayüz Dili', value: 'Türkçe', icon: 'fa-language', color: 'text-emerald-400' },
@@ -421,7 +421,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                                                 </div>
                                             </td>
                                             <td className="px-5 py-4">
-                                                <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black border ${!user.isDeletable ? 'bg-[#c5a059]/10 border-[#c5a059]/20 text-[#c5a059]' : 'bg-slate-500/10 border-slate-500/20 text-slate-400'}`}>
+                                                <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black border ${!user.isDeletable ? 'bg-[var(--color-primary)]/10 border-[var(--color-primary)]/20 text-[var(--color-primary)]' : 'bg-slate-500/10 border-slate-500/20 text-slate-400'}`}>
                                                     {!user.isDeletable && <i className="fa-solid fa-crown mr-1"></i>}
                                                     {user.role.toUpperCase()}
                                                 </span>

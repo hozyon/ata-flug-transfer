@@ -11,7 +11,7 @@ const Iletisim: React.FC = () => {
 
     const [formData, setFormData] = useState({ name: '', email: '', message: '' });
     const seo = siteContent.seo;
-    const canonical = seo?.canonicalUrl || 'https://ataflugtransfer.com';
+    const canonical = seo?.canonicalUrl || '';
     const pageTitle = seo?.pagesSeo?.contact?.title || 'İletişim';
     const pageDesc = seo?.pagesSeo?.contact?.description || 'Ata Flug Transfer ile 7/24 iletişime geçin.';
 
@@ -48,7 +48,7 @@ const Iletisim: React.FC = () => {
                 </div>
                 <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border border-white/10 mb-4 shadow-lg animate-in fade-in slide-in-from-bottom-3 duration-700">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#c5a059] animate-pulse"></span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse"></span>
                         <span>{t('contact.eyebrow')}</span>
                     </div>
                     <h1 className="text-3xl md:text-5xl lg:text-7xl font-playfair font-medium text-white mb-4 md:mb-6 tracking-tight leading-tight drop-shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
@@ -68,29 +68,29 @@ const Iletisim: React.FC = () => {
                             <h2 className="text-2xl md:text-3xl font-bold text-slate-800 tracking-wide mb-8">{t('contact.formTitle')}</h2>
                             <div className="flex flex-wrap gap-x-4 gap-y-3 mb-8 text-sm">
                                 <div className="flex items-center gap-2">
-                                    <div className="w-8 h-8 rounded-full bg-[#c5a059]/10 flex items-center justify-center"><i className="fa-solid fa-location-dot text-[#c5a059]"></i></div>
+                                    <div className="w-8 h-8 rounded-full bg-[var(--color-primary)]/10 flex items-center justify-center"><i className="fa-solid fa-location-dot text-[var(--color-primary)]"></i></div>
                                     <span className="text-slate-600">{business.address}</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <div className="w-8 h-8 rounded-full bg-[#c5a059]/10 flex items-center justify-center"><i className="fa-solid fa-phone text-[#c5a059] text-sm"></i></div>
-                                    <a href={`tel:${business.phone}`} className="text-slate-600 hover:text-[#c5a059] transition-colors">{business.phone}</a>
+                                    <div className="w-8 h-8 rounded-full bg-[var(--color-primary)]/10 flex items-center justify-center"><i className="fa-solid fa-phone text-[var(--color-primary)] text-sm"></i></div>
+                                    <a href={`tel:${business.phone}`} className="text-slate-600 hover:text-[var(--color-primary)] transition-colors">{business.phone}</a>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <div className="w-8 h-8 rounded-full bg-[#c5a059]/10 flex items-center justify-center"><i className="fa-solid fa-envelope text-[#c5a059] text-sm"></i></div>
-                                    <a href={`mailto:${business.email}`} className="text-slate-600 hover:text-[#c5a059] transition-colors">{business.email}</a>
+                                    <div className="w-8 h-8 rounded-full bg-[var(--color-primary)]/10 flex items-center justify-center"><i className="fa-solid fa-envelope text-[var(--color-primary)] text-sm"></i></div>
+                                    <a href={`mailto:${business.email}`} className="text-slate-600 hover:text-[var(--color-primary)] transition-colors">{business.email}</a>
                                 </div>
                             </div>
                             <form onSubmit={handleSubmit} className="space-y-5 max-w-md">
                                 <input type="text" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    className="w-full px-4 py-3.5 min-h-[48px] border-2 border-slate-200 rounded-2xl text-slate-700 placeholder-slate-400 focus:border-[#c5a059] focus:outline-none transition-colors text-base md:text-sm"
+                                    className="w-full px-4 py-3.5 min-h-[48px] border-2 border-slate-200 rounded-2xl text-slate-700 placeholder-slate-400 focus:border-[var(--color-primary)] focus:outline-none transition-colors text-base md:text-sm"
                                     placeholder={t('contact.namePh')} />
                                 <input type="email" required value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    className="w-full px-4 py-3.5 min-h-[48px] border-2 border-slate-200 rounded-2xl text-slate-700 placeholder-slate-400 focus:border-[#c5a059] focus:outline-none transition-colors text-base md:text-sm"
+                                    className="w-full px-4 py-3.5 min-h-[48px] border-2 border-slate-200 rounded-2xl text-slate-700 placeholder-slate-400 focus:border-[var(--color-primary)] focus:outline-none transition-colors text-base md:text-sm"
                                     placeholder={t('contact.emailPh')} />
                                 <textarea required rows={5} value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                    className="w-full px-4 py-3.5 min-h-[120px] border-2 border-slate-200 rounded-2xl text-slate-700 placeholder-slate-400 focus:border-[#c5a059] focus:outline-none transition-colors resize-none text-base md:text-sm"
+                                    className="w-full px-4 py-3.5 min-h-[120px] border-2 border-slate-200 rounded-2xl text-slate-700 placeholder-slate-400 focus:border-[var(--color-primary)] focus:outline-none transition-colors resize-none text-base md:text-sm"
                                     placeholder={t('contact.msgPh')}></textarea>
-                                <button type="submit" className="w-full md:w-auto bg-[#c5a059] hover:bg-amber-600 text-white font-bold px-10 py-4 min-h-[52px] rounded-2xl transition-colors uppercase tracking-wider flex items-center justify-center gap-2 active:scale-[0.98]">
+                                <button type="submit" className="w-full md:w-auto bg-[var(--color-primary)] hover:bg-amber-600 text-white font-bold px-10 py-4 min-h-[52px] rounded-2xl transition-colors uppercase tracking-wider flex items-center justify-center gap-2 active:scale-[0.98]">
                                     <i className="fab fa-whatsapp text-lg"></i>
                                     {t('contact.send')}
                                 </button>

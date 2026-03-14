@@ -123,7 +123,7 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                     b.time,
                     String(b.passengers),
                     (vehicle?.name || '').replace(/,/g, ' '),
-                    `€${b.totalPrice}`,
+                    `${siteContent.currency?.symbol || '€'}${b.totalPrice}`,
                     STATUS_MAP[b.status]?.label || b.status,
                     b.flightNumber || ''
                 ];
@@ -140,7 +140,7 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
     };
 
     const SortIcon = ({ col }: { col: typeof sortBy }) => (
-        <i className={`fa-solid ${sortBy === col ? (sortDir === 'asc' ? 'fa-arrow-up' : 'fa-arrow-down') : 'fa-sort'} text-[8px] ${sortBy === col ? 'text-[#c5a059]' : 'text-slate-600'}`}></i>
+        <i className={`fa-solid ${sortBy === col ? (sortDir === 'asc' ? 'fa-arrow-up' : 'fa-arrow-down') : 'fa-sort'} text-[8px] ${sortBy === col ? 'text-[var(--color-primary)]' : 'text-slate-600'}`}></i>
     );
 
     // Unique regions from bookings for filter dropdown
@@ -157,12 +157,12 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
         <div className="animate-in slide-in-from-right-8 duration-500 space-y-4">
 
             {/* ── Header Banner ── */}
-            <div className="relative rounded-2xl overflow-hidden border border-white/[0.06] bg-gradient-to-r from-[#0f172a] via-slate-900 to-[#0f172a] p-5">
+            <div className="relative rounded-2xl overflow-hidden border border-white/[0.06] bg-gradient-to-r from-[var(--color-dark)] via-slate-900 to-[var(--color-dark)] p-5">
                 <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(197,160,89,0.12),transparent_60%)]" />
-                <div className="absolute top-0 right-0 w-64 h-full opacity-[0.03]" style={{backgroundImage:'repeating-linear-gradient(45deg,#c5a059 0,#c5a059 1px,transparent 0,transparent 50%)',backgroundSize:'12px 12px'}} />
+                <div className="absolute top-0 right-0 w-64 h-full opacity-[0.03]" style={{backgroundImage:'repeating-linear-gradient(45deg,var(--color-primary) 0,var(--color-primary) 1px,transparent 0,transparent 50%)',backgroundSize:'12px 12px'}} />
                 <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#c5a059] to-amber-700 flex items-center justify-center shadow-xl shadow-amber-900/40 shrink-0">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-amber-700 flex items-center justify-center shadow-xl shadow-amber-900/40 shrink-0">
                             <i className="fa-solid fa-calendar-check text-white text-base"></i>
                         </div>
                         <div>
@@ -178,7 +178,7 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                         </div>
                     </div>
                     <button onClick={exportCSV}
-                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-slate-300 hover:bg-[#c5a059]/10 hover:border-[#c5a059]/30 hover:text-[#c5a059] text-xs font-bold transition-all shrink-0">
+                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-slate-300 hover:bg-[var(--color-primary)]/10 hover:border-[var(--color-primary)]/30 hover:text-[var(--color-primary)] text-xs font-bold transition-all shrink-0">
                         <i className="fa-solid fa-file-arrow-down text-[11px]"></i>
                         CSV İndir
                     </button>
@@ -209,10 +209,10 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                         dot: counts.Pending > 0 ? 'bg-amber-500 animate-pulse' : 'bg-slate-600',
                     },
                     {
-                        label: 'Toplam Gelir', value: `€${bookings.filter(b => b.status === 'Completed').reduce((s, b) => s + b.totalPrice, 0).toLocaleString()}`,
+                        label: 'Toplam Gelir', value: `${siteContent.currency?.symbol || '€'}${bookings.filter(b => b.status === 'Completed').reduce((s, b) => s + b.totalPrice, 0).toLocaleString()}`,
                         sub: `${counts.Completed} tamamlandı`,
-                        icon: 'fa-euro-sign', color: 'text-[#c5a059]',
-                        bg: 'bg-[#c5a059]/10', border: 'border-[#c5a059]/20', dot: 'bg-[#c5a059]',
+                        icon: 'fa-euro-sign', color: 'text-[var(--color-primary)]',
+                        bg: 'bg-[var(--color-primary)]/10', border: 'border-[var(--color-primary)]/20', dot: 'bg-[var(--color-primary)]',
                     },
                 ].map((s, i) => (
                     <div key={i} className={`flex items-center gap-4 p-4 rounded-2xl border ${s.border} ${s.bg}`}>
@@ -247,16 +247,16 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                         return (
                             <button key={tab.id} onClick={() => setBookingFilter(tab.id as any)}
                                 className={`relative flex items-center gap-2 px-4 py-3.5 text-[11px] font-bold whitespace-nowrap transition-all shrink-0
-                                    ${active ? 'text-[#c5a059]' : 'text-slate-600 hover:text-slate-300'}`}>
+                                    ${active ? 'text-[var(--color-primary)]' : 'text-slate-600 hover:text-slate-300'}`}>
                                 <i className={`fa-solid ${tab.icon} text-[10px]`}></i>
                                 {tab.label}
                                 {tab.count > 0 && (
                                     <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md min-w-[20px] text-center
-                                        ${active ? 'bg-[#c5a059]/20 text-[#c5a059]' : 'bg-white/[0.05] text-slate-500'}`}>
+                                        ${active ? 'bg-[var(--color-primary)]/20 text-[var(--color-primary)]' : 'bg-white/[0.05] text-slate-500'}`}>
                                         {tab.count}
                                     </span>
                                 )}
-                                {active && <span className="absolute bottom-0 left-3 right-3 h-[2px] bg-[#c5a059] rounded-t-full" />}
+                                {active && <span className="absolute bottom-0 left-3 right-3 h-[2px] bg-[var(--color-primary)] rounded-t-full" />}
                             </button>
                         );
                     })}
@@ -268,7 +268,7 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                     <div className="relative flex-[1_1_180px] min-w-0">
                         <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 text-[11px]"></i>
                         <input type="text" placeholder="Ad, telefon, ID veya uçuş no..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
-                            className="w-full pl-8 pr-8 py-2 bg-white/[0.04] border border-white/[0.06] rounded-lg text-[13px] text-white placeholder-slate-600 focus:border-[#c5a059]/40 focus:bg-white/[0.06] outline-none transition-all" />
+                            className="w-full pl-8 pr-8 py-2 bg-white/[0.04] border border-white/[0.06] rounded-lg text-[13px] text-white placeholder-slate-600 focus:border-[var(--color-primary)]/40 focus:bg-white/[0.06] outline-none transition-all" />
                         {searchTerm && (
                             <button onClick={() => setSearchTerm('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-600 hover:text-white transition-colors">
                                 <i className="fa-solid fa-xmark text-[10px]"></i>
@@ -280,11 +280,11 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                     <button onClick={() => setShowAdvancedFilters(v => !v)}
                         className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-[11px] font-bold transition-all shrink-0
                             ${showAdvancedFilters || hasActiveFilters
-                                ? 'bg-[#c5a059]/10 text-[#c5a059] border-[#c5a059]/25'
+                                ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] border-[var(--color-primary)]/25'
                                 : 'bg-white/[0.03] text-slate-500 border-white/[0.06] hover:text-white hover:bg-white/[0.06]'}`}>
                         <i className="fa-solid fa-sliders text-[10px]"></i>
                         Filtre
-                        {hasActiveFilters && <span className="w-1.5 h-1.5 rounded-full bg-[#c5a059] ml-0.5"></span>}
+                        {hasActiveFilters && <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] ml-0.5"></span>}
                     </button>
 
                     <MobileViewToggle viewMode={viewMode} onToggle={toggleViewMode} itemCount={filteredBookings.length} />
@@ -314,15 +314,15 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                             <div className="flex items-center gap-2">
                                 <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest whitespace-nowrap">Tarih</span>
                                 <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)}
-                                    className="px-2.5 py-1.5 bg-white/[0.04] border border-white/[0.06] rounded-lg text-[11px] text-white focus:border-[#c5a059]/40 outline-none transition-all [color-scheme:dark]" />
+                                    className="px-2.5 py-1.5 bg-white/[0.04] border border-white/[0.06] rounded-lg text-[11px] text-white focus:border-[var(--color-primary)]/40 outline-none transition-all [color-scheme:dark]" />
                                 <span className="text-slate-700 text-xs">—</span>
                                 <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)}
-                                    className="px-2.5 py-1.5 bg-white/[0.04] border border-white/[0.06] rounded-lg text-[11px] text-white focus:border-[#c5a059]/40 outline-none transition-all [color-scheme:dark]" />
+                                    className="px-2.5 py-1.5 bg-white/[0.04] border border-white/[0.06] rounded-lg text-[11px] text-white focus:border-[var(--color-primary)]/40 outline-none transition-all [color-scheme:dark]" />
                             </div>
                             <div className="flex items-center gap-2">
                                 <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest whitespace-nowrap">Araç</span>
                                 <select value={vehicleFilter} onChange={e => setVehicleFilter(e.target.value)}
-                                    className="px-2.5 py-1.5 bg-white/[0.04] border border-white/[0.06] rounded-lg text-[11px] text-white focus:border-[#c5a059]/40 outline-none transition-all [color-scheme:dark]">
+                                    className="px-2.5 py-1.5 bg-white/[0.04] border border-white/[0.06] rounded-lg text-[11px] text-white focus:border-[var(--color-primary)]/40 outline-none transition-all [color-scheme:dark]">
                                     <option value="all">Tümü</option>
                                     {siteContent.vehicles.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
                                 </select>
@@ -330,7 +330,7 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                             <div className="flex items-center gap-2">
                                 <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest whitespace-nowrap">Bölge</span>
                                 <select value={regionFilter} onChange={e => setRegionFilter(e.target.value)}
-                                    className="px-2.5 py-1.5 bg-white/[0.04] border border-white/[0.06] rounded-lg text-[11px] text-white focus:border-[#c5a059]/40 outline-none transition-all [color-scheme:dark]">
+                                    className="px-2.5 py-1.5 bg-white/[0.04] border border-white/[0.06] rounded-lg text-[11px] text-white focus:border-[var(--color-primary)]/40 outline-none transition-all [color-scheme:dark]">
                                     <option value="all">Tümü</option>
                                     {regionOptions.map(r => <option key={r} value={r}>{r}</option>)}
                                 </select>
@@ -417,7 +417,7 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                                             <div className="flex flex-col items-center gap-0.5 shrink-0">
                                                 <div className="w-2 h-2 rounded-full bg-emerald-400 border border-emerald-500/50"></div>
                                                 <div className="w-px h-3 bg-white/10"></div>
-                                                <div className="w-2 h-2 rounded-full bg-[#c5a059] border border-[#c5a059]/50"></div>
+                                                <div className="w-2 h-2 rounded-full bg-[var(--color-primary)] border border-[var(--color-primary)]/50"></div>
                                             </div>
                                             <div className="min-w-0 flex-1">
                                                 <p className="text-[11px] text-slate-300 truncate">{b.pickup}</p>
@@ -439,7 +439,7 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                                                     <span className="text-[9px] text-slate-600">· {b.passengers} kişi</span>
                                                 </div>
                                             </div>
-                                            <p className="text-lg font-black text-white">€{b.totalPrice}</p>
+                                            <p className="text-lg font-black text-white">{siteContent.currency?.symbol || '€'}{b.totalPrice}</p>
                                         </div>
 
                                         {/* Mobile Action Buttons (always visible) */}
@@ -535,7 +535,7 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                                     return (
                                         <tr key={b.id} onClick={() => setSelectedBookingForView(b)}
                                             className={`relative cursor-pointer transition-all duration-150 group
-                                                ${isSelected ? 'bg-[#c5a059]/[0.07]' : 'hover:bg-white/[0.035]'}
+                                                ${isSelected ? 'bg-[var(--color-primary)]/[0.07]' : 'hover:bg-white/[0.035]'}
                                                 ${b.status === 'Deleted' ? 'opacity-40' : ''}`}>
 
                                             {/* Status accent bar */}
@@ -557,7 +557,7 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                                                     </div>
                                                     <div className="min-w-0">
                                                         <div className="flex items-center gap-2 flex-wrap">
-                                                            <p className="font-bold text-white text-[13px] group-hover:text-[#c5a059] transition-colors truncate leading-tight">
+                                                            <p className="font-bold text-white text-[13px] group-hover:text-[var(--color-primary)] transition-colors truncate leading-tight">
                                                                 {b.customerName.replace(/[\n\r]+/g, ' ').trim()}
                                                             </p>
                                                             {isToday && b.status !== 'Completed' && (
@@ -589,8 +589,8 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                                                 <div className="flex items-start gap-2.5">
                                                     <div className="flex flex-col items-center gap-[3px] shrink-0 mt-1">
                                                         <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.5)]"></div>
-                                                        <div className="w-px h-3.5 bg-gradient-to-b from-emerald-400/50 to-[#c5a059]/50"></div>
-                                                        <div className="w-2 h-2 rounded-full bg-[#c5a059] shadow-[0_0_6px_rgba(197,160,89,0.5)]"></div>
+                                                        <div className="w-px h-3.5 bg-gradient-to-b from-emerald-400/50 to-[var(--color-primary)]/50"></div>
+                                                        <div className="w-2 h-2 rounded-full bg-[var(--color-primary)] shadow-[0_0_6px_rgba(197,160,89,0.5)]"></div>
                                                     </div>
                                                     <div className="min-w-0 space-y-1">
                                                         <p className="text-[11px] text-slate-200 truncate leading-tight font-medium">{b.pickup}</p>
@@ -628,8 +628,8 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
 
                                             {/* Price */}
                                             <td className="px-3 py-4 text-right">
-                                                <span className="text-[15px] font-black text-[#c5a059] tabular-nums tracking-tight">
-                                                    €{b.totalPrice}
+                                                <span className="text-[15px] font-black text-[var(--color-primary)] tabular-nums tracking-tight">
+                                                    {siteContent.currency?.symbol || '€'}{b.totalPrice}
                                                 </span>
                                             </td>
 

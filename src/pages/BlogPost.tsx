@@ -2,14 +2,18 @@
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { BLOG_POSTS, BUSINESS_INFO } from '../constants';
+import { BLOG_POSTS } from '../constants';
 import TextureBackground from '../components/TextureBackground';
 import { useLanguage } from '../i18n/LanguageContext';
+import { useSiteContent } from '../SiteContext';
 
 const BlogPost: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
     const { t, language } = useLanguage();
+    const { siteContent } = useSiteContent();
     const post = BLOG_POSTS.find(p => p.slug === slug);
+    const canonicalBase = siteContent.seo?.canonicalUrl || '';
+    const businessName = siteContent.business.name;
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -21,7 +25,7 @@ const BlogPost: React.FC = () => {
                 <div className="text-center px-4">
                     <h1 className="text-6xl font-playfair font-bold text-slate-800 mb-4">404</h1>
                     <p className="text-slate-500 text-lg mb-8">{t('blogPost.notFound')}</p>
-                    <Link to="/blog" className="inline-flex items-center gap-2 bg-[#c5a059] text-white px-8 py-3 rounded-full hover:bg-amber-600 transition-colors">
+                    <Link to="/blog" className="inline-flex items-center gap-2 bg-[var(--color-primary)] text-white px-8 py-3 rounded-full hover:bg-amber-600 transition-colors">
                         <i className="fa-solid fa-arrow-left"></i>
                         <span>{t('blogPost.backToBlog')}</span>
                     </Link>
@@ -40,13 +44,13 @@ const BlogPost: React.FC = () => {
         // Improved simple markdown parser
         let html = content
             .replace(/^# (.*$)/gm, '<h1 class="text-4xl md:text-5xl font-playfair font-bold text-slate-900 mb-8 mt-12 leading-tight">$1</h1>')
-            .replace(/^## (.*$)/gm, '<h2 class="text-2xl md:text-3xl font-playfair font-bold text-slate-800 mt-12 mb-6 border-l-4 border-[#c5a059] pl-4">$1</h2>')
+            .replace(/^## (.*$)/gm, '<h2 class="text-2xl md:text-3xl font-playfair font-bold text-slate-800 mt-12 mb-6 border-l-4 border-[var(--color-primary)] pl-4">$1</h2>')
             .replace(/^### (.*$)/gm, '<h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-4">$1</h3>')
             .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900">$1</strong>')
-            .replace(/^- (.*$)/gm, '<li class="flex items-start gap-3 mb-3 text-slate-600"><span class="mt-2 w-1.5 h-1.5 bg-[#c5a059] rounded-full flex-shrink-0"></span><span>$1</span></li>')
-            .replace(/^(\d+)\. \*\*(.*?)\*\* - (.*$)/gm, '<li class="mb-4 ml-4 list-decimal marker:text-[#c5a059] pl-2 text-slate-600"><strong>$2</strong> - $3</li>')
-            .replace(/^> (.*$)/gm, '<blockquote class="border-l-4 border-[#c5a059]/30 bg-[#c5a059]/5 p-6 italic text-slate-700 my-8 rounded-r-lg relative"><i class="fa-solid fa-quote-left absolute top-4 left-2 text-[#c5a059]/20 text-2xl"></i>$1</blockquote>')
-            .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-[#c5a059] font-bold hover:underline decoration-2 underline-offset-2">$1</a>')
+            .replace(/^- (.*$)/gm, '<li class="flex items-start gap-3 mb-3 text-slate-600"><span class="mt-2 w-1.5 h-1.5 bg-[var(--color-primary)] rounded-full flex-shrink-0"></span><span>$1</span></li>')
+            .replace(/^(\d+)\. \*\*(.*?)\*\* - (.*$)/gm, '<li class="mb-4 ml-4 list-decimal marker:text-[var(--color-primary)] pl-2 text-slate-600"><strong>$2</strong> - $3</li>')
+            .replace(/^> (.*$)/gm, '<blockquote class="border-l-4 border-[var(--color-primary)]/30 bg-[var(--color-primary)]/5 p-6 italic text-slate-700 my-8 rounded-r-lg relative"><i class="fa-solid fa-quote-left absolute top-4 left-2 text-[var(--color-primary)]/20 text-2xl"></i>$1</blockquote>')
+            .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-[var(--color-primary)] font-bold hover:underline decoration-2 underline-offset-2">$1</a>')
             .replace(/\n\n/g, '<div class="h-4"></div>') // spacing
             .replace(/\n/g, ' '); // collapse single newlines
 
@@ -58,23 +62,23 @@ const BlogPost: React.FC = () => {
     return (
         <div className="min-h-screen bg-slate-50">
             <Helmet>
-                <title>{translatedTitle} | {BUSINESS_INFO.name}</title>
+                <title>{translatedTitle} | {businessName}</title>
                 <meta name="description" content={translatedExcerpt} />
                 <meta name="robots" content="index, follow" />
-                <link rel="canonical" href={`https://ataflugtransfer.com/blog/${post.slug}`} />
+                <link rel="canonical" href={`${canonicalBase}/blog/${post.slug}`} />
                 <meta property="og:title" content={translatedTitle} />
                 <meta property="og:description" content={translatedExcerpt} />
                 <meta property="og:image" content={post.featuredImage} />
                 <meta property="og:image:width" content="1200" />
                 <meta property="og:image:height" content="630" />
                 <meta property="og:type" content="article" />
-                <meta property="og:url" content={`https://ataflugtransfer.com/blog/${post.slug}`} />
+                <meta property="og:url" content={`${canonicalBase}/blog/${post.slug}`} />
                 <meta property="og:locale" content={language === 'tr' ? 'tr_TR' : language === 'de' ? 'de_DE' : language === 'ru' ? 'ru_RU' : 'en_US'} />
-                <meta property="og:site_name" content={BUSINESS_INFO.name} />
+                <meta property="og:site_name" content={businessName} />
                 <meta property="article:published_time" content={post.publishedAt} />
                 <meta property="article:section" content={translatedCategory} />
                 <meta name="twitter:card" content="summary_large_image" />
-                <meta name="twitter:site" content="@ataflugtransfer" />
+                <meta name="twitter:site" content={siteContent.seo?.twitterHandle || ''} />
                 <meta name="twitter:title" content={translatedTitle} />
                 <meta name="twitter:description" content={translatedExcerpt} />
                 <meta name="twitter:image" content={post.featuredImage} />
@@ -85,14 +89,14 @@ const BlogPost: React.FC = () => {
                     "description": translatedExcerpt,
                     "image": post.featuredImage,
                     "datePublished": post.publishedAt,
-                    "author": { "@type": "Organization", "name": BUSINESS_INFO.name },
+                    "author": { "@type": "Organization", "name": businessName },
                     "publisher": {
                         "@type": "Organization",
-                        "name": BUSINESS_INFO.name,
-                        "logo": { "@type": "ImageObject", "url": "https://ataflugtransfer.com/logo.png" }
+                        "name": businessName,
+                        "logo": { "@type": "ImageObject", "url": siteContent.business.logo || '' }
                     },
-                    "url": `https://ataflugtransfer.com/blog/${post.slug}`,
-                    "mainEntityOfPage": { "@type": "WebPage", "@id": `https://ataflugtransfer.com/blog/${post.slug}` }
+                    "url": `${canonicalBase}/blog/${post.slug}`,
+                    "mainEntityOfPage": { "@type": "WebPage", "@id": `${canonicalBase}/blog/${post.slug}` }
                 })}</script>
             </Helmet>
 
@@ -107,7 +111,7 @@ const BlogPost: React.FC = () => {
                     <div className="max-w-7xl mx-auto">
                         <div className="max-w-3xl">
                             <Link to="/blog" className="inline-flex items-center text-white/80 hover:text-white mb-6 transition-colors group relative z-50">
-                                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center mr-3 group-hover:bg-[#c5a059] transition-colors">
+                                <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center mr-3 group-hover:bg-[var(--color-primary)] transition-colors">
                                     <i className="fa-solid fa-arrow-left text-sm"></i>
                                 </div>
                                 <span className="font-medium tracking-wide text-sm">{t('blogPost.allPosts')}</span>
@@ -115,7 +119,7 @@ const BlogPost: React.FC = () => {
 
                             <div className="flex flex-wrap gap-4 mb-4">
                                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border border-white/10 shadow-lg">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-[#c5a059] animate-pulse"></span>
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse"></span>
                                     <span>{translatedCategory}</span>
                                 </div>
                                 <span className="bg-white/20 backdrop-blur-md text-white border border-white/20 text-xs font-bold px-4 py-1.5 rounded-full flex items-center gap-2">
@@ -130,7 +134,7 @@ const BlogPost: React.FC = () => {
 
                             <div className="flex items-center gap-4 text-white/80 border-t border-white/10 pt-4 mt-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-[#c5a059] font-bold border border-white/10">
+                                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-[var(--color-primary)] font-bold border border-white/10">
                                         AF
                                     </div>
                                     <div className="flex flex-col">
@@ -165,7 +169,7 @@ const BlogPost: React.FC = () => {
                                 <div className="mt-12 pt-8 border-t border-slate-100 relative z-10">
                                     <div className="flex flex-wrap gap-2">
                                         {post.tags.map(tag => (
-                                            <span key={tag} className="bg-slate-50 text-slate-500 text-sm px-4 py-2 rounded-full hover:bg-[#c5a059] hover:text-white transition-colors cursor-default">
+                                            <span key={tag} className="bg-slate-50 text-slate-500 text-sm px-4 py-2 rounded-full hover:bg-[var(--color-primary)] hover:text-white transition-colors cursor-default">
                                                 #{tag}
                                             </span>
                                         ))}
@@ -197,7 +201,7 @@ const BlogPost: React.FC = () => {
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                        <i className="fa-solid fa-shield-alt text-[#c5a059] text-xl"></i>
+                                        <i className="fa-solid fa-shield-alt text-[var(--color-primary)] text-xl"></i>
                                         <div className="flex flex-col">
                                             <span className="font-bold text-slate-700 text-sm">{t('blogPost.license')}</span>
                                             <span className="text-slate-400 text-xs">{t('blogPost.licenseDesc')}</span>
@@ -206,7 +210,7 @@ const BlogPost: React.FC = () => {
                                 </div>
 
                                 <a
-                                    href={`https://wa.me/${BUSINESS_INFO.whatsapp}?text=${t('blogPost.waMsg')}`}
+                                    href={`https://wa.me/${siteContent.business.whatsapp}?text=${t('blogPost.waMsg')}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="block w-full bg-[#25D366] hover:bg-[#20bd5a] text-white text-center font-bold py-4 rounded-xl shadow-lg shadow-green-500/20 transition-all transform hover:-translate-y-1"
@@ -225,7 +229,7 @@ const BlogPost: React.FC = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between mb-12">
                         <h2 className="text-3xl font-playfair font-bold text-slate-800">{t('blogPost.readAlso')}</h2>
-                        <Link to="/blog" className="text-[#c5a059] font-bold hover:underline">{t('blogPost.viewAll')}</Link>
+                        <Link to="/blog" className="text-[var(--color-primary)] font-bold hover:underline">{t('blogPost.viewAll')}</Link>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -238,7 +242,7 @@ const BlogPost: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="p-6">
-                                    <h3 className="text-lg font-bold text-slate-800 group-hover:text-[#c5a059] transition-colors line-clamp-2 mb-2">
+                                    <h3 className="text-lg font-bold text-slate-800 group-hover:text-[var(--color-primary)] transition-colors line-clamp-2 mb-2">
                                         {p.title}
                                     </h3>
                                     <div className="flex items-center text-slate-400 text-xs">

@@ -91,7 +91,7 @@ export const FAQView: React.FC<FAQViewProps> = ({
                             { id: 'unanswered' as const, label: 'Boş Cevap', icon: 'fa-triangle-exclamation' },
                         ].map(tab => (
                             <button key={tab.id} onClick={() => setFaqFilter(tab.id)}
-                                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${faqFilter === tab.id ? 'bg-[#c5a059] text-white shadow-lg shadow-[#c5a059]/20' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}>
+                                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${faqFilter === tab.id ? 'bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/20' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}>
                                 <i className={`fa-solid ${tab.icon} text-[10px]`}></i>
                                 {tab.label}
                                 <span className={`text-[9px] font-black min-w-[18px] h-[18px] flex items-center justify-center rounded-full ${faqFilter === tab.id ? 'bg-white/20' : 'bg-white/5'}`}>{counts[tab.id]}</span>
@@ -104,10 +104,10 @@ export const FAQView: React.FC<FAQViewProps> = ({
                         <div className="relative flex-1 sm:w-56">
                             <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 text-xs"></i>
                             <input type="text" placeholder="Soru ara..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
-                                className="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/[0.06] rounded-xl text-sm text-white placeholder-slate-600 focus:border-[#c5a059]/50 outline-none transition-all" />
+                                className="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/[0.06] rounded-xl text-sm text-white placeholder-slate-600 focus:border-[var(--color-primary)]/50 outline-none transition-all" />
                         </div>
                         <button onClick={() => { const id = Date.now().toString(); setEditContent({ ...editContent, faq: [...editContent.faq, { id, q: 'Yeni Soru', a: '' }] }); setHighlightedFaqId(id); setTimeout(() => setHighlightedFaqId(null), 500); }}
-                            className="px-4 py-2.5 bg-[#c5a059] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 shrink-0">
+                            className="px-4 py-2.5 bg-[var(--color-primary)] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 shrink-0">
                             <i className="fa-solid fa-plus text-[10px]"></i> Yeni Soru
                         </button>
                     </div>
@@ -170,13 +170,13 @@ export const FAQView: React.FC<FAQViewProps> = ({
                                         {isExpanded && (
                                             <div className="mt-3 pt-3 border-t border-white/[0.04] space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
                                                 <div>
-                                                    <label className="text-[10px] font-black text-[#c5a059] uppercase tracking-widest mb-1 block">Soru</label>
-                                                    <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-3 py-2.5 text-sm text-white focus:border-[#c5a059]/50 outline-none"
+                                                    <label className="text-[10px] font-black text-[var(--color-primary)] uppercase tracking-widest mb-1 block">Soru</label>
+                                                    <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-3 py-2.5 text-sm text-white focus:border-[var(--color-primary)]/50 outline-none"
                                                         value={item.q} onChange={e => { const n = [...allFaq]; n[globalIndex] = { ...n[globalIndex], q: e.target.value }; setEditContent({ ...editContent, faq: n }); }} onClick={e => e.stopPropagation()} />
                                                 </div>
                                                 <div>
-                                                    <label className="text-[10px] font-black text-[#c5a059] uppercase tracking-widest mb-1 block">Cevap</label>
-                                                    <textarea className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-3 py-2.5 text-sm text-slate-300 focus:border-[#c5a059]/50 outline-none resize-none" rows={3}
+                                                    <label className="text-[10px] font-black text-[var(--color-primary)] uppercase tracking-widest mb-1 block">Cevap</label>
+                                                    <textarea className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-3 py-2.5 text-sm text-slate-300 focus:border-[var(--color-primary)]/50 outline-none resize-none" rows={3}
                                                         value={item.a || ''} onChange={e => { const n = [...allFaq]; n[globalIndex] = { ...n[globalIndex], a: e.target.value }; setEditContent({ ...editContent, faq: n }); }} onClick={e => e.stopPropagation()} />
                                                 </div>
                                             </div>
@@ -210,7 +210,7 @@ export const FAQView: React.FC<FAQViewProps> = ({
                                     return (
                                         <React.Fragment key={item.id}>
                                             <tr {...(!isFiltering ? getDragProps(globalIndex) : {})} onClick={() => setExpandedId(isExpanded ? null : item.id)}
-                                                className={`border-b border-white/[0.03] cursor-pointer transition-all group ${!isFiltering ? 'active:cursor-grabbing' : ''} ${highlightedFaqId === item.id ? 'bg-[#c5a059]/[0.08] border-[#c5a059]/30' : 'hover:bg-white/[0.03]'} ${item.hidden ? 'opacity-50 hover:opacity-100' : ''} ${getRowClassName(globalIndex)}`}>
+                                                className={`border-b border-white/[0.03] cursor-pointer transition-all group ${!isFiltering ? 'active:cursor-grabbing' : ''} ${highlightedFaqId === item.id ? 'bg-[var(--color-primary)]/[0.08] border-[var(--color-primary)]/30' : 'hover:bg-white/[0.03]'} ${item.hidden ? 'opacity-50 hover:opacity-100' : ''} ${getRowClassName(globalIndex)}`}>
                                                 <td className="px-2 py-3.5" onClick={e => e.stopPropagation()}>
                                                     {!isFiltering && (
                                                         <div className="flex items-center justify-center text-slate-600 hover:text-slate-300 transition-colors cursor-grab">
@@ -229,7 +229,7 @@ export const FAQView: React.FC<FAQViewProps> = ({
                                                             <i className={`fa-solid ${hasAnswer ? 'fa-question' : 'fa-exclamation'} text-white text-sm`}></i>
                                                         </div>
                                                         <div className="min-w-0">
-                                                            <p className="font-bold text-white text-[13px] group-hover:text-[#c5a059] transition-colors truncate max-w-[400px]">{item.q}</p>
+                                                            <p className="font-bold text-white text-[13px] group-hover:text-[var(--color-primary)] transition-colors truncate max-w-[400px]">{item.q}</p>
                                                             {hasAnswer && <p className="text-[10px] text-slate-500 truncate max-w-[400px] mt-0.5">{item.a}</p>}
                                                         </div>
                                                     </div>
@@ -273,10 +273,10 @@ export const FAQView: React.FC<FAQViewProps> = ({
                                                     <td colSpan={5} className="px-6 py-5">
                                                         <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300 max-w-3xl">
                                                             <div>
-                                                                <label className="flex items-center gap-2 text-[10px] font-black text-[#c5a059] uppercase tracking-widest mb-2">
+                                                                <label className="flex items-center gap-2 text-[10px] font-black text-[var(--color-primary)] uppercase tracking-widest mb-2">
                                                                     <i className="fa-solid fa-q text-[8px]"></i> Soru
                                                                 </label>
-                                                                <textarea className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-medium text-sm outline-none focus:border-[#c5a059] transition-all resize-none" rows={2} value={item.q}
+                                                                <textarea className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-medium text-sm outline-none focus:border-[var(--color-primary)] transition-all resize-none" rows={2} value={item.q}
                                                                     onChange={e => { const n = [...allFaq]; n[globalIndex].q = e.target.value; setEditContent({ ...editContent, faq: n }); }} />
                                                             </div>
                                                             <div>

@@ -126,13 +126,13 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
         <div className="h-screen h-[100dvh] flex flex-col lg:flex-row bg-[#030712] relative overflow-hidden">
             {/* Animated Background */}
             <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-[-20%] right-[-10%] w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] bg-[#c5a059]/8 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '8s' }} />
+                <div className="absolute top-[-20%] right-[-10%] w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] bg-[var(--color-primary)]/8 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '8s' }} />
                 <div className="absolute bottom-[-20%] left-[-10%] w-[250px] sm:w-[500px] h-[250px] sm:h-[500px] bg-blue-600/5 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '12s' }} />
                 <div className="hidden sm:block absolute top-[40%] left-[30%] w-[300px] h-[300px] bg-violet-600/5 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: '10s' }} />
 
                 {particles.map(p => (
                     <div key={p.id}
-                        className="absolute rounded-full bg-[#c5a059]"
+                        className="absolute rounded-full bg-[var(--color-primary)]"
                         style={{
                             left: `${p.x}%`, width: `${p.size}px`, height: `${p.size}px`,
                             opacity: p.opacity,
@@ -172,7 +172,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                 <div className="w-full max-w-[380px]">
                     {/* Logo */}
                     <div className="flex flex-col items-center mb-8 sm:mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#c5a059] to-amber-700 flex items-center justify-center shadow-2xl shadow-[#c5a059]/30 mb-5 relative">
+                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-amber-700 flex items-center justify-center shadow-2xl shadow-[var(--color-primary)]/30 mb-5 relative">
                             <img src="/logo.png" alt="Logo" className="h-10 w-auto object-contain brightness-0 invert" />
                             <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-[3px] border-[#030712] flex items-center justify-center">
                                 <i className="fa-solid fa-check text-[6px] text-white"></i>
@@ -191,7 +191,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                     }`}
                         style={loginStage === 'error' ? { animation: 'errorShake 0.5s ease-out' } : undefined}>
 
-                        {isFocused && <div className="absolute -inset-px rounded-2xl bg-gradient-to-b from-[#c5a059]/20 to-transparent opacity-50 pointer-events-none" />}
+                        {isFocused && <div className="absolute -inset-px rounded-2xl bg-gradient-to-b from-[var(--color-primary)]/20 to-transparent opacity-50 pointer-events-none" />}
 
                         <div className="relative p-5 sm:p-8">
                             {loginStage === 'success' ? (
@@ -229,10 +229,10 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                                         {/* Email */}
                                         <div>
                                             <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5 mb-2.5">
-                                                <i className="fa-solid fa-envelope text-[8px] text-[#c5a059]"></i> E-posta
+                                                <i className="fa-solid fa-envelope text-[8px] text-[var(--color-primary)]"></i> E-posta
                                             </label>
-                                            <div className={`relative rounded-xl border transition-all duration-300 ${isFocused === 'email' ? 'border-[#c5a059]/50 bg-white/[0.04] shadow-lg shadow-[#c5a059]/5' : 'border-white/[0.06] bg-white/[0.02] hover:border-white/10'}`}>
-                                                <i className={`fa-solid fa-at absolute left-4 top-1/2 -translate-y-1/2 text-sm transition-colors duration-300 ${isFocused === 'email' ? 'text-[#c5a059]' : 'text-slate-600'}`}></i>
+                                            <div className={`relative rounded-xl border transition-all duration-300 ${isFocused === 'email' ? 'border-[var(--color-primary)]/50 bg-white/[0.04] shadow-lg shadow-[var(--color-primary)]/5' : 'border-white/[0.06] bg-white/[0.02] hover:border-white/10'}`}>
+                                                <i className={`fa-solid fa-at absolute left-4 top-1/2 -translate-y-1/2 text-sm transition-colors duration-300 ${isFocused === 'email' ? 'text-[var(--color-primary)]' : 'text-slate-600'}`}></i>
                                                 <input
                                                     ref={emailRef}
                                                     type="email"
@@ -252,17 +252,17 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                                         <div>
                                             <div className="flex justify-between items-center mb-2.5">
                                                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                                                    <i className="fa-solid fa-lock text-[8px] text-[#c5a059]"></i> Şifre
+                                                    <i className="fa-solid fa-lock text-[8px] text-[var(--color-primary)]"></i> Şifre
                                                 </label>
                                                 <button
                                                     type="button"
                                                     onClick={handleForgotPassword}
-                                                    className="text-[10px] text-[#c5a059]/60 hover:text-[#c5a059] font-bold transition-colors">
+                                                    className="text-[10px] text-[var(--color-primary)]/60 hover:text-[var(--color-primary)] font-bold transition-colors">
                                                     Şifremi Unuttum?
                                                 </button>
                                             </div>
-                                            <div className={`relative rounded-xl border transition-all duration-300 ${isFocused === 'password' ? 'border-[#c5a059]/50 bg-white/[0.04] shadow-lg shadow-[#c5a059]/5' : 'border-white/[0.06] bg-white/[0.02] hover:border-white/10'}`}>
-                                                <i className={`fa-solid fa-fingerprint absolute left-4 top-1/2 -translate-y-1/2 text-sm transition-colors duration-300 ${isFocused === 'password' ? 'text-[#c5a059]' : 'text-slate-600'}`}></i>
+                                            <div className={`relative rounded-xl border transition-all duration-300 ${isFocused === 'password' ? 'border-[var(--color-primary)]/50 bg-white/[0.04] shadow-lg shadow-[var(--color-primary)]/5' : 'border-white/[0.06] bg-white/[0.02] hover:border-white/10'}`}>
+                                                <i className={`fa-solid fa-fingerprint absolute left-4 top-1/2 -translate-y-1/2 text-sm transition-colors duration-300 ${isFocused === 'password' ? 'text-[var(--color-primary)]' : 'text-slate-600'}`}></i>
                                                 <input
                                                     type={showPassword ? 'text' : 'password'}
                                                     value={password}
@@ -288,7 +288,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                                             type="submit"
                                             disabled={isLoading || !email || !password}
                                             className="group relative w-full h-[52px] rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0">
-                                            <div className="absolute inset-0 bg-gradient-to-r from-[#c5a059] to-amber-600 transition-all duration-300 group-hover:from-amber-600 group-hover:to-[#c5a059]" />
+                                            <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-primary)] to-amber-600 transition-all duration-300 group-hover:from-amber-600 group-hover:to-[var(--color-primary)]" />
                                             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                                                 <div className="absolute -inset-full top-0 h-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shine_1.5s_ease-in-out_infinite]" />
                                             </div>
@@ -357,15 +357,15 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                     </div>
 
                     <div className="mb-8" key={sloganIndex}>
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#c5a059]/10 border border-[#c5a059]/20 mb-6"
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 mb-6"
                             style={{ animation: 'slideInText 0.6s ease-out' }}>
-                            <span className="w-1.5 h-1.5 bg-[#c5a059] rounded-full shadow-[0_0_8px_#c5a059]"></span>
-                            <span className="text-[10px] font-bold text-[#c5a059] uppercase tracking-widest">Güvenli Erişim</span>
+                            <span className="w-1.5 h-1.5 bg-[var(--color-primary)] rounded-full shadow-[0_0_8px_var(--color-primary)]"></span>
+                            <span className="text-[10px] font-bold text-[var(--color-primary)] uppercase tracking-widest">Güvenli Erişim</span>
                         </div>
                         <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-white mb-5 leading-[1.15]"
                             style={{ animation: 'slideInText 0.6s ease-out 0.1s both' }}>
                             {activeSlogan.title}{' '}
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#c5a059] to-amber-400">
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-amber-400">
                                 {activeSlogan.highlight}
                             </span>
                         </h2>
@@ -378,7 +378,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                     <div className="flex gap-1.5">
                         {LOGIN_SLOGANS.map((_, i) => (
                             <button key={i} onClick={() => setSloganIndex(i)}
-                                className={`h-1 rounded-full transition-all duration-500 ${i === sloganIndex ? 'w-8 bg-[#c5a059]' : 'w-1.5 bg-white/10 hover:bg-white/20'}`} />
+                                className={`h-1 rounded-full transition-all duration-500 ${i === sloganIndex ? 'w-8 bg-[var(--color-primary)]' : 'w-1.5 bg-white/10 hover:bg-white/20'}`} />
                         ))}
                     </div>
 
@@ -386,7 +386,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                         {[
                             { icon: 'fa-chart-mixed', label: 'Analitik Dashboard', color: 'from-blue-500/10 to-indigo-500/5', border: 'border-blue-500/10' },
                             { icon: 'fa-users-gear', label: 'Çoklu Kullanıcı', color: 'from-violet-500/10 to-purple-500/5', border: 'border-violet-500/10' },
-                            { icon: 'fa-bell', label: 'Akıllı Bildirimler', color: 'from-[#c5a059]/10 to-amber-500/5', border: 'border-[#c5a059]/10' },
+                            { icon: 'fa-bell', label: 'Akıllı Bildirimler', color: 'from-[var(--color-primary)]/10 to-amber-500/5', border: 'border-[var(--color-primary)]/10' },
                         ].map((feat, i) => (
                             <div key={i} className={`p-3 rounded-xl bg-gradient-to-br ${feat.color} border ${feat.border} backdrop-blur-sm animate-in fade-in slide-in-from-bottom-4 duration-700`}
                                 style={{ animationDelay: `${i * 100 + 600}ms` }}>

@@ -24,9 +24,9 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent }) => {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {[
                     { label: 'Toplam Bölge', value: regions.length, icon: 'fa-map-location-dot', iconBg: 'bg-blue-500', gradient: 'from-blue-500/15 to-indigo-600/5', border: 'border-blue-500/15' },
-                    { label: 'Ortalama', value: `€${avg}`, icon: 'fa-chart-line', iconBg: 'bg-emerald-500', gradient: 'from-emerald-500/15 to-green-600/5', border: 'border-emerald-500/15' },
-                    { label: 'Min Fiyat', value: `€${prices.length > 0 ? Math.min(...prices) : 0}`, icon: 'fa-arrow-trend-down', iconBg: 'bg-amber-500', gradient: 'from-amber-500/15 to-orange-600/5', border: 'border-amber-500/15' },
-                    { label: 'Max Fiyat', value: `€${prices.length > 0 ? Math.max(...prices) : 0}`, icon: 'fa-arrow-trend-up', iconBg: 'bg-[#c5a059]', gradient: 'from-[#c5a059]/15 to-amber-600/5', border: 'border-[#c5a059]/15' },
+                    { label: 'Ortalama', value: `${editContent.currency?.symbol || '€'}${avg}`, icon: 'fa-chart-line', iconBg: 'bg-emerald-500', gradient: 'from-emerald-500/15 to-green-600/5', border: 'border-emerald-500/15' },
+                    { label: 'Min Fiyat', value: `${editContent.currency?.symbol || '€'}${prices.length > 0 ? Math.min(...prices) : 0}`, icon: 'fa-arrow-trend-down', iconBg: 'bg-amber-500', gradient: 'from-amber-500/15 to-orange-600/5', border: 'border-amber-500/15' },
+                    { label: 'Max Fiyat', value: `${editContent.currency?.symbol || '€'}${prices.length > 0 ? Math.max(...prices) : 0}`, icon: 'fa-arrow-trend-up', iconBg: 'bg-[var(--color-primary)]', gradient: 'from-[var(--color-primary)]/15 to-amber-600/5', border: 'border-[var(--color-primary)]/15' },
                 ].map((s, i) => (
                     <div key={i} className={`p-4 rounded-2xl bg-gradient-to-br ${s.gradient} border ${s.border}`}>
                         <div className="flex items-start justify-between">
@@ -47,7 +47,7 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent }) => {
                 {/* Toolbar */}
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-4 py-4">
                     <div className="flex items-center gap-2">
-                        <i className="fa-solid fa-tags text-[#c5a059] text-sm"></i>
+                        <i className="fa-solid fa-tags text-[var(--color-primary)] text-sm"></i>
                         <span className="text-sm font-bold text-white">Fiyat Tablosu</span>
                         <span className="text-[9px] font-black min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-white/5 text-slate-400">{filtered.length}</span>
                     </div>
@@ -61,7 +61,7 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent }) => {
                                 placeholder="Bölge veya açıklama ara..."
                                 value={searchTerm}
                                 onChange={e => setSearchTerm(e.target.value)}
-                                className="w-full pl-9 pr-8 py-2.5 bg-white/5 border border-white/[0.06] rounded-xl text-sm text-white placeholder-slate-600 focus:border-[#c5a059]/50 outline-none transition-all"
+                                className="w-full pl-9 pr-8 py-2.5 bg-white/5 border border-white/[0.06] rounded-xl text-sm text-white placeholder-slate-600 focus:border-[var(--color-primary)]/50 outline-none transition-all"
                             />
                             {searchTerm && (
                                 <button onClick={() => setSearchTerm('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors">
@@ -108,7 +108,7 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent }) => {
                                         </div>
                                     </div>
                                     <div className="text-right shrink-0">
-                                        <p className="text-xl font-black text-[#c5a059]">€{region.price}</p>
+                                        <p className="text-xl font-black text-[var(--color-primary)]">{editContent.currency?.symbol || '€'}{region.price}</p>
                                         <p className="text-[9px] text-slate-600">tek yön</p>
                                     </div>
                                 </div>
@@ -136,7 +136,7 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent }) => {
                                     const isMin = price === minPrice && minPrice > 0;
                                     const isMax = price === maxPrice && maxPrice > 0 && maxPrice !== minPrice;
                                     const isAvg = !isMin && !isMax && Math.abs(price - avg) <= 5;
-                                    const priceColor = isMin ? 'text-emerald-400' : isMax ? 'text-red-400' : isAvg ? 'text-[#c5a059]' : 'text-[#c5a059]';
+                                    const priceColor = isMin ? 'text-emerald-400' : isMax ? 'text-red-400' : isAvg ? 'text-[var(--color-primary)]' : 'text-[var(--color-primary)]';
 
                                     return (
                                     <tr key={region.id} className={`border-b border-white/[0.03] transition-all group ${index % 2 === 1 ? 'bg-white/[0.02] hover:bg-white/[0.04]' : 'hover:bg-white/[0.03]'}`}>
@@ -151,7 +151,7 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent }) => {
                                                     <img src={region.image} className="w-full h-full object-cover" alt={region.name} />
                                                 </div>
                                                 <div>
-                                                    <p className="font-bold text-white text-[13px] group-hover:text-[#c5a059] transition-colors">{region.name}</p>
+                                                    <p className="font-bold text-white text-[13px] group-hover:text-[var(--color-primary)] transition-colors">{region.name}</p>
                                                     <p className="text-[10px] text-slate-500 mt-0.5 truncate max-w-[200px]">{region.desc}</p>
                                                 </div>
                                             </div>
@@ -161,7 +161,7 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent }) => {
                                                 <div className="flex flex-col items-center gap-0.5 shrink-0">
                                                     <div className="w-2 h-2 rounded-full bg-sky-400 border border-sky-500/50"></div>
                                                     <div className="w-px h-3 bg-white/10"></div>
-                                                    <div className="w-2 h-2 rounded-full bg-[#c5a059] border border-[#c5a059]/50"></div>
+                                                    <div className="w-2 h-2 rounded-full bg-[var(--color-primary)] border border-[var(--color-primary)]/50"></div>
                                                 </div>
                                                 <div>
                                                     <p className="text-[11px] text-slate-300">Antalya Havalimanı</p>
@@ -173,9 +173,9 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent }) => {
                                             <div className="flex items-center justify-end gap-2">
                                                 {isMin && <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">MIN</span>}
                                                 {isMax && <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20">MAX</span>}
-                                                {isAvg && <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-[#c5a059]/10 text-[#c5a059] border border-[#c5a059]/20">ORT</span>}
+                                                {isAvg && <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20">ORT</span>}
                                                 <div>
-                                                    <p className={`text-lg font-black ${priceColor}`}>€{region.price}</p>
+                                                    <p className={`text-lg font-black ${priceColor}`}>{editContent.currency?.symbol || '€'}{region.price}</p>
                                                     <p className="text-[9px] text-slate-600">tek yön</p>
                                                 </div>
                                             </div>

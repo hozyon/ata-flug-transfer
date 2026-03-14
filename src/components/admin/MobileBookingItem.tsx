@@ -42,7 +42,7 @@ export const MobileBookingItem: React.FC<MobileBookingItemProps> = ({ booking: b
                         <span className="bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] text-emerald-100 text-[8px] font-black uppercase px-1.5 py-0.5 rounded animate-pulse shrink-0">Bugün</span>
                     )}
                 </div>
-                <p className="text-xs text-slate-400 truncate opacity-80">{b.pickup} <i className="fa-solid fa-arrow-right text-[8px] mx-1 text-[#c5a059]/50"></i> {b.destination}</p>
+                <p className="text-xs text-slate-400 truncate opacity-80">{b.pickup} <i className="fa-solid fa-arrow-right text-[8px] mx-1 text-[var(--color-primary)]/50"></i> {b.destination}</p>
             </div>
             <div className="flex flex-col items-end gap-1 pointer-events-none">
                 <span className="text-sm font-black text-white tabular-nums drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">€{b.totalPrice}</span>

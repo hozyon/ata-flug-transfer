@@ -19,7 +19,7 @@ const SSS: React.FC = () => {
     }));
 
     const seo = siteContent.seo;
-    const canonical = seo?.canonicalUrl || 'https://ataflugtransfer.com';
+    const canonical = seo?.canonicalUrl || '';
     const pageTitle = seo?.pagesSeo?.faq?.title || 'Sıkça Sorulan Sorular';
     const pageDesc = seo?.pagesSeo?.faq?.description || 'Antalya transfer hizmeti hakkında merak ettiğiniz tüm sorular ve cevapları.';
 
@@ -59,7 +59,7 @@ const SSS: React.FC = () => {
                 </div>
                 <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border border-white/10 mb-4 shadow-lg animate-in fade-in slide-in-from-bottom-3 duration-700">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#c5a059] animate-pulse"></span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse"></span>
                         <span>{t('faq.eyebrow')}</span>
                     </div>
                     <h1 className="text-5xl md:text-7xl font-playfair font-medium text-white mb-6 tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 drop-shadow-2xl">
@@ -79,7 +79,7 @@ const SSS: React.FC = () => {
                             <div key={faq.id} className="bg-white rounded-2xl shadow-sm overflow-hidden">
                                 <button onClick={() => setOpenId(openId === faq.id ? null : faq.id)} className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
                                     <span className="font-bold text-slate-800 pr-4">{faq.q}</span>
-                                    <i className={`fa-solid fa-chevron-down text-[#c5a059] transition-transform ${openId === faq.id ? 'rotate-180' : ''}`}></i>
+                                    <i className={`fa-solid fa-chevron-down text-[var(--color-primary)] transition-transform ${openId === faq.id ? 'rotate-180' : ''}`}></i>
                                 </button>
                                 {openId === faq.id && (
                                     <div className="px-6 pb-5"><p className="text-slate-600 leading-relaxed">{faq.a}</p></div>
@@ -92,8 +92,8 @@ const SSS: React.FC = () => {
 
             <section className="py-16 bg-white">
                 <div className="max-w-4xl mx-auto px-4 text-center">
-                    <div className="w-20 h-20 bg-[#c5a059]/10 rounded-full mx-auto flex items-center justify-center mb-6">
-                        <i className="fa-solid fa-question text-[#c5a059] text-3xl"></i>
+                    <div className="w-20 h-20 bg-[var(--color-primary)]/10 rounded-full mx-auto flex items-center justify-center mb-6">
+                        <i className="fa-solid fa-question text-[var(--color-primary)] text-3xl"></i>
                     </div>
                     <h2 className="text-2xl font-bold text-slate-800">{t('faq.moreQ')}</h2>
                     <p className="text-slate-600 mt-2">{t('faq.moreQDesc')}</p>
@@ -104,21 +104,21 @@ const SSS: React.FC = () => {
                 </div>
             </section>
 
-            <section className="py-16 bg-[#0f172a]">
+            <section className="py-16 bg-[var(--color-dark)]">
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div className="text-center">
-                            <div className="w-16 h-16 bg-[#c5a059] rounded-2xl mx-auto flex items-center justify-center text-white text-2xl"><i className="fa-solid fa-phone"></i></div>
+                            <div className="w-16 h-16 bg-[var(--color-primary)] rounded-2xl mx-auto flex items-center justify-center text-white text-2xl"><i className="fa-solid fa-phone"></i></div>
                             <h3 className="text-white font-bold mt-4">{t('faq.phone')}</h3>
                             <p className="text-slate-300 mt-1">{business.phone}</p>
                         </div>
                         <div className="text-center">
-                            <div className="w-16 h-16 bg-[#c5a059] rounded-2xl mx-auto flex items-center justify-center text-white text-2xl"><i className="fa-solid fa-envelope"></i></div>
+                            <div className="w-16 h-16 bg-[var(--color-primary)] rounded-2xl mx-auto flex items-center justify-center text-white text-2xl"><i className="fa-solid fa-envelope"></i></div>
                             <h3 className="text-white font-bold mt-4">{t('faq.email')}</h3>
                             <p className="text-slate-300 mt-1">{business.email}</p>
                         </div>
                         <div className="text-center">
-                            <div className="w-16 h-16 bg-[#c5a059] rounded-2xl mx-auto flex items-center justify-center text-white text-2xl"><i className="fa-solid fa-clock"></i></div>
+                            <div className="w-16 h-16 bg-[var(--color-primary)] rounded-2xl mx-auto flex items-center justify-center text-white text-2xl"><i className="fa-solid fa-clock"></i></div>
                             <h3 className="text-white font-bold mt-4">{t('faq.workHours')}</h3>
                             <p className="text-slate-300 mt-1">{t('faq.service247')}</p>
                         </div>

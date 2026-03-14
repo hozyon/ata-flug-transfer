@@ -812,13 +812,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   const pendingReviews = userReviews.filter(r => r.status === 'pending').length;
 
   return (
-    <div className="flex h-screen overflow-hidden relative bg-[#06080F] text-slate-200 selection:bg-[#c5a059] selection:text-white">
+    <div className="flex h-screen overflow-hidden relative bg-[#06080F] text-slate-200 selection:bg-[var(--color-primary)] selection:text-white">
       {/* 2026 SaaS Static Premium Background */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         {/* Deep Ambient Base Gradient */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#111827_0%,#06080F_100%)]"></div>
         {/* Static Subtle Color Accents */}
-        <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-[#c5a059]/5 to-transparent"></div>
+        <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-[var(--color-primary)]/5 to-transparent"></div>
         <div className="absolute -top-[10%] -right-[10%] w-[50%] h-[50%] rounded-full bg-indigo-500/5 blur-[120px]"></div>
         {/* Subtle Noise Texture Overlay (Static) */}
         <div className="absolute inset-0 opacity-[0.015] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
@@ -898,7 +898,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
         <div className="px-6 py-5 border-b border-white/[0.06] flex items-center justify-between bg-white/[0.02]">
           <div>
             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Toplam Tutar</p>
-            <p className="text-4xl font-black text-[#c5a059] leading-none">€{selectedBookingForView.totalPrice}</p>
+            <p className="text-4xl font-black text-[var(--color-primary)] leading-none">{siteContent.currency?.symbol || '€'}{selectedBookingForView.totalPrice}</p>
           </div>
           <div className="text-right">
             <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Kayıt Tarihi</p>
@@ -934,7 +934,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                     <span className="text-sm font-bold text-white">{selectedBookingForView.phone}</span>
                   </div>
                   <a
-                    href={`https://wa.me/${selectedBookingForView.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Merhaba ${selectedBookingForView.customerName.replace(/[\n\r]+/g, ' ').trim()}, ATA FLUG TRANSFER rezervasyonunuz onaylandı.\n📅 ${selectedBookingForView.date} ${selectedBookingForView.time}\n📍 ${selectedBookingForView.pickup} → ${selectedBookingForView.destination}`)}`}
+                    href={`https://wa.me/${selectedBookingForView.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Merhaba ${selectedBookingForView.customerName.replace(/[\n\r]+/g, ' ').trim()}, ${siteContent.business.name} rezervasyonunuz onaylandı.\n📅 ${selectedBookingForView.date} ${selectedBookingForView.time}\n📍 ${selectedBookingForView.pickup} → ${selectedBookingForView.destination}`)}`}
                     target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 text-[11px] font-black hover:bg-emerald-500/30 transition-all">
                     <i className="fa-brands fa-whatsapp"></i> WhatsApp
@@ -949,7 +949,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                       <span className="text-xs font-bold text-white truncate max-w-[140px]">{selectedBookingForView.email}</span>
                     </div>
                     <a
-                      href={`mailto:${selectedBookingForView.email}?subject=Rezervasyon%20Onay%C4%B1%20-%20ATA%20FLUG%20TRANSFER&body=${encodeURIComponent(`Sayın ${selectedBookingForView.customerName.replace(/[\n\r]+/g, ' ').trim()},\n\nRezervasyon bilgileriniz:\nTarih: ${selectedBookingForView.date} ${selectedBookingForView.time}\nKalkış: ${selectedBookingForView.pickup}\nVarış: ${selectedBookingForView.destination}\n\nATA FLUG TRANSFER`)}`}
+                      href={`mailto:${selectedBookingForView.email}?subject=${encodeURIComponent(`Rezervasyon Onayı - ${siteContent.business.name}`)}&body=${encodeURIComponent(`Sayın ${selectedBookingForView.customerName.replace(/[\n\r]+/g, ' ').trim()},\n\nRezervasyon bilgileriniz:\nTarih: ${selectedBookingForView.date} ${selectedBookingForView.time}\nKalkış: ${selectedBookingForView.pickup}\nVarış: ${selectedBookingForView.destination}\n\n${siteContent.business.name}`)}`}
                       onClick={e => e.stopPropagation()}
                       className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/15 text-blue-400 border border-blue-500/20 text-[11px] font-black hover:bg-blue-500/30 transition-all">
                       <i className="fa-solid fa-paper-plane text-[10px]"></i> E-posta
@@ -970,16 +970,16 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               <div className="flex items-stretch gap-3">
                 <div className="flex flex-col items-center gap-1 pt-1">
                   <div className="w-3 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]"></div>
-                  <div className="flex-1 w-[2px] bg-gradient-to-b from-emerald-400/50 to-[#c5a059]/50 min-h-[28px]"></div>
-                  <div className="w-3 h-3 rounded-full bg-[#c5a059] shadow-[0_0_8px_rgba(197,160,89,0.5)]"></div>
+                  <div className="flex-1 w-[2px] bg-gradient-to-b from-emerald-400/50 to-[var(--color-primary)]/50 min-h-[28px]"></div>
+                  <div className="w-3 h-3 rounded-full bg-[var(--color-primary)] shadow-[0_0_8px_rgba(197,160,89,0.5)]"></div>
                 </div>
                 <div className="flex-1 space-y-3">
                   <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/10">
                     <p className="text-[9px] font-black text-emerald-400 uppercase tracking-widest mb-1">Alış Noktası</p>
                     <p className="text-sm font-bold text-white leading-tight">{selectedBookingForView.pickup}</p>
                   </div>
-                  <div className="p-3 rounded-xl bg-[#c5a059]/5 border border-[#c5a059]/10">
-                    <p className="text-[9px] font-black text-[#c5a059] uppercase tracking-widest mb-1">Varış Noktası</p>
+                  <div className="p-3 rounded-xl bg-[var(--color-primary)]/5 border border-[var(--color-primary)]/10">
+                    <p className="text-[9px] font-black text-[var(--color-primary)] uppercase tracking-widest mb-1">Varış Noktası</p>
                     <p className="text-sm font-bold text-white leading-tight">{selectedBookingForView.destination}</p>
                   </div>
                 </div>
@@ -1011,7 +1011,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
             return vehicle ? (
               <div className="rounded-2xl overflow-hidden border border-white/[0.08] bg-white/[0.03]">
                 <div className="px-4 py-2.5 border-b border-white/[0.05] flex items-center gap-2">
-                  <i className="fa-solid fa-car text-[#c5a059] text-[11px]"></i>
+                  <i className="fa-solid fa-car text-[var(--color-primary)] text-[11px]"></i>
                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Araç Bilgisi</span>
                 </div>
                 <div className="p-4 flex items-center justify-between">
@@ -1019,17 +1019,17 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                     <p className="text-sm font-black text-white mb-2">{vehicle.name}</p>
                     <div className="flex gap-2">
                       <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/5 text-[11px] font-bold text-slate-300">
-                        <i className="fa-solid fa-users text-[#c5a059] text-[9px]"></i>
+                        <i className="fa-solid fa-users text-[var(--color-primary)] text-[9px]"></i>
                         {selectedBookingForView.passengers}/{vehicle.capacity} kişi
                       </span>
                       <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/5 text-[11px] font-bold text-slate-300">
-                        <i className="fa-solid fa-suitcase text-[#c5a059] text-[9px]"></i>
+                        <i className="fa-solid fa-suitcase text-[var(--color-primary)] text-[9px]"></i>
                         Max {vehicle.luggage}
                       </span>
                     </div>
                   </div>
-                  <div className="w-16 h-10 rounded-xl bg-[#c5a059]/10 border border-[#c5a059]/20 flex items-center justify-center">
-                    <i className="fa-solid fa-car-side text-[#c5a059] text-xl"></i>
+                  <div className="w-16 h-10 rounded-xl bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 flex items-center justify-center">
+                    <i className="fa-solid fa-car-side text-[var(--color-primary)] text-xl"></i>
                   </div>
                 </div>
               </div>
@@ -1178,7 +1178,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                     {editContent.vehicles.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
                   </select>
                 </div>
-                <button type="submit" className="w-full bg-[#c5a059] text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-gold/20 hover:bg-[#b08d4a] transition-all mt-4">Rezervasyonu Kaydet</button>
+                <button type="submit" className="w-full bg-[var(--color-primary)] text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-gold/20 hover:bg-[#b08d4a] transition-all mt-4">Rezervasyonu Kaydet</button>
               </form>
             </div>
           </div>
@@ -1206,7 +1206,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
         {/* Show Expand Button when Closed */}
         {!isSidebarOpen && (
-          <button onClick={() => setIsSidebarOpen(true)} className="absolute -right-3 top-20 w-6 h-6 bg-[#c5a059] rounded-full flex items-center justify-center text-white shadow-lg shadow-black/20 text-[10px] hover:bg-amber-600 transition-colors z-[60]">
+          <button onClick={() => setIsSidebarOpen(true)} className="absolute -right-3 top-20 w-6 h-6 bg-[var(--color-primary)] rounded-full flex items-center justify-center text-white shadow-lg shadow-black/20 text-[10px] hover:bg-amber-600 transition-colors z-[60]">
             <i className="fa-solid fa-chevron-right"></i>
           </button>
         )}
@@ -1228,26 +1228,26 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
           className={`w-full py-2.5 rounded-xl flex items-center ${isSidebarOpen ? 'justify-start px-4 gap-3' : 'justify-center'} transition-all group relative ${activeView === item.id ? 'bg-gradient-to-r from-white/[0.08] to-transparent text-white shadow-[inset_1px_0_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
         >
           {activeView === item.id && (
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[#c5a059] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[var(--color-primary)] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
           )}
-          <div className={`shrink-0 transition-transform duration-300 ${activeView === item.id ? 'scale-110 text-[#c5a059]' : 'group-hover:scale-110 group-hover:text-white'}`}>
+          <div className={`shrink-0 transition-transform duration-300 ${activeView === item.id ? 'scale-110 text-[var(--color-primary)]' : 'group-hover:scale-110 group-hover:text-white'}`}>
             {item.icon}
           </div>
           {isSidebarOpen && <span className="text-[11px] font-black whitespace-nowrap truncate tracking-wide">{item.label}</span>}
           {item.badge > 0 && (
-            <span className={`flex items-center justify-center text-[8px] font-black rounded-full bg-red-500 text-white ring-2 ring-[#020617] ${isSidebarOpen ? 'ml-auto shrink-0 w-[18px] h-[18px]' : 'absolute top-1 right-1.5 w-[14px] h-[14px]'}`}>
+            <span className={`flex items-center justify-center text-[8px] font-black rounded-full bg-red-500 text-white ring-2 ring-[var(--color-darker)] ${isSidebarOpen ? 'ml-auto shrink-0 w-[18px] h-[18px]' : 'absolute top-1 right-1.5 w-[14px] h-[14px]'}`}>
               {item.badge > 9 ? '9+' : item.badge}
             </span>
           )}
         </button>
         {!isSidebarOpen && (
-          <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
-            <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[#c5a059] to-amber-600" />
+          <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[var(--color-dark)]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
+            <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[var(--color-primary)] to-amber-600" />
             <div className="flex items-center gap-2.5">
               <span>{item.label}</span>
               {item.badge > 0 && <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 text-[10px] font-black">{item.badge}</span>}
             </div>
-            <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[#0f172a]/95" />
+            <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[var(--color-dark)]/95" />
           </div>
         )}
       </div>
@@ -1271,23 +1271,23 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
           className={`w-full py-2.5 rounded-xl flex items-center ${isSidebarOpen ? 'justify-start px-4 gap-3' : 'justify-center'} transition-all group relative ${activeView === item.id ? 'bg-gradient-to-r from-white/[0.08] to-transparent text-white shadow-[inset_1px_0_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
         >
           {activeView === item.id && (
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[#c5a059] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[var(--color-primary)] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
           )}
-          <div className={`shrink-0 transition-transform duration-300 ${activeView === item.id ? 'scale-110 text-[#c5a059]' : 'group-hover:scale-110 group-hover:text-white'}`}>
+          <div className={`shrink-0 transition-transform duration-300 ${activeView === item.id ? 'scale-110 text-[var(--color-primary)]' : 'group-hover:scale-110 group-hover:text-white'}`}>
             {item.icon}
           </div>
           {isSidebarOpen && <span className="text-[11px] font-black whitespace-nowrap truncate tracking-wide">{item.label}</span>}
           {item.badge > 0 && (
-            <span className={`flex items-center justify-center text-[8px] font-black rounded-full bg-red-500 text-white ring-2 ring-[#020617] ${isSidebarOpen ? 'ml-auto shrink-0 w-[18px] h-[18px]' : 'absolute top-1 right-1.5 w-[14px] h-[14px]'}`}>
+            <span className={`flex items-center justify-center text-[8px] font-black rounded-full bg-red-500 text-white ring-2 ring-[var(--color-darker)] ${isSidebarOpen ? 'ml-auto shrink-0 w-[18px] h-[18px]' : 'absolute top-1 right-1.5 w-[14px] h-[14px]'}`}>
               {item.badge > 9 ? '9+' : item.badge}
             </span>
           )}
         </button>
         {!isSidebarOpen && (
-          <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
-            <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[#c5a059] to-amber-600" />
+          <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[var(--color-dark)]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
+            <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[var(--color-primary)] to-amber-600" />
             <span>{item.label}</span>
-            <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[#0f172a]/95" />
+            <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[var(--color-dark)]/95" />
           </div>
         )}
       </div>
@@ -1312,18 +1312,18 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
           className={`w-full py-2.5 rounded-xl flex items-center ${isSidebarOpen ? 'justify-start px-4 gap-3' : 'justify-center'} transition-all group relative ${activeView === item.id ? 'bg-gradient-to-r from-white/[0.08] to-transparent text-white shadow-[inset_1px_0_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
         >
           {activeView === item.id && (
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[#c5a059] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[var(--color-primary)] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
           )}
-          <div className={`shrink-0 transition-transform duration-300 ${activeView === item.id ? 'scale-110 text-[#c5a059]' : 'group-hover:scale-110 group-hover:text-white'}`}>
+          <div className={`shrink-0 transition-transform duration-300 ${activeView === item.id ? 'scale-110 text-[var(--color-primary)]' : 'group-hover:scale-110 group-hover:text-white'}`}>
             {item.icon}
           </div>
           {isSidebarOpen && <span className="text-[11px] font-black whitespace-nowrap truncate tracking-wide">{item.label}</span>}
         </button>
         {!isSidebarOpen && (
-          <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
-            <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[#c5a059] to-amber-600" />
+          <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[var(--color-dark)]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
+            <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[var(--color-primary)] to-amber-600" />
             <span>{item.label}</span>
-            <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[#0f172a]/95" />
+            <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[var(--color-dark)]/95" />
           </div>
         )}
       </div>
@@ -1340,14 +1340,14 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
         className={`w-full py-2.5 rounded-xl flex items-center ${isSidebarOpen ? 'justify-start px-4 gap-3' : 'justify-center'} transition-all group relative ${(activeView === 'about' || activeView === 'visionMission') ? 'bg-gradient-to-r from-white/[0.08] to-transparent text-white shadow-[inset_1px_0_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
       >
         {(activeView === 'about' || activeView === 'visionMission') && (
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[#c5a059] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[var(--color-primary)] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
         )}
-        <div className={`shrink-0 transition-transform duration-300 ${(activeView === 'about' || activeView === 'visionMission') ? 'scale-110 text-[#c5a059]' : 'group-hover:scale-110 group-hover:text-white'}`}>
+        <div className={`shrink-0 transition-transform duration-300 ${(activeView === 'about' || activeView === 'visionMission') ? 'scale-110 text-[var(--color-primary)]' : 'group-hover:scale-110 group-hover:text-white'}`}>
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /><rect width="20" height="14" x="2" y="6" rx="2" /></svg>
         </div>
         {isSidebarOpen && <span className="text-[11px] font-black whitespace-nowrap truncate tracking-wide flex-1 text-left">KURUMSAL</span>}
         {isSidebarOpen && (
-          <i className={`fa-solid fa-chevron-down text-[10px] transition-transform duration-300 ${isCorporateOpen ? 'rotate-180 text-[#c5a059]' : 'opacity-50'}`}></i>
+          <i className={`fa-solid fa-chevron-down text-[10px] transition-transform duration-300 ${isCorporateOpen ? 'rotate-180 text-[var(--color-primary)]' : 'opacity-50'}`}></i>
         )}
       </button>
       {isSidebarOpen && isCorporateOpen && (
@@ -1359,19 +1359,19 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
             <button
               key={subItem.id}
               onClick={() => setActiveView(subItem.id as DashboardView)}
-              className={`w-full text-left py-2 px-3 rounded-lg text-[11px] font-black tracking-wide transition-all relative ${activeView === subItem.id ? 'text-[#c5a059] bg-white/[0.04]' : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'}`}
+              className={`w-full text-left py-2 px-3 rounded-lg text-[11px] font-black tracking-wide transition-all relative ${activeView === subItem.id ? 'text-[var(--color-primary)] bg-white/[0.04]' : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'}`}
             >
-              <span className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full transition-all ${activeView === subItem.id ? 'bg-[#c5a059] shadow-[0_0_5px_rgba(197,160,89,0.8)]' : 'bg-transparent'}`}></span>
+              <span className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full transition-all ${activeView === subItem.id ? 'bg-[var(--color-primary)] shadow-[0_0_5px_rgba(197,160,89,0.8)]' : 'bg-transparent'}`}></span>
               <span className={activeView === subItem.id ? 'pl-2' : ''}>{subItem.label}</span>
             </button>
           ))}
         </div>
       )}
       {!isSidebarOpen && (
-        <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
-          <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[#c5a059] to-amber-600" />
+        <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[var(--color-dark)]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
+          <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[var(--color-primary)] to-amber-600" />
           <span>KURUMSAL</span>
-          <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[#0f172a]/95" />
+          <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[var(--color-dark)]/95" />
         </div>
       )}
     </div>
@@ -1385,18 +1385,18 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
         className={`w-full py-2.5 rounded-xl flex items-center ${isSidebarOpen ? 'justify-start px-4 gap-3' : 'justify-center'} transition-all group relative ${activeView === 'account' ? 'bg-gradient-to-r from-white/[0.08] to-transparent text-white shadow-[inset_1px_0_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
       >
         {activeView === 'account' && (
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[#c5a059] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[var(--color-primary)] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
         )}
-        <div className={`shrink-0 transition-transform duration-300 ${activeView === 'account' ? 'scale-110 text-[#c5a059]' : 'group-hover:scale-110 group-hover:text-white'}`}>
+        <div className={`shrink-0 transition-transform duration-300 ${activeView === 'account' ? 'scale-110 text-[var(--color-primary)]' : 'group-hover:scale-110 group-hover:text-white'}`}>
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
         </div>
         {isSidebarOpen && <span className="text-[11px] font-black whitespace-nowrap truncate tracking-wide">HESAP AYARLARI</span>}
       </button>
       {!isSidebarOpen && (
-        <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
-          <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[#c5a059] to-amber-600" />
+        <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[var(--color-dark)]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
+          <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[var(--color-primary)] to-amber-600" />
           <span>HESAP AYARLARI</span>
-          <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[#0f172a]/95" />
+          <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[var(--color-dark)]/95" />
         </div>
       )}
     </div>
@@ -1418,10 +1418,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               {isSidebarOpen && <span className="text-[13px] font-bold whitespace-nowrap truncate">Siteyi Görüntüle</span>}
             </a>
             {!isSidebarOpen && (
-              <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
-                <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[#c5a059] to-amber-600" />
+              <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[var(--color-dark)]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
+                <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[var(--color-primary)] to-amber-600" />
                 Siteyi Görüntüle
-                <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[#0f172a]/95" />
+                <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[var(--color-dark)]/95" />
               </div>
             )}
           </div>
@@ -1443,10 +1443,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
             <button
               key={tab.id}
               onClick={() => { setActiveView(tab.id as DashboardView); setIsMobileMenuOpen(false); }}
-              className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-all relative ${activeView === tab.id && !isMobileMenuOpen ? 'text-[#c5a059]' : 'text-slate-600 active:text-slate-400'}`}
+              className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-all relative ${activeView === tab.id && !isMobileMenuOpen ? 'text-[var(--color-primary)]' : 'text-slate-600 active:text-slate-400'}`}
             >
               {activeView === tab.id && !isMobileMenuOpen && (
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2px] bg-[#c5a059] rounded-full shadow-[0_0_8px_rgba(197,160,89,0.5)]" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2px] bg-[var(--color-primary)] rounded-full shadow-[0_0_8px_rgba(197,160,89,0.5)]" />
               )}
               <div className="relative">
                 <i className={`fa-solid ${tab.icon} text-[16px]`}></i>
@@ -1462,9 +1462,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-all relative ${isMobileMenuOpen ? 'text-[#c5a059]' : 'text-slate-600 active:text-slate-400'}`}
+            className={`flex flex-col items-center justify-center gap-0.5 flex-1 h-full transition-all relative ${isMobileMenuOpen ? 'text-[var(--color-primary)]' : 'text-slate-600 active:text-slate-400'}`}
           >
-            {isMobileMenuOpen && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2px] bg-[#c5a059] rounded-full" />}
+            {isMobileMenuOpen && <div className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2px] bg-[var(--color-primary)] rounded-full" />}
             {isMobileMenuOpen ? (
               <i className="fa-solid fa-xmark text-[16px] transition-transform duration-200 rotate-90"></i>
             ) : (
@@ -1495,12 +1495,12 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                   { id: 'regions', label: 'Bölgeler', icon: 'fa-map-location-dot', color: 'text-teal-400' },
                 ].map(item => (
                   <button key={item.id} onClick={() => { setActiveView(item.id as DashboardView); setIsMobileMenuOpen(false); }}
-                    className={`flex flex-col items-center gap-1.5 py-3 px-1 rounded-2xl transition-all active:scale-95 ${activeView === item.id ? 'bg-[#c5a059]/10 ring-1 ring-[#c5a059]/20' : 'bg-white/[0.03]'}`}>
+                    className={`flex flex-col items-center gap-1.5 py-3 px-1 rounded-2xl transition-all active:scale-95 ${activeView === item.id ? 'bg-[var(--color-primary)]/10 ring-1 ring-[var(--color-primary)]/20' : 'bg-white/[0.03]'}`}>
                     <div className="relative">
-                      <i className={`fa-solid ${item.icon} ${activeView === item.id ? 'text-[#c5a059]' : item.color} text-[17px]`}></i>
+                      <i className={`fa-solid ${item.icon} ${activeView === item.id ? 'text-[var(--color-primary)]' : item.color} text-[17px]`}></i>
                       {(item as any).badge > 0 && <span className="absolute -top-1 -right-2.5 w-[13px] h-[13px] flex items-center justify-center text-[7px] font-black rounded-full bg-red-500 text-white">{(item as any).badge}</span>}
                     </div>
-                    <span className={`text-[9px] font-bold leading-tight text-center ${activeView === item.id ? 'text-[#c5a059]' : 'text-slate-500'}`}>{item.label}</span>
+                    <span className={`text-[9px] font-bold leading-tight text-center ${activeView === item.id ? 'text-[var(--color-primary)]' : 'text-slate-500'}`}>{item.label}</span>
                   </button>
                 ))}
               </div>
@@ -1518,9 +1518,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                   { id: 'site-settings', label: 'Menü', icon: 'fa-bars', color: 'text-cyan-400' },
                 ].map(item => (
                   <button key={item.id} onClick={() => { setActiveView(item.id as DashboardView); setIsMobileMenuOpen(false); }}
-                    className={`flex flex-col items-center gap-1.5 py-3 px-1 rounded-2xl transition-all active:scale-95 ${activeView === item.id ? 'bg-[#c5a059]/10 ring-1 ring-[#c5a059]/20' : 'bg-white/[0.03]'}`}>
-                    <i className={`fa-solid ${item.icon} ${activeView === item.id ? 'text-[#c5a059]' : item.color} text-[17px]`}></i>
-                    <span className={`text-[9px] font-bold leading-tight text-center ${activeView === item.id ? 'text-[#c5a059]' : 'text-slate-500'}`}>{item.label}</span>
+                    className={`flex flex-col items-center gap-1.5 py-3 px-1 rounded-2xl transition-all active:scale-95 ${activeView === item.id ? 'bg-[var(--color-primary)]/10 ring-1 ring-[var(--color-primary)]/20' : 'bg-white/[0.03]'}`}>
+                    <i className={`fa-solid ${item.icon} ${activeView === item.id ? 'text-[var(--color-primary)]' : item.color} text-[17px]`}></i>
+                    <span className={`text-[9px] font-bold leading-tight text-center ${activeView === item.id ? 'text-[var(--color-primary)]' : 'text-slate-500'}`}>{item.label}</span>
                   </button>
                 ))}
               </div>
@@ -1532,14 +1532,14 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                   { id: 'account', label: 'Hesap', icon: 'fa-user-gear' },
                 ].map(item => (
                   <button key={item.id} onClick={() => { setActiveView(item.id as DashboardView); setIsMobileMenuOpen(false); }}
-                    className={`flex-1 flex items-center gap-2.5 py-3 px-3.5 rounded-2xl transition-all active:scale-[0.97] ${activeView === item.id ? 'bg-[#c5a059]/10 ring-1 ring-[#c5a059]/20' : 'bg-white/[0.03]'}`}>
-                    <i className={`fa-solid ${item.icon} ${activeView === item.id ? 'text-[#c5a059]' : 'text-slate-500'} text-sm`}></i>
-                    <span className={`text-[11px] font-bold ${activeView === item.id ? 'text-[#c5a059]' : 'text-slate-500'}`}>{item.label}</span>
+                    className={`flex-1 flex items-center gap-2.5 py-3 px-3.5 rounded-2xl transition-all active:scale-[0.97] ${activeView === item.id ? 'bg-[var(--color-primary)]/10 ring-1 ring-[var(--color-primary)]/20' : 'bg-white/[0.03]'}`}>
+                    <i className={`fa-solid ${item.icon} ${activeView === item.id ? 'text-[var(--color-primary)]' : 'text-slate-500'} text-sm`}></i>
+                    <span className={`text-[11px] font-bold ${activeView === item.id ? 'text-[var(--color-primary)]' : 'text-slate-500'}`}>{item.label}</span>
                   </button>
                 ))}
                 <a href="/" target="_blank" rel="noopener noreferrer"
                   className="flex items-center gap-2.5 py-3 px-3.5 rounded-2xl bg-white/[0.03] transition-all active:scale-[0.97]">
-                  <i className="fa-solid fa-arrow-up-right-from-square text-[#c5a059] text-sm"></i>
+                  <i className="fa-solid fa-arrow-up-right-from-square text-[var(--color-primary)] text-sm"></i>
                   <span className="text-[11px] font-bold text-slate-500">Site</span>
                 </a>
               </div>
@@ -1592,11 +1592,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
             className="flex items-center justify-center transition-all duration-200 overflow-hidden"
             style={{ height: pullDistance || (isRefreshing ? 48 : 0), opacity: Math.min(1, pullDistance / 60) }}
           >
-            <div className={`w-8 h-8 rounded-full border-2 border-[#c5a059] flex items-center justify-center ${isRefreshing ? 'animate-spin' : ''}`}>
+            <div className={`w-8 h-8 rounded-full border-2 border-[var(--color-primary)] flex items-center justify-center ${isRefreshing ? 'animate-spin' : ''}`}>
               {isRefreshing ? (
-                <i className="fa-solid fa-circle-notch text-[#c5a059] text-sm"></i>
+                <i className="fa-solid fa-circle-notch text-[var(--color-primary)] text-sm"></i>
               ) : (
-                <i className={`fa-solid fa-arrow-down text-[#c5a059] text-xs transition-transform ${pullDistance >= 80 ? 'rotate-180' : ''}`}></i>
+                <i className={`fa-solid fa-arrow-down text-[var(--color-primary)] text-xs transition-transform ${pullDistance >= 80 ? 'rotate-180' : ''}`}></i>
               )}
             </div>
           </div>
@@ -1606,9 +1606,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
             {/* Breadcrumb */}
             {activeView !== 'overview' && (
               <div className="flex items-center gap-1.5 mb-2 text-[10px] font-bold uppercase tracking-wider">
-                <button onClick={() => setActiveView('overview')} className="text-slate-500 hover:text-[#c5a059] transition-colors">Panel</button>
+                <button onClick={() => setActiveView('overview')} className="text-slate-500 hover:text-[var(--color-primary)] transition-colors">Panel</button>
                 <i className="fa-solid fa-chevron-right text-[7px] text-slate-600"></i>
-                <span className="text-[#c5a059]">{VIEW_LABELS[activeView]?.label || activeView}</span>
+                <span className="text-[var(--color-primary)]">{VIEW_LABELS[activeView]?.label || activeView}</span>
               </div>
             )}
             {activeView === 'overview' && (
@@ -1616,7 +1616,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
             )}
             <h1 className={`text-3xl font-black capitalize tracking-tight ${isDarkTheme ? 'text-white' : 'text-slate-900'} leading-tight`}>
               {activeView === 'overview' ? (
-                <>{greeting.emoji} {greeting.text}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#c5a059] to-amber-300">Admin</span></>
+                <>{greeting.emoji} {greeting.text}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-amber-300">Admin</span></>
               ) : (
                 VIEW_LABELS[activeView]?.label || activeView.replace('-', ' ')
               )}
@@ -1652,7 +1652,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
             <div className="flex items-center gap-2">
               {saveStatus === 'saving' && (
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 animate-pulse">
-                  <i className="fa-solid fa-circle-notch fa-spin text-[#c5a059] text-xs"></i>
+                  <i className="fa-solid fa-circle-notch fa-spin text-[var(--color-primary)] text-xs"></i>
                   <span className="text-[11px] font-bold text-slate-400">Kaydediliyor...</span>
                 </div>
               )}
@@ -1672,8 +1672,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
             {/* User Profile Dropdown */}
             <div className="relative group z-50">
               <button className="flex items-center gap-2 pl-2 md:pl-4 border-l border-white/10 outline-none">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#c5a059] to-amber-600 p-[2px] shadow-lg shadow-black/20 group-hover:shadow-[#c5a059]/30 transition-shadow">
-                  <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center border-2 border-[#020617] relative overflow-hidden">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-amber-600 p-[2px] shadow-lg shadow-black/20 group-hover:shadow-[var(--color-primary)]/30 transition-shadow">
+                  <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center border-2 border-[var(--color-darker)] relative overflow-hidden">
                     <img src={accountForm.avatar} alt="Admin Profil" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors"></div>
                   </div>
@@ -1681,9 +1681,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               </button>
               {/* Dropdown Menu */}
               <div className="absolute right-0 top-full mt-3 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 transform origin-top-right">
-                <div className="bg-[#0f172a]/95 backdrop-blur-3xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden py-1.5 flex flex-col">
+                <div className="bg-[var(--color-dark)]/95 backdrop-blur-3xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden py-1.5 flex flex-col">
                   {/* Pointer arrow */}
-                  <div className="absolute -top-1.5 right-4 w-3 h-3 bg-[#0f172a] border-t border-l border-white/10 rotate-45"></div>
+                  <div className="absolute -top-1.5 right-4 w-3 h-3 bg-[var(--color-dark)] border-t border-l border-white/10 rotate-45"></div>
 
                   <div className="px-4 py-3 border-b border-white/5 bg-white/[0.02]">
                     <p className="text-white text-xs font-bold truncate">Admin</p>
@@ -1694,7 +1694,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                       onClick={() => setActiveView('account')}
                       className="w-full text-left px-3 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors flex items-center gap-2"
                     >
-                      <i className="fa-solid fa-user-gear text-[#c5a059] w-3"></i> Hesap Ayarları
+                      <i className="fa-solid fa-user-gear text-[var(--color-primary)] w-3"></i> Hesap Ayarları
                     </button>
                     <button
                       onClick={onExitAdmin}
@@ -1764,7 +1764,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
             {/* KPI Cards — Flat, Minimal + Today + Trend — Mobile: horizontal scroll snap carousel */}
             {(() => {
               const kpiItems = [
-                { label: 'Toplam Ciro', val: `€${stats.totalRevenue.toLocaleString()}`, icon: 'fa-coins', color: 'text-amber-400', bg: 'bg-amber-400/10', trend: stats.revenueTrend !== 0 ? `${stats.revenueTrend > 0 ? '+' : ''}${stats.revenueTrend.toFixed(0)}%` : null, trendUp: stats.revenueTrend > 0 },
+                { label: 'Toplam Ciro', val: `${siteContent.currency?.symbol || '€'}${stats.totalRevenue.toLocaleString()}`, icon: 'fa-coins', color: 'text-amber-400', bg: 'bg-amber-400/10', trend: stats.revenueTrend !== 0 ? `${stats.revenueTrend > 0 ? '+' : ''}${stats.revenueTrend.toFixed(0)}%` : null, trendUp: stats.revenueTrend > 0 },
                 { label: 'Onaylı', val: stats.confirmed, icon: 'fa-circle-check', color: 'text-emerald-400', bg: 'bg-emerald-400/10', trend: null, trendUp: false },
                 { label: 'Bekleyen', val: stats.pending, icon: 'fa-clock', color: 'text-blue-400', bg: 'bg-blue-400/10', trend: null, trendUp: false },
                 { label: 'Tamamlanan', val: stats.completed, icon: 'fa-check-double', color: 'text-violet-400', bg: 'bg-violet-400/10', trend: null, trendUp: false },
@@ -1775,15 +1775,15 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                   {/* Desktop Bento Grid */}
                   <div className="hidden lg:grid grid-cols-4 xl:grid-cols-6 gap-4">
                     {/* Bento Box 1: Revenue (Hero KPI) */}
-                    <div className="col-span-2 row-span-2 p-5 rounded-3xl bg-gradient-to-br from-[#c5a059]/10 via-[#c5a059]/5 to-transparent border border-white/[0.08] hover:border-[#c5a059]/30 hover:shadow-2xl hover:shadow-[#c5a059]/20 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between min-h-[160px]" style={{ boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.05), inset 1px 0 0 0 rgba(255, 255, 255, 0.02)' }}>
+                    <div className="col-span-2 row-span-2 p-5 rounded-3xl bg-gradient-to-br from-[var(--color-primary)]/10 via-[var(--color-primary)]/5 to-transparent border border-white/[0.08] hover:border-[var(--color-primary)]/30 hover:shadow-2xl hover:shadow-[var(--color-primary)]/20 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between min-h-[160px]" style={{ boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.05), inset 1px 0 0 0 rgba(255, 255, 255, 0.02)' }}>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-50 z-0 pointer-events-none"></div>
                       <div className="relative z-10 flex items-start justify-between mb-4">
                         <div>
-                          <p className="text-[12px] font-bold text-[#c5a059] uppercase tracking-wider mb-1 opacity-80">Toplam Ciro</p>
-                          <p className="text-4xl font-black text-white tracking-tight flex items-baseline gap-1">€<span className="tabular-nums"><AnimatedNumber value={stats.totalRevenue} /></span></p>
+                          <p className="text-[12px] font-bold text-[var(--color-primary)] uppercase tracking-wider mb-1 opacity-80">Toplam Ciro</p>
+                          <p className="text-4xl font-black text-white tracking-tight flex items-baseline gap-1">{siteContent.currency?.symbol || '€'}<span className="tabular-nums"><AnimatedNumber value={stats.totalRevenue} /></span></p>
                         </div>
-                        <div className="w-12 h-12 rounded-2xl bg-[#c5a059]/20 flex items-center justify-center backdrop-blur-md border border-[#c5a059]/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
-                          <i className="fa-solid fa-coins text-[#c5a059] text-xl"></i>
+                        <div className="w-12 h-12 rounded-2xl bg-[var(--color-primary)]/20 flex items-center justify-center backdrop-blur-md border border-[var(--color-primary)]/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
+                          <i className="fa-solid fa-coins text-[var(--color-primary)] text-xl"></i>
                         </div>
                       </div>
 
@@ -1860,7 +1860,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                       </span>
                     )}
                   </h3>
-                  <button onClick={() => setActiveView('bookings')} className="text-[11px] font-semibold text-slate-400 hover:text-[#c5a059] transition-colors">
+                  <button onClick={() => setActiveView('bookings')} className="text-[11px] font-semibold text-slate-400 hover:text-[var(--color-primary)] transition-colors">
                     Tümü <i className="fa-solid fa-arrow-right ml-1 text-[9px]"></i>
                   </button>
                 </div>
@@ -1891,13 +1891,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                                 key={b.id}
                                 onClick={() => setSelectedBookingForView(b)}
                                 className={`border-b cursor-pointer transition-colors group ${isToday
-                                  ? 'border-l-2 border-l-[#c5a059] border-b-white/[0.05] bg-[#c5a059]/[0.04] hover:bg-[#c5a059]/[0.08]'
+                                  ? 'border-l-2 border-l-[var(--color-primary)] border-b-white/[0.05] bg-[var(--color-primary)]/[0.04] hover:bg-[var(--color-primary)]/[0.08]'
                                   : 'border-b-white/[0.03] hover:bg-white/[0.03]'
                                   }`}
                               >
                                 <td className="px-5 py-3">
                                   <div className="flex items-center gap-2">
-                                    <p className="text-xs font-semibold text-white group-hover:text-[#c5a059] transition-colors truncate max-w-[140px]">{b.customerName.replace(/[\n\r]+/g, ' ').trim()}</p>
+                                    <p className="text-xs font-semibold text-white group-hover:text-[var(--color-primary)] transition-colors truncate max-w-[140px]">{b.customerName.replace(/[\n\r]+/g, ' ').trim()}</p>
                                     {isToday && b.status !== 'Completed' && (
                                       <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[8px] font-black uppercase px-1.5 py-0.5 rounded shadow-[0_0_5px_rgba(16,185,129,0.2)] animate-pulse shrink-0">Bugün</span>
                                     )}
@@ -1918,7 +1918,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                                   <p className="text-[11px] text-slate-400 tabular-nums">{b.date.split('-').reverse().join('.')}</p>
                                 </td>
                                 <td className="px-3 py-3">
-                                  <span className="text-xs font-bold text-white">€{b.totalPrice}</span>
+                                  <span className="text-xs font-bold text-white">{siteContent.currency?.symbol || '€'}{b.totalPrice}</span>
                                 </td>
                                 <td className="px-3 py-3">
                                   <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${b.status === 'Confirmed' ? 'bg-blue-500/15 text-blue-400' :
@@ -2012,7 +2012,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                     <div className="space-y-2 max-h-48 overflow-y-auto">
                       {activityLog.slice(0, 10).map(log => (
                         <div key={log.id} className="flex items-center gap-2.5 py-1.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#c5a059] shrink-0"></div>
+                          <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] shrink-0"></div>
                           <div className="flex-1 min-w-0">
                             <p className="text-[11px] text-slate-300 truncate">{log.action}: <span className="text-slate-500">{log.detail}</span></p>
                           </div>
@@ -2048,7 +2048,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                           <span className="text-[10px] font-bold text-slate-500">{c.count}</span>
                         </div>
                         <div className="h-1 bg-white/[0.06] rounded-full overflow-hidden">
-                          <div className="h-full bg-[#c5a059] rounded-full" style={{ width: `${Math.min(c.percent, 100)}%` }}></div>
+                          <div className="h-full bg-[var(--color-primary)] rounded-full" style={{ width: `${Math.min(c.percent, 100)}%` }}></div>
                         </div>
                       </div>
                     ))}
@@ -2100,7 +2100,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                     {stats.categoryData.slice(0, 4).map((item, i) => (
                       <div key={i} className="flex items-center justify-between text-[11px]">
                         <span className="flex items-center gap-2 text-slate-400">
-                          <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: ['#c5a059', '#3b82f6', '#10b981', '#8b5cf6'][i % 4] }}></span>
+                          <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: [getComputedStyle(document.documentElement).getPropertyValue('--color-primary') || '#c5a059', '#3b82f6', '#10b981', '#8b5cf6'][i % 4] }}></span>
                           {item.name}
                         </span>
                         <span className="font-bold text-slate-300">{item.value}</span>
@@ -2118,7 +2118,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                     Son 30 Gün — Rezervasyon Trendi
                   </h3>
                   <div className="flex items-center gap-1.5 text-[10px] text-slate-500">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#c5a059]"></span> Transfer
+                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)]"></span> Transfer
                   </div>
                 </div>
                 <div className="h-[180px]">
@@ -2126,15 +2126,15 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                     <AreaChart data={stats.monthlyTrendData}>
                       <defs>
                         <linearGradient id="goldGrad30" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#c5a059" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="#c5a059" stopOpacity={0} />
+                          <stop offset="5%" stopColor="var(--color-primary)" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0} />
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.04)" />
                       <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 9 }} interval={4} />
                       <YAxis axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10 }} width={25} allowDecimals={false} />
-                      <Tooltip contentStyle={{ background: '#0f172a', border: '1px solid rgba(197,160,89,0.2)', borderRadius: '10px', fontSize: '11px' }} />
-                      <Area type="monotone" dataKey="count" name="Rezervasyon" stroke="#c5a059" strokeWidth={2} fillOpacity={1} fill="url(#goldGrad30)" />
+                      <Tooltip contentStyle={{ background: 'var(--color-dark)', border: '1px solid rgba(197,160,89,0.2)', borderRadius: '10px', fontSize: '11px' }} />
+                      <Area type="monotone" dataKey="count" name="Rezervasyon" stroke="var(--color-primary)" strokeWidth={2} fillOpacity={1} fill="url(#goldGrad30)" />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
@@ -2185,9 +2185,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                     <BarChart data={stats.vehicleRevenue} barSize={20}>
                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.04)" />
                       <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10 }} />
-                      <YAxis axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10 }} width={45} tickFormatter={v => `€${v}`} />
-                      <Tooltip contentStyle={{ background: '#0f172a', border: '1px solid rgba(197,160,89,0.2)', borderRadius: '10px', fontSize: '11px' }} formatter={(v: number) => [`€${v}`, 'Gelir']} />
-                      <Bar dataKey="revenue" name="Gelir" fill="#c5a059" radius={[4, 4, 0, 0]} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10 }} width={45} tickFormatter={v => `${siteContent.currency?.symbol || '€'}${v}`} />
+                      <Tooltip contentStyle={{ background: 'var(--color-dark)', border: '1px solid rgba(197,160,89,0.2)', borderRadius: '10px', fontSize: '11px' }} formatter={(v: number) => [`${siteContent.currency?.symbol || '€'}${v}`, 'Gelir']} />
+                      <Bar dataKey="revenue" name="Gelir" fill="var(--color-primary)" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 )}
@@ -2212,12 +2212,12 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                       return (
                         <div key={idx} className="group relative flex flex-col p-3.5 rounded-xl bg-white/[0.015] hover:bg-white/[0.04] border border-white/5 transition-colors cursor-pointer overflow-hidden gap-1.5">
                           {/* Background Progress Bar */}
-                          <div className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[#c5a059]/15 to-transparent transition-all duration-700 ease-out" style={{ width: `${percentage}%` }} />
+                          <div className="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-[var(--color-primary)]/15 to-transparent transition-all duration-700 ease-out" style={{ width: `${percentage}%` }} />
 
                           <div className="flex items-center justify-between relative z-10 w-full">
                             <div className="flex items-center gap-3 w-full pr-2">
                               {/* Rank Indicator */}
-                              <div className={`w-7 h-7 shrink-0 rounded-full flex items-center justify-center text-[11px] font-black ${idx === 0 ? 'bg-[#c5a059] text-white shadow-[0_0_12px_rgba(197,160,89,0.5)]' : 'bg-slate-800 text-slate-400'}`}>
+                              <div className={`w-7 h-7 shrink-0 rounded-full flex items-center justify-center text-[11px] font-black ${idx === 0 ? 'bg-[var(--color-primary)] text-white shadow-[0_0_12px_rgba(197,160,89,0.5)]' : 'bg-slate-800 text-slate-400'}`}>
                                 {idx + 1}
                               </div>
 
@@ -2271,7 +2271,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
         )
         }
 
-        <Suspense fallback={<div className="flex items-center justify-center p-20"><i className="fa-solid fa-circle-notch fa-spin text-3xl text-[#c5a059]"></i></div>}>
+        <Suspense fallback={<div className="flex items-center justify-center p-20"><i className="fa-solid fa-circle-notch fa-spin text-3xl text-[var(--color-primary)]"></i></div>}>
           {
             activeView === 'bookings' && (
               <BookingsView
@@ -2446,7 +2446,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
       {
         isVehicleModalOpen && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-[100] flex items-center justify-center p-4 overflow-hidden">
-            <div className="w-full max-w-4xl max-h-[90vh] rounded-[32px] bg-[#0f172a] shadow-2xl flex flex-col overflow-hidden border border-white/10 animate-in zoom-in-95 duration-300">
+            <div className="w-full max-w-4xl max-h-[90vh] rounded-[32px] bg-[var(--color-dark)] shadow-2xl flex flex-col overflow-hidden border border-white/10 animate-in zoom-in-95 duration-300">
               {/* Modal Header */}
               <div className="p-8 border-b border-white/5 flex items-center justify-between shrink-0 bg-white/5">
                 <div>
@@ -2479,7 +2479,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                   <div className="md:col-span-2 space-y-5">
                     <div>
                       <label className="text-xs font-bold uppercase text-slate-400 block mb-2">Araç Adı (Model)</label>
-                      <input className="w-full bg-slate-800 border border-white/5 rounded-xl p-4 text-white font-bold focus:ring-2 focus:ring-[#c5a059] transition-all" value={vehicleForm.name} onChange={e => setVehicleForm({ ...vehicleForm, name: e.target.value })} placeholder="Örn: Mercedes Vito VIP" />
+                      <input className="w-full bg-slate-800 border border-white/5 rounded-xl p-4 text-white font-bold focus:ring-2 focus:ring-[var(--color-primary)] transition-all" value={vehicleForm.name} onChange={e => setVehicleForm({ ...vehicleForm, name: e.target.value })} placeholder="Örn: Mercedes Vito VIP" />
                     </div>
                     <div className="grid grid-cols-2 gap-5">
                       <div>
@@ -2511,12 +2511,12 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 {/* Features */}
                 <div className="p-6 rounded-3xl bg-slate-800/50 border border-white/5">
                   <h4 className="text-sm font-black text-white uppercase tracking-widest mb-6 border-b border-white/5 pb-4">
-                    <i className="fa-solid fa-star text-[#c5a059] mr-2"></i>Araç Donanımları
+                    <i className="fa-solid fa-star text-[var(--color-primary)] mr-2"></i>Araç Donanımları
                   </h4>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {VEHICLE_FEATURES.map(f => (
-                      <label key={f} className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${vehicleForm.features?.includes(f) ? 'bg-[#c5a059]/10 border-[#c5a059] shadow-lg shadow-[#c5a059]/10' : 'bg-slate-800 border-white/5 hover:bg-slate-700'}`}>
-                        <div className={`w-6 h-6 rounded-lg flex items-center justify-center border ${vehicleForm.features?.includes(f) ? 'bg-[#c5a059] border-[#c5a059]' : 'border-slate-500'}`}>
+                      <label key={f} className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${vehicleForm.features?.includes(f) ? 'bg-[var(--color-primary)]/10 border-[var(--color-primary)] shadow-lg shadow-[var(--color-primary)]/10' : 'bg-slate-800 border-white/5 hover:bg-slate-700'}`}>
+                        <div className={`w-6 h-6 rounded-lg flex items-center justify-center border ${vehicleForm.features?.includes(f) ? 'bg-[var(--color-primary)] border-[var(--color-primary)]' : 'border-slate-500'}`}>
                           {vehicleForm.features?.includes(f) && <i className="fa-solid fa-check text-white text-xs"></i>}
                         </div>
                         <input type="checkbox" className="hidden" checked={vehicleForm.features?.includes(f)} onChange={(e) => {
@@ -2524,7 +2524,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                           if (e.target.checked) setVehicleForm({ ...vehicleForm, features: [...feats, f] });
                           else setVehicleForm({ ...vehicleForm, features: feats.filter(item => item !== f) });
                         }} />
-                        <span className={`text-sm font-bold ${vehicleForm.features?.includes(f) ? 'text-[#c5a059]' : 'text-slate-400'}`}>{f}</span>
+                        <span className={`text-sm font-bold ${vehicleForm.features?.includes(f) ? 'text-[var(--color-primary)]' : 'text-slate-400'}`}>{f}</span>
                       </label>
                     ))}
                   </div>
@@ -2543,7 +2543,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                     showToast('Yeni araç eklendi', 'success');
                   }
                   setIsVehicleModalOpen(false);
-                }} className="flex-1 bg-[#c5a059] hover:bg-amber-600 text-white py-4 rounded-2xl font-bold text-lg shadow-xl shadow-amber-500/20 transition-all">
+                }} className="flex-1 bg-[var(--color-primary)] hover:bg-amber-600 text-white py-4 rounded-2xl font-bold text-lg shadow-xl shadow-amber-500/20 transition-all">
                   <i className="fa-solid fa-save mr-2"></i> Kaydet ve Kapat
                 </button>
               </div>
@@ -2602,7 +2602,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                           <p className="text-sm text-white font-medium">{item.label}</p>
                           <p className="text-[10px] text-white/40">{item.description}</p>
                         </div>
-                        {activeView === item.id && <span className="text-[9px] font-bold text-[#c5a059] bg-[#c5a059]/10 px-1.5 py-0.5 rounded shadow-[0_0_8px_rgba(197,160,89,0.2)]">Aktif</span>}
+                        {activeView === item.id && <span className="text-[9px] font-bold text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-1.5 py-0.5 rounded shadow-[0_0_8px_rgba(197,160,89,0.2)]">Aktif</span>}
                       </button>
                     ))}
                     {/* Actions */}
@@ -2615,8 +2615,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                         onClick={() => handleCommandSelect(item)}
                         className="w-full px-4 py-2.5 flex items-center gap-3 hover:bg-white/[0.06] transition-colors text-left"
                       >
-                        <div className="w-8 h-8 rounded-lg bg-[#c5a059]/10 flex items-center justify-center shrink-0">
-                          <i className={`fa-solid ${item.icon} text-[#c5a059] text-xs`}></i>
+                        <div className="w-8 h-8 rounded-lg bg-[var(--color-primary)]/10 flex items-center justify-center shrink-0">
+                          <i className={`fa-solid ${item.icon} text-[var(--color-primary)] text-xs`}></i>
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm text-white font-medium">{item.label}</p>
@@ -2644,10 +2644,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
         showShortcutsHelp && (
           <div className="fixed inset-0 z-[200] flex items-center justify-center" onClick={() => setShowShortcutsHelp(false)}>
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-            <div className="relative bg-[#0f172a] border border-white/10 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="relative bg-[var(--color-dark)] border border-white/10 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden" onClick={e => e.stopPropagation()}>
               <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between">
                 <h3 className="text-white font-bold text-sm flex items-center gap-2">
-                  <i className="fa-solid fa-keyboard text-[#c5a059]"></i> Klavye Kısayolları
+                  <i className="fa-solid fa-keyboard text-[var(--color-primary)]"></i> Klavye Kısayolları
                 </h3>
                 <button onClick={() => setShowShortcutsHelp(false)} className="w-7 h-7 rounded-lg bg-white/5 text-slate-400 hover:text-white flex items-center justify-center">
                   <i className="fa-solid fa-xmark text-xs"></i>

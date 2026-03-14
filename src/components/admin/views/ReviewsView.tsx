@@ -108,7 +108,7 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
                     { label: 'Onaylı', value: counts.approved, icon: 'fa-circle-check', iconBg: 'bg-emerald-500', gradient: 'from-emerald-500/15 to-green-600/5', border: 'border-emerald-500/15' },
                     { label: 'Bekleyen', value: counts.pending, icon: 'fa-hourglass-half', iconBg: 'bg-amber-500', gradient: 'from-amber-500/15 to-orange-600/5', border: 'border-amber-500/15', alert: counts.pending > 0 },
                     { label: 'Reddedilen', value: counts.rejected, icon: 'fa-circle-xmark', iconBg: 'bg-red-500', gradient: 'from-red-500/15 to-rose-600/5', border: 'border-red-500/15' },
-                    { label: 'Ort. Puan', value: avgRating, icon: 'fa-star', iconBg: 'bg-[#c5a059]', gradient: 'from-[#c5a059]/15 to-amber-600/5', border: 'border-[#c5a059]/15' },
+                    { label: 'Ort. Puan', value: avgRating, icon: 'fa-star', iconBg: 'bg-[var(--color-primary)]', gradient: 'from-[var(--color-primary)]/15 to-amber-600/5', border: 'border-[var(--color-primary)]/15' },
                 ].map((s, i) => (
                     <div key={i} className={`p-4 rounded-2xl bg-gradient-to-br ${s.gradient} border ${s.border}`}>
                         <div className="flex items-start justify-between">
@@ -134,7 +134,7 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
                         return (
                             <button key={tab} onClick={() => { setEditableReviewsTab(tab); setSelectedReviews([]); }}
                                 className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${editableReviewsTab === tab
-                                    ? 'bg-[#c5a059] text-white shadow-lg shadow-[#c5a059]/20'
+                                    ? 'bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/20'
                                     : 'text-slate-500 hover:text-white hover:bg-white/5'}`}>
                                 <i className={`fa-solid ${meta.icon} text-[10px]`}></i>
                                 {meta.label}
@@ -151,7 +151,7 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
                     <div className="relative flex-1 max-w-md">
                         <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 text-xs"></i>
                         <input type="text" placeholder="Yorum veya isim ara..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
-                            className="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/[0.06] rounded-xl text-sm text-white placeholder-slate-600 focus:border-[#c5a059]/50 outline-none transition-all" />
+                            className="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/[0.06] rounded-xl text-sm text-white placeholder-slate-600 focus:border-[var(--color-primary)]/50 outline-none transition-all" />
                         {searchTerm && <button onClick={() => setSearchTerm('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"><i className="fa-solid fa-xmark text-xs"></i></button>}
                     </div>
 
@@ -235,7 +235,7 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
                                             <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/[0.03] border border-white/[0.05] shrink-0">
                                                 <div className="flex gap-0.5">
                                                     {[...Array(5)].map((_, i) => (
-                                                        <i key={i} className={`fa-solid fa-star text-[8px] ${i < r.rating ? 'text-[#c5a059]' : 'text-slate-700'}`}></i>
+                                                        <i key={i} className={`fa-solid fa-star text-[8px] ${i < r.rating ? 'text-[var(--color-primary)]' : 'text-slate-700'}`}></i>
                                                     ))}
                                                 </div>
                                                 <span className="text-[11px] font-bold text-white ml-1">{r.rating}</span>
@@ -307,7 +307,7 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
                                     return (
                                         <React.Fragment key={r.id}>
                                             <tr onClick={() => setExpandedId(isExpanded ? null : r.id)}
-                                                className={`border-b border-white/[0.03] cursor-pointer transition-all group ${isSelected ? 'bg-[#c5a059]/[0.06]' : 'hover:bg-white/[0.03]'} ${isDimmed ? 'opacity-60 hover:opacity-100' : ''}`}>
+                                                className={`border-b border-white/[0.03] cursor-pointer transition-all group ${isSelected ? 'bg-[var(--color-primary)]/[0.06]' : 'hover:bg-white/[0.03]'} ${isDimmed ? 'opacity-60 hover:opacity-100' : ''}`}>
                                                 {/* Checkbox */}
                                                 <td className="px-4 py-3.5" onClick={e => e.stopPropagation()}>
                                                     <input type="checkbox" checked={isSelected}
@@ -324,7 +324,7 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
                                                             {r.name.charAt(0).toUpperCase()}
                                                         </div>
                                                         <div className="min-w-0">
-                                                            <p className={`font-bold text-[13px] group-hover:text-[#c5a059] transition-colors ${isDimmed ? 'line-through text-slate-500' : 'text-white'}`}>{r.name}</p>
+                                                            <p className={`font-bold text-[13px] group-hover:text-[var(--color-primary)] transition-colors ${isDimmed ? 'line-through text-slate-500' : 'text-white'}`}>{r.name}</p>
                                                             <div className="flex items-center gap-1.5 mt-0.5">
                                                                 <span className="text-sm">{r.country}</span>
                                                                 <span className="text-[10px] text-slate-500">{getCountryName(r.country)}</span>
@@ -343,7 +343,7 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
                                                     <div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/[0.03] border border-white/[0.05]">
                                                         <div className="flex gap-0.5">
                                                             {[...Array(5)].map((_, i) => (
-                                                                <i key={i} className={`fa-solid fa-star text-[8px] ${i < r.rating ? 'text-[#c5a059]' : 'text-slate-700'}`}></i>
+                                                                <i key={i} className={`fa-solid fa-star text-[8px] ${i < r.rating ? 'text-[var(--color-primary)]' : 'text-slate-700'}`}></i>
                                                             ))}
                                                         </div>
                                                         <span className="text-[11px] font-bold text-white ml-1">{r.rating}</span>
@@ -421,7 +421,7 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
                                                                     <p className="text-[9px] text-slate-600 uppercase font-bold">Puan</p>
                                                                     <div className="flex gap-0.5 mt-1">
                                                                         {[...Array(5)].map((_, i) => (
-                                                                            <i key={i} className={`fa-solid fa-star text-xs ${i < r.rating ? 'text-[#c5a059]' : 'text-slate-700'}`}></i>
+                                                                            <i key={i} className={`fa-solid fa-star text-xs ${i < r.rating ? 'text-[var(--color-primary)]' : 'text-slate-700'}`}></i>
                                                                         ))}
                                                                     </div>
                                                                 </div>

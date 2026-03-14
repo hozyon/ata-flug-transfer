@@ -177,8 +177,8 @@ export const INITIAL_SITE_CONTENT: SiteContent = {
     { id: 'add-5', q: 'Ödemeyi nasıl yapabilirim?', a: 'Nakit (TL, EUR, USD, GBP, RUB), kredi kartı veya havale ile ödeme yapabilirsiniz. Ödeme genellikle transfer sonrasında alınır.' }
   ],
   seo: {
-    siteTitle: 'Ata Flug Transfer | Antalya VIP Havalimanı Transfer Hizmeti',
-    titleTemplate: '%s | Ata Flug Transfer',
+    siteTitle: 'VIP Havalimanı Transfer Hizmeti',
+    titleTemplate: '%s | VIP Transfer',
     siteDescription: 'Antalya Havalimanı\'ndan tüm Türkiye\'ye VIP ve özel transfer hizmeti. 7/24 profesyonel sürücüler, konforlu araçlar, uygun fiyatlar.',
     siteKeywords: 'antalya transfer, antalya havalimanı transfer, vip transfer antalya, airport transfer turkey, antalya taxi, özel transfer',
     ogImage: 'https://ataflugtransfer.com/og-image.jpg',
@@ -197,12 +197,22 @@ export const INITIAL_SITE_CONTENT: SiteContent = {
     },
     pagesSeo: {
       home:    { title: 'Antalya VIP Havalimanı Transfer', description: 'Antalya Havalimanı\'ndan tüm Türkiye\'ye VIP ve özel transfer hizmeti. 7/24 profesyonel sürücüler, konforlu araçlar.', keywords: 'antalya transfer, vip transfer, havalimanı transfer' },
-      about:   { title: 'Hakkımızda', description: 'Ata Flug Transfer olarak 10+ yıllık deneyimimizle Antalya\'da güvenilir VIP transfer hizmeti sunuyoruz.', keywords: 'ata flug transfer hakkında, antalya transfer firması' },
+      about:   { title: 'Hakkımızda', description: '10+ yıllık deneyimimizle Antalya\'da güvenilir VIP transfer hizmeti sunuyoruz.', keywords: 'antalya transfer firması, vip transfer hakkında' },
       regions: { title: 'Transfer Bölgeleri', description: 'Antalya Havalimanı\'ndan Kemer, Alanya, Side, Belek ve tüm bölgelere uygun fiyatlı transfer hizmetleri.', keywords: 'kemer transfer, alanya transfer, side transfer, belek transfer' },
       blog:    { title: 'Transfer Rehberi & Blog', description: 'Antalya transfer rehberleri, bölge bilgileri ve seyahat ipuçları.', keywords: 'antalya rehber, transfer blog, antalya gezi' },
       faq:     { title: 'Sıkça Sorulan Sorular', description: 'Antalya transfer hizmeti hakkında merak ettiğiniz tüm sorular ve cevapları.', keywords: 'transfer sss, antalya transfer fiyat, nasıl rezervasyon' },
-      contact: { title: 'İletişim', description: 'Ata Flug Transfer ile 7/24 iletişime geçin. WhatsApp, telefon veya e-posta ile ulaşın.', keywords: 'ata flug transfer iletişim, antalya transfer telefon' },
+      contact: { title: 'İletişim', description: '7/24 iletişime geçin.', keywords: 'antalya transfer iletişim, transfer telefon' },
     },
+  },
+  branding: {
+    primaryColor: '#c5a059',
+    darkBg: '#0f172a',
+    darkBgDeep: '#020617',
+    favicon: '/favicon.ico',
+  },
+  currency: {
+    symbol: '€',
+    code: 'EUR',
   },
 };
 

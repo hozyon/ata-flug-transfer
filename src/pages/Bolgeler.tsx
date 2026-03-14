@@ -2,12 +2,14 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Fuse from 'fuse.js';
-import { INITIAL_SITE_CONTENT, BUSINESS_INFO } from '../constants';
+import { INITIAL_SITE_CONTENT } from '../constants';
 import TextureBackground from '../components/TextureBackground';
 import { useLanguage } from '../i18n/LanguageContext';
+import { useAppStore } from '../store/useAppStore';
 
 const Bolgeler: React.FC = () => {
     const { t, language } = useLanguage();
+    const { siteContent } = useAppStore();
     // Language → flag mapping
     const FLAGS: Record<string, string> = {
         en: '🇬🇧', de: '🇩🇪', fr: '🇫🇷', ru: '🇷🇺', ar: '🇸🇦', tr: '🇹🇷'
@@ -19,7 +21,7 @@ const Bolgeler: React.FC = () => {
 
         if (language === 'tr') {
             return encodeURIComponent(
-                `✈️ *ATA FLUG TRANSFER*\n▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔\n\n🇹🇷 *Transfer Fiyat Talebi*\n\n🚐  *Bölge:* ${regionName}\n📩  ${trMsg}\n\n⏳ _Yanıt süresi: ~2 dakika_`
+                `✈️ *${siteContent.business.name}*\n▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔\n\n🇹🇷 *Transfer Fiyat Talebi*\n\n🚐  *Bölge:* ${regionName}\n📩  ${trMsg}\n\n⏳ _Yanıt süresi: ~2 dakika_`
             );
         }
 
@@ -29,10 +31,10 @@ const Bolgeler: React.FC = () => {
         const translatedRegion = t('Bölge');
 
         return encodeURIComponent(
-            `✈️ *ATA FLUG TRANSFER*\n▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔\n\n${flag} *${translatedPriceReq}*\n\n🚐  *${translatedRegion}:* ${regionName}\n📩  ${translatedMsg}\n\n┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈\n\n🇹🇷 *Transfer Fiyat Talebi*\n\n🚐  *Bölge:* ${regionName}\n📩  ${trMsg}`
+            `✈️ *${siteContent.business.name}*\n▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔\n\n${flag} *${translatedPriceReq}*\n\n🚐  *${translatedRegion}:* ${regionName}\n📩  ${translatedMsg}\n\n┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈\n\n🇹🇷 *Transfer Fiyat Talebi*\n\n🚐  *Bölge:* ${regionName}\n📩  ${trMsg}`
         );
     };
-    const [regions, setRegions] = React.useState(INITIAL_SITE_CONTENT.regions);
+    const [regions, setRegions] = React.useState(siteContent.regions || INITIAL_SITE_CONTENT.regions);
     const [searchTerm, setSearchTerm] = React.useState('');
     const [isAnimating, setIsAnimating] = React.useState(false);
     const location = useLocation();
@@ -46,14 +48,10 @@ const Bolgeler: React.FC = () => {
     }, [location.search]);
 
     React.useEffect(() => {
-        const savedContent = localStorage.getItem('ata_site_content_v6');
-        if (savedContent) {
-            const parsed = JSON.parse(savedContent);
-            if (parsed.regions) {
-                setRegions(parsed.regions);
-            }
+        if (siteContent.regions && siteContent.regions.length > 0) {
+            setRegions(siteContent.regions);
         }
-    }, []);
+    }, [siteContent.regions]);
 
     const [currentPage, setCurrentPage] = React.useState(1);
     const itemsPerPage = 8;
@@ -143,17 +141,17 @@ const Bolgeler: React.FC = () => {
         "Kadriye": { "dist": "27 km", "time": "30 dk" }
     };
 
-    const seo = INITIAL_SITE_CONTENT.seo;
-    const canonical = seo.canonicalUrl;
-    const pageTitle = seo.pagesSeo.regions.title;
-    const pageDesc = seo.pagesSeo.regions.description;
+    const seo = siteContent.seo || INITIAL_SITE_CONTENT.seo;
+    const canonical = seo.canonicalUrl || '';
+    const pageTitle = seo.pagesSeo?.regions?.title || INITIAL_SITE_CONTENT.seo.pagesSeo.regions.title;
+    const pageDesc = seo.pagesSeo?.regions?.description || INITIAL_SITE_CONTENT.seo.pagesSeo.regions.description;
 
     return (
         <div className="min-h-screen bg-slate-50">
             <Helmet>
-                <title>{pageTitle} | {BUSINESS_INFO.name}</title>
+                <title>{pageTitle} | {siteContent.business.name}</title>
                 <meta name="description" content={pageDesc} />
-                <meta name="keywords" content={seo.pagesSeo.regions.keywords || seo.siteKeywords} />
+                <meta name="keywords" content={seo.pagesSeo?.regions?.keywords || seo.siteKeywords} />
                 <meta name="robots" content={seo.robotsDirective} />
                 <link rel="canonical" href={`${canonical}/bolgeler`} />
                 <meta property="og:title" content={pageTitle} />
@@ -162,7 +160,7 @@ const Bolgeler: React.FC = () => {
                 <meta property="og:url" content={`${canonical}/bolgeler`} />
                 <meta property="og:image" content={seo.ogImage} />
                 <meta property="og:locale" content="tr_TR" />
-                <meta property="og:site_name" content={BUSINESS_INFO.name} />
+                <meta property="og:site_name" content={siteContent.business.name} />
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:site" content={seo.twitterHandle} />
                 <meta name="twitter:title" content={pageTitle} />
@@ -238,7 +236,7 @@ const Bolgeler: React.FC = () => {
 
                 <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border border-white/10 mb-4 shadow-lg animate-in fade-in slide-in-from-bottom-3 duration-700">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#c5a059] animate-pulse"></span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse"></span>
                         <span>{t('regionsPage.eyebrow')}</span>
                     </div>
                     <h1 className="text-5xl md:text-7xl font-playfair font-medium text-white mb-6 tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 drop-shadow-2xl">
@@ -255,7 +253,7 @@ const Bolgeler: React.FC = () => {
                         <input
                             type="text"
                             placeholder={t('regionsPage.search')}
-                            className="block w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-[#c5a059] focus:border-transparent transition-all shadow-2xl"
+                            className="block w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all shadow-2xl"
                             value={searchTerm}
                             onChange={(e) => {
                                 setSearchTerm(e.target.value);
@@ -293,8 +291,8 @@ const Bolgeler: React.FC = () => {
                                                 />
                                                 {region.price && (
                                                     <div className="absolute top-4 left-4 z-20">
-                                                        <span className="inline-block px-3 py-1 bg-white text-[#c5a059] text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm">
-                                                            {region.price}€ {t('regionsPage.startingFrom')}
+                                                        <span className="inline-block px-3 py-1 bg-white text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm">
+                                                            {region.price}{siteContent.currency?.symbol || '€'} {t('regionsPage.startingFrom')}
                                                         </span>
                                                     </div>
                                                 )}
@@ -302,7 +300,7 @@ const Bolgeler: React.FC = () => {
 
                                             {/* Content */}
                                             <div className="flex-1 p-5 flex flex-col">
-                                                <h3 className="text-lg font-playfair font-bold text-slate-800 mb-2 group-hover:text-[#c5a059] transition-colors leading-snug line-clamp-1">
+                                                <h3 className="text-lg font-playfair font-bold text-slate-800 mb-2 group-hover:text-[var(--color-primary)] transition-colors leading-snug line-clamp-1">
                                                     {region.name}
                                                 </h3>
                                                 <p className="text-slate-500 text-xs leading-relaxed mb-4 line-clamp-2">
@@ -311,14 +309,14 @@ const Bolgeler: React.FC = () => {
 
                                                 <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-100">
                                                     <div className="flex items-center gap-2 text-slate-400 text-[10px] font-medium">
-                                                        <i className="fa-solid fa-route text-[#c5a059]"></i>
+                                                        <i className="fa-solid fa-route text-[var(--color-primary)]"></i>
                                                         <span>{distInfo.dist} / {distInfo.time}</span>
                                                     </div>
                                                     <a
-                                                        href={`https://wa.me/${BUSINESS_INFO.whatsapp}?text=${buildWaMessage(region.name)}`}
+                                                        href={`https://wa.me/${siteContent.business.whatsapp}?text=${buildWaMessage(region.name)}`}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
-                                                        className="flex items-center gap-1 text-[#c5a059] text-[10px] font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform"
+                                                        className="flex items-center gap-1 text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform"
                                                     >
                                                         <span>{t('regionsPage.getPrice')}</span>
                                                         <i className="fa-solid fa-arrow-right"></i>
@@ -357,7 +355,7 @@ const Bolgeler: React.FC = () => {
                                         key={page}
                                         onClick={() => setCurrentPage(page)}
                                         className={`w-10 h-10 flex items-center justify-center rounded-lg border transition-colors ${currentPage === page
-                                            ? 'bg-[#0f172a] border-[#0f172a] text-white'
+                                            ? 'bg-[var(--color-dark)] border-[var(--color-dark)] text-white'
                                             : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                                             }`}
                                     >
@@ -379,12 +377,12 @@ const Bolgeler: React.FC = () => {
             </section>
 
             {/* CTA */}
-            <section className="py-16 bg-[#0f172a]">
+            <section className="py-16 bg-[var(--color-dark)]">
                 <div className="max-w-4xl mx-auto px-4 text-center">
                     <h2 className="text-3xl font-bold text-white">{t('regionsPage.ctaTitle')}</h2>
                     <p className="text-slate-300 mt-4">{t('regionsPage.ctaDesc')}</p>
                     <a
-                        href={`https://wa.me/${BUSINESS_INFO.whatsapp}`}
+                        href={`https://wa.me/${siteContent.business.whatsapp}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold px-8 py-4 rounded-full mt-8 transition-colors"

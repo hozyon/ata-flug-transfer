@@ -83,6 +83,27 @@ const App: React.FC = () => {
       document.body.style.overflow = '';
     };
   }, [isAdmin]);
+
+  // Apply brand colors as CSS custom properties
+  useEffect(() => {
+    const b = siteContent.branding;
+    if (!b) return;
+    if (b.primaryColor) document.documentElement.style.setProperty('--color-primary', b.primaryColor);
+    if (b.darkBg) document.documentElement.style.setProperty('--color-dark', b.darkBg);
+    if (b.darkBgDeep) document.documentElement.style.setProperty('--color-darker', b.darkBgDeep);
+  }, [siteContent.branding]);
+
+  // Apply favicon dynamically
+  useEffect(() => {
+    const faviconUrl = siteContent.branding?.favicon || siteContent.business.logo || '/favicon.ico';
+    let link = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'icon';
+      document.head.appendChild(link);
+    }
+    link.href = faviconUrl;
+  }, [siteContent.branding?.favicon, siteContent.business.logo]);
   // Dynamic Text Rotator for Hero Section
   const [currentRegionIndex, setCurrentRegionIndex] = useState(0);
   const [isFading, setIsFading] = useState(false);
@@ -191,8 +212,8 @@ const App: React.FC = () => {
                     <meta name="twitter:image" content={siteContent.seo?.ogImage || ''} />
                     {siteContent.seo?.googleSiteVerification && <meta name="google-site-verification" content={siteContent.seo.googleSiteVerification} />}
                     {siteContent.seo?.bingVerification && <meta name="msvalidate.01" content={siteContent.seo.bingVerification} />}
-                    <link rel="icon" type="image/png" href={siteContent.business.logo || '/logo.png'} />
-                    <link rel="apple-touch-icon" href={siteContent.business.logo || '/logo.png'} />
+                    <link rel="icon" href={siteContent.branding?.favicon || siteContent.business.logo || '/favicon.ico'} />
+                    <link rel="apple-touch-icon" href={siteContent.business.logo || '/favicon.ico'} />
                     <script type="application/ld+json">{JSON.stringify({
                       "@context": "https://schema.org",
                       "@type": siteContent.seo?.structuredData?.businessType || "TravelAgency",
@@ -216,7 +237,7 @@ const App: React.FC = () => {
                       "areaServed": siteContent.seo?.structuredData?.areaServed || "Antalya, Turkey"
                     })}</script>
                   </Helmet>
-                  <section id="home" className="relative min-h-[100svh] flex flex-col bg-[#020617] overflow-hidden">
+                  <section id="home" className="relative min-h-[100svh] flex flex-col bg-[var(--color-darker)] overflow-hidden">
                     {/* Background Layer: Ken Burns Zoom */}
                     <div className="absolute inset-0 z-0 overflow-hidden">
                       {heroBgs.map((bg, idx) => (
@@ -231,7 +252,7 @@ const App: React.FC = () => {
                       <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/50 via-black/20 to-black/70"></div>
                       <div className="absolute inset-0 z-10 bg-gradient-to-r from-black/60 via-black/20 to-transparent"></div>
                       {/* Bottom fade to next section */}
-                      <div className="absolute bottom-0 left-0 right-0 h-40 z-10 bg-gradient-to-t from-[#020617] to-transparent"></div>
+                      <div className="absolute bottom-0 left-0 right-0 h-40 z-10 bg-gradient-to-t from-[var(--color-darker)] to-transparent"></div>
                     </div>
 
                     {/* Content Layer */}
@@ -242,15 +263,15 @@ const App: React.FC = () => {
                         <div className="flex-1 max-w-2xl animate-fadeInUp">
                           {/* Eyebrow */}
                           <div className="inline-flex items-center gap-2 mb-5">
-                            <span className="w-8 h-[2px] bg-[#c5a059]"></span>
-                            <span className="text-[#c5a059] text-[11px] font-bold uppercase tracking-[0.25em]" style={{ fontFamily: "'Outfit', sans-serif" }}>{t('hero.eyebrow')}</span>
+                            <span className="w-8 h-[2px] bg-[var(--color-primary)]"></span>
+                            <span className="text-[var(--color-primary)] text-[11px] font-bold uppercase tracking-[0.25em]" style={{ fontFamily: "'Outfit', sans-serif" }}>{t('hero.eyebrow')}</span>
                           </div>
 
                           {/* Headline */}
                           <h1 className="text-[2.6rem] sm:text-5xl md:text-6xl lg:text-[72px] font-bold text-white leading-[1.05] mb-5 tracking-[-0.02em]" style={{ fontFamily: "'Outfit', sans-serif" }}>
                             {t('hero.title')}
                             <br />
-                            <span className="bg-gradient-to-r from-[#ebd299] via-[#c5a059] to-[#a8864a] bg-clip-text text-transparent">{t('hero.titleAccent')}</span>
+                            <span className="bg-gradient-to-r from-[#ebd299] via-[var(--color-primary)] to-[#a8864a] bg-clip-text text-transparent">{t('hero.titleAccent')}</span>
                           </h1>
 
                           {/* Subtitle */}
@@ -270,12 +291,12 @@ const App: React.FC = () => {
                             </style>
                             <button
                               onClick={() => setIsBookingFormOpen(true)}
-                              className="group border border-[#c5a059]/40 hover:border-[#c5a059] bg-white/5 hover:bg-[#c5a059]/10 backdrop-blur-sm text-white font-semibold text-sm md:text-base px-7 py-3.5 md:px-9 md:py-4 rounded-full flex items-center gap-3 transition-all duration-300"
+                              className="group border border-[var(--color-primary)]/40 hover:border-[var(--color-primary)] bg-white/5 hover:bg-[var(--color-primary)]/10 backdrop-blur-sm text-white font-semibold text-sm md:text-base px-7 py-3.5 md:px-9 md:py-4 rounded-full flex items-center gap-3 transition-all duration-300"
                               style={{ fontFamily: "'Outfit', sans-serif", animation: 'breathe 3s ease-in-out infinite' }}
                             >
-                              <i className="fa-solid fa-calendar-check text-sm text-[#c5a059]"></i>
+                              <i className="fa-solid fa-calendar-check text-sm text-[var(--color-primary)]"></i>
                               <span className="tracking-wide">{t('hero.cta')}</span>
-                              <i className="fa-solid fa-arrow-right text-xs text-[#c5a059] opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"></i>
+                              <i className="fa-solid fa-arrow-right text-xs text-[var(--color-primary)] opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"></i>
                             </button>
                             <a
                               href={`https://wa.me/${siteContent.business.whatsapp}`}
@@ -318,8 +339,8 @@ const App: React.FC = () => {
                             <div className="px-6 pt-5 pb-4 lg:pt-7 flex items-start justify-between">
                               <div>
                                 <div className="inline-flex items-center gap-2 mb-2">
-                                  <span className="w-5 h-[2px] bg-[#c5a059]"></span>
-                                  <span className="text-[#c5a059] text-[10px] font-bold uppercase tracking-[0.2em]" style={{ fontFamily: "'Outfit', sans-serif" }}>{t('form.eyebrow')}</span>
+                                  <span className="w-5 h-[2px] bg-[var(--color-primary)]"></span>
+                                  <span className="text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-[0.2em]" style={{ fontFamily: "'Outfit', sans-serif" }}>{t('form.eyebrow')}</span>
                                 </div>
                                 <h3 className="text-white font-bold text-xl" style={{ fontFamily: "'Outfit', sans-serif" }}>{t('form.title')}</h3>
                               </div>
@@ -360,22 +381,22 @@ const App: React.FC = () => {
                     <div className="absolute bottom-0 left-0 right-0 z-30">
                       <div className="max-w-7xl mx-auto px-5 lg:px-10 pb-5 md:pb-6 flex items-center gap-4 md:gap-6" style={{ fontFamily: "'Outfit', sans-serif" }}>
                         <div className="flex items-center gap-2 text-white/50 text-xs md:text-sm">
-                          <i className="fa-solid fa-headset text-[#c5a059] text-sm"></i>
+                          <i className="fa-solid fa-headset text-[var(--color-primary)] text-sm"></i>
                           <span>{t('hero.trust.247')}</span>
                         </div>
                         <div className="w-px h-3 bg-white/10"></div>
                         <div className="flex items-center gap-2 text-white/50 text-xs md:text-sm">
-                          <i className="fa-solid fa-clock text-[#c5a059] text-sm"></i>
+                          <i className="fa-solid fa-clock text-[var(--color-primary)] text-sm"></i>
                           <span>{t('hero.trust.tracking')}</span>
                         </div>
                         <div className="w-px h-3 bg-white/10 hidden sm:block"></div>
                         <div className="hidden sm:flex items-center gap-2 text-white/50 text-xs md:text-sm">
-                          <i className="fa-solid fa-car text-[#c5a059] text-sm"></i>
+                          <i className="fa-solid fa-car text-[var(--color-primary)] text-sm"></i>
                           <span>{t('hero.trust.vehicle')}</span>
                         </div>
                         <div className="w-px h-3 bg-white/10"></div>
                         <div className="flex items-center gap-2 text-white/50 text-xs md:text-sm">
-                          <i className="fa-solid fa-location-dot text-[#c5a059] text-sm"></i>
+                          <i className="fa-solid fa-location-dot text-[var(--color-primary)] text-sm"></i>
                           <div className="w-[100px] sm:w-[140px] overflow-hidden">
                             <span className={`block transition-opacity duration-300 whitespace-nowrap text-ellipsis overflow-hidden ${isFading ? 'opacity-0' : 'opacity-100'}`}>
                               {siteContent.regions[currentRegionIndex]?.name || 'Antalya'}
@@ -396,7 +417,7 @@ const App: React.FC = () => {
                       <div className="relative">
                         {/* Admin Edit Trigger */}
                         {isAdmin && (
-                          <button className="absolute -top-6 right-0 text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-1 rounded hover:bg-[#c5a059] hover:text-white transition-colors flex items-center gap-1 z-50 shadow-sm border border-slate-300">
+                          <button className="absolute -top-6 right-0 text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-1 rounded hover:bg-[var(--color-primary)] hover:text-white transition-colors flex items-center gap-1 z-50 shadow-sm border border-slate-300">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                             EDIT
                           </button>
@@ -405,17 +426,17 @@ const App: React.FC = () => {
                         {/* Section Header */}
                         <div className="text-center mb-6 md:mb-8">
                           <div className="inline-flex items-center gap-3 mb-4">
-                            <span className="w-8 h-px bg-gradient-to-r from-transparent to-[#c5a059]"></span>
+                            <span className="w-8 h-px bg-gradient-to-r from-transparent to-[var(--color-primary)]"></span>
                             <h2 className="text-xs font-bold tracking-[0.2em] text-slate-400 uppercase">{t('services.eyebrow')}</h2>
-                            <span className="w-8 h-px bg-gradient-to-l from-transparent to-[#c5a059]"></span>
+                            <span className="w-8 h-px bg-gradient-to-l from-transparent to-[var(--color-primary)]"></span>
                           </div>
                         </div>
 
                         {/* Premium Services Grid Minimal */}
                         <div className="w-full mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
                           {/* Card 1 */}
-                          <div className="bg-white rounded-[2rem] p-6 xl:p-8 border border-slate-100 transition-all duration-200 hover:border-[#c5a059]/30 hover:shadow-md hover:bg-slate-50/50 group flex flex-col items-center text-center">
-                            <div className="w-14 h-14 rounded-xl bg-amber-50/50 flex items-center justify-center text-[#c5a059] mb-4 group-hover:bg-[#c5a059] group-hover:text-white transition-colors duration-200">
+                          <div className="bg-white rounded-[2rem] p-6 xl:p-8 border border-slate-100 transition-all duration-200 hover:border-[var(--color-primary)]/30 hover:shadow-md hover:bg-slate-50/50 group flex flex-col items-center text-center">
+                            <div className="w-14 h-14 rounded-xl bg-amber-50/50 flex items-center justify-center text-[var(--color-primary)] mb-4 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors duration-200">
                               <i className="fa-solid fa-plane-arrival text-xl"></i>
                             </div>
                             <h4 className="text-slate-900 font-playfair font-bold text-lg mb-3">{t('services.card1.title')}</h4>
@@ -425,8 +446,8 @@ const App: React.FC = () => {
                           </div>
 
                           {/* Card 2 */}
-                          <div className="bg-white rounded-[2rem] p-6 xl:p-8 border border-slate-100 transition-all duration-200 hover:border-[#c5a059]/30 hover:shadow-md hover:bg-slate-50/50 group flex flex-col items-center text-center">
-                            <div className="w-14 h-14 rounded-xl bg-amber-50/50 flex items-center justify-center text-[#c5a059] mb-4 group-hover:bg-[#c5a059] group-hover:text-white transition-colors duration-200">
+                          <div className="bg-white rounded-[2rem] p-6 xl:p-8 border border-slate-100 transition-all duration-200 hover:border-[var(--color-primary)]/30 hover:shadow-md hover:bg-slate-50/50 group flex flex-col items-center text-center">
+                            <div className="w-14 h-14 rounded-xl bg-amber-50/50 flex items-center justify-center text-[var(--color-primary)] mb-4 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors duration-200">
                               <i className="fa-solid fa-map text-xl"></i>
                             </div>
                             <h4 className="text-slate-900 font-playfair font-bold text-lg mb-3">{t('services.card2.title')}</h4>
@@ -436,8 +457,8 @@ const App: React.FC = () => {
                           </div>
 
                           {/* Card 3 */}
-                          <div className="bg-white rounded-[2rem] p-6 xl:p-8 border border-slate-100 transition-all duration-200 hover:border-[#c5a059]/30 hover:shadow-md hover:bg-slate-50/50 group flex flex-col items-center text-center">
-                            <div className="w-14 h-14 rounded-xl bg-amber-50/50 flex items-center justify-center text-[#c5a059] mb-4 group-hover:bg-[#c5a059] group-hover:text-white transition-colors duration-200">
+                          <div className="bg-white rounded-[2rem] p-6 xl:p-8 border border-slate-100 transition-all duration-200 hover:border-[var(--color-primary)]/30 hover:shadow-md hover:bg-slate-50/50 group flex flex-col items-center text-center">
+                            <div className="w-14 h-14 rounded-xl bg-amber-50/50 flex items-center justify-center text-[var(--color-primary)] mb-4 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors duration-200">
                               <i className="fa-solid fa-route text-xl"></i>
                             </div>
                             <h4 className="text-slate-900 font-playfair font-bold text-lg mb-3">{t('services.card3.title')}</h4>
@@ -447,8 +468,8 @@ const App: React.FC = () => {
                           </div>
 
                           {/* Card 4 */}
-                          <div className="bg-white rounded-[2rem] p-6 xl:p-8 border border-slate-100 transition-all duration-200 hover:border-[#c5a059]/30 hover:shadow-md hover:bg-slate-50/50 group flex flex-col items-center text-center">
-                            <div className="w-14 h-14 rounded-xl bg-amber-50/50 flex items-center justify-center text-[#c5a059] mb-4 group-hover:bg-[#c5a059] group-hover:text-white transition-colors duration-200">
+                          <div className="bg-white rounded-[2rem] p-6 xl:p-8 border border-slate-100 transition-all duration-200 hover:border-[var(--color-primary)]/30 hover:shadow-md hover:bg-slate-50/50 group flex flex-col items-center text-center">
+                            <div className="w-14 h-14 rounded-xl bg-amber-50/50 flex items-center justify-center text-[var(--color-primary)] mb-4 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors duration-200">
                               <i className="fa-solid fa-car-side text-xl"></i>
                             </div>
                             <h4 className="text-slate-900 font-playfair font-bold text-lg mb-3">{t('services.card4.title')}</h4>
@@ -466,19 +487,19 @@ const App: React.FC = () => {
                     {/* Ambient background */}
                     <div className="absolute inset-0 z-0">
                       <div className="absolute inset-0 bg-slate-900 z-10"></div>
-                      <div className="absolute inset-0 z-10" style={{ backgroundImage: 'radial-gradient(#c5a059 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.03 }}></div>
+                      <div className="absolute inset-0 z-10" style={{ backgroundImage: 'radial-gradient(var(--color-primary) 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.03 }}></div>
                     </div>
 
                     <div className="relative z-10 max-w-7xl mx-auto px-4">
                       {/* Section Header */}
                       <div className="text-center mb-10 md:mb-12">
                         <div className="inline-flex items-center gap-2 mb-3">
-                          <span className="w-8 h-px bg-gradient-to-r from-transparent to-[#c5a059]"></span>
-                          <span className="text-[#c5a059] font-bold text-[11px] uppercase tracking-[0.3em]">{t('regions.eyebrow')}</span>
-                          <span className="w-8 h-px bg-gradient-to-l from-transparent to-[#c5a059]"></span>
+                          <span className="w-8 h-px bg-gradient-to-r from-transparent to-[var(--color-primary)]"></span>
+                          <span className="text-[var(--color-primary)] font-bold text-[11px] uppercase tracking-[0.3em]">{t('regions.eyebrow')}</span>
+                          <span className="w-8 h-px bg-gradient-to-l from-transparent to-[var(--color-primary)]"></span>
                         </div>
                         <h2 className="text-3xl md:text-4xl lg:text-5xl font-playfair font-bold leading-tight">
-                          {t('regions.title')} <span className="bg-gradient-to-r from-[#c5a059] via-[#e0c07a] to-[#c5a059] bg-clip-text text-transparent">{t('regions.titleAccent')}</span>
+                          {t('regions.title')} <span className="bg-gradient-to-r from-[var(--color-primary)] via-[#e0c07a] to-[var(--color-primary)] bg-clip-text text-transparent">{t('regions.titleAccent')}</span>
                         </h2>
                         <p className="text-slate-400 mt-4 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">{t('regions.desc')}</p>
                       </div>
@@ -500,18 +521,18 @@ const App: React.FC = () => {
                           >
                             <img src={region.image} alt={region.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                            <div className="absolute inset-0 rounded-lg border border-white/[0.08] group-hover:border-[#c5a059]/40 transition-colors duration-300"></div>
+                            <div className="absolute inset-0 rounded-lg border border-white/[0.08] group-hover:border-[var(--color-primary)]/40 transition-colors duration-300"></div>
                             <div className="absolute top-3 right-3 z-10">
-                              <span className="bg-black/40 text-white px-2.5 py-1 rounded text-[11px] font-bold">€{region.price}</span>
+                              <span className="bg-black/40 text-white px-2.5 py-1 rounded text-[11px] font-bold">{siteContent.currency?.symbol || '€'}{region.price}</span>
                             </div>
                             <div className="absolute bottom-0 left-0 w-full p-3 md:p-4 z-10">
                               <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider block">{t('regions.airportLabel')}</span>
                               <svg width="14" height="22" viewBox="0 0 14 22" className="my-1 block" fill="none">
-                                <path d="M7 0l3.5 4.5H8.5v2h-3v-2H3.5L7 0z" fill="#c5a059" />
-                                <line x1="7" y1="8" x2="7" y2="14" stroke="#c5a059" strokeWidth="1.5" strokeDasharray="2 2" />
-                                <path d="M7 22l-3.5-4.5H5.5v-2h3v2h2L7 22z" fill="#c5a059" />
+                                <path d="M7 0l3.5 4.5H8.5v2h-3v-2H3.5L7 0z" fill="var(--color-primary)" />
+                                <line x1="7" y1="8" x2="7" y2="14" stroke="var(--color-primary)" strokeWidth="1.5" strokeDasharray="2 2" />
+                                <path d="M7 22l-3.5-4.5H5.5v-2h3v2h2L7 22z" fill="var(--color-primary)" />
                               </svg>
-                              <h3 className="text-sm md:text-base font-bold text-white leading-tight group-hover:text-[#c5a059] transition-colors duration-300">{region.name}</h3>
+                              <h3 className="text-sm md:text-base font-bold text-white leading-tight group-hover:text-[var(--color-primary)] transition-colors duration-300">{region.name}</h3>
                             </div>
                           </Link>
                         ))}
@@ -527,18 +548,18 @@ const App: React.FC = () => {
                           >
                             <img src={region.image} alt={region.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                            <div className="absolute inset-0 rounded-lg border border-white/[0.08] group-hover:border-[#c5a059]/40 transition-colors duration-300"></div>
+                            <div className="absolute inset-0 rounded-lg border border-white/[0.08] group-hover:border-[var(--color-primary)]/40 transition-colors duration-300"></div>
                             <div className="absolute top-3 right-3 z-10">
-                              <span className="bg-black/40 text-white px-2.5 py-1 rounded text-[11px] font-bold">€{region.price}</span>
+                              <span className="bg-black/40 text-white px-2.5 py-1 rounded text-[11px] font-bold">{siteContent.currency?.symbol || '€'}{region.price}</span>
                             </div>
                             <div className="absolute bottom-0 left-0 w-full p-3 md:p-4 z-10">
                               <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider block">Antalya Airport</span>
                               <svg width="14" height="22" viewBox="0 0 14 22" className="my-1 block" fill="none">
-                                <path d="M7 0l3.5 4.5H8.5v2h-3v-2H3.5L7 0z" fill="#c5a059" />
-                                <line x1="7" y1="8" x2="7" y2="14" stroke="#c5a059" strokeWidth="1.5" strokeDasharray="2 2" />
-                                <path d="M7 22l-3.5-4.5H5.5v-2h3v2h2L7 22z" fill="#c5a059" />
+                                <path d="M7 0l3.5 4.5H8.5v2h-3v-2H3.5L7 0z" fill="var(--color-primary)" />
+                                <line x1="7" y1="8" x2="7" y2="14" stroke="var(--color-primary)" strokeWidth="1.5" strokeDasharray="2 2" />
+                                <path d="M7 22l-3.5-4.5H5.5v-2h3v2h2L7 22z" fill="var(--color-primary)" />
                               </svg>
-                              <h3 className="text-sm md:text-base font-bold text-white leading-tight group-hover:text-[#c5a059] transition-colors duration-300">{region.name}</h3>
+                              <h3 className="text-sm md:text-base font-bold text-white leading-tight group-hover:text-[var(--color-primary)] transition-colors duration-300">{region.name}</h3>
                             </div>
                           </Link>
                         ))}
@@ -551,12 +572,12 @@ const App: React.FC = () => {
                     <div className="max-w-7xl mx-auto px-4 relative z-10">
                       <div className="text-center mb-10 md:mb-12">
                         <div className="inline-flex items-center gap-2 mb-3">
-                          <span className="w-8 h-px bg-gradient-to-r from-transparent to-[#c5a059]"></span>
-                          <span className="text-[#c5a059] font-bold text-[11px] uppercase tracking-[0.3em]">{t('blog.eyebrow')}</span>
-                          <span className="w-8 h-px bg-gradient-to-l from-transparent to-[#c5a059]"></span>
+                          <span className="w-8 h-px bg-gradient-to-r from-transparent to-[var(--color-primary)]"></span>
+                          <span className="text-[var(--color-primary)] font-bold text-[11px] uppercase tracking-[0.3em]">{t('blog.eyebrow')}</span>
+                          <span className="w-8 h-px bg-gradient-to-l from-transparent to-[var(--color-primary)]"></span>
                         </div>
                         <h2 className="text-3xl md:text-4xl lg:text-5xl font-playfair font-bold leading-tight text-slate-900">
-                          {t('blog.title')} <span className="bg-gradient-to-r from-[#c5a059] via-[#e0c07a] to-[#c5a059] bg-clip-text text-transparent">{t('blog.titleAccent')}</span>
+                          {t('blog.title')} <span className="bg-gradient-to-r from-[var(--color-primary)] via-[#e0c07a] to-[var(--color-primary)] bg-clip-text text-transparent">{t('blog.titleAccent')}</span>
                         </h2>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -568,9 +589,9 @@ const App: React.FC = () => {
                               <span className="absolute bottom-2 left-3 text-[10px] font-bold text-white/80 bg-black/30 backdrop-blur-sm rounded-full px-2.5 py-0.5">{t(post.category)}</span>
                             </div>
                             <div className="p-4">
-                              <h3 className="text-sm font-bold text-[#0f172a] line-clamp-2 mb-2 group-hover:text-[#c5a059] transition-colors leading-snug">{t(post.title)}</h3>
+                              <h3 className="text-sm font-bold text-[var(--color-dark)] line-clamp-2 mb-2 group-hover:text-[var(--color-primary)] transition-colors leading-snug">{t(post.title)}</h3>
                               <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">{t(post.excerpt)}</p>
-                              <div className="mt-3 flex items-center gap-1 text-[#c5a059] text-xs font-semibold">
+                              <div className="mt-3 flex items-center gap-1 text-[var(--color-primary)] text-xs font-semibold">
                                 <span>{t('blog.readMore')}</span>
                                 <i className="fa-solid fa-arrow-right text-[9px] group-hover:translate-x-1 transition-transform"></i>
                               </div>
@@ -579,7 +600,7 @@ const App: React.FC = () => {
                         ))}
                       </div>
                       <div className="text-center mt-8">
-                        <Link to="/blog" className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-[#c5a059] transition-colors">
+                        <Link to="/blog" className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-[var(--color-primary)] transition-colors">
                           <span>{t('blog.viewAll')}</span>
                           <i className="fa-solid fa-arrow-right text-xs"></i>
                         </Link>
@@ -588,20 +609,20 @@ const App: React.FC = () => {
                   </section>
 
                   {/* Müşteri Yorumları — 2026 UI */}
-                  <section id="reviews" className="py-8 md:py-10 bg-[#0f172a] overflow-hidden relative">
+                  <section id="reviews" className="py-8 md:py-10 bg-[var(--color-dark)] overflow-hidden relative">
                     {/* Ambient glow */}
-                    <div className="absolute top-0 left-1/4 w-[500px] h-[300px] bg-[#c5a059]/[0.03] rounded-full blur-[100px] pointer-events-none"></div>
-                    <div className="absolute bottom-0 right-1/4 w-[400px] h-[200px] bg-[#c5a059]/[0.02] rounded-full blur-[80px] pointer-events-none"></div>
+                    <div className="absolute top-0 left-1/4 w-[500px] h-[300px] bg-[var(--color-primary)]/[0.03] rounded-full blur-[100px] pointer-events-none"></div>
+                    <div className="absolute bottom-0 right-1/4 w-[400px] h-[200px] bg-[var(--color-primary)]/[0.02] rounded-full blur-[80px] pointer-events-none"></div>
 
                     <div className="max-w-7xl mx-auto px-4 mb-10 md:mb-14 relative z-10">
                       <div className="text-center">
                         <div className="inline-flex items-center gap-2 mb-3">
-                          <span className="w-8 h-px bg-gradient-to-r from-transparent to-[#c5a059]"></span>
-                          <span className="text-[#c5a059] font-bold text-[11px] uppercase tracking-[0.3em]">{t('reviews.eyebrow')}</span>
-                          <span className="w-8 h-px bg-gradient-to-l from-transparent to-[#c5a059]"></span>
+                          <span className="w-8 h-px bg-gradient-to-r from-transparent to-[var(--color-primary)]"></span>
+                          <span className="text-[var(--color-primary)] font-bold text-[11px] uppercase tracking-[0.3em]">{t('reviews.eyebrow')}</span>
+                          <span className="w-8 h-px bg-gradient-to-l from-transparent to-[var(--color-primary)]"></span>
                         </div>
                         <h2 className="text-3xl md:text-4xl lg:text-5xl font-playfair font-bold text-white leading-tight">
-                          <span className="bg-gradient-to-r from-[#c5a059] via-[#e0c07a] to-[#c5a059] bg-clip-text text-transparent">2.847</span> {t('reviews.count')}
+                          <span className="bg-gradient-to-r from-[var(--color-primary)] via-[#e0c07a] to-[var(--color-primary)] bg-clip-text text-transparent">2.847</span> {t('reviews.count')}
                         </h2>
                         <div className="flex items-center justify-center gap-2 mt-4">
                           <div className="flex items-center gap-0.5 bg-white/[0.04] backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/[0.06]">
@@ -619,7 +640,7 @@ const App: React.FC = () => {
                           {/* Header Row */}
                           <div className="flex items-center justify-between mb-4 md:mb-0 md:hidden">
                             <div className="flex items-center gap-2">
-                              <i className="fa-solid fa-pen text-[#c5a059] text-xs"></i>
+                              <i className="fa-solid fa-pen text-[var(--color-primary)] text-xs"></i>
                               <span className="text-white text-sm font-medium">{t('reviews.addReview')}</span>
                             </div>
                             <div className="flex gap-1">
@@ -638,7 +659,7 @@ const App: React.FC = () => {
                           {/* Desktop Layout */}
                           <div className="hidden md:flex items-center gap-3">
                             <div className="flex items-center gap-2 shrink-0">
-                              <i className="fa-solid fa-pen text-[#c5a059] text-xs"></i>
+                              <i className="fa-solid fa-pen text-[var(--color-primary)] text-xs"></i>
                               <span className="text-white text-sm font-medium">{t('reviews.addReview')}:</span>
                             </div>
                             <div className="flex gap-0.5 shrink-0">
@@ -652,10 +673,10 @@ const App: React.FC = () => {
                                 </button>
                               ))}
                             </div>
-                            <input type="text" placeholder={t('reviews.firstName')} className="flex-1 min-w-[60px] bg-white/[0.03] border border-white/[0.08] rounded-xl px-3 py-2 text-white text-xs placeholder-slate-500 focus:border-[#c5a059] focus:outline-none transition-colors" />
-                            <input type="text" placeholder={t('reviews.lastName')} className="flex-1 min-w-[60px] bg-white/[0.03] border border-white/[0.08] rounded-xl px-3 py-2 text-white text-xs placeholder-slate-500 focus:border-[#c5a059] focus:outline-none transition-colors" />
-                            <input type="text" placeholder={t('reviews.yourReview')} className="flex-[2] min-w-[100px] bg-white/[0.03] border border-white/[0.08] rounded-xl px-3 py-2 text-white text-xs placeholder-slate-500 focus:border-[#c5a059] focus:outline-none transition-colors" />
-                            <button className="shrink-0 bg-gradient-to-r from-[#c5a059] to-amber-600 hover:from-amber-600 hover:to-[#c5a059] text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all flex items-center gap-1.5 shadow-lg shadow-[#c5a059]/10 hover:shadow-[#c5a059]/20">
+                            <input type="text" placeholder={t('reviews.firstName')} className="flex-1 min-w-[60px] bg-white/[0.03] border border-white/[0.08] rounded-xl px-3 py-2 text-white text-xs placeholder-slate-500 focus:border-[var(--color-primary)] focus:outline-none transition-colors" />
+                            <input type="text" placeholder={t('reviews.lastName')} className="flex-1 min-w-[60px] bg-white/[0.03] border border-white/[0.08] rounded-xl px-3 py-2 text-white text-xs placeholder-slate-500 focus:border-[var(--color-primary)] focus:outline-none transition-colors" />
+                            <input type="text" placeholder={t('reviews.yourReview')} className="flex-[2] min-w-[100px] bg-white/[0.03] border border-white/[0.08] rounded-xl px-3 py-2 text-white text-xs placeholder-slate-500 focus:border-[var(--color-primary)] focus:outline-none transition-colors" />
+                            <button className="shrink-0 bg-gradient-to-r from-[var(--color-primary)] to-amber-600 hover:from-amber-600 hover:to-[var(--color-primary)] text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all flex items-center gap-1.5 shadow-lg shadow-[var(--color-primary)]/10 hover:shadow-[var(--color-primary)]/20">
                               <i className="fa-solid fa-paper-plane text-[10px]"></i>
                               {t('reviews.send')}
                             </button>
@@ -664,11 +685,11 @@ const App: React.FC = () => {
                           {/* Mobile Layout - Vertical Stack */}
                           <div className="md:hidden space-y-3">
                             <div className="grid grid-cols-2 gap-3">
-                              <input type="text" placeholder={t('reviews.firstName')} className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 min-h-[48px] text-white text-sm placeholder-slate-500 focus:border-[#c5a059] focus:outline-none transition-colors" />
-                              <input type="text" placeholder={t('reviews.lastName')} className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 min-h-[48px] text-white text-sm placeholder-slate-500 focus:border-[#c5a059] focus:outline-none transition-colors" />
+                              <input type="text" placeholder={t('reviews.firstName')} className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 min-h-[48px] text-white text-sm placeholder-slate-500 focus:border-[var(--color-primary)] focus:outline-none transition-colors" />
+                              <input type="text" placeholder={t('reviews.lastName')} className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 min-h-[48px] text-white text-sm placeholder-slate-500 focus:border-[var(--color-primary)] focus:outline-none transition-colors" />
                             </div>
-                            <input type="text" placeholder={t('reviews.yourReview')} className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 min-h-[48px] text-white text-sm placeholder-slate-500 focus:border-[#c5a059] focus:outline-none transition-colors" />
-                            <button className="w-full bg-gradient-to-r from-[#c5a059] to-amber-600 hover:from-amber-600 hover:to-[#c5a059] text-white text-sm font-bold px-4 py-3.5 min-h-[48px] rounded-xl transition-all flex items-center justify-center gap-2 active:scale-[0.98] shadow-lg shadow-[#c5a059]/10">
+                            <input type="text" placeholder={t('reviews.yourReview')} className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 min-h-[48px] text-white text-sm placeholder-slate-500 focus:border-[var(--color-primary)] focus:outline-none transition-colors" />
+                            <button className="w-full bg-gradient-to-r from-[var(--color-primary)] to-amber-600 hover:from-amber-600 hover:to-[var(--color-primary)] text-white text-sm font-bold px-4 py-3.5 min-h-[48px] rounded-xl transition-all flex items-center justify-center gap-2 active:scale-[0.98] shadow-lg shadow-[var(--color-primary)]/10">
                               <i className="fa-solid fa-paper-plane"></i>
                               {t('reviews.submit')}
                             </button>
@@ -680,8 +701,8 @@ const App: React.FC = () => {
                     {/* Dual-Row Kayan Yorumlar — GPU Accelerated */}
                     <div className="relative space-y-4">
                       {/* Fade edges */}
-                      <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-[#0f172a] to-transparent z-20 pointer-events-none"></div>
-                      <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-[#0f172a] to-transparent z-20 pointer-events-none"></div>
+                      <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-[var(--color-dark)] to-transparent z-20 pointer-events-none"></div>
+                      <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-[var(--color-dark)] to-transparent z-20 pointer-events-none"></div>
 
                       {/* Row 1 — Left to Right (15 reviews × 2) */}
                       <div className="flex gap-4 marquee-row-1 px-4">
@@ -690,13 +711,13 @@ const App: React.FC = () => {
                             <div className="flex items-center gap-3 mb-3">
                               {/* Avatar with gradient ring */}
                               <div className="relative">
-                                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#c5a059] via-amber-500 to-[#c5a059] p-[2px]">
-                                  <div className="w-full h-full rounded-full bg-[#0f172a] flex items-center justify-center text-[#c5a059] font-bold text-sm">
+                                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[var(--color-primary)] via-amber-500 to-[var(--color-primary)] p-[2px]">
+                                  <div className="w-full h-full rounded-full bg-[var(--color-dark)] flex items-center justify-center text-[var(--color-primary)] font-bold text-sm">
                                     {review.name.charAt(0)}
                                   </div>
                                 </div>
                                 {/* Verified dot */}
-                                <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 rounded-full border-2 border-[#0f172a] flex items-center justify-center">
+                                <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 rounded-full border-2 border-[var(--color-dark)] flex items-center justify-center">
                                   <i className="fa-solid fa-check text-white text-[6px]"></i>
                                 </div>
                               </div>
@@ -728,13 +749,13 @@ const App: React.FC = () => {
                             <div className="flex items-center gap-3 mb-3">
                               {/* Avatar with gradient ring */}
                               <div className="relative">
-                                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#c5a059] via-amber-500 to-[#c5a059] p-[2px]">
-                                  <div className="w-full h-full rounded-full bg-[#0f172a] flex items-center justify-center text-[#c5a059] font-bold text-sm">
+                                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[var(--color-primary)] via-amber-500 to-[var(--color-primary)] p-[2px]">
+                                  <div className="w-full h-full rounded-full bg-[var(--color-dark)] flex items-center justify-center text-[var(--color-primary)] font-bold text-sm">
                                     {review.name.charAt(0)}
                                   </div>
                                 </div>
                                 {/* Verified dot */}
-                                <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 rounded-full border-2 border-[#0f172a] flex items-center justify-center">
+                                <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 rounded-full border-2 border-[var(--color-dark)] flex items-center justify-center">
                                   <i className="fa-solid fa-check text-white text-[6px]"></i>
                                 </div>
                               </div>
@@ -768,26 +789,26 @@ const App: React.FC = () => {
 
         {/* Footer - Admin ve Login modunda gizle */}
         {!isAdmin && !isLoginPage && !isAdminPage && (
-          <footer id="contact" className="bg-[#020617] text-white py-6 pb-28 lg:pb-6 border-t border-[#c5a059]/20">
+          <footer id="contact" className="bg-[var(--color-darker)] text-white py-6 pb-28 lg:pb-6 border-t border-[var(--color-primary)]/20">
             <div className="max-w-7xl mx-auto px-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 text-center md:text-left mb-6">
                 <div className="flex items-center justify-center md:justify-start gap-3">
-                  <img src={siteContent.business.logo || '/logo.png'} alt={`${BUSINESS_INFO.name} Logo`} className="h-12 w-auto" onError={(e) => (e.currentTarget.src = '/logo.png')} />
+                  <img src={siteContent.business.logo || '/logo.png'} alt={`${siteContent.business.name} Logo`} className="h-12 w-auto" onError={(e) => (e.currentTarget.src = '/logo.png')} />
                   <div>
-                    <h4 className="text-white font-black text-xl tracking-tight">ATA FLUG TRANSFER</h4>
+                    <h4 className="text-white font-black text-xl tracking-tight">{siteContent.business.name}</h4>
                     <p className="text-slate-400 text-xs">{t('footer.tagline')}</p>
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-[#c5a059] font-bold text-xs uppercase tracking-widest mb-3">{t('footer.contact')}</h4>
+                  <h4 className="text-[var(--color-primary)] font-bold text-xs uppercase tracking-widest mb-3">{t('footer.contact')}</h4>
                   <ul className="space-y-3 md:space-y-2 text-sm text-slate-300">
-                    <li><a href={`tel:${siteContent.business.phone}`} target="_blank" rel="noopener noreferrer" className="hover:text-[#c5a059] transition-colors inline-flex items-center min-h-[44px] md:min-h-0"><i className="fa-solid fa-phone mr-3 text-[#c5a059]"></i>{siteContent.business.phone}</a></li>
-                    <li><a href={`mailto:${siteContent.business.email}`} target="_blank" rel="noopener noreferrer" className="hover:text-[#c5a059] transition-colors inline-flex items-center min-h-[44px] md:min-h-0"><i className="fa-solid fa-envelope mr-3 text-[#c5a059]"></i>{siteContent.business.email}</a></li>
-                    <li className="inline-flex items-center"><i className="fa-solid fa-location-dot mr-3 text-[#c5a059]"></i>{siteContent.business.address}</li>
+                    <li><a href={`tel:${siteContent.business.phone}`} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-primary)] transition-colors inline-flex items-center min-h-[44px] md:min-h-0"><i className="fa-solid fa-phone mr-3 text-[var(--color-primary)]"></i>{siteContent.business.phone}</a></li>
+                    <li><a href={`mailto:${siteContent.business.email}`} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-primary)] transition-colors inline-flex items-center min-h-[44px] md:min-h-0"><i className="fa-solid fa-envelope mr-3 text-[var(--color-primary)]"></i>{siteContent.business.email}</a></li>
+                    <li className="inline-flex items-center"><i className="fa-solid fa-location-dot mr-3 text-[var(--color-primary)]"></i>{siteContent.business.address}</li>
                   </ul>
                 </div>
                 <div>
-                  <h4 className="text-[#c5a059] font-bold text-xs uppercase tracking-widest mb-3">{t('footer.quickSupport')}</h4>
+                  <h4 className="text-[var(--color-primary)] font-bold text-xs uppercase tracking-widest mb-3">{t('footer.quickSupport')}</h4>
                   <div className="flex justify-center md:justify-start space-x-3">
                     <a href={`https://wa.me/${siteContent.business.whatsapp}`} target="_blank" rel="noopener noreferrer" className="w-12 h-12 md:w-11 md:h-11 bg-emerald-500 rounded-full flex items-center justify-center text-white text-xl md:text-lg hover:scale-110 active:scale-95 transition-transform shadow-lg"><i className="fa-brands fa-whatsapp"></i></a>
                     <a href={siteContent.business.telegram} target="_blank" rel="noopener noreferrer" className="w-12 h-12 md:w-11 md:h-11 bg-sky-500 rounded-full flex items-center justify-center text-white text-xl md:text-lg hover:scale-110 active:scale-95 transition-transform shadow-lg"><i className="fa-brands fa-telegram"></i></a>
@@ -797,7 +818,7 @@ const App: React.FC = () => {
                 </div>
               </div>
               <p className="text-slate-600 text-[10px] font-bold tracking-[0.3em] uppercase text-center pt-4 border-t border-white/5">
-                © {new Date().getFullYear()} ATA FLUG TRANSFER - ALL RIGHTS RESERVED - DESIGN <a href="https://wa.me/905523890771" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-[#c5a059] transition-colors">HOZYON</a>
+                © {new Date().getFullYear()} {siteContent.business.name} - ALL RIGHTS RESERVED - DESIGN <a href="https://wa.me/905523890771" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-[var(--color-primary)] transition-colors">HOZYON</a>
               </p>
             </div>
           </footer>

@@ -35,7 +35,7 @@ export const HeroImagesView: React.FC<HeroImagesViewProps> = ({
                     { label: 'Toplam Görsel', value: heroBackgrounds.length, icon: 'fa-images', iconBg: 'bg-blue-500', gradient: 'from-blue-500/15 to-indigo-600/5', border: 'border-blue-500/15' },
                     { label: 'Boş Slot', value: Math.max(0, 5 - heroBackgrounds.length), icon: 'fa-plus-circle', iconBg: 'bg-emerald-500', gradient: 'from-emerald-500/15 to-green-600/5', border: 'border-emerald-500/15' },
                     { label: 'Görünüm', value: 'Slider', icon: 'fa-tv', iconBg: 'bg-violet-500', gradient: 'from-violet-500/15 to-purple-600/5', border: 'border-violet-500/15' },
-                    { label: 'Kapasite', value: `${heroBackgrounds.length}/5`, icon: 'fa-gauge-high', iconBg: 'bg-[#c5a059]', gradient: 'from-[#c5a059]/15 to-amber-600/5', border: 'border-[#c5a059]/15' },
+                    { label: 'Kapasite', value: `${heroBackgrounds.length}/5`, icon: 'fa-gauge-high', iconBg: 'bg-[var(--color-primary)]', gradient: 'from-[var(--color-primary)]/15 to-amber-600/5', border: 'border-[var(--color-primary)]/15' },
                 ].map((s, i) => (
                     <div key={i} className={`p-4 rounded-2xl bg-gradient-to-br ${s.gradient} border ${s.border}`}>
                         <div className="flex items-start justify-between">
@@ -57,7 +57,7 @@ export const HeroImagesView: React.FC<HeroImagesViewProps> = ({
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 px-4 py-4">
                     <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2">
-                            <i className="fa-solid fa-panorama text-[#c5a059] text-sm"></i>
+                            <i className="fa-solid fa-panorama text-[var(--color-primary)] text-sm"></i>
                             <span className="text-sm font-bold text-white">Slider Görselleri</span>
                             <span className="text-[9px] font-black min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-white/5 text-slate-400">{heroBackgrounds.length}</span>
                         </div>
@@ -74,7 +74,7 @@ export const HeroImagesView: React.FC<HeroImagesViewProps> = ({
                     </div>
 
                     {heroBackgrounds.length < 5 && (
-                        <label className="sm:ml-auto px-4 py-2.5 bg-[#c5a059] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 cursor-pointer shrink-0">
+                        <label className="sm:ml-auto px-4 py-2.5 bg-[var(--color-primary)] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 cursor-pointer shrink-0">
                             <i className="fa-solid fa-cloud-arrow-up text-[10px]"></i> Görsel Yükle
                             <input type="file" accept="image/*" className="hidden" onChange={e => {
                                 const file = e.target.files?.[0];
@@ -112,7 +112,7 @@ export const HeroImagesView: React.FC<HeroImagesViewProps> = ({
                                     const isSelected = selectedHeroImages.includes(idx);
                                     return (
                                         <tr key={idx} {...getDragProps(idx)}
-                                            className={`border-b border-white/[0.03] transition-all group cursor-grab active:cursor-grabbing ${isSelected ? 'bg-[#c5a059]/[0.06]' : 'hover:bg-white/[0.03]'} ${getRowClassName(idx)}`}>
+                                            className={`border-b border-white/[0.03] transition-all group cursor-grab active:cursor-grabbing ${isSelected ? 'bg-[var(--color-primary)]/[0.06]' : 'hover:bg-white/[0.03]'} ${getRowClassName(idx)}`}>
                                             <td className="px-4 py-3.5">
                                                 <input type="checkbox" checked={isSelected}
                                                     onChange={e => { if (e.target.checked) setSelectedHeroImages([...selectedHeroImages, idx]); else setSelectedHeroImages(selectedHeroImages.filter(id => id !== idx)); }}
@@ -135,9 +135,9 @@ export const HeroImagesView: React.FC<HeroImagesViewProps> = ({
                                             </td>
                                             <td className="px-3 py-3.5 hidden md:table-cell">
                                                 <div>
-                                                    <p className="font-bold text-white text-[13px] group-hover:text-[#c5a059] transition-colors">Slider Görseli {idx + 1}</p>
+                                                    <p className="font-bold text-white text-[13px] group-hover:text-[var(--color-primary)] transition-colors">Slider Görseli {idx + 1}</p>
                                                     <p className="text-[10px] text-slate-500 font-mono mt-0.5 truncate max-w-[200px]">{img.startsWith('data:') ? 'Yüklenen Dosya' : img.substring(0, 40) + '...'}</p>
-                                                    {idx === 0 && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-[#c5a059]/10 text-[#c5a059] border border-[#c5a059]/15 mt-1 inline-block">Varsayılan</span>}
+                                                    {idx === 0 && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/15 mt-1 inline-block">Varsayılan</span>}
                                                 </div>
                                             </td>
                                             <td className="px-3 py-3.5">

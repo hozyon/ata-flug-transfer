@@ -83,7 +83,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
               { id: 'draft' as const, label: 'Taslak', icon: 'fa-file-pen', count: blogPosts.filter(p => !p.isPublished).length },
             ].map(tab => (
               <button key={tab.id} onClick={() => setBlogTab(tab.id)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${blogTab === tab.id ? 'bg-[#c5a059] text-white shadow-lg shadow-[#c5a059]/20' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}>
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${blogTab === tab.id ? 'bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/20' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}>
                 <i className={`fa-solid ${tab.icon} text-[10px]`}></i>
                 {tab.label}
                 <span className={`text-[9px] font-black min-w-[18px] h-[18px] flex items-center justify-center rounded-full ${blogTab === tab.id ? 'bg-white/20' : 'bg-white/5'}`}>{tab.count}</span>
@@ -107,12 +107,12 @@ export const BlogView: React.FC<BlogViewProps> = ({
             <div className="relative flex-1 sm:w-56">
               <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 text-xs"></i>
               <input type="text" placeholder="Yazı ara..." value={blogSearchTerm} onChange={e => setBlogSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/[0.06] rounded-xl text-sm text-white placeholder-slate-600 focus:border-[#c5a059]/50 outline-none transition-all" />
+                className="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/[0.06] rounded-xl text-sm text-white placeholder-slate-600 focus:border-[var(--color-primary)]/50 outline-none transition-all" />
               {blogSearchTerm && <button onClick={() => setBlogSearchTerm('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"><i className="fa-solid fa-xmark text-xs"></i></button>}
             </div>
             {/* Add */}
             <button onClick={() => { setNewBlogPost({ title: '', slug: '', excerpt: '', content: '', category: blogCategories[0] || 'Havalimanı Transfer', featuredImage: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800', isPublished: false }); setEditingBlogPost(null); setIsAddBlogModalOpen(true); }}
-              className="px-4 py-2.5 bg-[#c5a059] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 shrink-0">
+              className="px-4 py-2.5 bg-[var(--color-primary)] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 shrink-0">
               <i className="fa-solid fa-plus text-[10px]"></i> Yeni Yazı
             </button>
           </div>
@@ -147,7 +147,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
                   const isSelected = selectedBlogs.includes(post.id);
                   return (
                     <tr key={post.id} onClick={() => { setNewBlogPost(post); setEditingBlogPost(post); setIsAddBlogModalOpen(true); }}
-                      className={`border-b border-white/[0.03] cursor-pointer transition-all group ${isSelected ? 'bg-[#c5a059]/[0.06]' : 'hover:bg-white/[0.03]'}`}>
+                      className={`border-b border-white/[0.03] cursor-pointer transition-all group ${isSelected ? 'bg-[var(--color-primary)]/[0.06]' : 'hover:bg-white/[0.03]'}`}>
                       <td className="px-4 py-3.5" onClick={e => e.stopPropagation()}>
                         <input type="checkbox" checked={isSelected}
                           onChange={e => { if (e.target.checked) setSelectedBlogs([...selectedBlogs, post.id]); else setSelectedBlogs(selectedBlogs.filter(id => id !== post.id)); }}
@@ -159,13 +159,13 @@ export const BlogView: React.FC<BlogViewProps> = ({
                             <img src={post.featuredImage} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={post.title} />
                           </div>
                           <div className="min-w-0">
-                            <p className="font-bold text-white text-[13px] group-hover:text-[#c5a059] transition-colors truncate max-w-[250px] sm:max-w-[350px]">{post.title}</p>
+                            <p className="font-bold text-white text-[13px] group-hover:text-[var(--color-primary)] transition-colors truncate max-w-[250px] sm:max-w-[350px]">{post.title}</p>
                             <p className="text-[10px] text-slate-500 truncate max-w-[200px] sm:max-w-[300px] mt-0.5">{post.excerpt}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-3 py-3.5 hidden md:table-cell">
-                        <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-[#c5a059]/10 text-[#c5a059] border border-[#c5a059]/15">{post.category}</span>
+                        <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/15">{post.category}</span>
                       </td>
                       <td className="px-3 py-3.5 hidden lg:table-cell">
                         <span className="text-[11px] text-slate-500">{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('tr-TR') : '—'}</span>
@@ -226,7 +226,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
               </div>
               <div className="flex items-center gap-2">
                 <button onClick={() => setShowBlogPreview(!showBlogPreview)}
-                  className={`px-3 py-2 rounded-lg font-bold text-xs flex items-center gap-2 transition-all ${showBlogPreview ? 'bg-[#c5a059] text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}>
+                  className={`px-3 py-2 rounded-lg font-bold text-xs flex items-center gap-2 transition-all ${showBlogPreview ? 'bg-[var(--color-primary)] text-white' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}>
                   <i className={`fa-solid ${showBlogPreview ? 'fa-edit' : 'fa-eye'} text-[10px]`}></i>
                   {showBlogPreview ? 'Düzenle' : 'Önizle'}
                 </button>
@@ -242,7 +242,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
               {showBlogPreview ? (
                 <div className="p-6">
                   <div className="rounded-2xl overflow-hidden mb-6 shadow-xl"><img src={newBlogPost.featuredImage} alt="Preview" className="w-full h-56 object-cover" /></div>
-                  <span className="text-[#c5a059] font-bold text-xs uppercase tracking-widest">{newBlogPost.category}</span>
+                  <span className="text-[var(--color-primary)] font-bold text-xs uppercase tracking-widest">{newBlogPost.category}</span>
                   <h1 className="text-2xl font-black mt-2 text-white">{newBlogPost.title || 'Başlık girilmedi...'}</h1>
                   <p className="mt-3 text-sm text-slate-300">{newBlogPost.excerpt || 'Özet girilmedi...'}</p>
                   <div className="mt-6"><p className="text-slate-300 text-sm" style={{ whiteSpace: 'pre-wrap' }}>{newBlogPost.content || 'İçerik girilmedi...'}</p></div>
@@ -251,35 +251,35 @@ export const BlogView: React.FC<BlogViewProps> = ({
                 <div className="p-6 space-y-5">
                   {/* Image */}
                   <div>
-                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5 mb-2"><i className="fa-solid fa-image text-[8px] text-[#c5a059]"></i> Kapak Görseli</label>
+                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5 mb-2"><i className="fa-solid fa-image text-[8px] text-[var(--color-primary)]"></i> Kapak Görseli</label>
                     <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-800 group">
                       <img src={newBlogPost.featuredImage} className="w-full h-full object-cover" alt="Preview" />
                       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                         <input type="file" id="blog-image-upload" className="hidden" accept="image/*" onChange={e => { const f = e.target.files?.[0]; if (f) { if (f.size > 2 * 1024 * 1024) { alert('Maks 2MB!'); return; } const r = new FileReader(); r.onloadend = () => setNewBlogPost({ ...newBlogPost, featuredImage: r.result as string }); r.readAsDataURL(f); } }} />
-                        <label htmlFor="blog-image-upload" className="bg-white text-slate-800 px-4 py-2 rounded-xl font-bold text-xs cursor-pointer hover:bg-[#c5a059] hover:text-white transition-colors"><i className="fa-solid fa-upload mr-2"></i>Görsel Yükle</label>
+                        <label htmlFor="blog-image-upload" className="bg-white text-slate-800 px-4 py-2 rounded-xl font-bold text-xs cursor-pointer hover:bg-[var(--color-primary)] hover:text-white transition-colors"><i className="fa-solid fa-upload mr-2"></i>Görsel Yükle</label>
                       </div>
                     </div>
-                    <input className="w-full mt-2 bg-white/5 border border-white/[0.06] rounded-xl px-4 py-2.5 text-xs text-white focus:border-[#c5a059]/50 outline-none transition-all" value={newBlogPost.featuredImage} onChange={e => setNewBlogPost({ ...newBlogPost, featuredImage: e.target.value })} placeholder="veya URL girin..." />
+                    <input className="w-full mt-2 bg-white/5 border border-white/[0.06] rounded-xl px-4 py-2.5 text-xs text-white focus:border-[var(--color-primary)]/50 outline-none transition-all" value={newBlogPost.featuredImage} onChange={e => setNewBlogPost({ ...newBlogPost, featuredImage: e.target.value })} placeholder="veya URL girin..." />
                   </div>
 
                   {/* Title & Category */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="sm:col-span-2 space-y-2">
                       <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i className="fa-solid fa-heading text-[8px] text-blue-400"></i> Başlık</label>
-                      <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm font-bold text-white focus:border-[#c5a059]/50 outline-none transition-all"
+                      <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm font-bold text-white focus:border-[var(--color-primary)]/50 outline-none transition-all"
                         value={newBlogPost.title} onChange={e => setNewBlogPost({ ...newBlogPost, title: e.target.value, slug: e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-') })} placeholder="Blog başlığı..." />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i className="fa-solid fa-folder text-[8px] text-violet-400"></i> Kategori</label>
-                      <select className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:border-[#c5a059]/50 outline-none transition-all"
+                      <select className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:border-[var(--color-primary)]/50 outline-none transition-all"
                         value={newBlogPost.category} onChange={e => setNewBlogPost({ ...newBlogPost, category: e.target.value })}>
                         {blogCategories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                       </select>
                       <div className="flex gap-2">
                         <input type="text" placeholder="Yeni kategori..." value={newCategoryName} onChange={e => setNewCategoryName(e.target.value)}
-                          className="flex-1 bg-white/5 border border-white/[0.06] rounded-lg px-3 py-2 text-xs text-white focus:border-[#c5a059]/50 outline-none placeholder-slate-600 transition-all" />
+                          className="flex-1 bg-white/5 border border-white/[0.06] rounded-lg px-3 py-2 text-xs text-white focus:border-[var(--color-primary)]/50 outline-none placeholder-slate-600 transition-all" />
                         <button type="button" onClick={() => { if (newCategoryName.trim() && !blogCategories.includes(newCategoryName.trim())) { setBlogCategories([...blogCategories, newCategoryName.trim()]); setNewBlogPost({ ...newBlogPost, category: newCategoryName.trim() }); setNewCategoryName(''); } }}
-                          className="px-3 py-2 rounded-lg bg-[#c5a059] hover:bg-amber-600 text-white text-xs font-bold transition-colors"><i className="fa-solid fa-plus"></i></button>
+                          className="px-3 py-2 rounded-lg bg-[var(--color-primary)] hover:bg-amber-600 text-white text-xs font-bold transition-colors"><i className="fa-solid fa-plus"></i></button>
                       </div>
                     </div>
                   </div>
@@ -287,7 +287,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
                   {/* Excerpt */}
                   <div className="space-y-2">
                     <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i className="fa-solid fa-align-left text-[8px] text-emerald-400"></i> Özet</label>
-                    <textarea className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-slate-300 focus:border-[#c5a059]/50 outline-none resize-none transition-all" rows={3}
+                    <textarea className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-slate-300 focus:border-[var(--color-primary)]/50 outline-none resize-none transition-all" rows={3}
                       value={newBlogPost.excerpt} onChange={e => setNewBlogPost({ ...newBlogPost, excerpt: e.target.value })} placeholder="Kısa özet metni..." />
                   </div>
 
@@ -310,7 +310,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
                       <div className="flex-1"></div>
                       <span className="text-[10px] text-slate-500"><i className="fa-solid fa-circle-info mr-1"></i>Markdown</span>
                     </div>
-                    <textarea id="blog-content" className="w-full p-4 rounded-b-xl font-mono text-xs bg-white/5 text-white border border-white/[0.06] border-t-0 focus:border-[#c5a059]/50 outline-none min-h-[200px] resize-y leading-relaxed"
+                    <textarea id="blog-content" className="w-full p-4 rounded-b-xl font-mono text-xs bg-white/5 text-white border border-white/[0.06] border-t-0 focus:border-[var(--color-primary)]/50 outline-none min-h-[200px] resize-y leading-relaxed"
                       value={newBlogPost.content} onChange={e => setNewBlogPost({ ...newBlogPost, content: e.target.value })} placeholder="Blog içeriğinizi buraya yazın..." />
                   </div>
 
@@ -331,7 +331,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
                 else { setBlogPosts([...blogPosts, { ...newBlogPost, id: Date.now().toString(), publishedAt: new Date().toISOString() } as BlogPost]); showToast('Oluşturuldu', 'success'); }
                 setIsAddBlogModalOpen(false); setShowBlogPreview(false);
               }}
-                className="flex-1 bg-[#c5a059] hover:bg-amber-600 text-white py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition-all">
+                className="flex-1 bg-[var(--color-primary)] hover:bg-amber-600 text-white py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition-all">
                 <i className="fa-solid fa-check"></i> {editingBlogPost ? 'Kaydet' : 'Oluştur'}
               </button>
               <button onClick={() => { setIsAddBlogModalOpen(false); setShowBlogPreview(false); }}

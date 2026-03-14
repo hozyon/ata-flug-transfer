@@ -1,4 +1,16 @@
 
+export interface BrandingSettings {
+  primaryColor: string;
+  darkBg: string;
+  darkBgDeep: string;
+  favicon?: string;
+}
+
+export interface CurrencySettings {
+  symbol: string;
+  code: string;
+}
+
 export interface Vehicle {
   id: string;
   name: string;
@@ -127,6 +139,8 @@ export interface SiteContent {
     hidden?: boolean;
   }[];
   seo: SeoSettings;
+  branding?: BrandingSettings;
+  currency?: CurrencySettings;
 }
 
 export interface Region {

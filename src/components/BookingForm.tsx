@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { DESTINATIONS, BUSINESS_INFO } from '../constants';
 import { Booking, Vehicle } from '../types';
 import { useLanguage } from '../i18n/LanguageContext';
+import { useAppStore } from '../store/useAppStore';
 
 const COUNTRY_CODES = [
   { code: '+90', flag: '🇹🇷', name: 'TR' },
@@ -35,6 +36,8 @@ interface BookingFormProps {
 
 const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) => {
   const { t, language } = useLanguage();
+  const businessName = useAppStore(state => state.siteContent.business.name);
+  const whatsappNumber = useAppStore(state => state.siteContent.business.whatsapp);
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -106,7 +109,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
 
     if (language === 'tr') {
       msg = [
-        '✨ *ATA FLUG TRANSFER* ✨',
+        `✨ *${businessName}* ✨`,
         '____________________________',
         '',
         '⭐ *YENİ REZERVASYON TALEBİ*',
@@ -149,7 +152,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
       if (formData.notes) trLines2.push('📝  ' + lb.nt + ': ' + formData.notes);
 
       msg = [
-        '✨ *ATA FLUG TRANSFER* ✨',
+        `✨ *${businessName}* ✨`,
         '____________________________',
         '',
         lf + ' *' + lb.title + '*',
@@ -170,17 +173,18 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
 
     // Detect mobile vs desktop
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const waNumber = whatsappNumber || BUSINESS_INFO.whatsapp;
     const waUrl = isMobile
-      ? 'https://api.whatsapp.com/send?phone=' + BUSINESS_INFO.whatsapp + '&text=' + encodeURIComponent(msg)
-      : 'https://web.whatsapp.com/send?phone=' + BUSINESS_INFO.whatsapp + '&text=' + encodeURIComponent(msg);
+      ? 'https://api.whatsapp.com/send?phone=' + waNumber + '&text=' + encodeURIComponent(msg)
+      : 'https://web.whatsapp.com/send?phone=' + waNumber + '&text=' + encodeURIComponent(msg);
     setTimeout(() => { window.open(waUrl, '_blank'); }, 100);
     setFormData(initialState);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 4000);
   };
 
-  const card = "rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 min-h-[52px] focus-within:border-[#c5a059]/30 transition-colors";
-  const lbl = "block text-[9px] font-bold text-[#c5a059]/60 uppercase tracking-[0.15em] mb-0.5";
+  const card = "rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 min-h-[52px] focus-within:border-[var(--color-primary)]/30 transition-colors";
+  const lbl = "block text-[9px] font-bold text-[var(--color-primary)]/60 uppercase tracking-[0.15em] mb-0.5";
   const inp = "w-full bg-transparent outline-none text-[12px] text-white font-medium placeholder-white/20";
 
   return (
@@ -193,7 +197,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
             <div className="px-3 py-2.5 focus-within:bg-white/[0.05]">
               <label className={lbl}>{t('Nereden')}</label>
               <div className="flex items-center gap-2">
-                <i className="fa-solid fa-circle-dot text-[#c5a059] text-[9px] flex-shrink-0"></i>
+                <i className="fa-solid fa-circle-dot text-[var(--color-primary)] text-[9px] flex-shrink-0"></i>
                 <select name="pickup" value={formData.pickup} onChange={handleChange}
                   className="w-full bg-transparent outline-none text-[12px] text-white font-medium appearance-none cursor-pointer truncate">
                   {DESTINATIONS.map(d => <option key={d} value={d} className="bg-[#0a0a0e] text-white">{d}</option>)}
@@ -204,7 +208,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
             <div className="px-3 py-2.5 focus-within:bg-white/[0.05]">
               <label className={lbl}>{t('Nereye')}</label>
               <div className="flex items-center gap-2">
-                <i className="fa-solid fa-location-dot text-[#c5a059] text-[9px] flex-shrink-0"></i>
+                <i className="fa-solid fa-location-dot text-[var(--color-primary)] text-[9px] flex-shrink-0"></i>
                 <select name="destination" value={formData.destination} onChange={handleChange}
                   className="w-full bg-transparent outline-none text-[12px] text-white font-medium appearance-none cursor-pointer truncate">
                   {DESTINATIONS.map(d => <option key={d} value={d} className="bg-[#0a0a0e] text-white">{d}</option>)}
@@ -213,7 +217,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
             </div>
           </div>
           <button type="button" onClick={handleSwapLocations}
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-[#0a0a0e] border border-white/[0.1] shadow-lg hover:border-[#c5a059]/40 flex items-center justify-center text-white/40 hover:text-[#c5a059] transition-all active:scale-90 z-10">
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-[#0a0a0e] border border-white/[0.1] shadow-lg hover:border-[var(--color-primary)]/40 flex items-center justify-center text-white/40 hover:text-[var(--color-primary)] transition-all active:scale-90 z-10">
             <i className="fa-solid fa-arrow-right-arrow-left text-[9px] rotate-90"></i>
           </button>
         </div>
@@ -223,7 +227,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
           <div className={card}>
             <label className={lbl}>{t('Ad')}</label>
             <div className="flex items-center gap-2">
-              <i className="fa-regular fa-user text-[#c5a059] text-[9px] flex-shrink-0"></i>
+              <i className="fa-regular fa-user text-[var(--color-primary)] text-[9px] flex-shrink-0"></i>
               <input required type="text" name="firstName" value={formData.firstName} onChange={handleChange}
                 className={inp} placeholder={t('Adınız')} />
             </div>
@@ -231,7 +235,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
           <div className={card}>
             <label className={lbl}>{t('Soyad')}</label>
             <div className="flex items-center gap-2">
-              <i className="fa-regular fa-user text-[#c5a059] text-[9px] flex-shrink-0"></i>
+              <i className="fa-regular fa-user text-[var(--color-primary)] text-[9px] flex-shrink-0"></i>
               <input required type="text" name="lastName" value={formData.lastName} onChange={handleChange}
                 className={inp} placeholder={t('Soyadınız')} />
             </div>
@@ -242,7 +246,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
         <div className={card}>
           <label className={lbl}>{t('E-posta')}</label>
           <div className="flex items-center gap-2">
-            <i className="fa-regular fa-envelope text-[#c5a059] text-[9px] flex-shrink-0"></i>
+            <i className="fa-regular fa-envelope text-[var(--color-primary)] text-[9px] flex-shrink-0"></i>
             <input type="email" name="email" value={formData.email} onChange={handleChange}
               className={inp} placeholder="ornek@email.com" />
           </div>
@@ -252,7 +256,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
         <div className={card}>
           <label className={lbl}>{t('Telefon')}</label>
           <div className="flex items-center gap-1.5">
-            <i className="fa-solid fa-phone text-[#c5a059] text-[9px] flex-shrink-0"></i>
+            <i className="fa-solid fa-phone text-[var(--color-primary)] text-[9px] flex-shrink-0"></i>
             <select name="countryCode" value={formData.countryCode} onChange={handleChange}
               className="w-[72px] bg-transparent outline-none text-[12px] text-white font-medium appearance-none cursor-pointer shrink-0">
               {COUNTRY_CODES.map(cc => (
@@ -270,7 +274,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
           <div className={card}>
             <label className={lbl}>{t('Tarih')}</label>
             <div className="flex items-center gap-2">
-              <i className="fa-regular fa-calendar text-[#c5a059] text-[9px] flex-shrink-0"></i>
+              <i className="fa-regular fa-calendar text-[var(--color-primary)] text-[9px] flex-shrink-0"></i>
               <input required type="date" name="date" value={formData.date} onChange={handleChange}
                 min={today}
                 className={inp + ' cursor-pointer [color-scheme:dark]'} />
@@ -279,7 +283,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
           <div className={card}>
             <label className={lbl}>{t('Saat')}</label>
             <div className="flex items-center gap-2">
-              <i className="fa-regular fa-clock text-[#c5a059] text-[9px] flex-shrink-0"></i>
+              <i className="fa-regular fa-clock text-[var(--color-primary)] text-[9px] flex-shrink-0"></i>
               <input required type="time" name="time" value={formData.time} onChange={handleChange}
                 className={inp + ' cursor-pointer [color-scheme:dark]'} />
             </div>
@@ -291,7 +295,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
           <div className={card}>
             <label className={lbl}>{t('Yolcu')}</label>
             <div className="flex items-center gap-1.5">
-              <i className="fa-solid fa-user-group text-[#c5a059] text-[9px] flex-shrink-0"></i>
+              <i className="fa-solid fa-user-group text-[var(--color-primary)] text-[9px] flex-shrink-0"></i>
               <select name="passengers" value={formData.passengers} onChange={handleChange}
                 className="w-full bg-transparent outline-none text-[12px] text-white font-medium appearance-none cursor-pointer">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].map(n => (
@@ -303,7 +307,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
           <div className={card}>
             <label className={lbl}>{t('Araç')}</label>
             <div className="flex items-center gap-1.5">
-              <i className="fa-solid fa-car-side text-[#c5a059] text-[9px] flex-shrink-0"></i>
+              <i className="fa-solid fa-car-side text-[var(--color-primary)] text-[9px] flex-shrink-0"></i>
               <select name="vehicleId" value={formData.vehicleId} onChange={handleChange}
                 className="w-full bg-transparent outline-none text-[12px] text-white font-medium appearance-none cursor-pointer truncate">
                 {vehicles.map(v => <option key={v.id} value={v.id} className="bg-[#0a0a0e] text-white">{v.name}</option>)}
@@ -313,7 +317,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
           <div className={card}>
             <label className={lbl}>{t('Uçuş No')}</label>
             <div className="flex items-center gap-1.5">
-              <i className="fa-solid fa-plane text-[#c5a059] text-[9px] flex-shrink-0"></i>
+              <i className="fa-solid fa-plane text-[var(--color-primary)] text-[9px] flex-shrink-0"></i>
               <input type="text" name="flightNumber" value={formData.flightNumber} onChange={handleChange}
                 className={inp} placeholder="TK2414" />
             </div>
@@ -324,7 +328,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
         <div className={card}>
           <label className={lbl}>{t('Not / Ek Bilgi')}</label>
           <div className="flex items-start gap-2">
-            <i className="fa-regular fa-comment text-[#c5a059] text-[9px] flex-shrink-0 mt-0.5"></i>
+            <i className="fa-regular fa-comment text-[var(--color-primary)] text-[9px] flex-shrink-0 mt-0.5"></i>
             <input type="text" name="notes" value={formData.notes} onChange={handleChange}
               className={inp} placeholder={t('Bebek koltuğu, extra bagaj vb. (opsiyonel)')} />
           </div>
@@ -342,7 +346,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
 
         {/* Submit */}
         <button type="submit"
-          className="group w-full bg-[#c5a059] hover:bg-[#d4af6a] text-[#0a0a0e] rounded-xl px-5 py-3 font-bold text-sm tracking-wide transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2.5 mt-1">
+          className="group w-full bg-[var(--color-primary)] hover:bg-[#d4af6a] text-[#0a0a0e] rounded-xl px-5 py-3 font-bold text-sm tracking-wide transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2.5 mt-1">
           <i className="fa-brands fa-whatsapp text-lg"></i>
           <span>{t("Teklif Al & WhatsApp'a Gönder")}</span>
           <i className="fa-solid fa-arrow-right text-xs opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"></i>

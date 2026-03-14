@@ -61,16 +61,16 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
                     <div className={`ml-auto w-2 h-2 rounded-full ${editContent.business.logo?.trim() ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]' : 'bg-red-500'}`} />
                 </div>
                 <div className="p-6 flex flex-col sm:flex-row items-center gap-5">
-                    <div className="w-16 h-16 rounded-xl bg-[#0f172a] border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+                    <div className="w-16 h-16 rounded-xl bg-[var(--color-dark)] border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
                         <img src={editContent.business.logo || '/logo.png'} alt="Logo" className="max-w-[80%] max-h-[80%] object-contain" onError={e => (e.currentTarget.src = '/logo.png')} />
                     </div>
                     <div className="flex-1 w-full space-y-3">
                         <div className="flex flex-col sm:flex-row gap-3">
                             <input type="file" accept="image/*" className="hidden" id="logo-upload" onChange={e => { const f = e.target.files?.[0]; if (f) { const r = new FileReader(); r.onloadend = () => setEditContent({ ...editContent, business: { ...editContent.business, logo: r.result as string } }); r.readAsDataURL(f); } }} />
-                            <label htmlFor="logo-upload" className="px-4 py-2.5 bg-[#c5a059] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0">
+                            <label htmlFor="logo-upload" className="px-4 py-2.5 bg-[var(--color-primary)] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0">
                                 <i className="fa-solid fa-cloud-arrow-up text-[10px]"></i> Yükle
                             </label>
-                            <input className="flex-1 bg-white/5 border border-white/[0.06] rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-600 outline-none focus:border-[#c5a059]/50 transition-all"
+                            <input className="flex-1 bg-white/5 border border-white/[0.06] rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-600 outline-none focus:border-[var(--color-primary)]/50 transition-all"
                                 value={editContent.business.logo?.startsWith('data:') ? 'Yüklendi (Base64)' : editContent.business.logo || ''} onChange={e => setEditContent({ ...editContent, business: { ...editContent.business, logo: e.target.value } })} placeholder="URL yapıştırın..." />
                         </div>
                     </div>
@@ -80,7 +80,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
             {/* Main Info Table */}
             <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
                 <div className="px-6 py-4 border-b border-white/[0.04] flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-[#c5a059] flex items-center justify-center shadow-lg"><i className="fa-solid fa-building text-white text-sm"></i></div>
+                    <div className="w-9 h-9 rounded-xl bg-[var(--color-primary)] flex items-center justify-center shadow-lg"><i className="fa-solid fa-building text-white text-sm"></i></div>
                     <h3 className="text-sm font-bold text-white">Ana Bilgiler</h3>
                 </div>
                 <div className="overflow-x-auto scrollbar-hide">
@@ -94,7 +94,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
                         </thead>
                         <tbody>
                             {[
-                                { key: 'name' as const, label: 'İşletme Adı', icon: 'fa-signature', color: 'text-[#c5a059]', placeholder: 'İşletme adınızı girin', type: 'input' },
+                                { key: 'name' as const, label: 'İşletme Adı', icon: 'fa-signature', color: 'text-[var(--color-primary)]', placeholder: 'İşletme adınızı girin', type: 'input' },
                                 { key: 'phone' as const, label: 'Telefon', icon: 'fa-phone', color: 'text-green-400', placeholder: '+90 505 XXX XX XX', type: 'input' },
                                 { key: 'email' as const, label: 'E-posta', icon: 'fa-envelope', color: 'text-blue-400', placeholder: 'info@example.com', type: 'input' },
                                 { key: 'address' as const, label: 'Adres', icon: 'fa-location-dot', color: 'text-red-400', placeholder: 'İşletme adresini girin', type: 'textarea' },
@@ -173,6 +173,116 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
                 </div>
             </div>
 
+            {/* Favicon Section */}
+            <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
+                <div className="px-6 py-4 border-b border-white/[0.04] flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-slate-700 border border-white/10 flex items-center justify-center shadow-lg">
+                        <i className="fa-solid fa-star text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-bold text-white">Favicon</h3>
+                        <p className="text-[10px] text-slate-500">Tarayıcı sekmesinde görünür (ICO, PNG, SVG)</p>
+                    </div>
+                    <div className={`ml-auto w-2 h-2 rounded-full ${editContent.branding?.favicon?.trim() ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]' : 'bg-red-500'}`} />
+                </div>
+                <div className="p-6 flex flex-col sm:flex-row items-center gap-5">
+                    <div className="w-12 h-12 rounded-xl bg-[var(--color-dark)] border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+                        {editContent.branding?.favicon ? (
+                            <img src={editContent.branding.favicon} alt="Favicon" className="max-w-[80%] max-h-[80%] object-contain" onError={e => (e.currentTarget.style.display = 'none')} />
+                        ) : (
+                            <i className="fa-solid fa-star text-slate-600 text-lg"></i>
+                        )}
+                    </div>
+                    <div className="flex-1 w-full space-y-3">
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <input type="file" accept="image/*" className="hidden" id="favicon-upload" onChange={e => { const f = e.target.files?.[0]; if (f) { const r = new FileReader(); r.onloadend = () => setEditContent({ ...editContent, branding: { primaryColor: '#c5a059', darkBg: '#0f172a', darkBgDeep: '#020617', ...editContent.branding, favicon: r.result as string } }); r.readAsDataURL(f); } }} />
+                            <label htmlFor="favicon-upload" className="px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-xl font-bold text-xs shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer shrink-0">
+                                <i className="fa-solid fa-cloud-arrow-up text-[10px]"></i> Yükle
+                            </label>
+                            <input className="flex-1 bg-white/5 border border-white/[0.06] rounded-xl px-4 py-2.5 text-xs text-white placeholder-slate-600 outline-none focus:border-[var(--color-primary)]/50 transition-all"
+                                value={editContent.branding?.favicon?.startsWith('data:') ? 'Yüklendi (Base64)' : editContent.branding?.favicon || ''} onChange={e => setEditContent({ ...editContent, branding: { primaryColor: '#c5a059', darkBg: '#0f172a', darkBgDeep: '#020617', ...editContent.branding, favicon: e.target.value } })} placeholder="/favicon.ico veya URL..." />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Brand Colors Section */}
+            <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
+                <div className="px-6 py-4 border-b border-white/[0.04] flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-lg" style={{ background: editContent.branding?.primaryColor || '#c5a059' }}>
+                        <i className="fa-solid fa-palette text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-bold text-white">Marka Renkleri</h3>
+                        <p className="text-[10px] text-slate-500">Sitenin renk şemasını özelleştirin</p>
+                    </div>
+                </div>
+                <div className="p-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {[
+                        { key: 'primaryColor' as const, label: 'Ana Renk (Vurgu)', desc: 'Butonlar, ikonlar, vurgular', default: '#c5a059' },
+                        { key: 'darkBg' as const, label: 'Koyu Arka Plan', desc: 'Admin panel, footer', default: '#0f172a' },
+                        { key: 'darkBgDeep' as const, label: 'Derin Arka Plan', desc: 'Hero bölümü, overlaylar', default: '#020617' },
+                    ].map(({ key, label, desc, default: def }) => (
+                        <div key={key} className="space-y-2">
+                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{label}</label>
+                            <p className="text-[9px] text-slate-600">{desc}</p>
+                            <div className="flex items-center gap-3">
+                                <input
+                                    type="color"
+                                    value={editContent.branding?.[key] || def}
+                                    onChange={e => setEditContent({ ...editContent, branding: { primaryColor: '#c5a059', darkBg: '#0f172a', darkBgDeep: '#020617', ...editContent.branding, [key]: e.target.value } })}
+                                    className="w-10 h-10 rounded-xl border border-white/10 cursor-pointer bg-transparent"
+                                    style={{ padding: '2px' }}
+                                />
+                                <input
+                                    type="text"
+                                    value={editContent.branding?.[key] || def}
+                                    onChange={e => setEditContent({ ...editContent, branding: { primaryColor: '#c5a059', darkBg: '#0f172a', darkBgDeep: '#020617', ...editContent.branding, [key]: e.target.value } })}
+                                    className="flex-1 bg-white/5 border border-white/[0.06] rounded-xl px-3 py-2 text-xs text-white font-mono placeholder-slate-600 outline-none focus:border-white/20 transition-all"
+                                    placeholder={def}
+                                    maxLength={7}
+                                />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Currency Section */}
+            <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
+                <div className="px-6 py-4 border-b border-white/[0.04] flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-emerald-600 flex items-center justify-center shadow-lg">
+                        <i className="fa-solid fa-coins text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-bold text-white">Para Birimi</h3>
+                        <p className="text-[10px] text-slate-500">Fiyatlarda kullanılacak para birimi</p>
+                    </div>
+                    <div className="ml-auto text-2xl font-black text-white">{editContent.currency?.symbol || '€'}</div>
+                </div>
+                <div className="p-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                        {[
+                            { code: 'EUR', symbol: '€', label: 'Euro' },
+                            { code: 'USD', symbol: '$', label: 'US Dollar' },
+                            { code: 'GBP', symbol: '£', label: 'British Pound' },
+                            { code: 'TRY', symbol: '₺', label: 'Turkish Lira' },
+                            { code: 'RUB', symbol: '₽', label: 'Russian Ruble' },
+                        ].map(c => (
+                            <button
+                                key={c.code}
+                                onClick={() => setEditContent({ ...editContent, currency: { symbol: c.symbol, code: c.code } })}
+                                className={`flex flex-col items-center gap-1 py-3 px-2 rounded-xl border transition-all ${editContent.currency?.code === c.code ? 'bg-[var(--color-primary)]/20 border-[var(--color-primary)]/50 text-white' : 'bg-white/5 border-white/[0.06] text-slate-400 hover:border-white/20'}`}
+                            >
+                                <span className="text-xl font-black">{c.symbol}</span>
+                                <span className="text-[9px] font-bold uppercase tracking-wider">{c.code}</span>
+                                <span className="text-[8px] text-slate-600">{c.label}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
             {/* Map */}
             <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
                 <div className="px-6 py-4 border-b border-white/[0.04] flex items-center gap-3">
@@ -190,7 +300,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
                         </label>
                         <textarea className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-xs text-white font-mono placeholder-slate-600 outline-none focus:border-cyan-500/50 resize-none transition-all" rows={3}
                             value={editContent.business.mapEmbedUrl} onChange={e => setEditContent({ ...editContent, business: { ...editContent.business, mapEmbedUrl: e.target.value } })} placeholder="https://www.google.com/maps/embed?pb=..." />
-                        <p className="text-[10px] text-slate-600"><i className="fa-solid fa-circle-info mr-1"></i> Google Maps → Paylaş → Yerleştir → <code className="text-[#c5a059]">src="..."</code> URL'sini yapıştırın.</p>
+                        <p className="text-[10px] text-slate-600"><i className="fa-solid fa-circle-info mr-1"></i> Google Maps → Paylaş → Yerleştir → <code className="text-[var(--color-primary)]">src="..."</code> URL'sini yapıştırın.</p>
                     </div>
                     {editContent.business.mapEmbedUrl?.trim() && (
                         <div className="rounded-xl overflow-hidden border border-white/10 h-48">

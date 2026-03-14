@@ -41,14 +41,14 @@ const LanguageSwitcher: React.FC = () => {
                             key={code}
                             onClick={() => { setLanguage(code); setIsOpen(false); }}
                             className={`w-full flex items-center gap-3 px-4 py-3 text-left text-sm transition-colors duration-150 ${code === language
-                                ? 'bg-[#c5a059]/10 text-[#c5a059]'
+                                ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)]'
                                 : 'text-white/70 hover:bg-white/[0.06] hover:text-white'
                                 }`}
                         >
                             <span className="text-lg leading-none">{info.flag}</span>
                             <span className="font-medium">{info.native}</span>
                             {code === language && (
-                                <i className="fa-solid fa-check text-[10px] text-[#c5a059] ml-auto"></i>
+                                <i className="fa-solid fa-check text-[10px] text-[var(--color-primary)] ml-auto"></i>
                             )}
                         </button>
                     ))}

@@ -67,12 +67,12 @@ export const FleetView: React.FC<FleetViewProps> = ({
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 px-4 py-4">
                     {/* Category Filter */}
                     <div className="flex items-center gap-1">
-                        <button onClick={() => setFilterCat('all')} className={`px-3 py-2 rounded-lg text-xs font-bold transition-all ${filterCat === 'all' ? 'bg-[#c5a059] text-white shadow-lg shadow-[#c5a059]/20' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}>
+                        <button onClick={() => setFilterCat('all')} className={`px-3 py-2 rounded-lg text-xs font-bold transition-all ${filterCat === 'all' ? 'bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/20' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}>
                             <i className="fa-solid fa-layer-group text-[10px] mr-1.5"></i>Tümü
                             <span className={`ml-1.5 text-[9px] font-black min-w-[18px] h-[18px] inline-flex items-center justify-center rounded-full ${filterCat === 'all' ? 'bg-white/20' : 'bg-white/5'}`}>{vehicles.length}</span>
                         </button>
                         {categories.map(cat => (
-                            <button key={cat} onClick={() => setFilterCat(cat)} className={`px-3 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${filterCat === cat ? 'bg-[#c5a059] text-white shadow-lg shadow-[#c5a059]/20' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}>
+                            <button key={cat} onClick={() => setFilterCat(cat)} className={`px-3 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${filterCat === cat ? 'bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/20' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}>
                                 {cat}
                                 <span className={`ml-1.5 text-[9px] font-black min-w-[18px] h-[18px] inline-flex items-center justify-center rounded-full ${filterCat === cat ? 'bg-white/20' : 'bg-white/5'}`}>{vehicles.filter(v => v.category === cat).length}</span>
                             </button>
@@ -85,11 +85,11 @@ export const FleetView: React.FC<FleetViewProps> = ({
                         <div className="relative flex-1 sm:w-56">
                             <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 text-xs"></i>
                             <input type="text" placeholder="Araç ara..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
-                                className="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/[0.06] rounded-xl text-sm text-white placeholder-slate-600 focus:border-[#c5a059]/50 outline-none transition-all" />
+                                className="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/[0.06] rounded-xl text-sm text-white placeholder-slate-600 focus:border-[var(--color-primary)]/50 outline-none transition-all" />
                         </div>
                         {/* Add */}
                         <button onClick={() => { setVehicleForm({ id: '', name: '', category: 'VIP', capacity: 4, luggage: 4, image: 'https://images.unsplash.com/photo-1632245889029-e406faaa34cd?auto=format&fit=crop&q=80&w=800', features: [] }); setIsVehicleModalOpen(true); }}
-                            className="px-4 py-2.5 bg-[#c5a059] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 shrink-0">
+                            className="px-4 py-2.5 bg-[var(--color-primary)] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 shrink-0">
                             <i className="fa-solid fa-plus text-[10px]"></i> Yeni Araç
                         </button>
                     </div>
@@ -126,7 +126,7 @@ export const FleetView: React.FC<FleetViewProps> = ({
                                                         {vehicle.category}
                                                     </span>
                                                     <div className="flex items-center gap-1">
-                                                        <i className="fa-solid fa-user text-[#c5a059] text-[8px]"></i>
+                                                        <i className="fa-solid fa-user text-[var(--color-primary)] text-[8px]"></i>
                                                         <span className="text-[11px] font-bold text-white">{vehicle.capacity}</span>
                                                     </div>
                                                     <div className="flex items-center gap-1">
@@ -139,7 +139,7 @@ export const FleetView: React.FC<FleetViewProps> = ({
                                                         {vehicle.features.slice(0, 4).map((f, i) => (
                                                             <span key={i} className="text-[8px] bg-white/5 text-slate-400 px-1.5 py-0.5 rounded border border-white/5">{f}</span>
                                                         ))}
-                                                        {vehicle.features.length > 4 && <span className="text-[8px] bg-[#c5a059]/10 text-[#c5a059] px-1.5 py-0.5 rounded">+{vehicle.features.length - 4}</span>}
+                                                        {vehicle.features.length > 4 && <span className="text-[8px] bg-[var(--color-primary)]/10 text-[var(--color-primary)] px-1.5 py-0.5 rounded">+{vehicle.features.length - 4}</span>}
                                                     </div>
                                                 )}
                                             </div>
@@ -200,7 +200,7 @@ export const FleetView: React.FC<FleetViewProps> = ({
                                                     <div className="w-16 h-10 rounded-lg overflow-hidden border border-white/10 bg-black/20 shrink-0">
                                                         <img src={vehicle.image} className="w-full h-full object-cover" onError={e => (e.currentTarget.src = 'https://via.placeholder.com/160x100?text=No+Image')} alt={vehicle.name} />
                                                     </div>
-                                                    <p className="font-bold text-white text-[13px] group-hover:text-[#c5a059] transition-colors truncate">{vehicle.name}</p>
+                                                    <p className="font-bold text-white text-[13px] group-hover:text-[var(--color-primary)] transition-colors truncate">{vehicle.name}</p>
                                                 </div>
                                             </td>
                                             <td className="px-3 py-3.5 hidden md:table-cell">
@@ -213,7 +213,7 @@ export const FleetView: React.FC<FleetViewProps> = ({
                                             </td>
                                             <td className="px-3 py-3.5 text-center hidden sm:table-cell">
                                                 <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.03] border border-white/[0.05]">
-                                                    <i className="fa-solid fa-user text-[#c5a059] text-[9px]"></i>
+                                                    <i className="fa-solid fa-user text-[var(--color-primary)] text-[9px]"></i>
                                                     <span className="text-xs font-bold text-white">{vehicle.capacity}</span>
                                                 </div>
                                             </td>
@@ -228,7 +228,7 @@ export const FleetView: React.FC<FleetViewProps> = ({
                                                     {vehicle.features?.slice(0, 3).map((f, i) => (
                                                         <span key={i} className="text-[9px] bg-white/5 text-slate-400 px-1.5 py-0.5 rounded border border-white/5">{f}</span>
                                                     ))}
-                                                    {(vehicle.features?.length || 0) > 3 && <span className="text-[9px] bg-[#c5a059]/10 text-[#c5a059] px-1.5 py-0.5 rounded">+{(vehicle.features?.length || 0) - 3}</span>}
+                                                    {(vehicle.features?.length || 0) > 3 && <span className="text-[9px] bg-[var(--color-primary)]/10 text-[var(--color-primary)] px-1.5 py-0.5 rounded">+{(vehicle.features?.length || 0) - 3}</span>}
                                                 </div>
                                             </td>
                                             <td className="px-3 py-3.5">

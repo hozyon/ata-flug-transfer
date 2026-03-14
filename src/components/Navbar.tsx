@@ -268,13 +268,13 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                 >
                   <Link
                     to={item.url}
-                    className="px-4 py-2 transition-all flex items-center group relative hover:text-[#c5a059]"
+                    className="px-4 py-2 transition-all flex items-center group relative hover:text-[var(--color-primary)]"
                   >
                     {translateNav(item)}
                     {item.subMenus && (
                       <i className="fa-solid fa-chevron-down ml-2 text-[10px] opacity-50 group-hover:rotate-180 transition-transform" />
                     )}
-                    <span className="absolute bottom-0 left-4 right-4 h-0.5 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 bg-[#c5a059]" />
+                    <span className="absolute bottom-0 left-4 right-4 h-0.5 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 bg-[var(--color-primary)]" />
                   </Link>
                   {item.subMenus && activeDropdown === item.id && (
                     <div
@@ -283,7 +283,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                     >
                       {item.subMenus.map(sub => (
                         <Link key={sub.id} to={sub.url}
-                          className="block px-6 py-2.5 hover:bg-white/10 hover:text-[#c5a059] transition-all text-white/70 text-sm font-semibold">
+                          className="block px-6 py-2.5 hover:bg-white/10 hover:text-[var(--color-primary)] transition-all text-white/70 text-sm font-semibold">
                           {NAV_KEY_MAP[sub.url] ? t(NAV_KEY_MAP[sub.url]) : sub.label}
                         </Link>
                       ))}
@@ -296,7 +296,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                 <button
                   onClick={onAdminToggle}
                   className={`w-10 h-10 rounded-full flex items-center justify-center transition-all
-                    ${isAdmin ? 'bg-[#c5a059]/20 text-[#c5a059]' : 'bg-white/10 text-white/60 hover:bg-white/20 hover:text-white'}`}
+                    ${isAdmin ? 'bg-[var(--color-primary)]/20 text-[var(--color-primary)]' : 'bg-white/10 text-white/60 hover:bg-white/20 hover:text-white'}`}
                   title="Admin Paneli"
                 >
                   <i className={`fa-solid ${isAdmin ? 'fa-user-gear' : 'fa-lock'}`} />
@@ -315,7 +315,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                 aria-expanded={isMobileMenuOpen}
                 className={`relative w-11 h-11 flex items-center justify-center rounded-2xl transition-all duration-300 active:scale-90
                   ${isMobileMenuOpen
-                    ? 'bg-[#c5a059]/15 text-[#c5a059] border border-[#c5a059]/25'
+                    ? 'bg-[var(--color-primary)]/15 text-[var(--color-primary)] border border-[var(--color-primary)]/25'
                     : 'bg-white/[0.07] text-white/80 border border-white/[0.08] hover:bg-white/[0.12]'}`}
               >
                 <HamburgerIcon isOpen={isMobileMenuOpen} />
@@ -366,7 +366,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                 />
               </div>
               <div>
-                <p className="text-[11px] font-bold text-white/35 uppercase tracking-[0.2em] leading-none mb-0.5">ATA FLUG</p>
+                <p className="text-[11px] font-bold text-white/35 uppercase tracking-[0.2em] leading-none mb-0.5">{siteContent.business?.name || 'ATA FLUG'}</p>
                 <p className="text-[15px] font-extrabold text-white leading-none tracking-tight">TRANSFER</p>
               </div>
             </div>
@@ -386,8 +386,8 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
           <div className="px-5 pb-4 grid grid-cols-2 gap-2.5 shrink-0">
             <button
               onClick={() => { setBookingFormOpen(true); close(); }}
-              className="qa-primary flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-[13px] text-[#0f172a] active:scale-[0.97] transition-transform"
-              style={{ background: 'linear-gradient(135deg,#e0c07a,#c5a059)' }}
+              className="qa-primary flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-[13px] text-[var(--color-dark)] active:scale-[0.97] transition-transform"
+              style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--color-primary) 70%, white 30%), var(--color-primary))' }}
             >
               <i className="fa-solid fa-calendar-check text-sm" />
               <span className="tracking-wide">{t('hero.cta')}</span>
@@ -410,7 +410,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
               className="search-ring flex items-center gap-3 px-4 py-3 rounded-2xl border border-white/[0.09] transition-all"
               style={{ background: 'rgba(255,255,255,0.05)' }}
             >
-              <i className={`fa-solid fa-${searchFocused || searchQuery ? 'magnifying-glass text-[#c5a059]' : 'magnifying-glass text-white/25'} text-sm transition-colors`} />
+              <i className={`fa-solid fa-${searchFocused || searchQuery ? 'magnifying-glass text-[var(--color-primary)]' : 'magnifying-glass text-white/25'} text-sm transition-colors`} />
               <input
                 ref={searchRef}
                 type="search"
@@ -448,14 +448,14 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                     key={i} to={r.url} onClick={close}
                     className="flex items-center gap-3.5 px-3 py-3.5 rounded-2xl hover:bg-white/[0.06] active:bg-white/[0.09] transition-colors group"
                   >
-                    <div className="w-9 h-9 rounded-xl bg-white/[0.07] text-white/40 group-hover:bg-[#c5a059]/15 group-hover:text-[#c5a059] flex items-center justify-center text-sm shrink-0 transition-colors border border-white/[0.06]">
+                    <div className="w-9 h-9 rounded-xl bg-white/[0.07] text-white/40 group-hover:bg-[var(--color-primary)]/15 group-hover:text-[var(--color-primary)] flex items-center justify-center text-sm shrink-0 transition-colors border border-white/[0.06]">
                       <i className={`fa-solid ${r.icon}`} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <span className="block text-[9px] font-black text-[#c5a059]/60 uppercase tracking-[0.18em] mb-0.5">{r.type}</span>
+                      <span className="block text-[9px] font-black text-[var(--color-primary)]/60 uppercase tracking-[0.18em] mb-0.5">{r.type}</span>
                       <span className="block text-[13px] font-semibold text-white/75 truncate group-hover:text-white transition-colors">{r.label}</span>
                     </div>
-                    <i className="fa-solid fa-chevron-right text-[9px] text-white/15 group-hover:text-[#c5a059]/60 transition-colors" />
+                    <i className="fa-solid fa-chevron-right text-[9px] text-white/15 group-hover:text-[var(--color-primary)]/60 transition-colors" />
                   </Link>
                 ))}
               </div>
@@ -489,7 +489,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                               {/* icon container */}
                               <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-[15px] shrink-0 transition-all
                                 ${isActive
-                                  ? 'bg-gradient-to-br from-[#c5a059] to-[#a8864a] text-white shadow-md shadow-[#c5a059]/25'
+                                  ? 'bg-gradient-to-br from-[var(--color-primary)] to-[#a8864a] text-white shadow-md shadow-[var(--color-primary)]/25'
                                   : 'bg-white/[0.06] text-white/35 border border-white/[0.06]'
                                 }`}>
                                 <i className={`fa-solid ${icon}`} />
@@ -503,7 +503,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
 
                               {/* active dot */}
                               {isActive && !item.subMenus && (
-                                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#c5a059] mr-1" />
+                                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] mr-1" />
                               )}
                             </Link>
 
@@ -515,7 +515,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                                 aria-expanded={isExpanded}
                               >
                                 <i className={`fa-solid fa-chevron-down text-[10px] transition-transform duration-300
-                                  ${isExpanded ? 'rotate-180 text-[#c5a059]' : ''}`} />
+                                  ${isExpanded ? 'rotate-180 text-[var(--color-primary)]' : ''}`} />
                               </button>
                             )}
                             {/* right arrow for non-submenu */}
@@ -532,7 +532,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                                 <Link
                                   key={sub.id} to={sub.url} onClick={close}
                                   className={`flex items-center gap-2 py-3 px-2 text-[13.5px] font-semibold rounded-xl transition-colors active:bg-white/[0.06]
-                                    ${location.pathname === sub.url ? 'text-[#c5a059]' : 'text-white/35 hover:text-white/70'}`}
+                                    ${location.pathname === sub.url ? 'text-[var(--color-primary)]' : 'text-white/35 hover:text-white/70'}`}
                                 >
                                   <span className="w-1.5 h-1.5 rounded-full bg-current opacity-60 shrink-0" />
                                   {NAV_KEY_MAP[sub.url] ? t(NAV_KEY_MAP[sub.url]) : sub.label}
@@ -569,8 +569,8 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                     className="nav-row visible flex items-center gap-2.5 px-3.5 py-3.5 rounded-2xl border border-white/[0.05] active:bg-white/[0.06] transition-colors"
                     style={{ background: 'rgba(255,255,255,0.03)', animationDelay: `${80 + menuItems.length * 45 + 100}ms` }}
                   >
-                    <div className="w-8 h-8 rounded-xl bg-[#c5a059]/10 flex items-center justify-center shrink-0">
-                      <i className="fa-solid fa-envelope text-[#c5a059] text-xs" />
+                    <div className="w-8 h-8 rounded-xl bg-[var(--color-primary)]/10 flex items-center justify-center shrink-0">
+                      <i className="fa-solid fa-envelope text-[var(--color-primary)] text-xs" />
                     </div>
                     <div className="min-w-0">
                       <p className="text-[9px] font-bold text-white/25 uppercase tracking-wider">E-posta</p>
@@ -607,7 +607,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
 
             <button
               onClick={() => { onAdminToggle(); close(); }}
-              className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.07] text-white/25 hover:text-[#c5a059]/70 hover:bg-[#c5a059]/[0.07] transition-all active:scale-95 text-[12px] font-bold"
+              className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.07] text-white/25 hover:text-[var(--color-primary)]/70 hover:bg-[var(--color-primary)]/[0.07] transition-all active:scale-95 text-[12px] font-bold"
             >
               <i className="fa-solid fa-gear text-[11px]" />
               <span>Yönetici</span>

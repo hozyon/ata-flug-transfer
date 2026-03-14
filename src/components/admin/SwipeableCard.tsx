@@ -21,7 +21,7 @@ export const SwipeableCard: React.FC<SwipeableCardProps> = ({ children, actions,
 
   return (
     <div
-      className={`relative overflow-hidden rounded-2xl transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:shadow-[#c5a059]/10 group cursor-pointer ${className}`}
+      className={`relative overflow-hidden rounded-2xl transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl hover:shadow-[var(--color-primary)]/10 group cursor-pointer ${className}`}
       onPointerEnter={() => haptic.tap()}
     >
       {/* Revealed Actions (behind the card) */}
@@ -48,11 +48,11 @@ export const SwipeableCard: React.FC<SwipeableCardProps> = ({ children, actions,
       <div
         {...handlers}
         onClick={!isRevealed ? onClick : () => close()}
-        className="relative z-10 bg-[#0f172a] sm:bg-transparent bg-opacity-10 border border-white/[0.06] rounded-2xl transition-transform duration-200 ease-out h-full"
+        className="relative z-10 bg-[var(--color-dark)] sm:bg-transparent bg-opacity-10 border border-white/[0.06] rounded-2xl transition-transform duration-200 ease-out h-full"
         style={{ transform: `translateX(${swipeOffset}px)` }}
       >
         {/* Solid background for mobile to hide actions, transparent for desktop */}
-        <div className="absolute inset-0 bg-[#0f172a] sm:bg-transparent rounded-2xl -z-10 pointer-events-none"></div>
+        <div className="absolute inset-0 bg-[var(--color-dark)] sm:bg-transparent rounded-2xl -z-10 pointer-events-none"></div>
         <div className="absolute inset-0 bg-white/[0.03] rounded-2xl -z-10 pointer-events-none"></div>
         <div className="absolute inset-0 bg-gradient-to-br from-white/[0.05] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-2xl"></div>
         {children}

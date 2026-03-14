@@ -38,7 +38,7 @@ export const MobileSpotlight: React.FC<MobileSpotlightProps> = ({ items, onExecu
     <>
       <button
         onClick={() => { haptic.tap(); setIsOpen(true); }}
-        className="xl:hidden fixed right-4 z-[55] w-12 h-12 rounded-full bg-gradient-to-br from-[#c5a059] to-amber-600 shadow-lg shadow-[#c5a059]/30 flex items-center justify-center text-white active:scale-90 transition-transform"
+        className="xl:hidden fixed right-4 z-[55] w-12 h-12 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-amber-600 shadow-lg shadow-[var(--color-primary)]/30 flex items-center justify-center text-white active:scale-90 transition-transform"
         style={{ bottom: 'calc(80px + env(safe-area-inset-bottom, 16px))' }}
       >
         <i className="fa-solid fa-magnifying-glass text-sm"></i>
@@ -70,7 +70,7 @@ export const MobileSpotlight: React.FC<MobileSpotlightProps> = ({ items, onExecu
                   placeholder="Sayfa veya komut ara..."
                   value={search}
                   onChange={e => setSearch(e.target.value)}
-                  className="w-full pl-11 pr-4 py-3.5 bg-white/[0.06] border border-white/[0.08] rounded-2xl text-sm text-white placeholder-slate-600 focus:border-[#c5a059]/50 outline-none transition-all"
+                  className="w-full pl-11 pr-4 py-3.5 bg-white/[0.06] border border-white/[0.08] rounded-2xl text-sm text-white placeholder-slate-600 focus:border-[var(--color-primary)]/50 outline-none transition-all"
                 />
                 {search && (
                   <button onClick={() => setSearch('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500">
@@ -93,7 +93,7 @@ export const MobileSpotlight: React.FC<MobileSpotlightProps> = ({ items, onExecu
                         className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/[0.04] active:bg-white/[0.06] transition-colors text-left"
                       >
                         <div className="w-9 h-9 rounded-xl bg-white/[0.06] flex items-center justify-center shrink-0">
-                          <i className={`fa-solid ${item.icon} text-[#c5a059] text-sm`}></i>
+                          <i className={`fa-solid ${item.icon} text-[var(--color-primary)] text-sm`}></i>
                         </div>
                         <div className="min-w-0">
                           <p className="text-sm font-bold text-white truncate">{item.label}</p>
@@ -116,8 +116,8 @@ export const MobileSpotlight: React.FC<MobileSpotlightProps> = ({ items, onExecu
                         onClick={() => { haptic.tap(); onExecute(item); setIsOpen(false); }}
                         className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/[0.04] active:bg-white/[0.06] transition-colors text-left"
                       >
-                        <div className="w-9 h-9 rounded-xl bg-[#c5a059]/10 flex items-center justify-center shrink-0">
-                          <i className={`fa-solid ${item.icon} text-[#c5a059] text-sm`}></i>
+                        <div className="w-9 h-9 rounded-xl bg-[var(--color-primary)]/10 flex items-center justify-center shrink-0">
+                          <i className={`fa-solid ${item.icon} text-[var(--color-primary)] text-sm`}></i>
                         </div>
                         <div className="min-w-0">
                           <p className="text-sm font-bold text-white truncate">{item.label}</p>

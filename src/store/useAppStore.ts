@@ -66,6 +66,8 @@ function mergeContent(parsed: SiteContent): SiteContent {
             structuredData: { ...INITIAL_SITE_CONTENT.seo.structuredData, ...(parsed.seo?.structuredData || {}) },
             pagesSeo: { ...INITIAL_SITE_CONTENT.seo.pagesSeo, ...(parsed.seo?.pagesSeo || {}) },
         },
+        branding: { ...INITIAL_SITE_CONTENT.branding, ...(parsed.branding || {}) },
+        currency: { ...INITIAL_SITE_CONTENT.currency, ...(parsed.currency || {}) },
     };
     if (!Array.isArray(merged.hero.backgrounds) || merged.hero.backgrounds.length === 0) {
         merged.hero.backgrounds = INITIAL_SITE_CONTENT.hero.backgrounds;

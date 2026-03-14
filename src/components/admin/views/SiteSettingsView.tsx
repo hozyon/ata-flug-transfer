@@ -48,12 +48,12 @@ export const SiteSettingsView: React.FC<SiteSettingsViewProps> = ({
                 {/* Toolbar */}
                 <div className="flex items-center justify-between px-4 py-4">
                     <div className="flex items-center gap-2">
-                        <i className="fa-solid fa-compass text-[#c5a059] text-sm"></i>
+                        <i className="fa-solid fa-compass text-[var(--color-primary)] text-sm"></i>
                         <span className="text-sm font-bold text-white">Navigasyon Menüsü</span>
                         <span className="text-[9px] font-black min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-white/5 text-slate-400">{editContent.navbar.length}</span>
                     </div>
                     <button onClick={() => { const n = [...editContent.navbar]; n.push({ label: 'Yeni Menü', url: '#', subMenus: [] }); setEditContent({ ...editContent, navbar: n }); }}
-                        className="px-4 py-2.5 bg-[#c5a059] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2">
+                        className="px-4 py-2.5 bg-[var(--color-primary)] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2">
                         <i className="fa-solid fa-plus text-[10px]"></i> Yeni Menü
                     </button>
                 </div>
@@ -95,7 +95,7 @@ export const SiteSettingsView: React.FC<SiteSettingsViewProps> = ({
                                                     </div>
                                                 </td>
                                                 <td className="px-2 sm:px-3 py-3.5" onClick={e => e.stopPropagation()}>
-                                                    <input className="bg-transparent font-bold text-[13px] text-white outline-none focus:text-[#c5a059] transition-colors w-full min-w-0"
+                                                    <input className="bg-transparent font-bold text-[13px] text-white outline-none focus:text-[var(--color-primary)] transition-colors w-full min-w-0"
                                                         value={item.label} onChange={e => { const n = [...editContent.navbar]; n[index].label = e.target.value; setEditContent({ ...editContent, navbar: n }); }} />
                                                 </td>
                                                 <td className="px-3 py-3.5 hidden md:table-cell" onClick={e => e.stopPropagation()}>
@@ -159,7 +159,7 @@ export const SiteSettingsView: React.FC<SiteSettingsViewProps> = ({
                                                                 </div>
                                                             ))}
                                                             <button onClick={() => { const n = [...editContent.navbar]; if (!n[index].subMenus) n[index].subMenus = []; n[index].subMenus!.push({ id: Date.now().toString(), label: 'Yeni Alt Menü', url: '#' }); setEditContent({ ...editContent, navbar: n }); }}
-                                                                className="text-[11px] font-bold text-[#c5a059] hover:text-amber-300 flex items-center gap-1.5 py-1.5 px-3 rounded-lg hover:bg-[#c5a059]/10 transition-colors">
+                                                                className="text-[11px] font-bold text-[var(--color-primary)] hover:text-amber-300 flex items-center gap-1.5 py-1.5 px-3 rounded-lg hover:bg-[var(--color-primary)]/10 transition-colors">
                                                                 <i className="fa-solid fa-plus text-[9px]"></i> Alt Menü Ekle
                                                             </button>
                                                         </div>

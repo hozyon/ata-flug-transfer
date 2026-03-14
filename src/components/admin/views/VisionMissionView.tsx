@@ -24,7 +24,7 @@ export const VisionMissionView: React.FC<VisionMissionViewProps> = ({ editConten
                     { label: 'Vizyon', value: vm.vision?.title ? '✓' : '—', icon: 'fa-eye', iconBg: 'bg-blue-500', gradient: 'from-blue-500/15 to-indigo-600/5', border: 'border-blue-500/15' },
                     { label: 'Misyon', value: vm.mission?.title ? '✓' : '—', icon: 'fa-bullseye', iconBg: 'bg-violet-500', gradient: 'from-violet-500/15 to-purple-600/5', border: 'border-violet-500/15' },
                     { label: 'Değerler', value: vm.values?.items?.length || 0, icon: 'fa-gem', iconBg: 'bg-emerald-500', gradient: 'from-emerald-500/15 to-green-600/5', border: 'border-emerald-500/15' },
-                    { label: 'Banner', value: vm.hero?.bannerImage ? '✓' : '—', icon: 'fa-panorama', iconBg: 'bg-[#c5a059]', gradient: 'from-[#c5a059]/15 to-amber-600/5', border: 'border-[#c5a059]/15' },
+                    { label: 'Banner', value: vm.hero?.bannerImage ? '✓' : '—', icon: 'fa-panorama', iconBg: 'bg-[var(--color-primary)]', gradient: 'from-[var(--color-primary)]/15 to-amber-600/5', border: 'border-[var(--color-primary)]/15' },
                 ].map((s, i) => (
                     <div key={i} className={`p-4 rounded-2xl bg-gradient-to-br ${s.gradient} border ${s.border}`}>
                         <div className="flex items-start justify-between">
@@ -43,7 +43,7 @@ export const VisionMissionView: React.FC<VisionMissionViewProps> = ({ editConten
             {/* Hero Banner */}
             <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
                 <div className="px-6 py-4 border-b border-white/[0.04] flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-[#c5a059] flex items-center justify-center shadow-lg">
+                    <div className="w-9 h-9 rounded-xl bg-[var(--color-primary)] flex items-center justify-center shadow-lg">
                         <i className="fa-solid fa-panorama text-white text-sm"></i>
                     </div>
                     <div>
@@ -57,7 +57,7 @@ export const VisionMissionView: React.FC<VisionMissionViewProps> = ({ editConten
                             <div className="w-full md:w-64 h-36 rounded-xl overflow-hidden border border-white/10 shrink-0 relative group">
                                 <img src={vm.hero.bannerImage} className="w-full h-full object-cover" alt="Banner" />
                                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-sm">
-                                    <label className="w-9 h-9 rounded-lg bg-white/10 hover:bg-[#c5a059] text-white flex items-center justify-center cursor-pointer transition-all">
+                                    <label className="w-9 h-9 rounded-lg bg-white/10 hover:bg-[var(--color-primary)] text-white flex items-center justify-center cursor-pointer transition-all">
                                         <i className="fa-solid fa-pen text-xs"></i>
                                         <input type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) { const r = new FileReader(); r.onload = ev => update('hero.bannerImage', ev.target?.result); r.readAsDataURL(f); } }} />
                                     </label>
@@ -67,7 +67,7 @@ export const VisionMissionView: React.FC<VisionMissionViewProps> = ({ editConten
                                 </div>
                             </div>
                         ) : (
-                            <div className="w-full md:w-64 h-36 rounded-xl border-2 border-dashed border-white/10 hover:border-[#c5a059]/40 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all shrink-0"
+                            <div className="w-full md:w-64 h-36 rounded-xl border-2 border-dashed border-white/10 hover:border-[var(--color-primary)]/40 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all shrink-0"
                                 onClick={() => document.getElementById('vision-banner-upload')?.click()}>
                                 <input id="vision-banner-upload" type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) { const r = new FileReader(); r.onload = ev => update('hero.bannerImage', ev.target?.result); r.readAsDataURL(f); } }} />
                                 <i className="fa-solid fa-cloud-arrow-up text-xl text-slate-600"></i>
@@ -78,7 +78,7 @@ export const VisionMissionView: React.FC<VisionMissionViewProps> = ({ editConten
                             <div className="flex items-center gap-4 text-[10px] font-bold text-slate-600 uppercase before:flex-1 before:h-px before:bg-white/[0.04] after:flex-1 after:h-px after:bg-white/[0.04]">veya URL</div>
                             <div className="relative">
                                 <i className="fa-solid fa-link absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 text-xs"></i>
-                                <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl pl-9 pr-4 py-3 text-sm text-white focus:border-[#c5a059]/50 outline-none transition-all"
+                                <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl pl-9 pr-4 py-3 text-sm text-white focus:border-[var(--color-primary)]/50 outline-none transition-all"
                                     value={vm.hero?.bannerImage || ''} onChange={e => update('hero.bannerImage', e.target.value)} placeholder="https://..." />
                             </div>
                         </div>
@@ -202,7 +202,7 @@ export const VisionMissionView: React.FC<VisionMissionViewProps> = ({ editConten
                                             </div>
                                         </td>
                                         <td className="px-3 py-3.5">
-                                            <input className="w-full bg-transparent text-[13px] font-bold text-white outline-none focus:text-[#c5a059] transition-colors" value={item.title}
+                                            <input className="w-full bg-transparent text-[13px] font-bold text-white outline-none focus:text-[var(--color-primary)] transition-colors" value={item.title}
                                                 onChange={e => { const n = [...vm.values.items]; n[idx] = { ...n[idx], title: e.target.value }; update('values.items', n); }} />
                                         </td>
                                         <td className="px-3 py-3.5">

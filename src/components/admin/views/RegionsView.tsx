@@ -81,8 +81,8 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                 {[
                     { label: 'Aktif Bölge', value: regions.length, icon: 'fa-map-location-dot', iconBg: 'bg-emerald-500', gradient: 'from-emerald-500/15 to-green-600/5', border: 'border-emerald-500/15' },
                     { label: 'Hazır Bölge', value: SCRAPED_REGIONS.length, icon: 'fa-globe', iconBg: 'bg-blue-500', gradient: 'from-blue-500/15 to-indigo-600/5', border: 'border-blue-500/15' },
-                    { label: 'Ort. Fiyat', value: `€${avg}`, icon: 'fa-chart-line', iconBg: 'bg-amber-500', gradient: 'from-amber-500/15 to-orange-600/5', border: 'border-amber-500/15' },
-                    { label: 'Fiyat Aralığı', value: prices.length > 0 ? `€${Math.min(...prices)}–€${Math.max(...prices)}` : '—', icon: 'fa-arrows-left-right', iconBg: 'bg-violet-500', gradient: 'from-violet-500/15 to-purple-600/5', border: 'border-violet-500/15' },
+                    { label: 'Ort. Fiyat', value: `${editContent.currency?.symbol || '€'}${avg}`, icon: 'fa-chart-line', iconBg: 'bg-amber-500', gradient: 'from-amber-500/15 to-orange-600/5', border: 'border-amber-500/15' },
+                    { label: 'Fiyat Aralığı', value: prices.length > 0 ? `${editContent.currency?.symbol || '€'}${Math.min(...prices)}–${editContent.currency?.symbol || '€'}${Math.max(...prices)}` : '—', icon: 'fa-arrows-left-right', iconBg: 'bg-violet-500', gradient: 'from-violet-500/15 to-purple-600/5', border: 'border-violet-500/15' },
                 ].map((s, i) => (
                     <div key={i} className={`p-4 rounded-2xl bg-gradient-to-br ${s.gradient} border ${s.border}`}>
                         <div className="flex items-start justify-between">
@@ -165,13 +165,13 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                         <div className="relative flex-[1_1_200px] w-full sm:w-56">
                             <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 text-xs"></i>
                             <input type="text" placeholder="Bölge ara..." value={regionSearch} onChange={e => setRegionSearch(e.target.value)}
-                                className="w-full pl-9 pr-8 py-2.5 bg-white/5 border border-white/[0.06] rounded-xl text-sm text-white placeholder-slate-600 focus:border-[#c5a059]/50 outline-none transition-all" />
+                                className="w-full pl-9 pr-8 py-2.5 bg-white/5 border border-white/[0.06] rounded-xl text-sm text-white placeholder-slate-600 focus:border-[var(--color-primary)]/50 outline-none transition-all" />
                             {regionSearch && <button onClick={() => setRegionSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"><i className="fa-solid fa-xmark text-xs"></i></button>}
                         </div>
                         <MobileViewToggle viewMode={viewMode} onToggle={toggleViewMode} />
                         {/* Add Custom */}
                         <button onClick={() => { setNewRegion({ id: '', name: '', desc: '', image: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800', icon: 'fa-location-dot', price: 50 }); setEditingRegion(null); setIsAddRegionModalOpen(true); }}
-                            className="px-4 py-2.5 bg-[#c5a059] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 shrink-0">
+                            className="px-4 py-2.5 bg-[var(--color-primary)] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 shrink-0">
                             <i className="fa-solid fa-plus text-[10px]"></i> Yeni Bölge
                         </button>
                     </div>
@@ -203,7 +203,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center justify-between">
                                                     <p className="font-bold text-white text-sm truncate">{region.name}</p>
-                                                    <span className="text-lg font-black text-[#c5a059] shrink-0 ml-2">€{region.price}</span>
+                                                    <span className="text-lg font-black text-[var(--color-primary)] shrink-0 ml-2">{editContent.currency?.symbol || '€'}{region.price}</span>
                                                 </div>
                                                 <p className="text-[10px] text-slate-500 mt-0.5 truncate">{region.desc || 'Açıklama yok'}</p>
                                                 <div className="flex items-center gap-2 mt-2">
@@ -279,17 +279,17 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                                                         <img src={region.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={region.name} />
                                                     </div>
                                                     <div className="min-w-0">
-                                                        <p className="font-bold text-white text-[13px] group-hover:text-[#c5a059] transition-colors truncate max-w-[250px]">{region.name}</p>
+                                                        <p className="font-bold text-white text-[13px] group-hover:text-[var(--color-primary)] transition-colors truncate max-w-[250px]">{region.name}</p>
                                                         <p className="text-[10px] text-slate-500 mt-0.5 truncate max-w-[200px]">{region.desc || 'Açıklama yok'}</p>
                                                     </div>
                                                 </div>
                                             </td>
                                             <td className="px-3 py-3.5 text-right">
                                                 <div className="inline-flex items-center gap-1">
-                                                    <span className="text-[#c5a059] font-bold text-sm">€</span>
+                                                    <span className="text-[var(--color-primary)] font-bold text-sm">{editContent.currency?.symbol || '€'}</span>
                                                     <input type="number" value={region.price}
                                                         onChange={e => { const n = [...regions]; n[realIndex] = { ...n[realIndex], price: parseInt(e.target.value) || 0 }; setEditContent({ ...editContent, regions: n }); }}
-                                                        className="w-14 bg-transparent text-right text-sm font-black text-white outline-none focus:text-[#c5a059] transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                                                        className="w-14 bg-transparent text-right text-sm font-black text-white outline-none focus:text-[var(--color-primary)] transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                                                 </div>
                                             </td>
                                             <td className="px-3 py-3.5 text-center hidden md:table-cell">
@@ -354,7 +354,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                             {/* Preview */}
                             <div>
                                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5 mb-2">
-                                    <i className="fa-solid fa-eye text-[8px] text-[#c5a059]"></i> Önizleme
+                                    <i className="fa-solid fa-eye text-[8px] text-[var(--color-primary)]"></i> Önizleme
                                 </label>
                                 <div className="relative rounded-xl overflow-hidden border border-white/10">
                                     <div className="relative h-28">
@@ -365,7 +365,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                                             <p className="text-slate-400 text-[10px] truncate">{newRegion.desc || 'Açıklama...'}</p>
                                         </div>
                                         <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm px-2 py-1 rounded-lg">
-                                            <span className="text-lg font-black text-[#c5a059]">€{newRegion.price || 0}</span>
+                                            <span className="text-lg font-black text-[var(--color-primary)]">{editContent.currency?.symbol || '€'}{newRegion.price || 0}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -376,7 +376,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                                     <i className="fa-solid fa-location-dot text-[8px] text-red-400"></i> Bölge Adı *
                                 </label>
-                                <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm font-bold text-white focus:border-[#c5a059]/50 outline-none transition-all"
+                                <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm font-bold text-white focus:border-[var(--color-primary)]/50 outline-none transition-all"
                                     value={newRegion.name} onChange={e => setNewRegion({ ...newRegion, name: e.target.value })} placeholder="Örn: Belek, Kundu, Lara..." />
                             </div>
 
@@ -384,11 +384,11 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                                        <i className="fa-solid fa-euro-sign text-[8px] text-[#c5a059]"></i> Fiyat *
+                                        <i className="fa-solid fa-euro-sign text-[8px] text-[var(--color-primary)]"></i> Fiyat *
                                     </label>
                                     <div className="relative">
-                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg font-bold text-[#c5a059]">€</span>
-                                        <input type="number" className="w-full bg-white/5 border border-white/[0.06] rounded-xl pl-9 pr-4 py-3 text-sm font-bold text-white focus:border-[#c5a059]/50 outline-none transition-all"
+                                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg font-bold text-[var(--color-primary)]">{editContent.currency?.symbol || '€'}</span>
+                                        <input type="number" className="w-full bg-white/5 border border-white/[0.06] rounded-xl pl-9 pr-4 py-3 text-sm font-bold text-white focus:border-[var(--color-primary)]/50 outline-none transition-all"
                                             value={newRegion.price} onChange={e => setNewRegion({ ...newRegion, price: parseInt(e.target.value) || 0 })} placeholder="50" />
                                     </div>
                                 </div>
@@ -427,7 +427,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                                         'https://images.unsplash.com/photo-1505142468610-359e7d316be0?auto=format&fit=crop&q=80&w=400',
                                     ].map((img, i) => (
                                         <button key={i} onClick={() => setNewRegion({ ...newRegion, image: img })}
-                                            className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${newRegion.image === img ? 'border-[#c5a059] ring-2 ring-[#c5a059]/30 scale-105' : 'border-transparent hover:border-white/30'}`}>
+                                            className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${newRegion.image === img ? 'border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]/30 scale-105' : 'border-transparent hover:border-white/30'}`}>
                                             <img src={img} className="w-full h-full object-cover" alt="" />
                                         </button>
                                     ))}
@@ -447,7 +447,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                                 <div className="flex items-center gap-4 text-[10px] font-bold text-slate-600 uppercase before:flex-1 before:h-px before:bg-white/[0.04] after:flex-1 after:h-px after:bg-white/[0.04]">veya URL</div>
                                 <div className="relative">
                                     <i className="fa-solid fa-link absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 text-xs"></i>
-                                    <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl pl-9 pr-4 py-2.5 text-xs text-white focus:border-[#c5a059]/50 outline-none transition-all"
+                                    <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl pl-9 pr-4 py-2.5 text-xs text-white focus:border-[var(--color-primary)]/50 outline-none transition-all"
                                         value={newRegion.image} onChange={e => setNewRegion({ ...newRegion, image: e.target.value })} placeholder="https://..." />
                                 </div>
                             </div>
@@ -466,7 +466,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                                 }
                                 setIsAddRegionModalOpen(false);
                             }}
-                                className="flex-1 bg-[#c5a059] hover:bg-amber-600 text-white py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition-all">
+                                className="flex-1 bg-[var(--color-primary)] hover:bg-amber-600 text-white py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 transition-all">
                                 <i className="fa-solid fa-check"></i> {editingRegion ? 'Kaydet' : 'Ekle'}
                             </button>
                             <button onClick={() => setIsAddRegionModalOpen(false)}

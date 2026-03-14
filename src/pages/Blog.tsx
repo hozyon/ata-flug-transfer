@@ -1,12 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BLOG_POSTS, BUSINESS_INFO } from '../constants';
+import { BLOG_POSTS } from '../constants';
 import TextureBackground from '../components/TextureBackground';
 import { Helmet } from 'react-helmet-async';
 import { useLanguage } from '../i18n/LanguageContext';
+import { useSiteContent } from '../SiteContext';
 
 const Blog: React.FC = () => {
     const { t } = useLanguage();
+    const { siteContent } = useSiteContent();
+    const businessName = siteContent.business.name;
+    const canonicalBase = siteContent.seo?.canonicalUrl || '';
 
     // Auto-translate blog post fields
     const translatePost = (post: typeof BLOG_POSTS[0]) => ({
@@ -34,19 +38,19 @@ const Blog: React.FC = () => {
     return (
         <div className="min-h-screen bg-slate-50">
             <Helmet>
-                <title>{t('blogPage.title')} | Ata Flug Transfer</title>
+                <title>{t('blogPage.title')} | {businessName}</title>
                 <meta name="description" content="Antalya havalimanı transfer rehberi, gezilecek yerler, tatil ipuçları ve daha fazlası. Antalya'nın en güncel gezi blogu." />
                 <meta name="robots" content="index, follow" />
-                <link rel="canonical" href="https://ataflugtransfer.com/blog" />
-                <meta property="og:title" content={`${t('blogPage.title')} | Ata Flug Transfer`} />
+                <link rel="canonical" href={`${canonicalBase}/blog`} />
+                <meta property="og:title" content={`${t('blogPage.title')} | ${businessName}`} />
                 <meta property="og:description" content="Antalya havalimanı transfer rehberi, gezilecek yerler, tatil ipuçları ve daha fazlası." />
                 <meta property="og:type" content="website" />
-                <meta property="og:url" content="https://ataflugtransfer.com/blog" />
+                <meta property="og:url" content={`${canonicalBase}/blog`} />
                 <meta property="og:locale" content="tr_TR" />
-                <meta property="og:site_name" content="Ata Flug Transfer" />
+                <meta property="og:site_name" content={businessName} />
                 <meta name="twitter:card" content="summary_large_image" />
-                <meta name="twitter:site" content="@ataflugtransfer" />
-                <meta name="twitter:title" content={`${t('blogPage.title')} | Ata Flug Transfer`} />
+                <meta name="twitter:site" content={siteContent.seo?.twitterHandle || ''} />
+                <meta name="twitter:title" content={`${t('blogPage.title')} | ${businessName}`} />
                 <meta name="twitter:description" content="Antalya transfer rehberi ve gezi blogu." />
             </Helmet>
 
@@ -60,12 +64,12 @@ const Blog: React.FC = () => {
                         className="w-full h-full object-cover object-center scale-105"
                     />
                     <div className="absolute inset-0 bg-slate-900/60 transition-colors duration-500"></div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-slate-900/40 to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-dark)] via-slate-900/40 to-transparent"></div>
                 </div>
 
                 <div className="max-w-7xl mx-auto px-4 relative z-10 text-center">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border border-white/10 mb-4 shadow-lg">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#c5a059] animate-pulse"></span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse"></span>
                         <span>{t('blogPage.eyebrow')}</span>
                     </div>
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-white mb-4 leading-none tracking-tight drop-shadow-2xl">
@@ -100,7 +104,7 @@ const Blog: React.FC = () => {
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] will-change-transform"
                                         />
                                         <div className="absolute top-4 left-4 z-20">
-                                            <span className="inline-block px-3 py-1 bg-white text-[#0f172a] text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm">
+                                            <span className="inline-block px-3 py-1 bg-white text-[var(--color-dark)] text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm">
                                                 {tp.category}
                                             </span>
                                         </div>
@@ -108,7 +112,7 @@ const Blog: React.FC = () => {
 
                                     {/* Content */}
                                     <div className="flex-1 p-5 flex flex-col">
-                                        <h2 className="text-lg font-playfair font-bold text-slate-800 mb-2 group-hover:text-[#c5a059] transition-colors leading-snug line-clamp-2">
+                                        <h2 className="text-lg font-playfair font-bold text-slate-800 mb-2 group-hover:text-[var(--color-primary)] transition-colors leading-snug line-clamp-2">
                                             {tp.title}
                                         </h2>
                                         <p className="text-slate-500 text-xs leading-relaxed mb-4 line-clamp-3">
@@ -120,7 +124,7 @@ const Blog: React.FC = () => {
                                                 <i className="fa-regular fa-calendar"></i>
                                                 <span>{new Date(post.publishedAt).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                                             </div>
-                                            <div className="flex items-center gap-1 text-[#c5a059] text-[10px] font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform">
+                                            <div className="flex items-center gap-1 text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform">
                                                 <span>{t('blogPage.read')}</span>
                                                 <i className="fa-solid fa-arrow-right"></i>
                                             </div>
@@ -137,7 +141,7 @@ const Blog: React.FC = () => {
                             <button
                                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                                 disabled={currentPage === 1}
-                                className="w-11 h-11 rounded-full flex items-center justify-center border border-slate-200 text-slate-500 hover:border-[#c5a059] hover:text-[#c5a059] disabled:opacity-50 disabled:hover:border-slate-200 disabled:hover:text-slate-500 transition-colors"
+                                className="w-11 h-11 rounded-full flex items-center justify-center border border-slate-200 text-slate-500 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] disabled:opacity-50 disabled:hover:border-slate-200 disabled:hover:text-slate-500 transition-colors"
                             >
                                 <i className="fa-solid fa-chevron-left"></i>
                             </button>
@@ -147,8 +151,8 @@ const Blog: React.FC = () => {
                                     key={page}
                                     onClick={() => setCurrentPage(page)}
                                     className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${currentPage === page
-                                        ? 'bg-[#c5a059] text-white shadow-lg shadow-[#c5a059]/30 scale-110'
-                                        : 'bg-white border border-slate-200 text-slate-600 hover:border-[#c5a059] hover:text-[#c5a059]'
+                                        ? 'bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/30 scale-110'
+                                        : 'bg-white border border-slate-200 text-slate-600 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]'
                                         }`}
                                 >
                                     {page}
@@ -158,7 +162,7 @@ const Blog: React.FC = () => {
                             <button
                                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                                 disabled={currentPage === totalPages}
-                                className="w-11 h-11 rounded-full flex items-center justify-center border border-slate-200 text-slate-500 hover:border-[#c5a059] hover:text-[#c5a059] disabled:opacity-50 disabled:hover:border-slate-200 disabled:hover:text-slate-500 transition-colors"
+                                className="w-11 h-11 rounded-full flex items-center justify-center border border-slate-200 text-slate-500 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] disabled:opacity-50 disabled:hover:border-slate-200 disabled:hover:text-slate-500 transition-colors"
                             >
                                 <i className="fa-solid fa-chevron-right"></i>
                             </button>
@@ -168,7 +172,7 @@ const Blog: React.FC = () => {
             </section>
 
             {/* Minimal CTA */}
-            <section className="py-20 bg-[#0f172a] relative overflow-hidden">
+            <section className="py-20 bg-[var(--color-dark)] relative overflow-hidden">
                 <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
                 <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
                     <h2 className="text-3xl md:text-4xl font-playfair font-bold text-white mb-6">{t('blogPage.ctaTitle')}</h2>
@@ -176,7 +180,7 @@ const Blog: React.FC = () => {
                         {t('blogPage.ctaDesc')}
                     </p>
                     <a
-                        href={`https://wa.me/${BUSINESS_INFO.whatsapp}`}
+                        href={`https://wa.me/${siteContent.business.whatsapp}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center justify-center gap-3 bg-[#25D366] text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wider hover:bg-[#20bd5a] transition-all duration-300 shadow-lg hover:shadow-green-500/30 hover:-translate-y-1"
