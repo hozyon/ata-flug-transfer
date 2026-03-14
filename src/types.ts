@@ -48,6 +48,35 @@ export interface BusinessSettings {
   logo?: string;
 }
 
+export interface SeoSettings {
+  siteTitle: string;           // e.g. "Ata Flug Transfer | Antalya VIP Havalimanı Transfer"
+  titleTemplate: string;       // e.g. "%s | Ata Flug Transfer"
+  siteDescription: string;     // 160 chars max
+  siteKeywords: string;        // comma separated
+  ogImage: string;             // absolute URL for default OG image
+  canonicalUrl: string;        // e.g. "https://ataflugtransfer.com"
+  googleSiteVerification: string;
+  bingVerification: string;
+  twitterHandle: string;       // e.g. "@ataflugtransfer"
+  robotsDirective: string;     // "index, follow"
+  structuredData: {
+    businessType: string;      // "TravelAgency"
+    priceRange: string;        // "€€"
+    areaServed: string;        // "Antalya, Turkey"
+    openingHours: string;      // "Mo-Su 00:00-24:00"
+    latitude: string;
+    longitude: string;
+  };
+  pagesSeo: {
+    home:    { title: string; description: string; keywords: string };
+    about:   { title: string; description: string; keywords: string };
+    regions: { title: string; description: string; keywords: string };
+    blog:    { title: string; description: string; keywords: string };
+    faq:     { title: string; description: string; keywords: string };
+    contact: { title: string; description: string; keywords: string };
+  };
+}
+
 export interface SiteContent {
   navbar: NavMenuItem[];
   business: BusinessSettings;
@@ -97,6 +126,7 @@ export interface SiteContent {
     a: string;
     hidden?: boolean;
   }[];
+  seo: SeoSettings;
 }
 
 export interface Region {

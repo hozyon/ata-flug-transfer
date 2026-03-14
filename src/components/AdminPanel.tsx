@@ -29,6 +29,7 @@ const VisionMissionView = lazy(() => import('./admin/views/VisionMissionView').t
 const BlogView = lazy(() => import('./admin/views/BlogView').then(m => ({ default: m.BlogView })));
 const ReviewsView = lazy(() => import('./admin/views/ReviewsView').then(m => ({ default: m.ReviewsView })));
 const HeroImagesView = lazy(() => import('./admin/views/HeroImagesView').then(m => ({ default: m.HeroImagesView })));
+const SEOView = lazy(() => import('./admin/views/SEOView').then(m => ({ default: m.SEOView })));
 import { DESTINATIONS, BLOG_POSTS, REVIEWS, SCRAPED_REGIONS } from '../constants';
 
 interface AdminPanelProps {
@@ -41,7 +42,7 @@ interface AdminPanelProps {
   onDeleteBooking: (id: string) => void;
 }
 
-type DashboardView = 'overview' | 'bookings' | 'site-settings' | 'hero-images' | 'regions' | 'fleet' | 'blog' | 'reviews' | 'faq' | 'business' | 'pricing' | 'about' | 'visionMission' | 'account';
+type DashboardView = 'overview' | 'bookings' | 'site-settings' | 'hero-images' | 'regions' | 'fleet' | 'blog' | 'reviews' | 'faq' | 'business' | 'pricing' | 'about' | 'visionMission' | 'account' | 'seo';
 
 const COUNTRY_NAMES: Record<string, string> = {
   '🇩🇪': 'Almanya', '🇹🇷': 'Türkiye', '🇬🇧': 'İngiltere', '🇺🇸': 'ABD', '🇷🇺': 'Rusya',
@@ -527,6 +528,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     'about': { label: 'Hakkımızda', icon: 'fa-info-circle', description: 'Hakkımızda sayfası içeriği' },
     'visionMission': { label: 'Vizyon & Misyon', icon: 'fa-bullseye', description: 'Vizyon ve misyon sayfası' },
     'account': { label: 'Hesap Ayarları', icon: 'fa-user', description: 'Profil ve güvenlik tercihlerinizi merkezden yönetin.' },
+    'seo': { label: 'SEO Yönetimi', icon: 'fa-magnifying-glass-chart', description: 'Arama motoru optimizasyonu ayarları' },
   };
 
   const commandItems = useMemo(() => {
@@ -1244,6 +1246,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               { id: 'fleet', label: 'Araçlar', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2" /><circle cx="7" cy="17" r="2" /><path d="M9 17h6" /><circle cx="17" cy="17" r="2" /></svg> },
               { id: 'faq', label: 'S.S.S', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><path d="M12 17h.01" /></svg> },
               { id: 'business', label: 'İşletme', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2" /><path d="M9 22v-4h6v4" /><path d="M8 6h.01" /><path d="M16 6h.01" /><path d="M12 6h.01" /><path d="M12 10h.01" /><path d="M12 14h.01" /><path d="M16 10h.01" /><path d="M16 14h.01" /><path d="M8 10h.01" /><path d="M8 14h.01" /></svg> },
+              { id: 'seo', label: 'SEO Yönetimi', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg> },
               { id: 'account', label: 'Hesap Ayarları', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg> },
             ].map(item => {
               const isActiveGroup = item.subItems
@@ -2335,6 +2338,14 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 updateHeroBackgrounds={updateHeroBackgrounds}
                 selectedHeroImages={selectedHeroImages}
                 setSelectedHeroImages={setSelectedHeroImages}
+              />
+            )
+          }
+          {
+            activeView === 'seo' && (
+              <SEOView
+                editContent={editContent}
+                setEditContent={updateContent}
               />
             )
           }

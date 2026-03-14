@@ -170,13 +170,45 @@ const App: React.FC = () => {
                 <>
 
                   <Helmet>
-                    <title>{siteContent.hero.title} | {siteContent.business.name}</title>
-                    <meta name="description" content={siteContent.hero.desc} />
-                    <meta property="og:title" content={`${siteContent.hero.title} | ${siteContent.business.name}`} />
-                    <meta property="og:description" content={siteContent.hero.desc} />
+                    <title>{siteContent.seo?.pagesSeo?.home?.title ? `${siteContent.seo.pagesSeo.home.title} | ${siteContent.business.name}` : siteContent.seo?.siteTitle || `${siteContent.hero.title} | ${siteContent.business.name}`}</title>
+                    <meta name="description" content={siteContent.seo?.pagesSeo?.home?.description || siteContent.seo?.siteDescription || siteContent.hero.desc} />
+                    <meta name="keywords" content={siteContent.seo?.pagesSeo?.home?.keywords || siteContent.seo?.siteKeywords || ''} />
+                    <meta name="robots" content={siteContent.seo?.robotsDirective || 'index, follow'} />
+                    <link rel="canonical" href={siteContent.seo?.canonicalUrl || 'https://ataflugtransfer.com'} />
+                    <meta property="og:title" content={siteContent.seo?.pagesSeo?.home?.title || siteContent.hero.title} />
+                    <meta property="og:description" content={siteContent.seo?.pagesSeo?.home?.description || siteContent.seo?.siteDescription || siteContent.hero.desc} />
                     <meta property="og:type" content="website" />
+                    <meta property="og:image" content={siteContent.seo?.ogImage || ''} />
+                    <meta property="og:url" content={siteContent.seo?.canonicalUrl || ''} />
+                    <meta name="twitter:card" content="summary_large_image" />
+                    <meta name="twitter:site" content={siteContent.seo?.twitterHandle || ''} />
+                    <meta name="twitter:image" content={siteContent.seo?.ogImage || ''} />
+                    {siteContent.seo?.googleSiteVerification && <meta name="google-site-verification" content={siteContent.seo.googleSiteVerification} />}
+                    {siteContent.seo?.bingVerification && <meta name="msvalidate.01" content={siteContent.seo.bingVerification} />}
                     <link rel="icon" type="image/png" href={siteContent.business.logo || '/logo.png'} />
                     <link rel="apple-touch-icon" href={siteContent.business.logo || '/logo.png'} />
+                    <script type="application/ld+json">{JSON.stringify({
+                      "@context": "https://schema.org",
+                      "@type": siteContent.seo?.structuredData?.businessType || "TravelAgency",
+                      "name": siteContent.business.name,
+                      "url": siteContent.seo?.canonicalUrl || '',
+                      "telephone": siteContent.business.phone,
+                      "email": siteContent.business.email,
+                      "address": {
+                        "@type": "PostalAddress",
+                        "addressLocality": "Antalya",
+                        "addressCountry": "TR",
+                        "streetAddress": siteContent.business.address
+                      },
+                      "geo": {
+                        "@type": "GeoCoordinates",
+                        "latitude": siteContent.seo?.structuredData?.latitude || "36.8841",
+                        "longitude": siteContent.seo?.structuredData?.longitude || "30.7056"
+                      },
+                      "priceRange": siteContent.seo?.structuredData?.priceRange || "€€",
+                      "openingHours": siteContent.seo?.structuredData?.openingHours || "Mo-Su 00:00-24:00",
+                      "areaServed": siteContent.seo?.structuredData?.areaServed || "Antalya, Turkey"
+                    })}</script>
                   </Helmet>
                   <section id="home" className="relative min-h-[100svh] flex flex-col bg-[#020617] overflow-hidden">
                     {/* Background Layer: Ken Burns Zoom */}

@@ -78,6 +78,17 @@ Brand tokens:
 
 `src/components/AdminPanel.tsx` is a large monolithic component (~160KB). Each admin view (bookings, blog, settings, etc.) is a lazy-loaded component under `src/components/admin/views/`.
 
+### SEO System
+
+SEO is managed via `SeoSettings` in `src/types.ts` and stored as part of `SiteContent.seo`.
+
+- Defaults defined in `INITIAL_SITE_CONTENT.seo` in `src/constants.ts`
+- Admin UI: `src/components/admin/views/SEOView.tsx` — accessible via sidebar "SEO Yönetimi"
+- Global meta tags + JSON-LD structured data rendered in `App.tsx` home route `<Helmet>`
+- Per-page SEO fields: `pagesSeo.{home,about,regions,blog,faq,contact}`
+- `public/robots.txt` — crawl directives; `public/sitemap.xml` — static sitemap
+- `mergeContent()` in `src/store/useAppStore.ts` deep-merges `seo` and `seo.structuredData` / `seo.pagesSeo` from persisted data with defaults
+
 ## Deployment
 
 ```bash

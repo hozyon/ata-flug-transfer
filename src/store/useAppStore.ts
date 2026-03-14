@@ -60,6 +60,12 @@ function mergeContent(parsed: SiteContent): SiteContent {
         about: { ...INITIAL_SITE_CONTENT.about, ...(parsed.about || {}) },
         business: { ...INITIAL_SITE_CONTENT.business, ...(parsed.business || {}) },
         visionMission: { ...INITIAL_SITE_CONTENT.visionMission, ...(parsed.visionMission || {}) },
+        seo: {
+            ...INITIAL_SITE_CONTENT.seo,
+            ...(parsed.seo || {}),
+            structuredData: { ...INITIAL_SITE_CONTENT.seo.structuredData, ...(parsed.seo?.structuredData || {}) },
+            pagesSeo: { ...INITIAL_SITE_CONTENT.seo.pagesSeo, ...(parsed.seo?.pagesSeo || {}) },
+        },
     };
     if (!Array.isArray(merged.hero.backgrounds) || merged.hero.backgrounds.length === 0) {
         merged.hero.backgrounds = INITIAL_SITE_CONTENT.hero.backgrounds;
