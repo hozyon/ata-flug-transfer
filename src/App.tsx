@@ -179,9 +179,15 @@ const App: React.FC = () => {
                     <meta property="og:description" content={siteContent.seo?.pagesSeo?.home?.description || siteContent.seo?.siteDescription || siteContent.hero.desc} />
                     <meta property="og:type" content="website" />
                     <meta property="og:image" content={siteContent.seo?.ogImage || ''} />
+                    <meta property="og:image:width" content="1200" />
+                    <meta property="og:image:height" content="630" />
                     <meta property="og:url" content={siteContent.seo?.canonicalUrl || ''} />
+                    <meta property="og:locale" content="tr_TR" />
+                    <meta property="og:site_name" content={siteContent.business.name} />
                     <meta name="twitter:card" content="summary_large_image" />
                     <meta name="twitter:site" content={siteContent.seo?.twitterHandle || ''} />
+                    <meta name="twitter:title" content={siteContent.seo?.pagesSeo?.home?.title || siteContent.hero.title} />
+                    <meta name="twitter:description" content={siteContent.seo?.pagesSeo?.home?.description || siteContent.seo?.siteDescription || ''} />
                     <meta name="twitter:image" content={siteContent.seo?.ogImage || ''} />
                     {siteContent.seo?.googleSiteVerification && <meta name="google-site-verification" content={siteContent.seo.googleSiteVerification} />}
                     {siteContent.seo?.bingVerification && <meta name="msvalidate.01" content={siteContent.seo.bingVerification} />}

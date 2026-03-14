@@ -34,8 +34,20 @@ const Blog: React.FC = () => {
     return (
         <div className="min-h-screen bg-slate-50">
             <Helmet>
-                <title>Blog - Antalya Transfer Rehberi | Ata Flug</title>
+                <title>{t('blogPage.title')} | Ata Flug Transfer</title>
                 <meta name="description" content="Antalya havalimanı transfer rehberi, gezilecek yerler, tatil ipuçları ve daha fazlası. Antalya'nın en güncel gezi blogu." />
+                <meta name="robots" content="index, follow" />
+                <link rel="canonical" href="https://ataflugtransfer.com/blog" />
+                <meta property="og:title" content={`${t('blogPage.title')} | Ata Flug Transfer`} />
+                <meta property="og:description" content="Antalya havalimanı transfer rehberi, gezilecek yerler, tatil ipuçları ve daha fazlası." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://ataflugtransfer.com/blog" />
+                <meta property="og:locale" content="tr_TR" />
+                <meta property="og:site_name" content="Ata Flug Transfer" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:site" content="@ataflugtransfer" />
+                <meta name="twitter:title" content={`${t('blogPage.title')} | Ata Flug Transfer`} />
+                <meta name="twitter:description" content="Antalya transfer rehberi ve gezi blogu." />
             </Helmet>
 
             {/* Premium Header */}

@@ -58,12 +58,42 @@ const BlogPost: React.FC = () => {
     return (
         <div className="min-h-screen bg-slate-50">
             <Helmet>
-                <title>{translatedTitle} | Ata Flug Transfer</title>
+                <title>{translatedTitle} | {BUSINESS_INFO.name}</title>
                 <meta name="description" content={translatedExcerpt} />
+                <meta name="robots" content="index, follow" />
+                <link rel="canonical" href={`https://ataflugtransfer.com/blog/${post.slug}`} />
                 <meta property="og:title" content={translatedTitle} />
                 <meta property="og:description" content={translatedExcerpt} />
                 <meta property="og:image" content={post.featuredImage} />
+                <meta property="og:image:width" content="1200" />
+                <meta property="og:image:height" content="630" />
                 <meta property="og:type" content="article" />
+                <meta property="og:url" content={`https://ataflugtransfer.com/blog/${post.slug}`} />
+                <meta property="og:locale" content={language === 'tr' ? 'tr_TR' : language === 'de' ? 'de_DE' : language === 'ru' ? 'ru_RU' : 'en_US'} />
+                <meta property="og:site_name" content={BUSINESS_INFO.name} />
+                <meta property="article:published_time" content={post.publishedAt} />
+                <meta property="article:section" content={translatedCategory} />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:site" content="@ataflugtransfer" />
+                <meta name="twitter:title" content={translatedTitle} />
+                <meta name="twitter:description" content={translatedExcerpt} />
+                <meta name="twitter:image" content={post.featuredImage} />
+                <script type="application/ld+json">{JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "BlogPosting",
+                    "headline": translatedTitle,
+                    "description": translatedExcerpt,
+                    "image": post.featuredImage,
+                    "datePublished": post.publishedAt,
+                    "author": { "@type": "Organization", "name": BUSINESS_INFO.name },
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": BUSINESS_INFO.name,
+                        "logo": { "@type": "ImageObject", "url": "https://ataflugtransfer.com/logo.png" }
+                    },
+                    "url": `https://ataflugtransfer.com/blog/${post.slug}`,
+                    "mainEntityOfPage": { "@type": "WebPage", "@id": `https://ataflugtransfer.com/blog/${post.slug}` }
+                })}</script>
             </Helmet>
 
             {/* Immersive Hero */}

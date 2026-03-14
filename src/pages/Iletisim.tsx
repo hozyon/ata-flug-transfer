@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import TextureBackground from '../components/TextureBackground';
 import { useSiteContent } from '../SiteContext';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -9,6 +10,10 @@ const Iletisim: React.FC = () => {
     const business = siteContent.business;
 
     const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+    const seo = siteContent.seo;
+    const canonical = seo?.canonicalUrl || 'https://ataflugtransfer.com';
+    const pageTitle = seo?.pagesSeo?.contact?.title || 'İletişim';
+    const pageDesc = seo?.pagesSeo?.contact?.description || 'Ata Flug Transfer ile 7/24 iletişime geçin.';
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -18,6 +23,24 @@ const Iletisim: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-slate-50 flex flex-col pb-24 lg:pb-0">
+            <Helmet>
+                <title>{pageTitle} | {business.name}</title>
+                <meta name="description" content={pageDesc} />
+                <meta name="keywords" content={seo?.pagesSeo?.contact?.keywords || seo?.siteKeywords || ''} />
+                <meta name="robots" content={seo?.robotsDirective || 'index, follow'} />
+                <link rel="canonical" href={`${canonical}/iletisim`} />
+                <meta property="og:title" content={pageTitle} />
+                <meta property="og:description" content={pageDesc} />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content={`${canonical}/iletisim`} />
+                <meta property="og:image" content={seo?.ogImage || ''} />
+                <meta property="og:locale" content="tr_TR" />
+                <meta property="og:site_name" content={business.name} />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:site" content={seo?.twitterHandle || ''} />
+                <meta name="twitter:title" content={pageTitle} />
+                <meta name="twitter:description" content={pageDesc} />
+            </Helmet>
             <section className="relative pt-24 md:pt-28 pb-12 md:pb-16 flex items-center justify-center overflow-hidden shrink-0">
                 <div className="absolute inset-0 z-0">
                     <img src="/images/about-custom.jpg" alt="Contact Banner" className="w-full h-full object-cover" />

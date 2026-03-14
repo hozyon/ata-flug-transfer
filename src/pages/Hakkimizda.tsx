@@ -1,4 +1,5 @@
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import TextureBackground from '../components/TextureBackground';
 import { useSiteContent } from '../SiteContext';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -15,8 +16,31 @@ const Hakkimizda: React.FC = () => {
         { icon: "fa-headset", title: t('about.feat3.title'), desc: t('about.feat3.desc') },
     ];
 
+    const seo = siteContent.seo;
+    const canonical = seo?.canonicalUrl || 'https://ataflugtransfer.com';
+    const pageTitle = seo?.pagesSeo?.about?.title || 'Hakkımızda';
+    const pageDesc = seo?.pagesSeo?.about?.description || 'Ata Flug Transfer olarak Antalya\'da güvenilir VIP transfer hizmeti sunuyoruz.';
+
     return (
         <div className="min-h-screen bg-slate-50">
+            <Helmet>
+                <title>{pageTitle} | {business.name}</title>
+                <meta name="description" content={pageDesc} />
+                <meta name="keywords" content={seo?.pagesSeo?.about?.keywords || seo?.siteKeywords || ''} />
+                <meta name="robots" content={seo?.robotsDirective || 'index, follow'} />
+                <link rel="canonical" href={`${canonical}/hakkimizda`} />
+                <meta property="og:title" content={pageTitle} />
+                <meta property="og:description" content={pageDesc} />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content={`${canonical}/hakkimizda`} />
+                <meta property="og:image" content={seo?.ogImage || ''} />
+                <meta property="og:locale" content="tr_TR" />
+                <meta property="og:site_name" content={business.name} />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:site" content={seo?.twitterHandle || ''} />
+                <meta name="twitter:title" content={pageTitle} />
+                <meta name="twitter:description" content={pageDesc} />
+            </Helmet>
             <section className="relative pt-28 pb-12 flex items-center justify-center overflow-hidden border-b border-white/5">
                 <div className="absolute inset-0 z-0">
                     <img src={about.bannerImage || "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=2000"} alt="Antalya Luxury" className="w-full h-full object-cover" />

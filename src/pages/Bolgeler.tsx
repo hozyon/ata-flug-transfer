@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import Fuse from 'fuse.js';
 import { INITIAL_SITE_CONTENT, BUSINESS_INFO } from '../constants';
 import TextureBackground from '../components/TextureBackground';
@@ -142,8 +143,31 @@ const Bolgeler: React.FC = () => {
         "Kadriye": { "dist": "27 km", "time": "30 dk" }
     };
 
+    const seo = INITIAL_SITE_CONTENT.seo;
+    const canonical = seo.canonicalUrl;
+    const pageTitle = seo.pagesSeo.regions.title;
+    const pageDesc = seo.pagesSeo.regions.description;
+
     return (
         <div className="min-h-screen bg-slate-50">
+            <Helmet>
+                <title>{pageTitle} | {BUSINESS_INFO.name}</title>
+                <meta name="description" content={pageDesc} />
+                <meta name="keywords" content={seo.pagesSeo.regions.keywords || seo.siteKeywords} />
+                <meta name="robots" content={seo.robotsDirective} />
+                <link rel="canonical" href={`${canonical}/bolgeler`} />
+                <meta property="og:title" content={pageTitle} />
+                <meta property="og:description" content={pageDesc} />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content={`${canonical}/bolgeler`} />
+                <meta property="og:image" content={seo.ogImage} />
+                <meta property="og:locale" content="tr_TR" />
+                <meta property="og:site_name" content={BUSINESS_INFO.name} />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:site" content={seo.twitterHandle} />
+                <meta name="twitter:title" content={pageTitle} />
+                <meta name="twitter:description" content={pageDesc} />
+            </Helmet>
             {/* Custom Animation Styles */}
             <style>{`
                 @property --angle {

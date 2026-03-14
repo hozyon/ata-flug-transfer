@@ -514,21 +514,21 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   const commandInputRef = useRef<HTMLInputElement>(null);
 
   const VIEW_LABELS: Record<string, { label: string; icon: string; description: string }> = {
-    'overview': { label: 'Dashboard', icon: 'fa-chart-pie', description: 'Genel bakış ve istatistikler' },
-    'bookings': { label: 'Rezervasyonlar', icon: 'fa-calendar-check', description: 'Rezervasyon yönetimi' },
-    'blog': { label: 'Blog Yönetimi', icon: 'fa-newspaper', description: 'Blog yazıları' },
-    'reviews': { label: 'Yorumlar', icon: 'fa-star', description: 'Yorum moderasyonu' },
-    'hero-images': { label: 'Anasayfa Banner Yönetimi', icon: 'fa-images', description: 'Slider görselleri' },
-    'site-settings': { label: 'Menü', icon: 'fa-bars', description: 'Site menü yapısı' },
-    'regions': { label: 'Bölgeler', icon: 'fa-map-location-dot', description: 'Transfer bölgeleri' },
-    'pricing': { label: 'Fiyatlar', icon: 'fa-tag', description: 'Fiyat tablosu' },
-    'fleet': { label: 'Araçlar', icon: 'fa-car-side', description: 'Araç filosu' },
+    'overview': { label: 'DASHBOARD', icon: 'fa-chart-pie', description: 'Genel bakış ve istatistikler' },
+    'bookings': { label: 'REZERVASYONLAR', icon: 'fa-calendar-check', description: 'Rezervasyon yönetimi' },
+    'blog': { label: 'BLOG YÖNETİMİ', icon: 'fa-newspaper', description: 'Blog yazıları' },
+    'reviews': { label: 'YORUMLAR', icon: 'fa-star', description: 'Yorum moderasyonu' },
+    'hero-images': { label: 'ANASAYFA BANNER', icon: 'fa-images', description: 'Slider görselleri' },
+    'site-settings': { label: 'MENÜ YÖNETİMİ', icon: 'fa-bars', description: 'Site menü yapısı' },
+    'regions': { label: 'BÖLGELER', icon: 'fa-map-location-dot', description: 'Transfer bölgeleri' },
+    'pricing': { label: 'FİYATLAR', icon: 'fa-tag', description: 'Fiyat tablosu' },
+    'fleet': { label: 'ARAÇLAR', icon: 'fa-car-side', description: 'Araç filosu' },
     'faq': { label: 'S.S.S', icon: 'fa-circle-question', description: 'Sıkça sorulan sorular' },
-    'business': { label: 'İşletme', icon: 'fa-building', description: 'İşletme bilgileri' },
-    'about': { label: 'Hakkımızda', icon: 'fa-info-circle', description: 'Hakkımızda sayfası içeriği' },
-    'visionMission': { label: 'Vizyon & Misyon', icon: 'fa-bullseye', description: 'Vizyon ve misyon sayfası' },
-    'account': { label: 'Hesap Ayarları', icon: 'fa-user', description: 'Profil ve güvenlik tercihlerinizi merkezden yönetin.' },
-    'seo': { label: 'SEO Yönetimi', icon: 'fa-magnifying-glass-chart', description: 'Arama motoru optimizasyonu ayarları' },
+    'business': { label: 'İŞLETME BİLGİLERİ', icon: 'fa-building', description: 'İşletme bilgileri' },
+    'about': { label: 'HAKKIMIZDA', icon: 'fa-info-circle', description: 'Hakkımızda sayfası içeriği' },
+    'visionMission': { label: 'VİZYON & MİSYON', icon: 'fa-bullseye', description: 'Vizyon ve misyon sayfası' },
+    'account': { label: 'HESAP AYARLARI', icon: 'fa-user', description: 'Profil ve güvenlik tercihlerinizi merkezden yönetin.' },
+    'seo': { label: 'SEO YÖNETİMİ', icon: 'fa-magnifying-glass-chart', description: 'Arama motoru optimizasyonu ayarları' },
   };
 
   const commandItems = useMemo(() => {
@@ -845,244 +845,279 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
       {/* View Booking Details - Sidebar Drawer */}
       {selectedBookingForView && (
-        <div className="fixed inset-0 z-[210]">
-          {/* Backdrop */}
-          <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-300"
-            onClick={() => setSelectedBookingForView(null)}
-          />
+  <div className="fixed inset-0 z-[210]">
+    <div
+      className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+      onClick={() => setSelectedBookingForView(null)}
+    />
 
-          {/* Drawer Panel */}
-          <div className="absolute right-0 top-0 h-full w-full max-w-lg bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 shadow-2xl animate-in slide-in-from-right duration-300 border-l border-white/10 flex flex-col">
+    <div className="absolute right-0 top-0 h-full w-full max-w-[480px] flex flex-col shadow-2xl animate-in slide-in-from-right duration-300">
 
-            {/* Header */}
-            <div className="p-6 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
+      {/* Status Color Banner Header */}
+      {(() => {
+        const s = selectedBookingForView.status;
+        const bannerMap: Record<string, { bg: string; text: string; label: string; icon: string }> = {
+          Pending:   { bg: 'from-amber-500/20 to-amber-900/10 border-amber-500/30',   text: 'text-amber-300',   label: 'BEKLEMEDEKİ',   icon: 'fa-clock' },
+          Confirmed: { bg: 'from-blue-500/20 to-blue-900/10 border-blue-500/30',       text: 'text-blue-300',    label: 'ONAYLANMIŞ',     icon: 'fa-circle-check' },
+          Completed: { bg: 'from-emerald-500/20 to-emerald-900/10 border-emerald-500/30', text: 'text-emerald-300', label: 'TAMAMLANMIŞ', icon: 'fa-flag-checkered' },
+          Cancelled: { bg: 'from-red-500/20 to-red-900/10 border-red-500/30',           text: 'text-red-300',     label: 'İPTAL EDİLMİŞ',  icon: 'fa-ban' },
+          Rejected:  { bg: 'from-slate-500/20 to-slate-900/10 border-slate-500/30',     text: 'text-slate-300',   label: 'REDDEDİLMİŞ',    icon: 'fa-xmark-circle' },
+        };
+        const bm = bannerMap[s] || bannerMap['Pending'];
+        return (
+          <div className={`bg-gradient-to-r ${bm.bg} border-b px-6 py-4 flex items-center justify-between shrink-0 bg-slate-900`}>
+            <div className="flex items-center gap-3">
+              <div className={`w-9 h-9 rounded-xl bg-black/20 flex items-center justify-center ${bm.text}`}>
+                <i className={`fa-solid ${bm.icon} text-base`}></i>
+              </div>
               <div>
-                <h3 className="text-xl font-black text-white flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#c5a059] to-amber-600 flex items-center justify-center">
-                    <i className="fa-solid fa-calendar-check text-white"></i>
-                  </div>
-                  Rezervasyon Detayları
-                </h3>
-                <p className="text-xs text-slate-400 mt-1 ml-[52px]">ID: <span className="text-[#c5a059] font-mono">{selectedBookingForView.id}</span></p>
+                <p className={`text-[10px] font-black uppercase tracking-widest ${bm.text} opacity-80`}>Rezervasyon Durumu</p>
+                <p className={`text-sm font-black ${bm.text}`}>{bm.label}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="text-right mr-2">
+                <p className="text-[9px] font-black text-slate-500 uppercase tracking-wider">REF</p>
+                <p className="text-[10px] font-mono text-slate-400">#{selectedBookingForView.id.slice(-8).toUpperCase()}</p>
               </div>
               <button
                 onClick={() => setSelectedBookingForView(null)}
-                className="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all flex items-center justify-center"
+                className="w-9 h-9 rounded-xl bg-black/20 hover:bg-black/40 text-slate-400 hover:text-white transition-all flex items-center justify-center"
               >
-                <i className="fa-solid fa-xmark text-lg"></i>
+                <i className="fa-solid fa-xmark text-base"></i>
               </button>
             </div>
+          </div>
+        );
+      })()}
 
-            {/* Content - Scrollable */}
-            <div className="flex-1 overflow-y-auto overscroll-y-contain p-6 space-y-6">
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto overscroll-y-contain bg-gradient-to-b from-slate-900 to-slate-950">
 
-              {/* Status Badge - Top */}
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10">
-                <div>
-                  <p className="text-[10px] font-bold text-slate-500 uppercase">Durum</p>
-                  <span className={`inline-block mt-1 px-4 py-1.5 rounded-full text-xs font-black uppercase ${selectedBookingForView.status === 'Confirmed' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' :
-                    selectedBookingForView.status === 'Cancelled' ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
-                      selectedBookingForView.status === 'Completed' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
-                        selectedBookingForView.status === 'Rejected' ? 'bg-slate-500/20 text-slate-400 border border-slate-500/30' :
-                          'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                    }`}>
-                    {{
-                      'Pending': 'Beklemede',
-                      'Confirmed': 'Onaylandı',
-                      'Completed': 'Tamamlandı',
-                      'Cancelled': 'İptal',
-                      'Rejected': 'Reddedildi'
-                    }[selectedBookingForView.status] || selectedBookingForView.status}
-                  </span>
+        {/* Price Hero */}
+        <div className="px-6 py-5 border-b border-white/[0.06] flex items-center justify-between bg-white/[0.02]">
+          <div>
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Toplam Tutar</p>
+            <p className="text-4xl font-black text-[#c5a059] leading-none">€{selectedBookingForView.totalPrice}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">Kayıt Tarihi</p>
+            <p className="text-xs font-bold text-slate-300">{new Date(selectedBookingForView.createdAt).toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
+            <p className="text-[10px] text-slate-500">{new Date(selectedBookingForView.createdAt).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}</p>
+          </div>
+        </div>
+
+        <div className="p-5 space-y-4">
+
+          {/* Customer Card */}
+          <div className="rounded-2xl overflow-hidden border border-white/[0.08] bg-white/[0.03]">
+            <div className="px-4 py-2.5 border-b border-white/[0.05] flex items-center gap-2">
+              <i className="fa-solid fa-user-tie text-blue-400 text-[11px]"></i>
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Müşteri</span>
+            </div>
+            <div className="p-4">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500/30 to-indigo-600/20 border border-blue-500/20 flex items-center justify-center shrink-0">
+                  <span className="text-lg font-black text-blue-300">{selectedBookingForView.customerName.replace(/[\n\r]+/g, ' ').trim().charAt(0).toUpperCase()}</span>
                 </div>
-                <div className="text-right">
-                  <p className="text-[10px] font-bold text-slate-500 uppercase">Toplam</p>
-                  <p className="text-2xl font-black text-[#c5a059]">€{selectedBookingForView.totalPrice}</p>
+                <div>
+                  <p className="text-base font-black text-white leading-tight">{selectedBookingForView.customerName.replace(/[\n\r]+/g, ' ').trim()}</p>
+                  <p className="text-[10px] text-slate-500 mt-0.5">Yolcu Sayısı: <span className="text-slate-300 font-bold">{selectedBookingForView.passengers} kişi</span></p>
                 </div>
               </div>
-
-              {/* Customer Info */}
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                    <i className="fa-solid fa-user text-blue-400 text-sm"></i>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between gap-3 p-3 rounded-xl bg-black/20 border border-white/5">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-emerald-500/15 flex items-center justify-center">
+                      <i className="fa-solid fa-phone text-emerald-400 text-[10px]"></i>
+                    </div>
+                    <span className="text-sm font-bold text-white">{selectedBookingForView.phone}</span>
                   </div>
-                  <span className="text-xs font-bold text-slate-400 uppercase">Müşteri Bilgileri</span>
+                  <a
+                    href={`https://wa.me/${selectedBookingForView.phone.replace(/\D/g, '')}?text=${encodeURIComponent(`Merhaba ${selectedBookingForView.customerName.replace(/[\n\r]+/g, ' ').trim()}, ATA FLUG TRANSFER rezervasyonunuz onaylandı.\n📅 ${selectedBookingForView.date} ${selectedBookingForView.time}\n📍 ${selectedBookingForView.pickup} → ${selectedBookingForView.destination}`)}`}
+                    target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 text-[11px] font-black hover:bg-emerald-500/30 transition-all">
+                    <i className="fa-brands fa-whatsapp"></i> WhatsApp
+                  </a>
                 </div>
-                <div className="space-y-3 pl-11">
-                  <div>
-                    <p className="text-lg font-bold text-white">{selectedBookingForView.customerName.replace(/[\n\r]+/g, ' ').trim()}</p>
-                  </div>
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2 text-slate-400">
-                      <i className="fa-solid fa-phone text-xs text-emerald-400"></i>
-                      <span className="text-sm font-medium">{selectedBookingForView.phone}</span>
+                {selectedBookingForView.email && (
+                  <div className="flex items-center justify-between gap-3 p-3 rounded-xl bg-black/20 border border-white/5">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-lg bg-blue-500/15 flex items-center justify-center">
+                        <i className="fa-solid fa-envelope text-blue-400 text-[10px]"></i>
+                      </div>
+                      <span className="text-xs font-bold text-white truncate max-w-[140px]">{selectedBookingForView.email}</span>
                     </div>
                     <a
-                      href={`https://wa.me/${selectedBookingForView.phone.replace(/\D/g, '')}?text=${encodeURIComponent(
-                        `Merhaba ${selectedBookingForView.customerName.replace(/[\n\r]+/g, ' ').trim()}, ATA FLUG TRANSFER rezervasyonunuz onaylandı.\n📅 ${selectedBookingForView.date} ${selectedBookingForView.time}\n📍 ${selectedBookingForView.pickup} → ${selectedBookingForView.destination}`
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href={`mailto:${selectedBookingForView.email}?subject=Rezervasyon%20Onay%C4%B1%20-%20ATA%20FLUG%20TRANSFER&body=${encodeURIComponent(`Sayın ${selectedBookingForView.customerName.replace(/[\n\r]+/g, ' ').trim()},\n\nRezervasyon bilgileriniz:\nTarih: ${selectedBookingForView.date} ${selectedBookingForView.time}\nKalkış: ${selectedBookingForView.pickup}\nVarış: ${selectedBookingForView.destination}\n\nATA FLUG TRANSFER`)}`}
                       onClick={e => e.stopPropagation()}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold hover:bg-emerald-500/20 transition-all shrink-0">
-                      <i className="fa-brands fa-whatsapp text-sm"></i>
-                      WhatsApp
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/15 text-blue-400 border border-blue-500/20 text-[11px] font-black hover:bg-blue-500/30 transition-all">
+                      <i className="fa-solid fa-paper-plane text-[10px]"></i> E-posta
                     </a>
                   </div>
-                  {selectedBookingForView.email && (
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 text-slate-400">
-                        <i className="fa-solid fa-envelope text-xs text-blue-400"></i>
-                        <span className="text-sm font-medium">{selectedBookingForView.email}</span>
-                      </div>
-                      <a
-                        href={`mailto:${selectedBookingForView.email}?subject=Rezervasyon%20Onay%C4%B1%20-%20ATA%20FLUG%20TRANSFER&body=${encodeURIComponent(
-                          `Sayın ${selectedBookingForView.customerName.replace(/[\n\r]+/g, ' ').trim()},\n\nRezervasyon bilgileriniz:\nTarih: ${selectedBookingForView.date} ${selectedBookingForView.time}\nKalkış: ${selectedBookingForView.pickup}\nVarış: ${selectedBookingForView.destination}\n\nATA FLUG TRANSFER`
-                        )}`}
-                        onClick={e => e.stopPropagation()}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 text-xs font-bold hover:bg-blue-500/20 transition-all shrink-0">
-                        <i className="fa-solid fa-paper-plane text-xs"></i>
-                        E-posta
-                      </a>
-                    </div>
-                  )}
-                </div>
+                )}
               </div>
-
-              {/* Route Info */}
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 rounded-lg bg-emerald-500/20 flex items-center justify-center">
-                    <i className="fa-solid fa-route text-emerald-400 text-sm"></i>
-                  </div>
-                  <span className="text-xs font-bold text-slate-400 uppercase">Güzergah</span>
-                </div>
-                <div className="pl-11 flex items-center gap-3">
-                  <div className="flex-1">
-                    <p className="text-xs text-slate-500 mb-1">Alış</p>
-                    <p className="text-sm font-bold text-white">{selectedBookingForView.pickup}</p>
-                  </div>
-                  <div className="w-8 h-8 rounded-full bg-[#c5a059]/20 flex items-center justify-center">
-                    <i className="fa-solid fa-arrow-right text-[#c5a059] text-xs"></i>
-                  </div>
-                  <div className="flex-1 text-right">
-                    <p className="text-xs text-slate-500 mb-1">Bırakış</p>
-                    <p className="text-sm font-bold text-white">{selectedBookingForView.destination}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Date & Time */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10">
-                  <div className="flex items-center gap-2 mb-2">
-                    <i className="fa-solid fa-calendar text-purple-400 text-sm"></i>
-                    <span className="text-xs font-bold text-slate-400 uppercase">Tarih</span>
-                  </div>
-                  <p className="text-lg font-bold text-white">{selectedBookingForView.date.split('-').reverse().join('/')}</p>
-                </div>
-                <div className="p-4 rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10">
-                  <div className="flex items-center gap-2 mb-2">
-                    <i className="fa-solid fa-clock text-amber-400 text-sm"></i>
-                    <span className="text-xs font-bold text-slate-400 uppercase">Saat</span>
-                  </div>
-                  <p className="text-lg font-bold text-white">{selectedBookingForView.time}</p>
-                </div>
-              </div>
-
-              {/* Vehicle Info */}
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 rounded-lg bg-[#c5a059]/20 flex items-center justify-center">
-                    <i className="fa-solid fa-car text-[#c5a059] text-sm"></i>
-                  </div>
-                  <span className="text-xs font-bold text-slate-400 uppercase">Araç Bilgisi</span>
-                </div>
-                {(() => {
-                  const vehicle = editContent.vehicles.find(v => v.id === selectedBookingForView.vehicleId);
-                  return (
-                    <div className="pl-11">
-                      <p className="text-base font-bold text-white mb-3">{vehicle?.name || 'Bilinmiyor'}</p>
-                      <div className="flex gap-4">
-                        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/5">
-                          <i className="fa-solid fa-users text-[#c5a059] text-xs"></i>
-                          <span className="text-xs font-bold text-slate-300">{selectedBookingForView.passengers} / {vehicle?.capacity}</span>
-                        </div>
-                        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/5">
-                          <i className="fa-solid fa-suitcase text-[#c5a059] text-xs"></i>
-                          <span className="text-xs font-bold text-slate-300">Max {vehicle?.luggage}</span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })()}
-              </div>
-
-              {/* Flight Number */}
-              {selectedBookingForView.flightNumber && (
-                <div className="p-4 rounded-2xl bg-gradient-to-br from-sky-500/[0.08] to-white/[0.02] border border-sky-500/20">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-sky-500/20 flex items-center justify-center">
-                      <i className="fa-solid fa-plane text-sky-400 text-sm"></i>
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-bold text-slate-500 uppercase">Uçuş Numarası</p>
-                      <p className="text-base font-bold text-sky-400 tracking-wider">{selectedBookingForView.flightNumber}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Notes */}
-              {selectedBookingForView.notes && (
-                <div className="p-4 rounded-2xl bg-gradient-to-br from-white/[0.06] to-white/[0.02] border border-white/10">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-8 rounded-lg bg-slate-500/20 flex items-center justify-center">
-                      <i className="fa-solid fa-note-sticky text-slate-400 text-sm"></i>
-                    </div>
-                    <span className="text-xs font-bold text-slate-400 uppercase">Notlar</span>
-                  </div>
-                  <p className="text-sm text-slate-300 pl-11">{selectedBookingForView.notes}</p>
-                </div>
-              )}
-
             </div>
+          </div>
 
-            {/* Footer */}
-            <div className="p-6 border-t border-white/10 bg-black/20">
-              <div className="flex items-center justify-between">
-                <div className="text-[10px] text-slate-500 font-bold uppercase">
-                  Kayıt: {new Date(selectedBookingForView.createdAt).toLocaleString('tr-TR')}
+          {/* Route Card */}
+          <div className="rounded-2xl overflow-hidden border border-white/[0.08] bg-white/[0.03]">
+            <div className="px-4 py-2.5 border-b border-white/[0.05] flex items-center gap-2">
+              <i className="fa-solid fa-route text-emerald-400 text-[11px]"></i>
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Güzergah</span>
+            </div>
+            <div className="p-4">
+              <div className="flex items-stretch gap-3">
+                <div className="flex flex-col items-center gap-1 pt-1">
+                  <div className="w-3 h-3 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]"></div>
+                  <div className="flex-1 w-[2px] bg-gradient-to-b from-emerald-400/50 to-[#c5a059]/50 min-h-[28px]"></div>
+                  <div className="w-3 h-3 rounded-full bg-[#c5a059] shadow-[0_0_8px_rgba(197,160,89,0.5)]"></div>
                 </div>
-                <div className="flex gap-2">
-                  <select
-                    value={selectedBookingForView.status}
-                    onChange={(e) => {
-                      onUpdateStatus(selectedBookingForView.id, e.target.value as Booking['status']);
-                      setSelectedBookingForView({ ...selectedBookingForView, status: e.target.value as Booking['status'] });
-                    }}
-                    className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none focus:border-[#c5a059]"
-                  >
-                    <option value="Pending">Beklemede</option>
-                    <option value="Confirmed">Onayla</option>
-                    <option value="Completed">Tamamlandı</option>
-                    <option value="Cancelled">İptal</option>
-                    <option value="Rejected">Reddet</option>
-                  </select>
-                  <button
-                    onClick={() => setSelectedBookingForView(null)}
-                    className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#c5a059] to-amber-600 text-white text-xs font-bold uppercase hover:from-amber-600 hover:to-amber-700 transition-all"
-                  >
-                    Kapat
-                  </button>
+                <div className="flex-1 space-y-3">
+                  <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/10">
+                    <p className="text-[9px] font-black text-emerald-400 uppercase tracking-widest mb-1">Alış Noktası</p>
+                    <p className="text-sm font-bold text-white leading-tight">{selectedBookingForView.pickup}</p>
+                  </div>
+                  <div className="p-3 rounded-xl bg-[#c5a059]/5 border border-[#c5a059]/10">
+                    <p className="text-[9px] font-black text-[#c5a059] uppercase tracking-widest mb-1">Varış Noktası</p>
+                    <p className="text-sm font-bold text-white leading-tight">{selectedBookingForView.destination}</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+
+          {/* Date, Time & Vehicle Row */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <i className="fa-solid fa-calendar-days text-purple-400 text-xs"></i>
+                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Tarih</span>
+              </div>
+              <p className="text-base font-black text-white">{selectedBookingForView.date.split('-').reverse().join('.')}</p>
+            </div>
+            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <i className="fa-solid fa-clock text-amber-400 text-xs"></i>
+                <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Saat</span>
+              </div>
+              <p className="text-base font-black text-white">{selectedBookingForView.time}</p>
+            </div>
+          </div>
+
+          {/* Vehicle */}
+          {(() => {
+            const vehicle = editContent.vehicles.find(v => v.id === selectedBookingForView.vehicleId);
+            return vehicle ? (
+              <div className="rounded-2xl overflow-hidden border border-white/[0.08] bg-white/[0.03]">
+                <div className="px-4 py-2.5 border-b border-white/[0.05] flex items-center gap-2">
+                  <i className="fa-solid fa-car text-[#c5a059] text-[11px]"></i>
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Araç Bilgisi</span>
+                </div>
+                <div className="p-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-black text-white mb-2">{vehicle.name}</p>
+                    <div className="flex gap-2">
+                      <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/5 text-[11px] font-bold text-slate-300">
+                        <i className="fa-solid fa-users text-[#c5a059] text-[9px]"></i>
+                        {selectedBookingForView.passengers}/{vehicle.capacity} kişi
+                      </span>
+                      <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/5 border border-white/5 text-[11px] font-bold text-slate-300">
+                        <i className="fa-solid fa-suitcase text-[#c5a059] text-[9px]"></i>
+                        Max {vehicle.luggage}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="w-16 h-10 rounded-xl bg-[#c5a059]/10 border border-[#c5a059]/20 flex items-center justify-center">
+                    <i className="fa-solid fa-car-side text-[#c5a059] text-xl"></i>
+                  </div>
+                </div>
+              </div>
+            ) : null;
+          })()}
+
+          {/* Flight Number */}
+          {selectedBookingForView.flightNumber && (
+            <div className="rounded-2xl border border-sky-500/20 bg-sky-500/[0.06] p-4 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-sky-500/15 flex items-center justify-center shrink-0">
+                <i className="fa-solid fa-plane text-sky-400 text-sm"></i>
+              </div>
+              <div>
+                <p className="text-[9px] font-black text-sky-400/70 uppercase tracking-widest mb-0.5">Uçuş Numarası</p>
+                <p className="text-base font-black text-sky-300 tracking-widest">{selectedBookingForView.flightNumber}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Notes */}
+          {selectedBookingForView.notes && (
+            <div className="rounded-2xl overflow-hidden border border-white/[0.08] bg-white/[0.03]">
+              <div className="px-4 py-2.5 border-b border-white/[0.05] flex items-center gap-2">
+                <i className="fa-solid fa-note-sticky text-slate-400 text-[11px]"></i>
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Notlar</span>
+              </div>
+              <div className="p-4">
+                <p className="text-sm text-slate-300 leading-relaxed">{selectedBookingForView.notes}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Status Change - Button Group */}
+          <div className="rounded-2xl overflow-hidden border border-white/[0.08] bg-white/[0.03]">
+            <div className="px-4 py-2.5 border-b border-white/[0.05] flex items-center gap-2">
+              <i className="fa-solid fa-arrows-rotate text-violet-400 text-[11px]"></i>
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Durum Güncelle</span>
+            </div>
+            <div className="p-4 grid grid-cols-2 gap-2">
+              {[
+                { value: 'Confirmed', label: 'ONAYLA', icon: 'fa-circle-check', style: 'bg-blue-500/15 border-blue-500/30 text-blue-300 hover:bg-blue-500 hover:text-white hover:border-blue-500' },
+                { value: 'Completed', label: 'TAMAMLANDI', icon: 'fa-flag-checkered', style: 'bg-emerald-500/15 border-emerald-500/30 text-emerald-300 hover:bg-emerald-500 hover:text-white hover:border-emerald-500' },
+                { value: 'Pending', label: 'BEKLEMEYE AL', icon: 'fa-clock', style: 'bg-amber-500/15 border-amber-500/30 text-amber-300 hover:bg-amber-500 hover:text-white hover:border-amber-500' },
+                { value: 'Cancelled', label: 'İPTAL ET', icon: 'fa-ban', style: 'bg-red-500/15 border-red-500/30 text-red-300 hover:bg-red-500 hover:text-white hover:border-red-500' },
+              ].map(btn => (
+                <button
+                  key={btn.value}
+                  onClick={() => {
+                    onUpdateStatus(selectedBookingForView.id, btn.value as Booking['status']);
+                    setSelectedBookingForView({ ...selectedBookingForView, status: btn.value as Booking['status'] });
+                  }}
+                  disabled={selectedBookingForView.status === btn.value}
+                  className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border text-[11px] font-black transition-all ${btn.style} ${selectedBookingForView.status === btn.value ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  <i className={`fa-solid ${btn.icon} text-[10px]`}></i>
+                  {btn.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
         </div>
-      )}
+      </div>
+
+      {/* Footer */}
+      <div className="bg-slate-950 border-t border-white/10 px-5 py-4 flex items-center justify-between shrink-0">
+        <button
+          onClick={() => {
+            if (window.confirm('Bu rezervasyonu silmek istediğinizden emin misiniz?')) {
+              onDeleteBooking(selectedBookingForView.id);
+              setSelectedBookingForView(null);
+            }
+          }}
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white text-[11px] font-black transition-all"
+        >
+          <i className="fa-solid fa-trash text-[10px]"></i>
+          SİL
+        </button>
+        <button
+          onClick={() => setSelectedBookingForView(null)}
+          className="flex items-center gap-2 px-6 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-white/10 text-[11px] font-black transition-all"
+        >
+          KAPAT
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
       {/* Add Booking Modal */}
       {
@@ -1178,140 +1213,195 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
         {/* Nav Items — Grouped */}
         <nav className="flex-1 flex flex-col py-2 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
-          {/* Main Group */}
-          <div className="space-y-0 px-2">
-            {[
-              { id: 'overview', label: 'Dashboard', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></svg> },
-              { id: 'bookings', label: 'Rezervasyonlar', badge: pendingCount, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 2v4" /><path d="M16 2v4" /><rect width="18" height="18" x="3" y="4" rx="2" /><path d="M3 10h18" /><path d="M8 14h.01" /><path d="M12 14h.01" /><path d="M16 14h.01" /><path d="M8 18h.01" /><path d="M12 18h.01" /><path d="M16 18h.01" /></svg> },
-              { id: 'blog', label: 'Blog Yönetimi', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" /><path d="M18 14h-8" /><path d="M15 18h-5" /><path d="M10 6h8v4h-8V6Z" /></svg> },
-              { id: 'reviews', label: 'Yorumlar', badge: pendingReviews, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg> },
-              { id: 'hero-images', label: 'Anasayfa Banner', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></svg> },
-            ].map(item => (
-              <div key={item.id} className="relative group">
-                <button
-                  onClick={() => setActiveView(item.id as DashboardView)}
-                  className={`w-full py-2.5 rounded-xl flex items-center ${isSidebarOpen ? 'justify-start px-4 gap-3' : 'justify-center'} transition-all group relative ${activeView === item.id ? 'bg-gradient-to-r from-white/[0.08] to-transparent text-white shadow-[inset_1px_0_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
-                >
-                  {/* Elegant Active Indicator Line */}
-                  {activeView === item.id && (
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[#c5a059] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
-                  )}
 
-                  <div className={`shrink-0 transition-transform duration-300 ${activeView === item.id ? 'scale-110 text-[#c5a059]' : 'group-hover:scale-110 group-hover:text-white'}`}>
-                    {item.icon}
-                  </div>
-
-                  {isSidebarOpen && <span className="text-[13px] font-bold whitespace-nowrap truncate">{item.label}</span>}
-
-                  {/* Badge */}
-                  {item.badge > 0 && (
-                    <span className={`flex items-center justify-center text-[8px] font-black rounded-full bg-red-500 text-white ring-2 ring-[#020617] ${isSidebarOpen ? 'ml-auto shrink-0 w-[18px] h-[18px]' : 'absolute top-1 right-1.5 w-[14px] h-[14px]'}`}>
-                      {item.badge > 9 ? '9+' : item.badge}
-                    </span>
-                  )}
-                </button>
-                {/* Tooltip */}
-                {!isSidebarOpen && (
-                  <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
-                    <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[#c5a059] to-amber-600" />
-                    <div className="flex items-center gap-2.5">
-                      <span>{item.label}</span>
-                      {item.badge > 0 && <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 text-[10px] font-black">{item.badge}</span>}
-                    </div>
-                    <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[#0f172a]/95" />
-                  </div>
-                )}
-              </div>
-            ))}
+  {/* ── OPERASYON ── */}
+  {isSidebarOpen && <p className="px-4 pt-3 pb-1 text-[9px] font-black text-slate-600 uppercase tracking-[0.2em]">Operasyon</p>}
+  <div className="space-y-0 px-2">
+    {[
+      { id: 'overview', label: 'DASHBOARD', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></svg> },
+      { id: 'bookings', label: 'REZERVASYONLAR', badge: pendingCount, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 2v4" /><path d="M16 2v4" /><rect width="18" height="18" x="3" y="4" rx="2" /><path d="M3 10h18" /><path d="M8 14h.01" /><path d="M12 14h.01" /><path d="M16 14h.01" /><path d="M8 18h.01" /><path d="M12 18h.01" /><path d="M16 18h.01" /></svg> },
+      { id: 'reviews', label: 'YORUMLAR', badge: pendingReviews, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg> },
+    ].map(item => (
+      <div key={item.id} className="relative group">
+        <button
+          onClick={() => setActiveView(item.id as DashboardView)}
+          className={`w-full py-2.5 rounded-xl flex items-center ${isSidebarOpen ? 'justify-start px-4 gap-3' : 'justify-center'} transition-all group relative ${activeView === item.id ? 'bg-gradient-to-r from-white/[0.08] to-transparent text-white shadow-[inset_1px_0_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+        >
+          {activeView === item.id && (
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[#c5a059] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
+          )}
+          <div className={`shrink-0 transition-transform duration-300 ${activeView === item.id ? 'scale-110 text-[#c5a059]' : 'group-hover:scale-110 group-hover:text-white'}`}>
+            {item.icon}
           </div>
-
-          {/* Separator */}
-          <div className="mx-4 my-2 h-px bg-white/5 shrink-0" />
-
-          {/* Management Group */}
-          <div className="space-y-0 px-2 pb-2">
-            {[
-              {
-                id: 'corporate',
-                label: 'Kurumsal',
-                icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /><rect width="20" height="14" x="2" y="6" rx="2" /></svg>,
-                subItems: [
-                  { id: 'about', label: 'Hakkımızda' },
-                  { id: 'visionMission', label: 'Vizyon & Misyon' }
-                ]
-              },
-              { id: 'site-settings', label: 'Menü Yönetimi', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg> },
-              { id: 'regions', label: 'Bölgeler', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg> },
-              { id: 'pricing', label: 'Fiyatlar', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42l-8.704-8.704z" /><circle cx="7.5" cy="7.5" r=".5" fill="currentColor" /></svg> },
-              { id: 'fleet', label: 'Araçlar', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2" /><circle cx="7" cy="17" r="2" /><path d="M9 17h6" /><circle cx="17" cy="17" r="2" /></svg> },
-              { id: 'faq', label: 'S.S.S', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><path d="M12 17h.01" /></svg> },
-              { id: 'business', label: 'İşletme', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2" /><path d="M9 22v-4h6v4" /><path d="M8 6h.01" /><path d="M16 6h.01" /><path d="M12 6h.01" /><path d="M12 10h.01" /><path d="M12 14h.01" /><path d="M16 10h.01" /><path d="M16 14h.01" /><path d="M8 10h.01" /><path d="M8 14h.01" /></svg> },
-              { id: 'seo', label: 'SEO Yönetimi', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg> },
-              { id: 'account', label: 'Hesap Ayarları', icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg> },
-            ].map(item => {
-              const isActiveGroup = item.subItems
-                ? item.subItems.some(sub => sub.id === activeView)
-                : activeView === item.id;
-
-              return (
-                <div key={item.id} className="relative group">
-                  <button
-                    onClick={() => {
-                      if (item.subItems) {
-                        if (!isSidebarOpen) setIsSidebarOpen(true);
-                        setIsCorporateOpen(!isCorporateOpen);
-                        setActiveView('about'); // Default to about as requested
-                      } else {
-                        setActiveView(item.id as DashboardView);
-                      }
-                    }}
-                    className={`w-full py-2.5 rounded-xl flex items-center ${isSidebarOpen ? 'justify-start px-4 gap-3' : 'justify-center'} transition-all group relative ${isActiveGroup ? 'bg-gradient-to-r from-white/[0.08] to-transparent text-white shadow-[inset_1px_0_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
-                  >
-                    {/* Elegant Active Indicator Line */}
-                    {isActiveGroup && (
-                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[#c5a059] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
-                    )}
-
-                    <div className={`shrink-0 transition-transform duration-300 ${isActiveGroup ? 'scale-110 text-[#c5a059]' : 'group-hover:scale-110 group-hover:text-white'}`}>
-                      {item.icon}
-                    </div>
-
-                    {isSidebarOpen && <span className="text-[13px] font-bold whitespace-nowrap truncate flex-1 text-left">{item.label}</span>}
-
-                    {isSidebarOpen && item.subItems && (
-                      <i className={`fa-solid fa-chevron-down text-[10px] transition-transform duration-300 ${isCorporateOpen ? 'rotate-180 text-[#c5a059]' : 'opacity-50'}`}></i>
-                    )}
-                  </button>
-
-                  {/* Submenu Items */}
-                  {isSidebarOpen && item.subItems && isCorporateOpen && (
-                    <div className="mt-1 space-y-1 pl-11 pr-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                      {item.subItems.map(subItem => (
-                        <button
-                          key={subItem.id}
-                          onClick={() => setActiveView(subItem.id as DashboardView)}
-                          className={`w-full text-left py-2 px-3 rounded-lg text-[12px] transition-all relative ${activeView === subItem.id ? 'text-[#c5a059] bg-white/[0.04] font-semibold' : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'}`}
-                        >
-                          <span className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full transition-all ${activeView === subItem.id ? 'bg-[#c5a059] shadow-[0_0_5px_rgba(197,160,89,0.8)]' : 'bg-transparent'}`}></span>
-                          <span className={activeView === subItem.id ? 'pl-2' : ''}>{subItem.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Tooltip */}
-                  {!isSidebarOpen && (
-                    <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
-                      <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[#c5a059] to-amber-600" />
-                      {item.label}
-                      <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[#0f172a]/95" />
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+          {isSidebarOpen && <span className="text-[11px] font-black whitespace-nowrap truncate tracking-wide">{item.label}</span>}
+          {item.badge > 0 && (
+            <span className={`flex items-center justify-center text-[8px] font-black rounded-full bg-red-500 text-white ring-2 ring-[#020617] ${isSidebarOpen ? 'ml-auto shrink-0 w-[18px] h-[18px]' : 'absolute top-1 right-1.5 w-[14px] h-[14px]'}`}>
+              {item.badge > 9 ? '9+' : item.badge}
+            </span>
+          )}
+        </button>
+        {!isSidebarOpen && (
+          <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
+            <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[#c5a059] to-amber-600" />
+            <div className="flex items-center gap-2.5">
+              <span>{item.label}</span>
+              {item.badge > 0 && <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 text-[10px] font-black">{item.badge}</span>}
+            </div>
+            <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[#0f172a]/95" />
           </div>
-        </nav>
+        )}
+      </div>
+    ))}
+  </div>
+
+  <div className="mx-4 my-2 h-px bg-white/5 shrink-0" />
+
+  {/* ── İÇERİK ── */}
+  {isSidebarOpen && <p className="px-4 pt-1 pb-1 text-[9px] font-black text-slate-600 uppercase tracking-[0.2em]">İçerik & Katalog</p>}
+  <div className="space-y-0 px-2">
+    {[
+      { id: 'blog', label: 'BLOG YÖNETİMİ', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" /><path d="M18 14h-8" /><path d="M15 18h-5" /><path d="M10 6h8v4h-8V6Z" /></svg> },
+      { id: 'regions', label: 'BÖLGELER', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg> },
+      { id: 'pricing', label: 'FİYATLAR', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42l-8.704-8.704z" /><circle cx="7.5" cy="7.5" r=".5" fill="currentColor" /></svg> },
+      { id: 'fleet', label: 'ARAÇLAR', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2" /><circle cx="7" cy="17" r="2" /><path d="M9 17h6" /><circle cx="17" cy="17" r="2" /></svg> },
+    ].map(item => (
+      <div key={item.id} className="relative group">
+        <button
+          onClick={() => setActiveView(item.id as DashboardView)}
+          className={`w-full py-2.5 rounded-xl flex items-center ${isSidebarOpen ? 'justify-start px-4 gap-3' : 'justify-center'} transition-all group relative ${activeView === item.id ? 'bg-gradient-to-r from-white/[0.08] to-transparent text-white shadow-[inset_1px_0_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+        >
+          {activeView === item.id && (
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[#c5a059] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
+          )}
+          <div className={`shrink-0 transition-transform duration-300 ${activeView === item.id ? 'scale-110 text-[#c5a059]' : 'group-hover:scale-110 group-hover:text-white'}`}>
+            {item.icon}
+          </div>
+          {isSidebarOpen && <span className="text-[11px] font-black whitespace-nowrap truncate tracking-wide">{item.label}</span>}
+          {item.badge > 0 && (
+            <span className={`flex items-center justify-center text-[8px] font-black rounded-full bg-red-500 text-white ring-2 ring-[#020617] ${isSidebarOpen ? 'ml-auto shrink-0 w-[18px] h-[18px]' : 'absolute top-1 right-1.5 w-[14px] h-[14px]'}`}>
+              {item.badge > 9 ? '9+' : item.badge}
+            </span>
+          )}
+        </button>
+        {!isSidebarOpen && (
+          <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
+            <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[#c5a059] to-amber-600" />
+            <span>{item.label}</span>
+            <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[#0f172a]/95" />
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
+
+  <div className="mx-4 my-2 h-px bg-white/5 shrink-0" />
+
+  {/* ── SİTE YÖNETİMİ ── */}
+  {isSidebarOpen && <p className="px-4 pt-1 pb-1 text-[9px] font-black text-slate-600 uppercase tracking-[0.2em]">Site Yönetimi</p>}
+  <div className="space-y-0 px-2 pb-2">
+    {[
+      { id: 'hero-images', label: 'ANASAYFA BANNER', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></svg> },
+      { id: 'site-settings', label: 'MENÜ YÖNETİMİ', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg> },
+      { id: 'faq', label: 'S.S.S', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><path d="M12 17h.01" /></svg> },
+      { id: 'business', label: 'İŞLETME BİLGİLERİ', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2" /><path d="M9 22v-4h6v4" /><path d="M8 6h.01" /><path d="M16 6h.01" /><path d="M12 6h.01" /><path d="M12 10h.01" /><path d="M12 14h.01" /><path d="M16 10h.01" /><path d="M16 14h.01" /><path d="M8 10h.01" /><path d="M8 14h.01" /></svg> },
+      { id: 'seo', label: 'SEO YÖNETİMİ', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg> },
+    ].map(item => (
+      <div key={item.id} className="relative group">
+        <button
+          onClick={() => setActiveView(item.id as DashboardView)}
+          className={`w-full py-2.5 rounded-xl flex items-center ${isSidebarOpen ? 'justify-start px-4 gap-3' : 'justify-center'} transition-all group relative ${activeView === item.id ? 'bg-gradient-to-r from-white/[0.08] to-transparent text-white shadow-[inset_1px_0_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+        >
+          {activeView === item.id && (
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[#c5a059] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
+          )}
+          <div className={`shrink-0 transition-transform duration-300 ${activeView === item.id ? 'scale-110 text-[#c5a059]' : 'group-hover:scale-110 group-hover:text-white'}`}>
+            {item.icon}
+          </div>
+          {isSidebarOpen && <span className="text-[11px] font-black whitespace-nowrap truncate tracking-wide">{item.label}</span>}
+        </button>
+        {!isSidebarOpen && (
+          <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
+            <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[#c5a059] to-amber-600" />
+            <span>{item.label}</span>
+            <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[#0f172a]/95" />
+          </div>
+        )}
+      </div>
+    ))}
+
+    {/* Kurumsal Accordion */}
+    <div className="relative group">
+      <button
+        onClick={() => {
+          if (!isSidebarOpen) setIsSidebarOpen(true);
+          setIsCorporateOpen(!isCorporateOpen);
+          setActiveView('about');
+        }}
+        className={`w-full py-2.5 rounded-xl flex items-center ${isSidebarOpen ? 'justify-start px-4 gap-3' : 'justify-center'} transition-all group relative ${(activeView === 'about' || activeView === 'visionMission') ? 'bg-gradient-to-r from-white/[0.08] to-transparent text-white shadow-[inset_1px_0_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+      >
+        {(activeView === 'about' || activeView === 'visionMission') && (
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[#c5a059] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
+        )}
+        <div className={`shrink-0 transition-transform duration-300 ${(activeView === 'about' || activeView === 'visionMission') ? 'scale-110 text-[#c5a059]' : 'group-hover:scale-110 group-hover:text-white'}`}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /><rect width="20" height="14" x="2" y="6" rx="2" /></svg>
+        </div>
+        {isSidebarOpen && <span className="text-[11px] font-black whitespace-nowrap truncate tracking-wide flex-1 text-left">KURUMSAL</span>}
+        {isSidebarOpen && (
+          <i className={`fa-solid fa-chevron-down text-[10px] transition-transform duration-300 ${isCorporateOpen ? 'rotate-180 text-[#c5a059]' : 'opacity-50'}`}></i>
+        )}
+      </button>
+      {isSidebarOpen && isCorporateOpen && (
+        <div className="mt-1 space-y-1 pl-11 pr-2 animate-in fade-in slide-in-from-top-2 duration-300">
+          {[
+            { id: 'about', label: 'HAKKIMIZDA' },
+            { id: 'visionMission', label: 'VİZYON & MİSYON' }
+          ].map(subItem => (
+            <button
+              key={subItem.id}
+              onClick={() => setActiveView(subItem.id as DashboardView)}
+              className={`w-full text-left py-2 px-3 rounded-lg text-[11px] font-black tracking-wide transition-all relative ${activeView === subItem.id ? 'text-[#c5a059] bg-white/[0.04]' : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'}`}
+            >
+              <span className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full transition-all ${activeView === subItem.id ? 'bg-[#c5a059] shadow-[0_0_5px_rgba(197,160,89,0.8)]' : 'bg-transparent'}`}></span>
+              <span className={activeView === subItem.id ? 'pl-2' : ''}>{subItem.label}</span>
+            </button>
+          ))}
+        </div>
+      )}
+      {!isSidebarOpen && (
+        <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
+          <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[#c5a059] to-amber-600" />
+          <span>KURUMSAL</span>
+          <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[#0f172a]/95" />
+        </div>
+      )}
+    </div>
+
+    <div className="mx-2 my-2 h-px bg-white/5 shrink-0" />
+
+    {/* Account */}
+    <div className="relative group">
+      <button
+        onClick={() => setActiveView('account' as DashboardView)}
+        className={`w-full py-2.5 rounded-xl flex items-center ${isSidebarOpen ? 'justify-start px-4 gap-3' : 'justify-center'} transition-all group relative ${activeView === 'account' ? 'bg-gradient-to-r from-white/[0.08] to-transparent text-white shadow-[inset_1px_0_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+      >
+        {activeView === 'account' && (
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[#c5a059] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
+        )}
+        <div className={`shrink-0 transition-transform duration-300 ${activeView === 'account' ? 'scale-110 text-[#c5a059]' : 'group-hover:scale-110 group-hover:text-white'}`}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+        </div>
+        {isSidebarOpen && <span className="text-[11px] font-black whitespace-nowrap truncate tracking-wide">HESAP AYARLARI</span>}
+      </button>
+      {!isSidebarOpen && (
+        <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[#0f172a]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
+          <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[#c5a059] to-amber-600" />
+          <span>HESAP AYARLARI</span>
+          <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[#0f172a]/95" />
+        </div>
+      )}
+    </div>
+  </div>
+</nav>
 
         {/* Bottom — Site Link */}
         <div className="px-2 py-2 border-t border-white/5 shrink-0 space-y-0">

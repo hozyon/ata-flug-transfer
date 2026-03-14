@@ -154,160 +154,191 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
     }, [bookings]);
 
     return (
-        <div className="animate-in slide-in-from-right-8 duration-500 space-y-5">
-            {/* Stats Row */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="animate-in slide-in-from-right-8 duration-500 space-y-4">
+
+            {/* ── Header Banner ── */}
+            <div className="relative rounded-2xl overflow-hidden border border-white/[0.06] bg-gradient-to-r from-[#0f172a] via-slate-900 to-[#0f172a] p-5">
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(197,160,89,0.12),transparent_60%)]" />
+                <div className="absolute top-0 right-0 w-64 h-full opacity-[0.03]" style={{backgroundImage:'repeating-linear-gradient(45deg,#c5a059 0,#c5a059 1px,transparent 0,transparent 50%)',backgroundSize:'12px 12px'}} />
+                <div className="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#c5a059] to-amber-700 flex items-center justify-center shadow-xl shadow-amber-900/40 shrink-0">
+                            <i className="fa-solid fa-calendar-check text-white text-base"></i>
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-black text-white tracking-tight">Rezervasyonlar</h1>
+                            <div className="flex items-center gap-3 mt-0.5 flex-wrap">
+                                <span className="text-xs text-slate-500">{counts.All} toplam rezervasyon</span>
+                                {counts.Pending > 0 && (
+                                    <span className="inline-flex items-center gap-1.5 text-[10px] font-black text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full animate-pulse">
+                                        <i className="fa-solid fa-circle text-[5px]"></i>{counts.Pending} bekliyor
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                    <button onClick={exportCSV}
+                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] text-slate-300 hover:bg-[#c5a059]/10 hover:border-[#c5a059]/30 hover:text-[#c5a059] text-xs font-bold transition-all shrink-0">
+                        <i className="fa-solid fa-file-arrow-down text-[11px]"></i>
+                        CSV İndir
+                    </button>
+                </div>
+            </div>
+
+            {/* ── Stats Row ── */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 {[
-                    { label: 'Toplam', value: counts.All, icon: 'fa-calendar-check', gradient: 'from-blue-500/15 to-indigo-600/5', border: 'border-blue-500/15', iconBg: 'bg-blue-500', change: null },
-                    { label: 'Bugün', value: bookings.filter(b => b.date === today).length, icon: 'fa-calendar-day', gradient: 'from-emerald-500/15 to-green-600/5', border: 'border-emerald-500/15', iconBg: 'bg-emerald-500', change: null },
-                    { label: 'Bekleyen', value: counts.Pending, icon: 'fa-hourglass-half', gradient: 'from-amber-500/15 to-orange-600/5', border: 'border-amber-500/15', iconBg: 'bg-amber-500', change: counts.Pending > 0 ? 'Aksiyon gerekli' : null },
-                    { label: 'Gelir', value: `€${bookings.filter(b => b.status === 'Completed').reduce((s, b) => s + b.totalPrice, 0).toLocaleString()}`, icon: 'fa-euro-sign', gradient: 'from-[#c5a059]/15 to-amber-600/5', border: 'border-[#c5a059]/15', iconBg: 'bg-[#c5a059]', change: null },
+                    {
+                        label: 'Toplam', value: counts.All,
+                        sub: `${counts.Confirmed} onaylı`,
+                        icon: 'fa-calendar-check', color: 'text-blue-400',
+                        bg: 'bg-blue-500/10', border: 'border-blue-500/15', dot: 'bg-blue-500',
+                    },
+                    {
+                        label: 'Bugün', value: bookings.filter(b => b.date === today).length,
+                        sub: 'aktif transfer',
+                        icon: 'fa-calendar-day', color: 'text-emerald-400',
+                        bg: 'bg-emerald-500/10', border: 'border-emerald-500/15', dot: 'bg-emerald-500',
+                    },
+                    {
+                        label: 'Bekleyen', value: counts.Pending,
+                        sub: counts.Pending > 0 ? 'aksiyon gerekli' : 'temiz',
+                        icon: 'fa-hourglass-half', color: counts.Pending > 0 ? 'text-amber-400' : 'text-slate-500',
+                        bg: counts.Pending > 0 ? 'bg-amber-500/10' : 'bg-white/[0.03]',
+                        border: counts.Pending > 0 ? 'border-amber-500/25' : 'border-white/[0.06]',
+                        dot: counts.Pending > 0 ? 'bg-amber-500 animate-pulse' : 'bg-slate-600',
+                    },
+                    {
+                        label: 'Toplam Gelir', value: `€${bookings.filter(b => b.status === 'Completed').reduce((s, b) => s + b.totalPrice, 0).toLocaleString()}`,
+                        sub: `${counts.Completed} tamamlandı`,
+                        icon: 'fa-euro-sign', color: 'text-[#c5a059]',
+                        bg: 'bg-[#c5a059]/10', border: 'border-[#c5a059]/20', dot: 'bg-[#c5a059]',
+                    },
                 ].map((s, i) => (
-                    <div key={i} className={`p-4 rounded-2xl bg-gradient-to-br ${s.gradient} border ${s.border}`}>
-                        <div className="flex items-start justify-between">
-                            <div>
-                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{s.label}</p>
-                                <p className="text-2xl font-black text-white mt-1">{s.value}</p>
-                                {s.change && <p className="text-[10px] text-amber-400 font-medium mt-1"><i className="fa-solid fa-circle-exclamation mr-1"></i>{s.change}</p>}
+                    <div key={i} className={`flex items-center gap-4 p-4 rounded-2xl border ${s.border} ${s.bg}`}>
+                        <div className="shrink-0">
+                            <div className={`w-10 h-10 rounded-xl bg-black/20 border border-white/[0.06] flex items-center justify-center`}>
+                                <i className={`fa-solid ${s.icon} ${s.color} text-sm`}></i>
                             </div>
-                            <div className={`w-10 h-10 rounded-xl ${s.iconBg} flex items-center justify-center shadow-lg`}>
-                                <i className={`fa-solid ${s.icon} text-white text-sm`}></i>
-                            </div>
+                        </div>
+                        <div className="min-w-0">
+                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest truncate">{s.label}</p>
+                            <p className="text-xl font-black text-white tabular-nums leading-tight mt-0.5">{s.value}</p>
+                            <p className={`text-[10px] mt-0.5 ${s.color} opacity-70`}>{s.sub}</p>
                         </div>
                     </div>
                 ))}
             </div>
 
-            {/* Toolbar */}
-            <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
-                {/* Filter Tabs */}
-                <div className="flex items-center gap-1 px-4 pt-4 pb-3 overflow-x-auto scrollbar-hide snap-x snap-mandatory">
+            {/* ── Main Panel ── */}
+            <div className="rounded-2xl border border-white/[0.06] overflow-hidden bg-[#0b1120]">
+
+                {/* Status Filter Tabs */}
+                <div className="flex items-center border-b border-white/[0.05] px-1 overflow-x-auto scrollbar-hide">
                     {[
-                        { id: 'All', label: 'Tümü', icon: 'fa-layer-group' },
-                        { id: 'Pending', label: 'Bekleyen', icon: 'fa-clock' },
-                        { id: 'Confirmed', label: 'Onaylı', icon: 'fa-circle-check' },
-                        { id: 'Completed', label: 'Tamamlanan', icon: 'fa-flag-checkered' },
-                        { id: 'Rejected', label: 'Reddedilen', icon: 'fa-circle-xmark' },
-                        { id: 'Deleted', label: 'Çöp', icon: 'fa-trash-can' },
-                    ].map(tab => (
-                        <button key={tab.id} onClick={() => setBookingFilter(tab.id as any)}
-                            className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition-all snap-center sm:snap-none ${bookingFilter === tab.id
-                                ? 'bg-[#c5a059] text-white shadow-lg shadow-[#c5a059]/20'
-                                : 'text-slate-500 hover:text-white hover:bg-white/5'}`}>
-                            <i className={`fa-solid ${tab.icon} text-[10px]`}></i>
-                            {tab.label}
-                            <span className={`text-[9px] font-black min-w-[18px] h-[18px] flex items-center justify-center rounded-full ${bookingFilter === tab.id ? 'bg-white/20' : 'bg-white/5'}`}>
-                                {counts[tab.id as keyof typeof counts]}
-                            </span>
-                        </button>
-                    ))}
+                        { id: 'All',       label: 'Tümü',        icon: 'fa-layer-group',  count: counts.All },
+                        { id: 'Pending',   label: 'Bekleyen',    icon: 'fa-clock',        count: counts.Pending },
+                        { id: 'Confirmed', label: 'Onaylı',      icon: 'fa-circle-check', count: counts.Confirmed },
+                        { id: 'Completed', label: 'Tamamlanan',  icon: 'fa-flag-checkered', count: counts.Completed },
+                        { id: 'Rejected',  label: 'Reddedilen',  icon: 'fa-circle-xmark', count: counts.Rejected },
+                        { id: 'Deleted',   label: 'Çöp Kutusu',  icon: 'fa-trash-can',    count: counts.Deleted },
+                    ].map(tab => {
+                        const active = bookingFilter === tab.id;
+                        return (
+                            <button key={tab.id} onClick={() => setBookingFilter(tab.id as any)}
+                                className={`relative flex items-center gap-2 px-4 py-3.5 text-[11px] font-bold whitespace-nowrap transition-all shrink-0
+                                    ${active ? 'text-[#c5a059]' : 'text-slate-600 hover:text-slate-300'}`}>
+                                <i className={`fa-solid ${tab.icon} text-[10px]`}></i>
+                                {tab.label}
+                                {tab.count > 0 && (
+                                    <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-md min-w-[20px] text-center
+                                        ${active ? 'bg-[#c5a059]/20 text-[#c5a059]' : 'bg-white/[0.05] text-slate-500'}`}>
+                                        {tab.count}
+                                    </span>
+                                )}
+                                {active && <span className="absolute bottom-0 left-3 right-3 h-[2px] bg-[#c5a059] rounded-t-full" />}
+                            </button>
+                        );
+                    })}
                 </div>
 
-                {/* Search & Bulk Actions */}
-                <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 px-4 pb-3">
-                    <div className="relative flex-[1_1_200px] sm:max-w-md w-full">
-                        <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 text-xs"></i>
-                        <input type="text" placeholder="Ad, telefon, ID veya uçuş no ara..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
-                            className="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/[0.06] rounded-xl text-sm text-white placeholder-slate-600 focus:border-[#c5a059]/50 outline-none transition-all" />
+                {/* Search + Tools Bar */}
+                <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 px-4 py-3 border-b border-white/[0.04]">
+                    {/* Search */}
+                    <div className="relative flex-[1_1_180px] min-w-0">
+                        <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 text-[11px]"></i>
+                        <input type="text" placeholder="Ad, telefon, ID veya uçuş no..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
+                            className="w-full pl-8 pr-8 py-2 bg-white/[0.04] border border-white/[0.06] rounded-lg text-[13px] text-white placeholder-slate-600 focus:border-[#c5a059]/40 focus:bg-white/[0.06] outline-none transition-all" />
                         {searchTerm && (
-                            <button onClick={() => setSearchTerm('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white">
-                                <i className="fa-solid fa-xmark text-xs"></i>
+                            <button onClick={() => setSearchTerm('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-600 hover:text-white transition-colors">
+                                <i className="fa-solid fa-xmark text-[10px]"></i>
                             </button>
                         )}
                     </div>
 
-                    <button
-                        onClick={() => setShowAdvancedFilters(v => !v)}
-                        className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-xs font-bold transition-all ${showAdvancedFilters || hasActiveFilters ? 'bg-[#c5a059]/10 text-[#c5a059] border-[#c5a059]/30' : 'bg-white/5 text-slate-400 border-white/[0.06] hover:text-white'}`}>
+                    {/* Filter toggle */}
+                    <button onClick={() => setShowAdvancedFilters(v => !v)}
+                        className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-[11px] font-bold transition-all shrink-0
+                            ${showAdvancedFilters || hasActiveFilters
+                                ? 'bg-[#c5a059]/10 text-[#c5a059] border-[#c5a059]/25'
+                                : 'bg-white/[0.03] text-slate-500 border-white/[0.06] hover:text-white hover:bg-white/[0.06]'}`}>
                         <i className="fa-solid fa-sliders text-[10px]"></i>
-                        Filtreler
-                        {hasActiveFilters && <span className="w-1.5 h-1.5 rounded-full bg-[#c5a059]"></span>}
-                    </button>
-
-                    <button
-                        onClick={exportCSV}
-                        title="CSV olarak indir"
-                        className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-white/5 border border-white/[0.06] text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 hover:border-emerald-500/20 text-xs font-bold transition-all">
-                        <i className="fa-solid fa-file-csv text-[10px]"></i>
-                        <span className="hidden sm:inline">CSV</span>
+                        Filtre
+                        {hasActiveFilters && <span className="w-1.5 h-1.5 rounded-full bg-[#c5a059] ml-0.5"></span>}
                     </button>
 
                     <MobileViewToggle viewMode={viewMode} onToggle={toggleViewMode} itemCount={filteredBookings.length} />
 
+                    {/* Bulk actions */}
                     {selectedIds.size > 0 && (
-                        <div className="flex items-center gap-2 animate-in fade-in duration-200">
-                            <span className="text-xs text-slate-400 font-medium">{selectedIds.size} seçili</span>
+                        <div className="flex items-center gap-1.5 animate-in fade-in duration-150 pl-1 border-l border-white/[0.06]">
+                            <span className="text-[11px] text-slate-500 shrink-0">{selectedIds.size} seçili</span>
                             <button onClick={() => { selectedIds.forEach(id => onUpdateStatus(id, 'Confirmed')); setSelectedIds(new Set()); }}
-                                className="px-3 py-2 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 text-xs font-bold transition-all">
-                                <i className="fa-solid fa-check mr-1.5"></i>Onayla
+                                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white border border-blue-500/20 hover:border-transparent text-[10px] font-bold transition-all">
+                                <i className="fa-solid fa-check text-[9px]"></i>Onayla
                             </button>
                             <button onClick={() => { selectedIds.forEach(id => onUpdateStatus(id, 'Deleted')); setSelectedIds(new Set()); }}
-                                className="px-3 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 text-xs font-bold transition-all">
-                                <i className="fa-solid fa-trash mr-1.5"></i>Sil
+                                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white border border-red-500/20 hover:border-transparent text-[10px] font-bold transition-all">
+                                <i className="fa-solid fa-trash text-[9px]"></i>Sil
                             </button>
                         </div>
                     )}
 
-                    <span className="text-[11px] text-slate-600 ml-auto shrink-0 hidden md:inline">{filteredBookings.length} kayıt</span>
+                    <span className="text-[11px] text-slate-600 ml-auto shrink-0 hidden sm:inline tabular-nums">{filteredBookings.length} kayıt</span>
                 </div>
 
                 {/* Advanced Filters Panel */}
                 {showAdvancedFilters && (
-                    <div className="px-4 pb-4 border-t border-white/[0.04] pt-3 animate-in fade-in slide-in-from-top-2 duration-200">
-                        <div className="flex flex-wrap gap-3">
-                            {/* Date Range */}
+                    <div className="px-4 py-3 border-b border-white/[0.04] bg-white/[0.02] animate-in fade-in slide-in-from-top-1 duration-150">
+                        <div className="flex flex-wrap items-center gap-3">
                             <div className="flex items-center gap-2">
-                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Tarih</label>
-                                <input
-                                    type="date"
-                                    value={dateFrom}
-                                    onChange={e => setDateFrom(e.target.value)}
-                                    className="px-3 py-2 bg-white/5 border border-white/[0.06] rounded-xl text-xs text-white focus:border-[#c5a059]/50 outline-none transition-all [color-scheme:dark]"
-                                />
-                                <span className="text-slate-600 text-xs">—</span>
-                                <input
-                                    type="date"
-                                    value={dateTo}
-                                    onChange={e => setDateTo(e.target.value)}
-                                    className="px-3 py-2 bg-white/5 border border-white/[0.06] rounded-xl text-xs text-white focus:border-[#c5a059]/50 outline-none transition-all [color-scheme:dark]"
-                                />
+                                <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest whitespace-nowrap">Tarih</span>
+                                <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)}
+                                    className="px-2.5 py-1.5 bg-white/[0.04] border border-white/[0.06] rounded-lg text-[11px] text-white focus:border-[#c5a059]/40 outline-none transition-all [color-scheme:dark]" />
+                                <span className="text-slate-700 text-xs">—</span>
+                                <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)}
+                                    className="px-2.5 py-1.5 bg-white/[0.04] border border-white/[0.06] rounded-lg text-[11px] text-white focus:border-[#c5a059]/40 outline-none transition-all [color-scheme:dark]" />
                             </div>
-
-                            {/* Vehicle Filter */}
                             <div className="flex items-center gap-2">
-                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Araç</label>
-                                <select
-                                    value={vehicleFilter}
-                                    onChange={e => setVehicleFilter(e.target.value)}
-                                    className="px-3 py-2 bg-white/5 border border-white/[0.06] rounded-xl text-xs text-white focus:border-[#c5a059]/50 outline-none transition-all [color-scheme:dark]">
+                                <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest whitespace-nowrap">Araç</span>
+                                <select value={vehicleFilter} onChange={e => setVehicleFilter(e.target.value)}
+                                    className="px-2.5 py-1.5 bg-white/[0.04] border border-white/[0.06] rounded-lg text-[11px] text-white focus:border-[#c5a059]/40 outline-none transition-all [color-scheme:dark]">
                                     <option value="all">Tümü</option>
-                                    {siteContent.vehicles.map(v => (
-                                        <option key={v.id} value={v.id}>{v.name}</option>
-                                    ))}
+                                    {siteContent.vehicles.map(v => <option key={v.id} value={v.id}>{v.name}</option>)}
                                 </select>
                             </div>
-
-                            {/* Region Filter */}
                             <div className="flex items-center gap-2">
-                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Bölge</label>
-                                <select
-                                    value={regionFilter}
-                                    onChange={e => setRegionFilter(e.target.value)}
-                                    className="px-3 py-2 bg-white/5 border border-white/[0.06] rounded-xl text-xs text-white focus:border-[#c5a059]/50 outline-none transition-all [color-scheme:dark]">
+                                <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest whitespace-nowrap">Bölge</span>
+                                <select value={regionFilter} onChange={e => setRegionFilter(e.target.value)}
+                                    className="px-2.5 py-1.5 bg-white/[0.04] border border-white/[0.06] rounded-lg text-[11px] text-white focus:border-[#c5a059]/40 outline-none transition-all [color-scheme:dark]">
                                     <option value="all">Tümü</option>
-                                    {regionOptions.map(r => (
-                                        <option key={r} value={r}>{r}</option>
-                                    ))}
+                                    {regionOptions.map(r => <option key={r} value={r}>{r}</option>)}
                                 </select>
                             </div>
-
-                            {/* Clear Button */}
                             {hasActiveFilters && (
-                                <button
-                                    onClick={clearFilters}
-                                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-red-500/10 text-red-400 border border-red-500/20 text-xs font-bold hover:bg-red-500/20 transition-all">
-                                    <i className="fa-solid fa-xmark text-[10px]"></i>
-                                    Filtreleri Temizle
+                                <button onClick={clearFilters}
+                                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-red-500/10 text-red-400 border border-red-500/15 text-[10px] font-bold hover:bg-red-500/20 transition-all ml-auto">
+                                    <i className="fa-solid fa-xmark text-[9px]"></i>Temizle
                                 </button>
                             )}
                         </div>
@@ -447,82 +478,105 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                 ) : (
                     /* ── TABLE VIEW ── */
                     <div className="overflow-x-auto scrollbar-hide">
-                        <table className="w-full">
+                        <table className="w-full border-collapse">
                             <thead>
-                                <tr className="border-t border-b border-white/[0.04] bg-white/[0.02]">
-                                    <th className="w-10 px-4 py-3">
+                                <tr className="border-b border-white/[0.06] bg-gradient-to-r from-white/[0.04] to-white/[0.02]">
+                                    <th className="w-10 pl-4 pr-2 py-3.5">
                                         <input type="checkbox" checked={selectedIds.size === filteredBookings.length && filteredBookings.length > 0}
                                             onChange={toggleAll} className="w-3.5 h-3.5 rounded border-white/20 bg-white/5 accent-[#c5a059] cursor-pointer" />
                                     </th>
-                                    <th className="text-left px-3 py-3">
-                                        <button onClick={() => toggleSort('name')} className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider hover:text-white transition-colors">
+                                    <th className="text-left px-3 py-3.5">
+                                        <button onClick={() => toggleSort('name')} className="flex items-center gap-1.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-white transition-colors">
                                             Müşteri <SortIcon col="name" />
                                         </button>
                                     </th>
-                                    <th className="text-left px-3 py-3 hidden md:table-cell">
-                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Güzergah</span>
+                                    <th className="text-left px-3 py-3.5 hidden md:table-cell">
+                                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Güzergah</span>
                                     </th>
-                                    <th className="text-left px-3 py-3">
-                                        <button onClick={() => toggleSort('date')} className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider hover:text-white transition-colors">
+                                    <th className="text-left px-3 py-3.5">
+                                        <button onClick={() => toggleSort('date')} className="flex items-center gap-1.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-white transition-colors">
                                             Tarih <SortIcon col="date" />
                                         </button>
                                     </th>
-                                    <th className="text-left px-3 py-3 hidden lg:table-cell">
-                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Araç</span>
+                                    <th className="text-left px-3 py-3.5 hidden lg:table-cell">
+                                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Araç</span>
                                     </th>
-                                    <th className="text-right px-3 py-3">
-                                        <button onClick={() => toggleSort('price')} className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider hover:text-white transition-colors ml-auto">
+                                    <th className="text-right px-3 py-3.5">
+                                        <button onClick={() => toggleSort('price')} className="flex items-center gap-1.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-white transition-colors ml-auto">
                                             Tutar <SortIcon col="price" />
                                         </button>
                                     </th>
-                                    <th className="text-left px-3 py-3">
-                                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Durum</span>
+                                    <th className="text-left px-3 py-3.5">
+                                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Durum</span>
                                     </th>
-                                    <th className="w-24 px-3 py-3"></th>
+                                    <th className="w-28 px-3 py-3.5"></th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {filteredBookings.map((b, rowIdx) => {
+                            <tbody className="divide-y divide-white/[0.03]">
+                                {filteredBookings.map((b) => {
                                     const st = STATUS_MAP[b.status] || STATUS_MAP.Pending;
                                     const vehicle = siteContent.vehicles.find(v => v.id === b.vehicleId);
                                     const isToday = b.date === today;
                                     const isSelected = selectedIds.has(b.id);
 
+                                    const accentColor =
+                                        b.status === 'Completed' ? 'bg-emerald-500' :
+                                        b.status === 'Confirmed' ? 'bg-blue-500' :
+                                        b.status === 'Pending'   ? 'bg-amber-500' :
+                                        b.status === 'Cancelled' ? 'bg-red-500' :
+                                        'bg-slate-600';
+
+                                    const avatarGradient =
+                                        b.status === 'Completed' ? 'from-emerald-500 to-green-600' :
+                                        b.status === 'Confirmed' ? 'from-blue-500 to-indigo-600' :
+                                        b.status === 'Pending'   ? 'from-amber-500 to-orange-600' :
+                                        'from-slate-600 to-slate-700';
+
                                     return (
                                         <tr key={b.id} onClick={() => setSelectedBookingForView(b)}
-                                            className={`border-b border-white/[0.03] cursor-pointer transition-all group ${isSelected ? 'bg-[#c5a059]/[0.06]' : rowIdx % 2 === 1 ? 'bg-white/[0.015] hover:bg-white/[0.04]' : 'hover:bg-white/[0.03]'} ${b.status === 'Deleted' ? 'opacity-50' : ''}`}>
+                                            className={`relative cursor-pointer transition-all duration-150 group
+                                                ${isSelected ? 'bg-[#c5a059]/[0.07]' : 'hover:bg-white/[0.035]'}
+                                                ${b.status === 'Deleted' ? 'opacity-40' : ''}`}>
+
+                                            {/* Status accent bar */}
+                                            <td className="pl-0 pr-0 py-0 w-0">
+                                                <div className={`absolute left-0 top-[20%] bottom-[20%] w-[3px] rounded-r-full ${accentColor} opacity-0 group-hover:opacity-100 ${isSelected ? 'opacity-100' : ''} transition-opacity`} />
+                                            </td>
+
                                             {/* Checkbox */}
-                                            <td className="px-4 py-3.5" onClick={e => e.stopPropagation()}>
+                                            <td className="pl-4 pr-2 py-4" onClick={e => e.stopPropagation()}>
                                                 <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(b.id)}
                                                     className="w-3.5 h-3.5 rounded border-white/20 bg-white/5 accent-[#c5a059] cursor-pointer" />
                                             </td>
 
                                             {/* Customer */}
-                                            <td className="px-3 py-3.5">
+                                            <td className="px-3 py-4">
                                                 <div className="flex items-center gap-3">
-                                                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-white font-bold text-sm shrink-0 shadow-lg ${b.status === 'Completed' ? 'bg-gradient-to-br from-emerald-500 to-green-600' :
-                                                        b.status === 'Confirmed' ? 'bg-gradient-to-br from-blue-500 to-indigo-600' :
-                                                            b.status === 'Pending' ? 'bg-gradient-to-br from-amber-500 to-orange-600' :
-                                                                'bg-gradient-to-br from-slate-600 to-slate-700'}`}>
+                                                    <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${avatarGradient} flex items-center justify-center text-white font-black text-sm shrink-0 shadow-lg ring-2 ring-white/5`}>
                                                         {b.customerName.trim().charAt(0).toUpperCase()}
                                                     </div>
                                                     <div className="min-w-0">
-                                                        <div className="flex items-center gap-2">
-                                                            <p className="font-bold text-white text-[13px] group-hover:text-[#c5a059] transition-colors truncate">{b.customerName.replace(/[\n\r]+/g, ' ').trim()}</p>
+                                                        <div className="flex items-center gap-2 flex-wrap">
+                                                            <p className="font-bold text-white text-[13px] group-hover:text-[#c5a059] transition-colors truncate leading-tight">
+                                                                {b.customerName.replace(/[\n\r]+/g, ' ').trim()}
+                                                            </p>
                                                             {isToday && b.status !== 'Completed' && (
-                                                                <span className="bg-emerald-500/20 text-emerald-400 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-md border border-emerald-500/30 animate-pulse shrink-0">Bugün</span>
+                                                                <span className="inline-flex items-center gap-1 bg-emerald-500/15 text-emerald-400 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-md border border-emerald-500/25 animate-pulse shrink-0">
+                                                                    <i className="fa-solid fa-circle text-[4px]"></i>Bugün
+                                                                </span>
                                                             )}
                                                         </div>
-                                                        <div className="flex items-center gap-2 mt-0.5">
-                                                            <p className="text-[10px] text-slate-500">{b.phone}</p>
+                                                        <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
+                                                            <span className="text-[10px] text-slate-500 tabular-nums">{b.phone}</span>
+                                                            {b.email && <span className="text-slate-700 text-[9px]">·</span>}
                                                             {b.flightNumber && (
-                                                                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-sky-500/10 text-sky-400 border border-sky-500/15 shrink-0">
-                                                                    <i className="fa-solid fa-plane text-[7px] mr-1"></i>{b.flightNumber}
+                                                                <span className="inline-flex items-center gap-1 text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-sky-500/10 text-sky-400 border border-sky-500/15 shrink-0">
+                                                                    <i className="fa-solid fa-plane text-[7px]"></i>{b.flightNumber}
                                                                 </span>
                                                             )}
                                                             {b.notes && (
-                                                                <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-violet-500/10 text-violet-400 border border-violet-500/15 shrink-0" title={b.notes}>
-                                                                    <i className="fa-solid fa-comment text-[7px]"></i>
+                                                                <span className="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded-md bg-violet-500/10 text-violet-400 border border-violet-500/15 shrink-0" title={b.notes}>
+                                                                    <i className="fa-solid fa-note-sticky text-[7px]"></i>Not
                                                                 </span>
                                                             )}
                                                         </div>
@@ -531,78 +585,91 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                                             </td>
 
                                             {/* Route */}
-                                            <td className="px-3 py-3.5 hidden md:table-cell">
-                                                <div className="flex items-center gap-2 max-w-[220px]">
-                                                    <div className="flex flex-col items-center gap-0.5 shrink-0">
-                                                        <div className="w-2 h-2 rounded-full bg-emerald-400 border border-emerald-500/50"></div>
-                                                        <div className="w-px h-3 bg-white/10"></div>
-                                                        <div className="w-2 h-2 rounded-full bg-[#c5a059] border border-[#c5a059]/50"></div>
+                                            <td className="px-3 py-4 hidden md:table-cell max-w-[200px]">
+                                                <div className="flex items-start gap-2.5">
+                                                    <div className="flex flex-col items-center gap-[3px] shrink-0 mt-1">
+                                                        <div className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.5)]"></div>
+                                                        <div className="w-px h-3.5 bg-gradient-to-b from-emerald-400/50 to-[#c5a059]/50"></div>
+                                                        <div className="w-2 h-2 rounded-full bg-[#c5a059] shadow-[0_0_6px_rgba(197,160,89,0.5)]"></div>
                                                     </div>
-                                                    <div className="min-w-0">
-                                                        <p className="text-[11px] text-slate-300 truncate">{b.pickup}</p>
-                                                        <p className="text-[11px] text-slate-500 truncate">{b.destination}</p>
+                                                    <div className="min-w-0 space-y-1">
+                                                        <p className="text-[11px] text-slate-200 truncate leading-tight font-medium">{b.pickup}</p>
+                                                        <p className="text-[11px] text-slate-500 truncate leading-tight">{b.destination}</p>
                                                     </div>
                                                 </div>
                                             </td>
 
                                             {/* Date */}
-                                            <td className="px-3 py-3.5">
-                                                <p className="text-[13px] text-white font-medium tabular-nums">{b.date.split('-').reverse().join('.')}</p>
-                                                <p className="text-[10px] text-slate-500 tabular-nums">{b.time}</p>
+                                            <td className="px-3 py-4">
+                                                <div className="flex flex-col">
+                                                    <span className="text-[13px] text-white font-bold tabular-nums leading-tight">
+                                                        {b.date.split('-').reverse().join('.')}
+                                                    </span>
+                                                    <span className="text-[10px] text-slate-500 tabular-nums mt-0.5 flex items-center gap-1">
+                                                        <i className="fa-regular fa-clock text-[8px]"></i>{b.time}
+                                                    </span>
+                                                </div>
                                             </td>
 
                                             {/* Vehicle */}
-                                            <td className="px-3 py-3.5 hidden lg:table-cell">
+                                            <td className="px-3 py-4 hidden lg:table-cell">
                                                 <div className="flex items-center gap-2">
-                                                    <div className="w-6 h-6 rounded-md bg-white/5 flex items-center justify-center">
-                                                        <i className="fa-solid fa-car-side text-[9px] text-slate-500"></i>
+                                                    <div className="w-7 h-7 rounded-lg bg-white/[0.06] border border-white/[0.06] flex items-center justify-center shrink-0">
+                                                        <i className="fa-solid fa-car-side text-[10px] text-slate-400"></i>
                                                     </div>
                                                     <div>
-                                                        <p className="text-[11px] text-slate-300 truncate max-w-[100px]">{vehicle?.name || '—'}</p>
-                                                        <p className="text-[9px] text-slate-600">{b.passengers} kişi</p>
+                                                        <p className="text-[11px] text-slate-300 font-medium truncate max-w-[110px] leading-tight">{vehicle?.name || '—'}</p>
+                                                        <p className="text-[9px] text-slate-600 mt-0.5 flex items-center gap-1">
+                                                            <i className="fa-solid fa-user text-[7px]"></i>{b.passengers} kişi
+                                                        </p>
                                                     </div>
                                                 </div>
                                             </td>
 
                                             {/* Price */}
-                                            <td className="px-3 py-3.5 text-right">
-                                                <p className="text-sm font-black text-white">€{b.totalPrice}</p>
+                                            <td className="px-3 py-4 text-right">
+                                                <span className="text-[15px] font-black text-[#c5a059] tabular-nums tracking-tight">
+                                                    €{b.totalPrice}
+                                                </span>
                                             </td>
 
                                             {/* Status */}
-                                            <td className="px-3 py-3.5">
-                                                <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg ${st.bg} border ${st.border}`}>
-                                                    <div className={`w-1.5 h-1.5 rounded-full ${st.dot}`}></div>
-                                                    <span className={`text-[10px] font-bold ${st.color}`}>{st.label}</span>
+                                            <td className="px-3 py-4">
+                                                <div className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg ${st.bg} border ${st.border}`}>
+                                                    <div className={`w-1.5 h-1.5 rounded-full ${st.dot} ${b.status === 'Pending' ? 'animate-pulse' : ''}`}></div>
+                                                    <span className={`text-[10px] font-black tracking-wide ${st.color}`}>{st.label}</span>
                                                 </div>
                                             </td>
 
                                             {/* Actions */}
-                                            <td className="px-3 py-3.5" onClick={e => e.stopPropagation()}>
-                                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity justify-end">
+                                            <td className="px-3 py-4" onClick={e => e.stopPropagation()}>
+                                                <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-150 justify-end">
                                                     {b.status === 'Pending' && (
                                                         <>
                                                             <button onClick={() => onUpdateStatus(b.id, 'Confirmed')} title="Onayla"
-                                                                className="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white flex items-center justify-center transition-all">
-                                                                <i className="fa-solid fa-check text-[10px]"></i>
+                                                                className="flex items-center gap-1.5 h-7 px-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-white hover:border-transparent text-[10px] font-bold transition-all">
+                                                                <i className="fa-solid fa-check text-[9px]"></i>
+                                                                <span className="hidden xl:inline">Onayla</span>
                                                             </button>
                                                             <button onClick={() => onUpdateStatus(b.id, 'Rejected')} title="Reddet"
-                                                                className="w-7 h-7 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white flex items-center justify-center transition-all">
+                                                                className="w-7 h-7 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white hover:border-transparent flex items-center justify-center transition-all">
                                                                 <i className="fa-solid fa-xmark text-[10px]"></i>
                                                             </button>
                                                         </>
                                                     )}
                                                     {b.status === 'Confirmed' && (
                                                         <button onClick={() => onUpdateStatus(b.id, 'Completed')} title="Tamamla"
-                                                            className="w-7 h-7 rounded-lg bg-violet-500/10 text-violet-400 hover:bg-violet-500 hover:text-white flex items-center justify-center transition-all">
-                                                            <i className="fa-solid fa-flag-checkered text-[10px]"></i>
+                                                            className="flex items-center gap-1.5 h-7 px-2.5 rounded-lg bg-violet-500/10 border border-violet-500/20 text-violet-400 hover:bg-violet-500 hover:text-white hover:border-transparent text-[10px] font-bold transition-all">
+                                                            <i className="fa-solid fa-flag-checkered text-[9px]"></i>
+                                                            <span className="hidden xl:inline">Tamamla</span>
                                                         </button>
                                                     )}
                                                     <button onClick={() => {
                                                         if (b.status === 'Deleted') { if (confirm('KALICI olarak silinecek!')) onDeleteBooking(b.id); }
                                                         else { if (confirm('Silmek istediğinize emin misiniz?')) onUpdateStatus(b.id, 'Deleted'); }
-                                                    }} title="Sil" className="w-7 h-7 rounded-lg bg-white/5 text-slate-500 hover:bg-red-500/20 hover:text-red-400 flex items-center justify-center transition-all">
-                                                        <i className="fa-solid fa-trash text-[10px]"></i>
+                                                    }} title="Sil"
+                                                        className="w-7 h-7 rounded-lg bg-white/[0.04] border border-white/[0.06] text-slate-600 hover:bg-red-500/15 hover:text-red-400 hover:border-red-500/20 flex items-center justify-center transition-all">
+                                                        <i className="fa-solid fa-trash text-[9px]"></i>
                                                     </button>
                                                 </div>
                                             </td>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import TextureBackground from '../components/TextureBackground';
 import { useSiteContent } from '../SiteContext';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -17,8 +18,40 @@ const SSS: React.FC = () => {
         a: t(faq.a),
     }));
 
+    const seo = siteContent.seo;
+    const canonical = seo?.canonicalUrl || 'https://ataflugtransfer.com';
+    const pageTitle = seo?.pagesSeo?.faq?.title || 'Sıkça Sorulan Sorular';
+    const pageDesc = seo?.pagesSeo?.faq?.description || 'Antalya transfer hizmeti hakkında merak ettiğiniz tüm sorular ve cevapları.';
+
     return (
         <div className="min-h-screen bg-slate-50">
+            <Helmet>
+                <title>{pageTitle} | {business.name}</title>
+                <meta name="description" content={pageDesc} />
+                <meta name="keywords" content={seo?.pagesSeo?.faq?.keywords || seo?.siteKeywords || ''} />
+                <meta name="robots" content={seo?.robotsDirective || 'index, follow'} />
+                <link rel="canonical" href={`${canonical}/sss`} />
+                <meta property="og:title" content={pageTitle} />
+                <meta property="og:description" content={pageDesc} />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content={`${canonical}/sss`} />
+                <meta property="og:image" content={seo?.ogImage || ''} />
+                <meta property="og:locale" content="tr_TR" />
+                <meta property="og:site_name" content={business.name} />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:site" content={seo?.twitterHandle || ''} />
+                <meta name="twitter:title" content={pageTitle} />
+                <meta name="twitter:description" content={pageDesc} />
+                <script type="application/ld+json">{JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "FAQPage",
+                    "mainEntity": faqs.map(faq => ({
+                        "@type": "Question",
+                        "name": faq.q,
+                        "acceptedAnswer": { "@type": "Answer", "text": faq.a }
+                    }))
+                })}</script>
+            </Helmet>
             <section className="relative pt-28 pb-12 flex items-center justify-center overflow-hidden border-b border-white/5">
                 <div className="absolute inset-0 z-0">
                     <img src="/images/sss-banner-custom.png" alt="FAQ Banner" className="w-full h-full object-cover" />

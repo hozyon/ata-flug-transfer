@@ -76,16 +76,17 @@ export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent })
         setEditContent({ ...editContent, seo: { ...seo, pagesSeo: { ...seo.pagesSeo, [page]: { ...seo.pagesSeo[page], ...patch } } } });
     };
 
-    // Calculate SEO score
+    // Calculate SEO score (max 100)
     const calcScore = (): number => {
         let score = 0;
         if (seo.siteTitle.length > 10) score += 10;
         if (seo.siteDescription.length > 50) score += 15;
         if (seo.siteKeywords.length > 5) score += 10;
-        if (seo.canonicalUrl.startsWith('http')) score += 10;
+        if (seo.canonicalUrl.startsWith('https')) score += 10;
         if (seo.ogImage.startsWith('http')) score += 10;
-        if (seo.googleSiteVerification) score += 10;
+        if (seo.twitterHandle) score += 5;
         if (seo.structuredData.areaServed) score += 5;
+        if (seo.structuredData.latitude && seo.structuredData.longitude) score += 5;
         const pageFilled = Object.values(seo.pagesSeo).filter(p => p.title && p.description).length;
         score += Math.floor((pageFilled / 6) * 30);
         return Math.min(score, 100);
@@ -99,8 +100,8 @@ export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent })
         { ok: seo.siteDescription.length >= 120 && seo.siteDescription.length <= 160, label: 'Meta açıklama 120-160 karakter' },
         { ok: seo.siteKeywords.split(',').length >= 5, label: 'En az 5 anahtar kelime' },
         { ok: seo.canonicalUrl.startsWith('https'), label: 'HTTPS canonical URL' },
-        { ok: !!seo.googleSiteVerification, label: 'Google doğrulama kodu' },
         { ok: seo.ogImage.startsWith('http'), label: 'Open Graph görseli' },
+        { ok: !!seo.twitterHandle, label: 'Twitter/X hesabı tanımlı' },
         { ok: Object.values(seo.pagesSeo).every(p => p.title && p.description), label: 'Tüm sayfa SEO\'ları dolu' },
         { ok: !!seo.structuredData.latitude && !!seo.structuredData.longitude, label: 'Coğrafi koordinatlar' },
     ];
