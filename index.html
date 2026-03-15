@@ -3,19 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Coming Soon</title>
+  <title>Luxury Antalya Airport Transfer — Coming Soon</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #060608;
-      --text: #f2f2f2;
-      --muted: rgba(255,255,255,0.38);
-      --border: rgba(255,255,255,0.07);
-      --surface: rgba(255,255,255,0.04);
+      --bg:       #07080a;
+      --text:     #f0ece4;
+      --muted:    rgba(240,236,228,0.4);
+      --border:   rgba(240,236,228,0.08);
+      --surface:  rgba(240,236,228,0.04);
+      --gold:     #c8a96e;
+      --gold-dim: rgba(200,169,110,0.18);
     }
 
     html, body { height: 100%; }
@@ -29,506 +31,667 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── Background canvas ── */
+    /* ─── BG ─── */
     .bg {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      overflow: hidden;
+      position: fixed; inset: 0; z-index: 0; overflow: hidden;
     }
-
     .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(120px);
-      opacity: 0.55;
-      will-change: transform;
+      position: absolute; border-radius: 50%;
+      filter: blur(140px); opacity: 0.4; will-change: transform;
     }
-
     .orb-1 {
-      width: 700px; height: 700px;
-      background: radial-gradient(circle, #5b21b6, transparent 70%);
-      top: -200px; left: -200px;
-      animation: float1 18s ease-in-out infinite;
+      width: 800px; height: 800px;
+      background: radial-gradient(circle, #2a1a06, transparent 65%);
+      top: -260px; left: -260px;
+      animation: f1 20s ease-in-out infinite;
     }
-
     .orb-2 {
       width: 600px; height: 600px;
-      background: radial-gradient(circle, #1d4ed8, transparent 70%);
-      bottom: -150px; right: -150px;
-      animation: float2 22s ease-in-out infinite;
+      background: radial-gradient(circle, #0d1a2a, transparent 65%);
+      bottom: -180px; right: -180px;
+      animation: f2 25s ease-in-out infinite;
     }
-
     .orb-3 {
-      width: 400px; height: 400px;
-      background: radial-gradient(circle, #be185d, transparent 70%);
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      animation: float3 15s ease-in-out infinite;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, #c8a96e18, transparent 65%);
+      top: 40%; left: 55%;
+      animation: f3 18s ease-in-out infinite;
     }
-
-    @keyframes float1 {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      33%       { transform: translate(80px, 60px) scale(1.08); }
-      66%       { transform: translate(-40px, 80px) scale(0.95); }
+    @keyframes f1 {
+      0%,100%{ transform:translate(0,0)scale(1); }
+      50%{ transform:translate(60px,80px)scale(1.1); }
     }
-    @keyframes float2 {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      33%       { transform: translate(-60px, -80px) scale(1.1); }
-      66%       { transform: translate(50px, -40px) scale(0.92); }
+    @keyframes f2 {
+      0%,100%{ transform:translate(0,0)scale(1); }
+      50%{ transform:translate(-60px,-60px)scale(1.08); }
     }
-    @keyframes float3 {
-      0%, 100% { transform: translate(-50%, -50%) scale(1); }
-      50%       { transform: translate(-50%, -50%) scale(1.3); opacity: 0.3; }
+    @keyframes f3 {
+      0%,100%{ transform:translate(0,0)scale(1); opacity:.4; }
+      50%{ transform:translate(-40px,30px)scale(1.2); opacity:.2; }
     }
-
-    /* noise grain overlay */
     .bg::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      opacity: 0.25;
-      pointer-events: none;
+      content:''; position:absolute; inset:0;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity:.18; pointer-events:none;
     }
 
-    /* ── Layout ── */
+    /* ─── LAYOUT ─── */
     .page {
-      position: relative;
-      z-index: 1;
+      position: relative; z-index: 1;
       min-height: 100vh;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
+      display: flex; flex-direction: column;
     }
 
+    /* ─── HEADER ─── */
     header {
-      padding: 2rem 2.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      padding: 2rem 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
     }
 
     .logo {
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: -0.01em;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .logo-icon {
+      width: 36px; height: 36px;
+      border: 1px solid var(--gold);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .logo-text {
+      display: flex; flex-direction: column; gap: 1px;
+    }
+    .logo-main {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
       color: var(--text);
     }
-
-    .logo span {
-      display: inline-block;
-      width: 8px; height: 8px;
-      background: #a855f7;
-      border-radius: 50%;
-      margin-right: 8px;
-      vertical-align: middle;
-      position: relative;
-      top: -1px;
+    .logo-sub {
+      font-size: 9px; font-weight: 500;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--gold);
     }
 
     .status-pill {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      display: flex; align-items: center; gap: 7px;
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
       color: var(--muted);
       border: 1px solid var(--border);
-      padding: 5px 14px;
-      border-radius: 999px;
+      padding: 6px 14px; border-radius: 999px;
       background: var(--surface);
       backdrop-filter: blur(12px);
     }
-
     .pulse {
-      width: 6px; height: 6px;
-      background: #4ade80;
-      border-radius: 50%;
+      width: 5px; height: 5px;
+      background: #c8a96e; border-radius: 50%;
       animation: pulse 2.5s ease-in-out infinite;
     }
-
     @keyframes pulse {
-      0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(74,222,128,0.5); }
-      50%       { opacity: 0.5; box-shadow: 0 0 0 6px rgba(74,222,128,0); }
+      0%,100%{ opacity:1; box-shadow:0 0 0 0 rgba(200,169,110,.5); }
+      50%{ opacity:.5; box-shadow:0 0 0 6px rgba(200,169,110,0); }
     }
 
-    /* ── Hero ── */
-    main {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 4rem 2rem;
+    /* ─── HERO ─── */
+    .hero {
+      flex: 1;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 5rem 2rem 3rem;
       text-align: center;
     }
 
     .eyebrow {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--muted);
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--gold);
       margin-bottom: 2rem;
+    }
+    .eyebrow::before, .eyebrow::after {
+      content: ''; display: block;
+      width: 28px; height: 1px; background: var(--gold); opacity: .5;
     }
 
     h1 {
-      font-size: clamp(3rem, 10vw, 7rem);
-      font-weight: 600;
-      letter-spacing: -0.04em;
-      line-height: 1.02;
-      margin-bottom: 1.75rem;
-      background: linear-gradient(160deg, #fff 30%, rgba(255,255,255,0.45));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.8rem, 9vw, 7.5rem);
+      font-weight: 300;
+      letter-spacing: -0.01em;
+      line-height: 1.0;
+      margin-bottom: 0.6rem;
+      background: linear-gradient(160deg, #f0ece4 30%, rgba(240,236,228,0.45));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
     }
 
-    .subtitle {
-      font-size: clamp(1rem, 2.5vw, 1.15rem);
-      color: var(--muted);
-      line-height: 1.75;
-      max-width: 480px;
-      margin-bottom: 3.5rem;
+    h1 em {
+      font-style: italic;
+      background: linear-gradient(120deg, #c8a96e, #e8d5a3, #c8a96e);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tagline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1rem, 2.5vw, 1.35rem);
       font-weight: 300;
-    }
-
-    /* ── Countdown ── */
-    .countdown {
-      display: flex;
-      gap: 1.5rem;
+      font-style: italic;
+      color: var(--muted);
       margin-bottom: 3.5rem;
-      flex-wrap: wrap;
-      justify-content: center;
+      letter-spacing: 0.02em;
     }
 
-    .countdown-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      min-width: 72px;
+    /* ─── COUNTDOWN ─── */
+    .countdown {
+      display: flex; gap: 1.25rem;
+      margin-bottom: 3.5rem;
+      flex-wrap: wrap; justify-content: center;
     }
-
-    .count-box {
-      width: 72px; height: 72px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      font-weight: 600;
-      letter-spacing: -0.03em;
+    .cd-item {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 8px;
+    }
+    .cd-box {
+      width: 76px; height: 76px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem; font-weight: 400;
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: 12px;
       backdrop-filter: blur(16px);
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
+      color: var(--text);
+    }
+    .cd-box::before {
+      content:''; position:absolute; inset:0;
+      background: linear-gradient(160deg, rgba(200,169,110,0.06), transparent);
+    }
+    .cd-label {
+      font-size: 9px; font-weight: 500;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--gold);
     }
 
-    .count-box::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(160deg, rgba(255,255,255,0.06), transparent);
-      pointer-events: none;
+    /* ─── DIVIDER ─── */
+    .gold-line {
+      width: 48px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 0 auto 3rem;
     }
 
-    .count-label {
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    /* ── Email form ── */
-    .form-wrap {
-      width: 100%;
-      max-width: 400px;
-      margin-bottom: 1rem;
-    }
-
-    .notify-form {
-      display: flex;
-      gap: 8px;
-    }
-
+    /* ─── EMAIL FORM ─── */
+    .form-wrap { width: 100%; max-width: 420px; margin: 0 auto; }
+    .notify-form { display: flex; gap: 8px; }
     .notify-form input {
       flex: 1;
       background: var(--surface);
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 12px 18px;
-      border-radius: 12px;
-      font-size: 14px;
-      font-family: inherit;
+      padding: 13px 18px;
+      border-radius: 10px;
+      font-size: 13px; font-family: inherit;
       outline: none;
       backdrop-filter: blur(12px);
-      transition: border-color 0.2s, background 0.2s;
+      transition: border-color .2s;
     }
-
     .notify-form input::placeholder { color: var(--muted); }
-    .notify-form input:focus {
-      border-color: rgba(255,255,255,0.18);
-      background: rgba(255,255,255,0.06);
-    }
-
+    .notify-form input:focus { border-color: rgba(200,169,110,.35); }
     .notify-form button {
-      background: linear-gradient(135deg, #7c3aed, #4f46e5);
-      color: #fff;
+      background: linear-gradient(135deg, #a07840, #c8a96e);
+      color: #07080a;
       border: none;
-      padding: 12px 22px;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 500;
-      font-family: inherit;
-      cursor: pointer;
-      transition: opacity 0.15s, transform 0.15s;
-      white-space: nowrap;
+      padding: 13px 22px;
+      border-radius: 10px;
+      font-size: 13px; font-weight: 600;
+      font-family: inherit; cursor: pointer;
+      transition: opacity .15s, transform .15s;
+      white-space: nowrap; letter-spacing: 0.04em;
     }
-
-    .notify-form button:hover { opacity: 0.88; transform: translateY(-1px); }
-    .notify-form button:active { transform: translateY(0); }
-
+    .notify-form button:hover { opacity:.85; transform:translateY(-1px); }
     .form-note {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 10px;
+      font-size: 11px; color: var(--muted);
+      margin-top: 10px; text-align: center;
     }
-
     .success-msg {
       display: none;
-      font-size: 14px;
-      color: #4ade80;
+      font-size: 13px; color: var(--gold);
       padding: 12px 20px;
-      background: rgba(74,222,128,0.08);
-      border: 1px solid rgba(74,222,128,0.2);
-      border-radius: 12px;
-      margin-top: 8px;
+      background: var(--gold-dim);
+      border: 1px solid rgba(200,169,110,0.25);
+      border-radius: 10px; margin-top: 8px;
+      text-align: center;
     }
 
-    /* ── Footer ── */
-    footer {
-      padding: 2rem 2.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
+    /* ─── LOCATIONS SLIDER ─── */
+    .locations-section {
+      padding: 4rem 0 3rem;
+      overflow: hidden;
       border-top: 1px solid var(--border);
     }
 
-    .footer-copy {
-      font-size: 12px;
-      color: var(--muted);
+    .locations-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      padding: 0 2rem;
+    }
+    .locations-header p {
+      font-size: 10px; font-weight: 500;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 0.6rem;
+    }
+    .locations-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.6rem, 4vw, 2.8rem);
+      font-weight: 300; letter-spacing: -0.01em;
+      color: var(--text);
     }
 
-    .socials {
-      display: flex;
-      gap: 1.25rem;
+    /* Track */
+    .slider-track-wrap {
+      position: relative;
+    }
+    /* fade edges */
+    .slider-track-wrap::before,
+    .slider-track-wrap::after {
+      content: ''; position: absolute;
+      top: 0; bottom: 0; width: 120px; z-index: 2;
+      pointer-events: none;
+    }
+    .slider-track-wrap::before {
+      left: 0;
+      background: linear-gradient(to right, var(--bg), transparent);
+    }
+    .slider-track-wrap::after {
+      right: 0;
+      background: linear-gradient(to left, var(--bg), transparent);
     }
 
-    .socials a {
-      font-size: 12px;
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.15s;
-      letter-spacing: 0.02em;
+    .slider-track {
+      display: flex; gap: 1.25rem;
+      width: max-content;
+      animation: slide 40s linear infinite;
+      padding: 0.5rem 0;
+    }
+    .slider-track:hover { animation-play-state: paused; }
+
+    @keyframes slide {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
     }
 
-    .socials a:hover { color: var(--text); }
-
-    /* ── Progress bar ── */
-    .progress-wrap {
-      width: 100%;
-      max-width: 400px;
-      margin-bottom: 3rem;
-    }
-
-    .progress-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .progress-label {
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .progress-pct {
-      font-size: 12px;
-      font-weight: 600;
-      color: #a78bfa;
-    }
-
-    .progress-track {
-      height: 3px;
-      background: var(--border);
-      border-radius: 99px;
+    .location-card {
+      flex-shrink: 0;
+      width: 220px; height: 300px;
+      border-radius: 16px;
       overflow: hidden;
+      position: relative;
+      cursor: default;
+      border: 1px solid var(--border);
+      transition: transform .3s ease, border-color .3s;
+    }
+    .location-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(200,169,110,0.3);
+    }
+    .location-card img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform .5s ease;
+      display: block;
+    }
+    .location-card:hover img { transform: scale(1.06); }
+
+    .card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(7,8,10,0.88) 0%, rgba(7,8,10,0.1) 55%, transparent 100%);
+    }
+    .card-info {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 1.25rem 1.1rem;
+    }
+    .card-tag {
+      display: inline-block;
+      font-size: 9px; font-weight: 500;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid rgba(200,169,110,0.35);
+      padding: 3px 9px; border-radius: 999px;
+      margin-bottom: 7px;
+      background: rgba(200,169,110,0.08);
+    }
+    .card-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; font-weight: 400;
+      color: var(--text); line-height: 1.2;
+      letter-spacing: 0.01em;
+    }
+    .card-dist {
+      font-size: 11px; color: var(--muted);
+      margin-top: 4px;
     }
 
-    .progress-fill {
-      height: 100%;
-      width: 0;
-      background: linear-gradient(90deg, #7c3aed, #a855f7, #c084fc);
-      border-radius: 99px;
-      transition: width 1.6s cubic-bezier(0.16, 1, 0.3, 1);
+    /* ─── FOOTER ─── */
+    footer {
+      padding: 1.75rem 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+      border-top: 1px solid var(--border);
     }
-
-    /* ── Fade in ── */
-    .fade-in {
-      opacity: 0;
-      transform: translateY(16px);
-      animation: fadeUp 0.8s ease forwards;
+    .footer-copy {
+      font-size: 11px; color: var(--muted);
     }
-
-    @keyframes fadeUp {
-      to { opacity: 1; transform: translateY(0); }
+    .socials {
+      display: flex; gap: 1.5rem;
     }
+    .socials a {
+      font-size: 11px; color: var(--muted);
+      text-decoration: none; letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: color .15s;
+    }
+    .socials a:hover { color: var(--gold); }
 
-    .fade-in:nth-child(1) { animation-delay: 0.1s; }
-    .fade-in:nth-child(2) { animation-delay: 0.22s; }
-    .fade-in:nth-child(3) { animation-delay: 0.34s; }
-    .fade-in:nth-child(4) { animation-delay: 0.46s; }
-    .fade-in:nth-child(5) { animation-delay: 0.58s; }
-    .fade-in:nth-child(6) { animation-delay: 0.70s; }
+    /* ─── FADE IN ─── */
+    .fi { opacity:0; transform:translateY(18px); animation: fu .9s ease forwards; }
+    @keyframes fu { to { opacity:1; transform:translateY(0); } }
+    .fi:nth-child(1){animation-delay:.1s}
+    .fi:nth-child(2){animation-delay:.22s}
+    .fi:nth-child(3){animation-delay:.36s}
+    .fi:nth-child(4){animation-delay:.50s}
+    .fi:nth-child(5){animation-delay:.64s}
+    .fi:nth-child(6){animation-delay:.78s}
 
-    @media (max-width: 480px) {
-      header, footer { padding: 1.5rem; }
-      .count-box { width: 60px; height: 60px; font-size: 1.6rem; }
-      .countdown { gap: 0.85rem; }
+    @media(max-width:600px){
+      header, footer { padding: 1.25rem 1.5rem; }
+      .logo-main { font-size: 13px; }
+      .cd-box { width:62px; height:62px; font-size:1.9rem; }
+      .countdown { gap:.75rem; }
+      .location-card { width:180px; height:250px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="bg">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-  </div>
+<div class="bg">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
 
-  <div class="page">
+<div class="page">
 
-    <header>
-      <div class="logo"><span></span>Studio</div>
-      <div class="status-pill"><span class="pulse"></span> In Progress</div>
-    </header>
-
-    <main>
-      <p class="eyebrow fade-in">We're building something</p>
-
-      <h1 class="fade-in">Coming<br />Soon.</h1>
-
-      <p class="subtitle fade-in">
-        Something remarkable is taking shape.<br />
-        We'll be live before you know it.
-      </p>
-
-      <div class="countdown fade-in">
-        <div class="countdown-item">
-          <div class="count-box" id="cd-days">00</div>
-          <div class="count-label">Days</div>
-        </div>
-        <div class="countdown-item">
-          <div class="count-box" id="cd-hours">00</div>
-          <div class="count-label">Hours</div>
-        </div>
-        <div class="countdown-item">
-          <div class="count-box" id="cd-mins">00</div>
-          <div class="count-label">Minutes</div>
-        </div>
-        <div class="countdown-item">
-          <div class="count-box" id="cd-secs">00</div>
-          <div class="count-label">Seconds</div>
-        </div>
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">✦</div>
+      <div class="logo-text">
+        <span class="logo-main">Antalya Transfer</span>
+        <span class="logo-sub">Luxury Airport Service</span>
       </div>
+    </div>
+    <div class="status-pill"><span class="pulse"></span> Launching Soon</div>
+  </header>
 
-      <div class="progress-wrap fade-in">
-        <div class="progress-header">
-          <span class="progress-label">Development</span>
-          <span class="progress-pct">68%</span>
-        </div>
-        <div class="progress-track">
-          <div class="progress-fill" id="progress-fill"></div>
-        </div>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="eyebrow fi">Luxury Antalya Airport Transfer</div>
+
+    <h1 class="fi">Premium<br /><em>Transfers,</em><br />Redefined.</h1>
+
+    <p class="tagline fi">First-class comfort from the runway to your destination.</p>
+
+    <div class="countdown fi">
+      <div class="cd-item">
+        <div class="cd-box" id="cd-days">00</div>
+        <div class="cd-label">Days</div>
       </div>
-
-      <div class="form-wrap fade-in">
-        <form class="notify-form" id="notify-form" onsubmit="handleSubmit(event)">
-          <input type="email" placeholder="Enter your email" required />
-          <button type="submit">Notify me</button>
-        </form>
-        <p class="form-note">No spam. Just a heads up when we launch.</p>
-        <div class="success-msg" id="success-msg">
-          You're on the list — we'll reach out when we're live.
-        </div>
+      <div class="cd-item">
+        <div class="cd-box" id="cd-hours">00</div>
+        <div class="cd-label">Hours</div>
       </div>
-    </main>
+      <div class="cd-item">
+        <div class="cd-box" id="cd-mins">00</div>
+        <div class="cd-label">Minutes</div>
+      </div>
+      <div class="cd-item">
+        <div class="cd-box" id="cd-secs">00</div>
+        <div class="cd-label">Seconds</div>
+      </div>
+    </div>
 
-    <footer>
-      <span class="footer-copy">&copy; <span id="year"></span> Studio. All rights reserved.</span>
-      <nav class="socials">
-        <a href="#">Twitter</a>
-        <a href="#">Instagram</a>
-        <a href="#">LinkedIn</a>
-      </nav>
-    </footer>
+    <div class="gold-line fi"></div>
 
-  </div>
+    <div class="form-wrap fi">
+      <form class="notify-form" id="notify-form" onsubmit="handleSubmit(event)">
+        <input type="email" placeholder="Your email address" required />
+        <button type="submit">Notify Me</button>
+      </form>
+      <p class="form-note">Be the first to book. No spam, ever.</p>
+      <div class="success-msg" id="success-msg">
+        Thank you — we'll reach out the moment we launch.
+      </div>
+    </div>
+  </section>
 
-  <script>
-    // Year
-    document.getElementById('year').textContent = new Date().getFullYear();
+  <!-- LOCATIONS SLIDER -->
+  <section class="locations-section">
+    <div class="locations-header">
+      <p>Popular Destinations</p>
+      <h2>Where Would You Like to Go?</h2>
+    </div>
 
-    // Countdown — target date (change as needed)
-    const target = new Date('2026-03-23T00:00:00');
+    <div class="slider-track-wrap">
+      <div class="slider-track" id="slider">
 
-    function pad(n) { return String(n).padStart(2, '0'); }
+        <!-- Cards set 1 -->
+        <div class="location-card">
+          <img src="https://images.unsplash.com/photo-1601041405416-beb8e7f72c27?w=440&q=80&auto=format&fit=crop" alt="Kaleiçi" loading="lazy" />
+          <div class="card-overlay"></div>
+          <div class="card-info">
+            <span class="card-tag">Old Town</span>
+            <div class="card-name">Kaleiçi</div>
+            <div class="card-dist">12 km from airport</div>
+          </div>
+        </div>
 
-    function tick() {
-      const diff = target - Date.now();
-      if (diff <= 0) {
-        ['cd-days','cd-hours','cd-mins','cd-secs'].forEach(id => {
-          document.getElementById(id).textContent = '00';
-        });
-        return;
-      }
-      const d = Math.floor(diff / 86400000);
-      const h = Math.floor((diff % 86400000) / 3600000);
-      const m = Math.floor((diff % 3600000) / 60000);
-      const s = Math.floor((diff % 60000) / 1000);
-      document.getElementById('cd-days').textContent  = pad(d);
-      document.getElementById('cd-hours').textContent = pad(h);
-      document.getElementById('cd-mins').textContent  = pad(m);
-      document.getElementById('cd-secs').textContent  = pad(s);
+        <div class="location-card">
+          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=440&q=80&auto=format&fit=crop" alt="Belek" loading="lazy" />
+          <div class="card-overlay"></div>
+          <div class="card-info">
+            <span class="card-tag">Golf Resort</span>
+            <div class="card-name">Belek</div>
+            <div class="card-dist">35 km from airport</div>
+          </div>
+        </div>
+
+        <div class="location-card">
+          <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=440&q=80&auto=format&fit=crop" alt="Kemer" loading="lazy" />
+          <div class="card-overlay"></div>
+          <div class="card-info">
+            <span class="card-tag">Riviera</span>
+            <div class="card-name">Kemer</div>
+            <div class="card-dist">42 km from airport</div>
+          </div>
+        </div>
+
+        <div class="location-card">
+          <img src="https://images.unsplash.com/photo-1527838832700-5059252407fa?w=440&q=80&auto=format&fit=crop" alt="Alanya" loading="lazy" />
+          <div class="card-overlay"></div>
+          <div class="card-info">
+            <span class="card-tag">Coastal City</span>
+            <div class="card-name">Alanya</div>
+            <div class="card-dist">125 km from airport</div>
+          </div>
+        </div>
+
+        <div class="location-card">
+          <img src="https://images.unsplash.com/photo-1555993539-1732b0258235?w=440&q=80&auto=format&fit=crop" alt="Side" loading="lazy" />
+          <div class="card-overlay"></div>
+          <div class="card-info">
+            <span class="card-tag">Ancient City</span>
+            <div class="card-name">Side</div>
+            <div class="card-dist">75 km from airport</div>
+          </div>
+        </div>
+
+        <div class="location-card">
+          <img src="https://images.unsplash.com/photo-1563274234-09ce86e1d1b9?w=440&q=80&auto=format&fit=crop" alt="Lara Beach" loading="lazy" />
+          <div class="card-overlay"></div>
+          <div class="card-info">
+            <span class="card-tag">Beach</span>
+            <div class="card-name">Lara Beach</div>
+            <div class="card-dist">18 km from airport</div>
+          </div>
+        </div>
+
+        <div class="location-card">
+          <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=440&q=80&auto=format&fit=crop" alt="Kaş" loading="lazy" />
+          <div class="card-overlay"></div>
+          <div class="card-info">
+            <span class="card-tag">Boutique Town</span>
+            <div class="card-name">Kaş</div>
+            <div class="card-dist">185 km from airport</div>
+          </div>
+        </div>
+
+        <div class="location-card">
+          <img src="https://images.unsplash.com/photo-1510784722466-f2aa240c7db8?w=440&q=80&auto=format&fit=crop" alt="Aspendos" loading="lazy" />
+          <div class="card-overlay"></div>
+          <div class="card-info">
+            <span class="card-tag">Heritage</span>
+            <div class="card-name">Aspendos</div>
+            <div class="card-dist">48 km from airport</div>
+          </div>
+        </div>
+
+        <!-- Cards set 2 (duplicate for seamless loop) -->
+        <div class="location-card">
+          <img src="https://images.unsplash.com/photo-1601041405416-beb8e7f72c27?w=440&q=80&auto=format&fit=crop" alt="Kaleiçi" loading="lazy" />
+          <div class="card-overlay"></div>
+          <div class="card-info">
+            <span class="card-tag">Old Town</span>
+            <div class="card-name">Kaleiçi</div>
+            <div class="card-dist">12 km from airport</div>
+          </div>
+        </div>
+
+        <div class="location-card">
+          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=440&q=80&auto=format&fit=crop" alt="Belek" loading="lazy" />
+          <div class="card-overlay"></div>
+          <div class="card-info">
+            <span class="card-tag">Golf Resort</span>
+            <div class="card-name">Belek</div>
+            <div class="card-dist">35 km from airport</div>
+          </div>
+        </div>
+
+        <div class="location-card">
+          <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=440&q=80&auto=format&fit=crop" alt="Kemer" loading="lazy" />
+          <div class="card-overlay"></div>
+          <div class="card-info">
+            <span class="card-tag">Riviera</span>
+            <div class="card-name">Kemer</div>
+            <div class="card-dist">42 km from airport</div>
+          </div>
+        </div>
+
+        <div class="location-card">
+          <img src="https://images.unsplash.com/photo-1527838832700-5059252407fa?w=440&q=80&auto=format&fit=crop" alt="Alanya" loading="lazy" />
+          <div class="card-overlay"></div>
+          <div class="card-info">
+            <span class="card-tag">Coastal City</span>
+            <div class="card-name">Alanya</div>
+            <div class="card-dist">125 km from airport</div>
+          </div>
+        </div>
+
+        <div class="location-card">
+          <img src="https://images.unsplash.com/photo-1555993539-1732b0258235?w=440&q=80&auto=format&fit=crop" alt="Side" loading="lazy" />
+          <div class="card-overlay"></div>
+          <div class="card-info">
+            <span class="card-tag">Ancient City</span>
+            <div class="card-name">Side</div>
+            <div class="card-dist">75 km from airport</div>
+          </div>
+        </div>
+
+        <div class="location-card">
+          <img src="https://images.unsplash.com/photo-1563274234-09ce86e1d1b9?w=440&q=80&auto=format&fit=crop" alt="Lara Beach" loading="lazy" />
+          <div class="card-overlay"></div>
+          <div class="card-info">
+            <span class="card-tag">Beach</span>
+            <div class="card-name">Lara Beach</div>
+            <div class="card-dist">18 km from airport</div>
+          </div>
+        </div>
+
+        <div class="location-card">
+          <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=440&q=80&auto=format&fit=crop" alt="Kaş" loading="lazy" />
+          <div class="card-overlay"></div>
+          <div class="card-info">
+            <span class="card-tag">Boutique Town</span>
+            <div class="card-name">Kaş</div>
+            <div class="card-dist">185 km from airport</div>
+          </div>
+        </div>
+
+        <div class="location-card">
+          <img src="https://images.unsplash.com/photo-1510784722466-f2aa240c7db8?w=440&q=80&auto=format&fit=crop" alt="Aspendos" loading="lazy" />
+          <div class="card-overlay"></div>
+          <div class="card-info">
+            <span class="card-tag">Heritage</span>
+            <div class="card-name">Aspendos</div>
+            <div class="card-dist">48 km from airport</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-copy">&copy; <span id="year"></span> Luxury Antalya Transfer. All rights reserved.</span>
+    <nav class="socials">
+      <a href="#">Instagram</a>
+      <a href="#">WhatsApp</a>
+      <a href="#">Contact</a>
+    </nav>
+  </footer>
+
+</div>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Countdown — 1 week from build
+  const target = new Date('2026-03-23T00:00:00');
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function tick(){
+    const diff = target - Date.now();
+    if(diff <= 0){
+      ['cd-days','cd-hours','cd-mins','cd-secs'].forEach(id=>{
+        document.getElementById(id).textContent='00';
+      });
+      return;
     }
+    document.getElementById('cd-days').textContent  = pad(Math.floor(diff/86400000));
+    document.getElementById('cd-hours').textContent = pad(Math.floor((diff%86400000)/3600000));
+    document.getElementById('cd-mins').textContent  = pad(Math.floor((diff%3600000)/60000));
+    document.getElementById('cd-secs').textContent  = pad(Math.floor((diff%60000)/1000));
+  }
+  tick(); setInterval(tick, 1000);
 
-    tick();
-    setInterval(tick, 1000);
-
-    // Progress bar animate in
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        document.getElementById('progress-fill').style.width = '68%';
-      }, 900);
-    });
-
-    // Form submit
-    function handleSubmit(e) {
-      e.preventDefault();
-      document.getElementById('notify-form').style.display = 'none';
-      document.getElementById('success-msg').style.display = 'block';
-    }
-  </script>
-
+  // Form
+  function handleSubmit(e){
+    e.preventDefault();
+    document.getElementById('notify-form').style.display='none';
+    document.getElementById('success-msg').style.display='block';
+  }
+</script>
 </body>
 </html>
