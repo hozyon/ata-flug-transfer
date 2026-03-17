@@ -36,6 +36,11 @@ const App: React.FC = () => {
 
   const [reviewRating, setReviewRating] = useState(0);
   const [authChecking, setAuthChecking] = useState(isSupabaseConfigured);
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [resetNewPassword, setResetNewPassword] = useState('');
+  const [resetConfirmPassword, setResetConfirmPassword] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetMessage, setResetMessage] = useState('');
   const { t, language } = useLanguage();
 
   // Handle successful login
@@ -70,6 +75,8 @@ const App: React.FC = () => {
       } else if (event === 'SIGNED_OUT') {
         setIsAdmin(false);
         navigate('/');
+      } else if (event === 'PASSWORD_RECOVERY') {
+        setShowResetModal(true);
       }
     });
     return () => subscription.unsubscribe();
@@ -892,6 +899,59 @@ const App: React.FC = () => {
           </a>
         )}
       </div>
+      {/* ── Şifre Sıfırlama Modal ── */}
+      {showResetModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="w-full max-w-sm rounded-2xl bg-[#0f172a] border border-white/10 p-6 shadow-2xl">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-xl bg-[#c5a059]/10 flex items-center justify-center">
+                <i className="fa-solid fa-key text-[#c5a059]"></i>
+              </div>
+              <div>
+                <h2 className="text-white font-black text-base">Yeni Şifre Belirle</h2>
+                <p className="text-slate-500 text-[11px]">Şifre sıfırlama bağlantısı doğrulandı</p>
+              </div>
+            </div>
+            {resetMessage && (
+              <div className={`mb-4 px-3 py-2.5 rounded-xl text-[12px] ${resetMessage.startsWith('✓') ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400' : 'bg-red-500/10 border border-red-500/20 text-red-400'}`}>
+                {resetMessage}
+              </div>
+            )}
+            <div className="space-y-3">
+              <input
+                type="password"
+                value={resetNewPassword}
+                onChange={e => setResetNewPassword(e.target.value)}
+                placeholder="Yeni şifre"
+                className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 outline-none focus:border-[#c5a059]/50"
+              />
+              <input
+                type="password"
+                value={resetConfirmPassword}
+                onChange={e => setResetConfirmPassword(e.target.value)}
+                placeholder="Yeni şifre (tekrar)"
+                className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 outline-none focus:border-[#c5a059]/50"
+              />
+              <button
+                disabled={resetLoading || !resetNewPassword || resetNewPassword !== resetConfirmPassword || resetNewPassword.length < 6}
+                onClick={async () => {
+                  if (resetNewPassword !== resetConfirmPassword) { setResetMessage('Şifreler eşleşmiyor'); return; }
+                  if (resetNewPassword.length < 6) { setResetMessage('En az 6 karakter gerekli'); return; }
+                  setResetLoading(true);
+                  const { error } = await supabase.auth.updateUser({ password: resetNewPassword });
+                  setResetLoading(false);
+                  if (error) { setResetMessage(error.message); return; }
+                  setResetMessage('✓ Şifreniz başarıyla güncellendi!');
+                  setTimeout(() => { setShowResetModal(false); setResetNewPassword(''); setResetConfirmPassword(''); setResetMessage(''); navigate('/login'); }, 1500);
+                }}
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-[#c5a059] to-amber-600 text-white text-sm font-black disabled:opacity-40 disabled:cursor-not-allowed hover:from-amber-600 hover:to-amber-700 transition-all"
+              >
+                {resetLoading ? 'Güncelleniyor...' : 'ŞİFREYİ GÜNCELLE'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </SiteProvider >
   );
 };

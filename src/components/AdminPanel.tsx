@@ -556,9 +556,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   // ── USER MANAGEMENT STATE ──
   const [accountTab, setAccountTab] = useState<'profile' | 'users'>('profile');
   const [systemUsers, setSystemUsers] = useState([
-    { id: 'usr-admin', name: 'Admin', email: 'admin@system.com', role: 'Sistem Yöneticisi', isDeletable: false, lastLogin: '2 dk önce', status: 'Aktif' },
-    { id: 'usr-1', name: 'Ahmet Yılmaz', email: 'ahmet@system.com', role: 'Editör', isDeletable: true, lastLogin: '1 saat önce', status: 'Aktif' },
-    { id: 'usr-2', name: 'Ayşe Kaya', email: 'ayse@system.com', role: 'Transfer Görevlisi', isDeletable: true, lastLogin: 'Dün', status: 'Pasif' }
+    { id: 'usr-admin', name: siteContent.adminAccount?.fullName || 'Admin', email: siteContent.adminAccount?.email || 'isozyon0771@ataflugtransfer.com', role: 'Sistem Yöneticisi', isDeletable: false, lastLogin: 'Şu an aktif', status: 'Aktif' },
   ]);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [editingUserId, setEditingUserId] = useState<string | null>(null);

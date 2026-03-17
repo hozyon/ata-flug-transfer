@@ -110,7 +110,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
             return;
         }
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: `${window.location.origin}/reset-password`,
+            redirectTo: `${window.location.origin}/login`,
         });
         if (error) {
             setErrorMessage(error.message);
