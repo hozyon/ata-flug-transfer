@@ -518,27 +518,24 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
   // ── ACCOUNT SETTINGS STATE ──
   const [accountForm, setAccountForm] = useState(() => {
-    try {
-      const saved = localStorage.getItem('ata_admin_account_v1');
-      if (saved) return { currentPassword: '', newPassword: '', confirmPassword: '', ...JSON.parse(saved) };
-    } catch {}
+    const saved = siteContent.adminAccount;
     return {
-      fullName: 'Admin',
-      email: 'admin@system.com',
-      phone: '+90 555 123 4567',
-      avatar: ADMIN_AVATARS[0],
+      fullName: saved?.fullName ?? 'Admin',
+      email: saved?.email ?? 'admin@system.com',
+      phone: saved?.phone ?? '+90 555 123 4567',
+      avatar: saved?.avatar ?? ADMIN_AVATARS[0],
       currentPassword: '',
       newPassword: '',
       confirmPassword: '',
-      notifyEmail: true,
-      notifySms: false,
-      notifySystem: true
+      notifyEmail: saved?.notifyEmail ?? true,
+      notifySms: saved?.notifySms ?? false,
+      notifySystem: saved?.notifySystem ?? true,
     };
   });
 
   const handleSaveAccount = () => {
     const { currentPassword, newPassword, confirmPassword, ...toSave } = accountForm;
-    localStorage.setItem('ata_admin_account_v1', JSON.stringify(toSave));
+    onUpdateSiteContent({ ...siteContent, adminAccount: toSave });
   };
 
   // ── USER MANAGEMENT STATE ──

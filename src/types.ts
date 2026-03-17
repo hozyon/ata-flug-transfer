@@ -141,6 +141,15 @@ export interface SiteContent {
   seo: SeoSettings;
   branding?: BrandingSettings;
   currency?: CurrencySettings;
+  adminAccount?: {
+    fullName: string;
+    email: string;
+    phone: string;
+    avatar: string;
+    notifyEmail: boolean;
+    notifySms: boolean;
+    notifySystem: boolean;
+  };
 }
 
 export interface Region {
