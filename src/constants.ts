@@ -214,6 +214,16 @@ export const INITIAL_SITE_CONTENT: SiteContent = {
     symbol: '€',
     code: 'EUR',
   },
+  adminAccount: {
+    fullName: 'Admin',
+    email: 'ataflugtransfer@gmail.com',
+    phone: '+90 505 228 15 96',
+    avatar: 'https://api.dicebear.com/7.x/notionists/svg?seed=Admin1&backgroundColor=c5a059',
+    notifyEmail: true,
+    notifySms: false,
+    notifySystem: true,
+    twoFa: false,
+  },
 };
 
 export const DESTINATIONS = [

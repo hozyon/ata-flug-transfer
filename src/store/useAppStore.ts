@@ -157,6 +157,9 @@ function mergeContent(parsed: SiteContent): SiteContent {
         },
         branding: { ...INITIAL_SITE_CONTENT.branding, ...(parsed.branding || {}) },
         currency: { ...INITIAL_SITE_CONTENT.currency, ...(parsed.currency || {}) },
+        adminAccount: parsed.adminAccount
+            ? { ...INITIAL_SITE_CONTENT.adminAccount, ...parsed.adminAccount }
+            : INITIAL_SITE_CONTENT.adminAccount,
     };
     if (!Array.isArray(merged.hero.backgrounds) || merged.hero.backgrounds.length === 0) {
         merged.hero.backgrounds = INITIAL_SITE_CONTENT.hero.backgrounds;

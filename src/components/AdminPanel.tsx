@@ -31,7 +31,7 @@ const BlogView = lazy(() => import('./admin/views/BlogView').then(m => ({ defaul
 const ReviewsView = lazy(() => import('./admin/views/ReviewsView').then(m => ({ default: m.ReviewsView })));
 const HeroImagesView = lazy(() => import('./admin/views/HeroImagesView').then(m => ({ default: m.HeroImagesView })));
 const SEOView = lazy(() => import('./admin/views/SEOView').then(m => ({ default: m.SEOView })));
-import { DESTINATIONS, BLOG_POSTS, REVIEWS, SCRAPED_REGIONS } from '../constants';
+import { DESTINATIONS, BLOG_POSTS, REVIEWS, SCRAPED_REGIONS, INITIAL_SITE_CONTENT } from '../constants';
 
 interface AdminPanelProps {
   bookings: Booking[];
@@ -122,7 +122,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   const [editContent, setEditContent] = useState<SiteContent>(siteContent);
   const editContentInitialized = useRef(false);
   useEffect(() => {
-    if (!editContentInitialized.current && siteContent && Object.keys(siteContent).length > 0) {
+    // Only sync editContent once real data has loaded (not the initial defaults)
+    if (!editContentInitialized.current && siteContent !== INITIAL_SITE_CONTENT) {
       setEditContent(siteContent);
       editContentInitialized.current = true;
     }
@@ -423,7 +424,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     setSaveStatus('saving');
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(() => {
-      onUpdateSiteContent(editContent);
+      // Always preserve adminAccount from the Zustand store — never from editContent
+      // This prevents editContent (initialized before Supabase loads) from wiping adminAccount
+      onUpdateSiteContent({ ...editContent, adminAccount: siteContent.adminAccount });
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 2000);
     }, 1500);
@@ -532,9 +535,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   const [accountForm, setAccountForm] = useState(() => {
     const saved = siteContent.adminAccount;
     return {
-      fullName: saved?.fullName ?? 'Admin',
-      email: saved?.email ?? 'ataflugtransfer@gmail.com',
-      phone: saved?.phone ?? '+90 555 123 4567',
+      fullName: saved?.fullName ?? INITIAL_SITE_CONTENT.adminAccount!.fullName,
+      email: saved?.email ?? INITIAL_SITE_CONTENT.adminAccount!.email,
+      phone: saved?.phone ?? INITIAL_SITE_CONTENT.adminAccount!.phone,
       avatar: saved?.avatar ?? ADMIN_AVATARS[0],
       currentPassword: '',
       newPassword: '',
@@ -560,7 +563,17 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
       notifySystem: saved.notifySystem ?? prev.notifySystem,
       twoFa: saved.twoFa ?? prev.twoFa,
     }));
-  }, [siteContent.adminAccount]);
+  // Use individual primitive fields as deps (not the object ref) to reliably detect changes
+  }, [
+    siteContent.adminAccount?.fullName,
+    siteContent.adminAccount?.email,
+    siteContent.adminAccount?.phone,
+    siteContent.adminAccount?.avatar,
+    siteContent.adminAccount?.notifyEmail,
+    siteContent.adminAccount?.notifySms,
+    siteContent.adminAccount?.notifySystem,
+    siteContent.adminAccount?.twoFa,
+  ]);
 
   const handleSaveAccount = (form = accountForm) => {
     const { currentPassword, newPassword, confirmPassword, ...toSave } = form;
@@ -579,13 +592,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   // ── USER MANAGEMENT STATE ──
   const [accountTab, setAccountTab] = useState<'profile' | 'users'>('profile');
   const [systemUsers, setSystemUsers] = useState([
-    { id: 'usr-admin', name: siteContent.adminAccount?.fullName || 'Admin', email: siteContent.adminAccount?.email || 'ataflugtransfer@gmail.com', role: 'Sistem Yöneticisi', isDeletable: false, lastLogin: 'Şu an aktif', status: 'Aktif' },
+    { id: 'usr-admin', name: siteContent.adminAccount?.fullName || INITIAL_SITE_CONTENT.adminAccount!.fullName, email: siteContent.adminAccount?.email || INITIAL_SITE_CONTENT.adminAccount!.email, role: 'Sistem Yöneticisi', isDeletable: false, lastLogin: 'Şu an aktif', status: 'Aktif' },
   ]);
   useEffect(() => {
     setSystemUsers(prev => prev.map(u => u.id === 'usr-admin' ? {
       ...u,
-      name: siteContent.adminAccount?.fullName || 'Admin',
-      email: siteContent.adminAccount?.email || 'ataflugtransfer@gmail.com',
+      name: siteContent.adminAccount?.fullName || INITIAL_SITE_CONTENT.adminAccount!.fullName,
+      email: siteContent.adminAccount?.email || INITIAL_SITE_CONTENT.adminAccount!.email,
     } : u));
   }, [siteContent.adminAccount?.fullName, siteContent.adminAccount?.email]);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
