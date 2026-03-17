@@ -138,13 +138,23 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                     20%, 60% { transform: translateX(-6px); }
                     40%, 80% { transform: translateX(6px); }
                 }
-                @keyframes goldShimmer {
-                    0% { background-position: -200% center; }
-                    100% { background-position: 200% center; }
-                }
                 @keyframes fadeUp {
                     0% { opacity: 0; transform: translateY(16px); }
                     100% { opacity: 1; transform: translateY(0); }
+                }
+                @keyframes blobMove1 {
+                    0%, 100% { transform: translate(0px, 0px) scale(1); }
+                    33% { transform: translate(60px, -80px) scale(1.15); }
+                    66% { transform: translate(-40px, 50px) scale(0.9); }
+                }
+                @keyframes blobMove2 {
+                    0%, 100% { transform: translate(0px, 0px) scale(1); }
+                    33% { transform: translate(-70px, 60px) scale(1.1); }
+                    66% { transform: translate(50px, -40px) scale(0.95); }
+                }
+                @keyframes blobMove3 {
+                    0%, 100% { transform: translate(0px, 0px) scale(1); }
+                    50% { transform: translate(40px, 70px) scale(1.2); }
                 }
             `}</style>
 
@@ -274,66 +284,56 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                 </div>
             </div>
 
-            {/* ── RIGHT: Visual Panel ── */}
-            <div className="hidden lg:block flex-1 relative overflow-hidden">
-                {/* Background image */}
-                <img
-                    src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?q=85&w=2070&auto=format&fit=crop"
-                    alt=""
-                    className="absolute inset-0 w-full h-full object-cover scale-105"
-                    style={{ filter: 'brightness(0.35) saturate(0.8)' }}
-                />
-                {/* Gradient overlays */}
-                <div className="absolute inset-0 bg-gradient-to-r from-[#020617] via-[#020617]/30 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#020617]/80 via-transparent to-[#020617]/40" />
+            {/* ── RIGHT: Animated Visual Panel ── */}
+            <div className="hidden lg:flex flex-1 relative overflow-hidden items-center justify-center bg-[#050010]">
+                {/* Animated blobs */}
+                <div className="absolute w-[500px] h-[500px] rounded-full opacity-60 blur-[100px]"
+                    style={{ background: 'radial-gradient(circle, #7c3aed, #4f1d96)', top: '5%', left: '10%', animation: 'blobMove1 12s ease-in-out infinite' }} />
+                <div className="absolute w-[400px] h-[400px] rounded-full opacity-50 blur-[90px]"
+                    style={{ background: 'radial-gradient(circle, #2563eb, #1e3a8a)', bottom: '10%', right: '5%', animation: 'blobMove2 15s ease-in-out infinite' }} />
+                <div className="absolute w-[350px] h-[350px] rounded-full opacity-40 blur-[110px]"
+                    style={{ background: 'radial-gradient(circle, #a855f7, #6d28d9)', bottom: '30%', left: '35%', animation: 'blobMove3 10s ease-in-out infinite' }} />
+                <div className="absolute w-[250px] h-[250px] rounded-full opacity-30 blur-[80px]"
+                    style={{ background: 'radial-gradient(circle, #3b82f6, #1d4ed8)', top: '40%', right: '25%', animation: 'blobMove1 18s ease-in-out infinite reverse' }} />
 
-                {/* Diagonal gold accent line */}
-                <div className="absolute top-0 right-[30%] w-px h-full opacity-20"
-                    style={{ background: 'linear-gradient(to bottom, transparent 0%, #c5a059 30%, #c5a059 70%, transparent 100%)', transform: 'rotate(15deg) scaleY(1.5)', transformOrigin: 'top' }} />
+                {/* Noise texture overlay */}
+                <div className="absolute inset-0 opacity-[0.03]"
+                    style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")', backgroundSize: '200px 200px' }} />
+
+                {/* Dark vignette edges */}
+                <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, transparent 40%, rgba(5,0,16,0.7) 100%)' }} />
 
                 {/* Content */}
-                <div className="absolute inset-0 flex flex-col justify-between p-12 xl:p-16">
-                    {/* Top badge */}
-                    <div className="flex items-center gap-2 animate-in fade-in slide-in-from-left-4 duration-700 delay-300">
-                        <div className="w-1 h-8 rounded-full bg-gradient-to-b from-[#c5a059] to-amber-700" />
-                        <div>
-                            <p className="text-[#c5a059] text-[10px] font-black tracking-[0.3em] uppercase">Antalya'nın</p>
-                            <p className="text-white/60 text-[10px] font-bold tracking-[0.2em] uppercase">VIP Transfer Hizmeti</p>
-                        </div>
-                    </div>
-
-                    {/* Center: Main headline */}
-                    <div className="max-w-lg">
-                        <p className="text-[#c5a059]/60 text-xs font-black tracking-[0.4em] uppercase mb-4"
-                            style={{ animation: 'slideInText 0.7s ease 0.4s both' }}>
+                <div className="relative z-10 px-12 xl:px-16 max-w-lg">
+                    <div className="mb-3" style={{ animation: 'fadeUp 0.8s ease 0.3s both' }}>
+                        <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-black text-white/50 uppercase tracking-[0.2em]">
+                            <span className="w-1.5 h-1.5 rounded-full bg-violet-400 shadow-[0_0_8px_#a78bfa]"></span>
                             Yönetim Merkezi
-                        </p>
-                        <h2 className="text-4xl xl:text-5xl font-black text-white leading-[1.1] mb-6 tracking-tight"
-                            style={{ animation: 'slideInText 0.7s ease 0.5s both' }}>
-                            Kusursuz Hizmet,<br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#c5a059] via-amber-400 to-[#c5a059]">
-                                Akıllı Yönetim
-                            </span>
-                        </h2>
-                        <p className="text-slate-400 text-[14px] leading-relaxed max-w-sm"
-                            style={{ animation: 'slideInText 0.7s ease 0.6s both' }}>
-                            Tüm transfer operasyonlarınızı tek ekrandan yönetin. Gerçek zamanlı rezervasyon takibi, gelir analizi ve filo yönetimi.
-                        </p>
+                        </span>
                     </div>
-
-                    {/* Bottom: Stats row */}
-                    <div className="flex items-center gap-6" style={{ animation: 'slideInText 0.7s ease 0.7s both' }}>
+                    <h2 className="text-4xl xl:text-5xl font-black text-white leading-[1.1] mb-5 tracking-tight"
+                        style={{ animation: 'fadeUp 0.8s ease 0.4s both' }}>
+                        Kusursuz Hizmet,<br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-blue-400 to-violet-400">
+                            Akıllı Yönetim
+                        </span>
+                    </h2>
+                    <p className="text-white/30 text-[14px] leading-relaxed mb-10"
+                        style={{ animation: 'fadeUp 0.8s ease 0.5s both' }}>
+                        Tüm transfer operasyonlarınızı tek ekrandan yönetin.
+                    </p>
+                    <div className="flex items-center gap-6" style={{ animation: 'fadeUp 0.8s ease 0.6s both' }}>
                         {[
-                            { value: '7/24', label: 'Kesintisiz Erişim' },
-                            { value: '256-bit', label: 'SSL Şifreleme' },
-                            { value: '99.9%', label: 'Sistem Uptime' },
+                            { value: '7/24', label: 'Erişim' },
+                            { value: '256-bit', label: 'Şifreleme' },
+                            { value: '99.9%', label: 'Uptime' },
                         ].map((stat, i) => (
                             <React.Fragment key={stat.label}>
                                 <div>
-                                    <p className="text-white font-black text-lg leading-none">{stat.value}</p>
-                                    <p className="text-slate-600 text-[10px] font-bold uppercase tracking-wider mt-1">{stat.label}</p>
+                                    <p className="text-white font-black text-base leading-none">{stat.value}</p>
+                                    <p className="text-white/25 text-[10px] font-bold uppercase tracking-wider mt-1">{stat.label}</p>
                                 </div>
-                                {i < 2 && <div className="w-px h-8 bg-white/[0.07]" />}
+                                {i < 2 && <div className="w-px h-6 bg-white/10" />}
                             </React.Fragment>
                         ))}
                     </div>
