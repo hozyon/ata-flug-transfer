@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Routes, Route, useLocation, Link, useNavigate, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
@@ -41,6 +41,8 @@ const App: React.FC = () => {
   const [resetConfirmPassword, setResetConfirmPassword] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
   const [resetMessage, setResetMessage] = useState('');
+  // Ref to block isAdmin=true when PASSWORD_RECOVERY token is in URL
+  const isRecoveryModeRef = useRef(false);
   const { t, language } = useLanguage();
 
   // Handle successful login
@@ -67,16 +69,25 @@ const App: React.FC = () => {
   useEffect(() => {
     if (!isSupabaseConfigured) return;
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'INITIAL_SESSION') {
-        setIsAdmin(!!session);
+      if (event === 'PASSWORD_RECOVERY') {
+        // Must be handled FIRST — set ref synchronously so INITIAL_SESSION won't set isAdmin=true
+        isRecoveryModeRef.current = true;
+        setIsAdmin(false);
+        setAuthChecking(false);
+        setShowResetModal(true);
+      } else if (event === 'INITIAL_SESSION') {
+        if (!isRecoveryModeRef.current) {
+          setIsAdmin(!!session);
+        }
         setAuthChecking(false);
       } else if (event === 'SIGNED_IN' && session) {
-        setIsAdmin(true);
+        if (!isRecoveryModeRef.current) {
+          setIsAdmin(true);
+        }
       } else if (event === 'SIGNED_OUT') {
+        isRecoveryModeRef.current = false;
         setIsAdmin(false);
         navigate('/');
-      } else if (event === 'PASSWORD_RECOVERY') {
-        setShowResetModal(true);
       }
     });
     return () => subscription.unsubscribe();
@@ -942,7 +953,15 @@ const App: React.FC = () => {
                   setResetLoading(false);
                   if (error) { setResetMessage(error.message); return; }
                   setResetMessage('✓ Şifreniz başarıyla güncellendi!');
-                  setTimeout(() => { setShowResetModal(false); setResetNewPassword(''); setResetConfirmPassword(''); setResetMessage(''); navigate('/login'); }, 1500);
+                  setTimeout(async () => {
+                    isRecoveryModeRef.current = false;
+                    await supabase.auth.signOut();
+                    setShowResetModal(false);
+                    setResetNewPassword('');
+                    setResetConfirmPassword('');
+                    setResetMessage('');
+                    navigate('/login');
+                  }, 1500);
                 }}
                 className="w-full py-3 rounded-xl bg-gradient-to-r from-[#c5a059] to-amber-600 text-white text-sm font-black disabled:opacity-40 disabled:cursor-not-allowed hover:from-amber-600 hover:to-amber-700 transition-all"
               >
