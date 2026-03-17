@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { Booking, SiteContent } from '../types';
-import { INITIAL_SITE_CONTENT, MOCK_BOOKINGS } from '../constants';
+import { Booking, SiteContent, BlogPost, UserReview } from '../types';
+import { INITIAL_SITE_CONTENT, MOCK_BOOKINGS, BLOG_POSTS } from '../constants';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 interface AppStore {
@@ -8,6 +8,8 @@ interface AppStore {
     isAdmin: boolean;
     siteContent: SiteContent;
     bookings: Booking[];
+    blogPosts: BlogPost[];
+    userReviews: UserReview[];
     isBookingFormOpen: boolean;
     isLoading: boolean;
 
@@ -22,11 +24,22 @@ interface AppStore {
     updateBookingStatus: (id: string, status: Booking['status']) => Promise<void>;
     deleteBooking: (id: string) => Promise<void>;
     setBookingFormOpen: (isOpen: boolean) => void;
+
+    // Blog
+    addBlogPost: (post: BlogPost) => Promise<void>;
+    updateBlogPost: (post: BlogPost) => Promise<void>;
+    deleteBlogPost: (id: string) => Promise<void>;
+
+    // Reviews
+    updateReviewStatus: (id: string, status: UserReview['status']) => Promise<void>;
+    deleteReview: (id: string) => Promise<void>;
 }
 
 // ─── localStorage helpers (fallback when Supabase not configured) ───────────
 const LS_BOOKINGS = 'ata_bookings_v6';
 const LS_CONTENT = 'ata_site_content_v10';
+const LS_BLOG = 'ata_blog_posts_v1';
+const LS_REVIEWS = 'ata_user_reviews_v1';
 
 function loadBookingsFromLS(): Booking[] {
     try {
@@ -49,6 +62,82 @@ function loadContentFromLS(): SiteContent {
 
 function saveContentToLS(content: SiteContent) {
     localStorage.setItem(LS_CONTENT, JSON.stringify(content));
+}
+
+function loadBlogFromLS(): BlogPost[] {
+    try {
+        const saved = localStorage.getItem(LS_BLOG);
+        return saved ? JSON.parse(saved) : BLOG_POSTS;
+    } catch { return BLOG_POSTS; }
+}
+
+function saveBlogToLS(posts: BlogPost[]) {
+    localStorage.setItem(LS_BLOG, JSON.stringify(posts));
+}
+
+function loadReviewsFromLS(): UserReview[] {
+    try {
+        const saved = localStorage.getItem(LS_REVIEWS);
+        return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+}
+
+function saveReviewsToLS(reviews: UserReview[]) {
+    localStorage.setItem(LS_REVIEWS, JSON.stringify(reviews));
+}
+
+// ─── Map Supabase row → BlogPost ─────────────────────────────────────────────
+function rowToBlogPost(row: Record<string, unknown>): BlogPost {
+    return {
+        id: row.id as string,
+        slug: row.slug as string,
+        title: row.title as string,
+        excerpt: (row.excerpt as string) || '',
+        content: (row.content as string) || '',
+        featuredImage: (row.featured_image as string) || '',
+        category: (row.category as string) || '',
+        tags: (row.tags as string[]) || [],
+        author: (row.author as string) || 'Ata Flug Transfer',
+        publishedAt: (row.published_at as string) || new Date().toISOString(),
+        updatedAt: (row.updated_at as string) || new Date().toISOString(),
+        seoTitle: (row.seo_title as string) || '',
+        seoDescription: (row.seo_description as string) || '',
+        isPublished: (row.is_published as boolean) || false,
+        viewCount: (row.view_count as number) || 0,
+    };
+}
+
+function blogPostToRow(p: BlogPost) {
+    return {
+        id: p.id,
+        slug: p.slug,
+        title: p.title,
+        excerpt: p.excerpt || null,
+        content: p.content || null,
+        featured_image: p.featuredImage || null,
+        category: p.category || null,
+        tags: p.tags || [],
+        author: p.author || 'Ata Flug Transfer',
+        published_at: p.publishedAt || new Date().toISOString(),
+        seo_title: p.seoTitle || null,
+        seo_description: p.seoDescription || null,
+        is_published: p.isPublished || false,
+        view_count: p.viewCount || 0,
+    };
+}
+
+// ─── Map Supabase row → UserReview ───────────────────────────────────────────
+function rowToReview(row: Record<string, unknown>): UserReview {
+    return {
+        id: row.id as string,
+        name: row.name as string,
+        country: (row.country as string) || '',
+        lang: (row.lang as string) || 'tr',
+        rating: row.rating as number,
+        text: row.text as string,
+        status: row.status as UserReview['status'],
+        createdAt: row.created_at as string,
+    };
 }
 
 // ─── Merge persisted content with INITIAL defaults ───────────────────────────
@@ -125,6 +214,8 @@ export const useAppStore = create<AppStore>((set, get) => ({
     isAdmin: false,
     siteContent: INITIAL_SITE_CONTENT,
     bookings: [],
+    blogPosts: [],
+    userReviews: [],
     isBookingFormOpen: false,
     isLoading: false,
 
@@ -137,32 +228,36 @@ export const useAppStore = create<AppStore>((set, get) => ({
         if (isSupabaseConfigured) {
             // ── Load from Supabase ──────────────────────────────────────────
             try {
-                const [bookingsRes, contentRes] = await Promise.all([
+                const [bookingsRes, contentRes, blogRes, reviewsRes] = await Promise.all([
                     supabase.from('bookings').select('*').order('created_at', { ascending: false }),
                     supabase.from('site_content').select('content').eq('id', 1).single(),
+                    supabase.from('blog_posts').select('*').order('created_at', { ascending: false }),
+                    supabase.from('reviews').select('*').order('created_at', { ascending: false }),
                 ]);
 
-                if (!bookingsRes.error && bookingsRes.data) {
-                    set({ bookings: bookingsRes.data.map(rowToBooking) });
-                } else {
-                    set({ bookings: [] });
-                }
-
-                if (!contentRes.error && contentRes.data?.content) {
-                    set({ siteContent: mergeContent(contentRes.data.content as SiteContent) });
-                } else {
-                    set({ siteContent: INITIAL_SITE_CONTENT });
-                }
+                set({
+                    bookings: (!bookingsRes.error && bookingsRes.data) ? bookingsRes.data.map(rowToBooking) : [],
+                    siteContent: (!contentRes.error && contentRes.data?.content) ? mergeContent(contentRes.data.content as SiteContent) : INITIAL_SITE_CONTENT,
+                    blogPosts: (!blogRes.error && blogRes.data && blogRes.data.length > 0) ? blogRes.data.map(rowToBlogPost) : loadBlogFromLS(),
+                    userReviews: (!reviewsRes.error && reviewsRes.data) ? reviewsRes.data.map(rowToReview) : [],
+                });
             } catch (err) {
                 console.error('Supabase init error, falling back to localStorage:', err);
                 set({
                     bookings: loadBookingsFromLS(),
                     siteContent: loadContentFromLS(),
+                    blogPosts: loadBlogFromLS(),
+                    userReviews: loadReviewsFromLS(),
                 });
             }
         } else {
             // ── localStorage fallback ───────────────────────────────────────
-            set({ bookings: loadBookingsFromLS(), siteContent: loadContentFromLS() });
+            set({
+                bookings: loadBookingsFromLS(),
+                siteContent: loadContentFromLS(),
+                blogPosts: loadBlogFromLS(),
+                userReviews: loadReviewsFromLS(),
+            });
         }
 
         set({ isLoading: false });
@@ -267,10 +362,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
 
         if (isSupabaseConfigured) {
             try {
-                const { error } = await supabase
-                    .from('bookings')
-                    .delete()
-                    .eq('id', id);
+                const { error } = await supabase.from('bookings').delete().eq('id', id);
                 if (error) throw error;
             } catch (err) {
                 console.error('Failed to delete booking from Supabase:', err);
@@ -278,6 +370,98 @@ export const useAppStore = create<AppStore>((set, get) => ({
             }
         } else {
             saveBookingsToLS(updated);
+        }
+    },
+
+    // ── Blog CRUD ─────────────────────────────────────────────────────────────
+    addBlogPost: async (post) => {
+        const { blogPosts } = get();
+        const updated = [post, ...blogPosts];
+        set({ blogPosts: updated });
+
+        if (isSupabaseConfigured) {
+            try {
+                const { error } = await supabase.from('blog_posts').insert(blogPostToRow(post));
+                if (error) throw error;
+            } catch (err) {
+                console.error('Failed to save blog post to Supabase:', err);
+                saveBlogToLS(updated);
+            }
+        } else {
+            saveBlogToLS(updated);
+        }
+    },
+
+    updateBlogPost: async (post) => {
+        const { blogPosts } = get();
+        const updated = blogPosts.map(p => p.id === post.id ? post : p);
+        set({ blogPosts: updated });
+
+        if (isSupabaseConfigured) {
+            try {
+                const { error } = await supabase.from('blog_posts').upsert(blogPostToRow(post));
+                if (error) throw error;
+            } catch (err) {
+                console.error('Failed to update blog post in Supabase:', err);
+                saveBlogToLS(updated);
+            }
+        } else {
+            saveBlogToLS(updated);
+        }
+    },
+
+    deleteBlogPost: async (id) => {
+        const { blogPosts } = get();
+        const updated = blogPosts.filter(p => p.id !== id);
+        set({ blogPosts: updated });
+
+        if (isSupabaseConfigured) {
+            try {
+                const { error } = await supabase.from('blog_posts').delete().eq('id', id);
+                if (error) throw error;
+            } catch (err) {
+                console.error('Failed to delete blog post from Supabase:', err);
+                saveBlogToLS(updated);
+            }
+        } else {
+            saveBlogToLS(updated);
+        }
+    },
+
+    // ── Review CRUD ───────────────────────────────────────────────────────────
+    updateReviewStatus: async (id, status) => {
+        const { userReviews } = get();
+        const updated = userReviews.map(r => r.id === id ? { ...r, status } : r);
+        set({ userReviews: updated });
+
+        if (isSupabaseConfigured) {
+            try {
+                const { error } = await supabase.from('reviews').update({ status }).eq('id', id);
+                if (error) throw error;
+            } catch (err) {
+                console.error('Failed to update review status in Supabase:', err);
+                saveReviewsToLS(updated);
+            }
+        } else {
+            saveReviewsToLS(updated);
+        }
+    },
+
+    deleteReview: async (id) => {
+        const { userReviews } = get();
+        const updated = userReviews.filter(r => r.id !== id);
+        set({ userReviews: updated });
+
+        if (isSupabaseConfigured) {
+            try {
+                const { error } = await supabase.from('reviews').delete().eq('id', id);
+                if (error) throw error;
+            } catch (err) {
+                console.error('Failed to delete review from Supabase:', err);
+                saveReviewsToLS(updated);
+            }
+        } else {
+            saveReviewsToLS(updated);
         }
     },
 }));

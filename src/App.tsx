@@ -29,7 +29,9 @@ const App: React.FC = () => {
     isAdmin, setIsAdmin,
     siteContent, updateSiteContent: handleUpdateSiteContent,
     bookings, isBookingFormOpen, setBookingFormOpen: setIsBookingFormOpen,
-    initializeStore, addBooking: handleNewBooking, updateBookingStatus, deleteBooking: handleDeleteBooking
+    initializeStore, addBooking: handleNewBooking, updateBookingStatus, deleteBooking: handleDeleteBooking,
+    blogPosts, addBlogPost, updateBlogPost, deleteBlogPost,
+    userReviews, updateReviewStatus, deleteReview,
   } = useAppStore();
 
   const [reviewRating, setReviewRating] = useState(0);
@@ -183,6 +185,13 @@ const App: React.FC = () => {
                   onUpdateSiteContent={handleUpdateSiteContent}
                   onDeleteBooking={handleDeleteBooking}
                   onExitAdmin={handleExitAdmin}
+                  blogPosts={blogPosts}
+                  onAddBlogPost={addBlogPost}
+                  onUpdateBlogPost={updateBlogPost}
+                  onDeleteBlogPost={deleteBlogPost}
+                  userReviews={userReviews}
+                  onUpdateReviewStatus={updateReviewStatus}
+                  onDeleteReview={deleteReview}
                 />
               </React.Suspense>
             </ErrorBoundary>

@@ -10,7 +10,7 @@ import { MobileBookingItem } from './admin/MobileBookingItem';
 
 import { haptic } from '../utils/haptic';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
-import { Booking, SiteContent, NavMenuItem, Vehicle, BusinessSettings, BlogPost, UserReview } from '../types';
+import { Booking, SiteContent, NavMenuItem, Vehicle, BusinessSettings, BlogPost, UserReview, Region } from '../types';
 import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
   PieChart, Pie, Legend, AreaChart, Area, BarChart, Bar
@@ -41,6 +41,13 @@ interface AdminPanelProps {
   onUpdateSiteContent: (content: SiteContent) => void;
   onExitAdmin: () => void;
   onDeleteBooking: (id: string) => void;
+  blogPosts: BlogPost[];
+  onAddBlogPost: (post: BlogPost) => Promise<void>;
+  onUpdateBlogPost: (post: BlogPost) => Promise<void>;
+  onDeleteBlogPost: (id: string) => Promise<void>;
+  userReviews: UserReview[];
+  onUpdateReviewStatus: (id: string, status: UserReview['status']) => Promise<void>;
+  onDeleteReview: (id: string) => Promise<void>;
 }
 
 type DashboardView = 'overview' | 'bookings' | 'site-settings' | 'hero-images' | 'regions' | 'fleet' | 'blog' | 'reviews' | 'faq' | 'business' | 'pricing' | 'about' | 'visionMission' | 'account' | 'seo';
@@ -69,7 +76,7 @@ const ADMIN_AVATARS = [
 ];
 
 const getCountryName = (flag: string) => COUNTRY_NAMES[flag] || 'Bilinmiyor';
-const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAddBooking, siteContent, onUpdateSiteContent, onExitAdmin, onDeleteBooking }) => {
+const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAddBooking, siteContent, onUpdateSiteContent, onExitAdmin, onDeleteBooking, blogPosts: blogPostsProp, onAddBlogPost, onUpdateBlogPost, onDeleteBlogPost, userReviews: userReviewsProp, onUpdateReviewStatus, onDeleteReview }) => {
   // Theme Toggle
   const [isDarkTheme, setIsDarkTheme] = useState(() => {
     const saved = localStorage.getItem('ata_admin_theme');
@@ -117,19 +124,20 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   const [isAddBookingModalOpen, setIsAddBookingModalOpen] = useState(false);
   const [selectedBookingForView, setSelectedBookingForView] = useState<Booking | null>(null);
 
-  // Blog States — persisted to localStorage
-  const [blogPosts, setBlogPostsState] = useState<BlogPost[]>(() => {
-    try {
-      const saved = localStorage.getItem('ata_blog_posts_v1');
-      return saved ? JSON.parse(saved) : BLOG_POSTS;
-    } catch { return BLOG_POSTS; }
-  });
-  const setBlogPosts = (posts: BlogPost[] | ((prev: BlogPost[]) => BlogPost[])) => {
-    setBlogPostsState(prev => {
-      const next = typeof posts === 'function' ? posts(prev) : posts;
-      localStorage.setItem('ata_blog_posts_v1', JSON.stringify(next));
-      return next;
+  // Blog States — Supabase-backed via props
+  const blogPosts = blogPostsProp;
+  const setBlogPosts = async (posts: BlogPost[] | ((prev: BlogPost[]) => BlogPost[])) => {
+    const next = typeof posts === 'function' ? posts(blogPostsProp) : posts;
+    // Diff against current to find what changed
+    const added = next.filter(p => !blogPostsProp.find(e => e.id === p.id));
+    const removed = blogPostsProp.filter(e => !next.find(p => p.id === e.id));
+    const updated = next.filter(p => {
+      const existing = blogPostsProp.find(e => e.id === p.id);
+      return existing && JSON.stringify(existing) !== JSON.stringify(p);
     });
+    for (const p of added) await onAddBlogPost(p);
+    for (const p of updated) await onUpdateBlogPost(p);
+    for (const p of removed) await onDeleteBlogPost(p.id);
   };
   const [editingBlogPost, setEditingBlogPost] = useState<BlogPost | null>(null);
   const [isAddBlogModalOpen, setIsAddBlogModalOpen] = useState(false);
@@ -163,21 +171,17 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   useEffect(() => { setSelectedBlogs([]); }, [blogTab]);
   useEffect(() => { setSelectedHeroImages([]); }, [heroBackgrounds.length]);
 
-  const DEFAULT_USER_REVIEWS: UserReview[] = [];
-
-  // Review States — persisted to localStorage
-  const [userReviews, setUserReviewsState] = useState<UserReview[]>(() => {
-    try {
-      const saved = localStorage.getItem('ata_user_reviews_v1');
-      return saved ? JSON.parse(saved) : DEFAULT_USER_REVIEWS;
-    } catch { return DEFAULT_USER_REVIEWS; }
-  });
-  const setUserReviews = (reviews: UserReview[] | ((prev: UserReview[]) => UserReview[])) => {
-    setUserReviewsState(prev => {
-      const next = typeof reviews === 'function' ? reviews(prev) : reviews;
-      localStorage.setItem('ata_user_reviews_v1', JSON.stringify(next));
-      return next;
+  // Review States — Supabase-backed via props
+  const userReviews = userReviewsProp;
+  const setUserReviews = async (reviews: UserReview[] | ((prev: UserReview[]) => UserReview[])) => {
+    const next = typeof reviews === 'function' ? reviews(userReviewsProp) : reviews;
+    const removed = userReviewsProp.filter(r => !next.find(n => n.id === r.id));
+    const changed = next.filter(r => {
+      const existing = userReviewsProp.find(e => e.id === r.id);
+      return existing && existing.status !== r.status;
     });
+    for (const r of changed) await onUpdateReviewStatus(r.id, r.status);
+    for (const r of removed) await onDeleteReview(r.id);
   };
   const [siteReviews, setSiteReviews] = useState(REVIEWS);
   const [editableReviewsTab, setEditableReviewsTab] = useState<'pending' | 'approved' | 'rejected' | 'deleted'>('pending');
