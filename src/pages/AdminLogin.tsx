@@ -278,7 +278,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
             <div className="hidden lg:block flex-1 relative overflow-hidden">
                 {/* Background image */}
                 <img
-                    src="https://images.unsplash.com/photo-1571607388263-1044f9ea01dd?q=85&w=2070&auto=format&fit=crop"
+                    src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?q=85&w=2070&auto=format&fit=crop"
                     alt=""
                     className="absolute inset-0 w-full h-full object-cover scale-105"
                     style={{ filter: 'brightness(0.35) saturate(0.8)' }}
