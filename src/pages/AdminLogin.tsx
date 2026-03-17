@@ -85,7 +85,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
             }, 800);
         } else {
             // Dev fallback: simple hardcoded check
-            if (email === 'isozyon0771@ataflugtransfer.com' && password === 'Trak1ng-16') {
+            if (email === 'ataflugtransfer@gmail.com' && password === 'Trak1ng-16') {
                 setLoginStage('success');
                 setTimeout(() => {
                     setIsLoading(false);

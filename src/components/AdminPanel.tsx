@@ -526,7 +526,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     const saved = siteContent.adminAccount;
     return {
       fullName: saved?.fullName ?? 'Admin',
-      email: saved?.email ?? 'admin@system.com',
+      email: saved?.email ?? 'ataflugtransfer@gmail.com',
       phone: saved?.phone ?? '+90 555 123 4567',
       avatar: saved?.avatar ?? ADMIN_AVATARS[0],
       currentPassword: '',
@@ -556,7 +556,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   // ── USER MANAGEMENT STATE ──
   const [accountTab, setAccountTab] = useState<'profile' | 'users'>('profile');
   const [systemUsers, setSystemUsers] = useState([
-    { id: 'usr-admin', name: siteContent.adminAccount?.fullName || 'Admin', email: siteContent.adminAccount?.email || 'isozyon0771@ataflugtransfer.com', role: 'Sistem Yöneticisi', isDeletable: false, lastLogin: 'Şu an aktif', status: 'Aktif' },
+    { id: 'usr-admin', name: siteContent.adminAccount?.fullName || 'Admin', email: siteContent.adminAccount?.email || 'ataflugtransfer@gmail.com', role: 'Sistem Yöneticisi', isDeletable: false, lastLogin: 'Şu an aktif', status: 'Aktif' },
   ]);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
@@ -1657,8 +1657,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                   <div className="absolute -top-1.5 right-4 w-3 h-3 bg-[var(--color-dark)] border-t border-l border-white/10 rotate-45"></div>
 
                   <div className="px-4 py-3 border-b border-white/5 bg-white/[0.02]">
-                    <p className="text-white text-xs font-bold truncate">Admin</p>
-                    <p className="text-slate-400 text-[10px] truncate">admin@system.com</p>
+                    <p className="text-white text-xs font-bold truncate">{accountForm.fullName || 'Admin'}</p>
+                    <p className="text-slate-400 text-[10px] truncate">{accountForm.email || 'ataflugtransfer@gmail.com'}</p>
                   </div>
                   <div className="p-1.5">
                     <button
