@@ -365,7 +365,7 @@ const Bolgeler: React.FC = () => {
                             <button
                                 onClick={() => setCurrentPage(cms => Math.max(cms - 1, 1))}
                                 disabled={currentPage === 1}
-                                className="w-10 h-10 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                className="w-11 h-11 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
                                 <i className="fas fa-chevron-left"></i>
                             </button>
@@ -375,7 +375,7 @@ const Bolgeler: React.FC = () => {
                                     <button
                                         key={page}
                                         onClick={() => setCurrentPage(page)}
-                                        className={`w-10 h-10 flex items-center justify-center rounded-lg border transition-colors ${currentPage === page
+                                        className={`w-11 h-11 flex items-center justify-center rounded-lg border transition-colors ${currentPage === page
                                             ? 'bg-[var(--color-dark)] border-[var(--color-dark)] text-white'
                                             : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
                                             }`}
@@ -388,7 +388,7 @@ const Bolgeler: React.FC = () => {
                             <button
                                 onClick={() => setCurrentPage(cms => Math.min(cms + 1, totalPages))}
                                 disabled={currentPage === totalPages}
-                                className="w-10 h-10 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                className="w-11 h-11 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
                                 <i className="fas fa-chevron-right"></i>
                             </button>

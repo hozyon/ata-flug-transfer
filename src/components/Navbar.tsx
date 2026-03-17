@@ -372,7 +372,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
             </div>
             <button
               onClick={close}
-              className="w-9 h-9 rounded-full flex items-center justify-center bg-white/[0.07] text-white/50 hover:text-white border border-white/[0.08] active:scale-90 transition-all"
+              className="w-11 h-11 rounded-full flex items-center justify-center bg-white/[0.07] text-white/50 hover:text-white border border-white/[0.08] active:scale-90 transition-all"
               aria-label="Kapat"
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
@@ -527,7 +527,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                           {/* collapsible sub-items */}
                           <div className={`transition-all duration-300 ease-in-out overflow-hidden
                             ${isExpanded ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}>
-                            <div className="ml-[3.25rem] mr-3 mb-2 border-l-2 border-white/[0.06] pl-4 space-y-0.5">
+                            <div className="ml-[2.5rem] sm:ml-[3.25rem] mr-3 mb-2 border-l-2 border-white/[0.06] pl-4 space-y-0.5">
                               {item.subMenus?.map(sub => (
                                 <Link
                                   key={sub.id} to={sub.url} onClick={close}

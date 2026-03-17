@@ -155,13 +155,13 @@ const BlogPost: React.FC = () => {
 
             <div className="relative z-10 -mt-8">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 lg:gap-12">
                         {/* Main Content */}
                         <div className="lg:col-span-8">
-                            <article className="bg-white rounded-t-3xl shadow-xl p-8 md:p-12 lg:p-16 relative overflow-hidden">
+                            <article className="bg-white rounded-t-3xl shadow-xl p-5 sm:p-8 md:p-12 lg:p-16 relative overflow-hidden">
                                 <TextureBackground />
                                 <div
-                                    className="prose prose-lg max-w-none prose-headings:font-playfair prose-slate relative z-10"
+                                    className="prose prose-sm sm:prose sm:prose-lg max-w-none prose-headings:font-playfair prose-slate relative z-10"
                                     dangerouslySetInnerHTML={{ __html: formatContent(translatedContent) }}
                                 />
 

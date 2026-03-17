@@ -120,6 +120,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   const [isCorporateOpen, setIsCorporateOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [editContent, setEditContent] = useState<SiteContent>(siteContent);
+  const editContentInitialized = useRef(false);
+  useEffect(() => {
+    if (!editContentInitialized.current && siteContent && Object.keys(siteContent).length > 0) {
+      setEditContent(siteContent);
+      editContentInitialized.current = true;
+    }
+  }, [siteContent]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isAddBookingModalOpen, setIsAddBookingModalOpen] = useState(false);
   const [selectedBookingForView, setSelectedBookingForView] = useState<Booking | null>(null);
@@ -539,6 +546,22 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     };
   });
 
+  useEffect(() => {
+    const saved = siteContent.adminAccount;
+    if (!saved) return;
+    setAccountForm(prev => ({
+      ...prev,
+      fullName: saved.fullName ?? prev.fullName,
+      email: saved.email ?? prev.email,
+      phone: saved.phone ?? prev.phone,
+      avatar: saved.avatar ?? prev.avatar,
+      notifyEmail: saved.notifyEmail ?? prev.notifyEmail,
+      notifySms: saved.notifySms ?? prev.notifySms,
+      notifySystem: saved.notifySystem ?? prev.notifySystem,
+      twoFa: saved.twoFa ?? prev.twoFa,
+    }));
+  }, [siteContent.adminAccount]);
+
   const handleSaveAccount = (form = accountForm) => {
     const { currentPassword, newPassword, confirmPassword, ...toSave } = form;
     onUpdateSiteContent({ ...siteContent, adminAccount: toSave });
@@ -558,6 +581,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   const [systemUsers, setSystemUsers] = useState([
     { id: 'usr-admin', name: siteContent.adminAccount?.fullName || 'Admin', email: siteContent.adminAccount?.email || 'ataflugtransfer@gmail.com', role: 'Sistem Yöneticisi', isDeletable: false, lastLogin: 'Şu an aktif', status: 'Aktif' },
   ]);
+  useEffect(() => {
+    setSystemUsers(prev => prev.map(u => u.id === 'usr-admin' ? {
+      ...u,
+      name: siteContent.adminAccount?.fullName || 'Admin',
+      email: siteContent.adminAccount?.email || 'ataflugtransfer@gmail.com',
+    } : u));
+  }, [siteContent.adminAccount?.fullName, siteContent.adminAccount?.email]);
   const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
   const [newUserForm, setNewUserForm] = useState({ name: '', email: '', role: 'Editör', password: '', confirmPassword: '' });

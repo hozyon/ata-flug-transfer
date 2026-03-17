@@ -85,12 +85,12 @@ const SSS: React.FC = () => {
                     <div className="space-y-4">
                         {translatedFaqs.map((faq) => (
                             <div key={faq.id} className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                                <button onClick={() => setOpenId(openId === faq.id ? null : faq.id)} className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
+                                <button onClick={() => setOpenId(openId === faq.id ? null : faq.id)} className="w-full px-4 sm:px-6 py-4 sm:py-5 min-h-[56px] flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
                                     <span className="font-bold text-slate-800 pr-4">{faq.q}</span>
                                     <i className={`fa-solid fa-chevron-down text-[var(--color-primary)] transition-transform ${openId === faq.id ? 'rotate-180' : ''}`}></i>
                                 </button>
                                 {openId === faq.id && (
-                                    <div className="px-6 pb-5"><p className="text-slate-600 leading-relaxed">{faq.a}</p></div>
+                                    <div className="px-4 sm:px-6 pb-4 sm:pb-5"><p className="text-slate-600 text-sm sm:text-base leading-relaxed">{faq.a}</p></div>
                                 )}
                             </div>
                         ))}

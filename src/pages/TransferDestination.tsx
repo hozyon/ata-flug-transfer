@@ -112,18 +112,18 @@ const TransferDestination: React.FC = () => {
       {/* Info Strip */}
       {meta && (
         <section className="bg-[#0f172a] text-white py-5">
-          <div className="max-w-6xl mx-auto px-5 grid grid-cols-3 gap-4 text-center">
+          <div className="max-w-6xl mx-auto px-4 sm:px-5 grid grid-cols-3 gap-3 sm:gap-4 text-center">
             <div>
-              <div className="text-[#c5a059] text-2xl font-bold">{meta.distanceKm} km</div>
-              <div className="text-white/50 text-xs mt-1">Havalimanına Mesafe</div>
+              <div className="text-[#c5a059] text-lg sm:text-2xl font-bold">{meta.distanceKm} km</div>
+              <div className="text-white/50 text-[11px] sm:text-xs mt-1">Havalimanına Mesafe</div>
             </div>
             <div>
-              <div className="text-[#c5a059] text-2xl font-bold">~{meta.durationMin} dk</div>
-              <div className="text-white/50 text-xs mt-1">Transfer Süresi</div>
+              <div className="text-[#c5a059] text-lg sm:text-2xl font-bold">~{meta.durationMin} dk</div>
+              <div className="text-white/50 text-[11px] sm:text-xs mt-1">Transfer Süresi</div>
             </div>
             <div>
-              <div className="text-[#c5a059] text-2xl font-bold">7/24</div>
-              <div className="text-white/50 text-xs mt-1">Hizmet</div>
+              <div className="text-[#c5a059] text-lg sm:text-2xl font-bold">7/24</div>
+              <div className="text-white/50 text-[11px] sm:text-xs mt-1">Hizmet</div>
             </div>
           </div>
         </section>
@@ -212,7 +212,7 @@ const TransferDestination: React.FC = () => {
 
         {/* Right: CTA Sidebar */}
         <div className="space-y-4">
-          <div className="bg-[#0f172a] rounded-2xl p-6 text-white sticky top-24">
+          <div className="bg-[#0f172a] rounded-2xl p-6 text-white lg:sticky lg:top-24">
             <h3 className="text-lg font-bold mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>
               {region.name} Transfer Rezervasyonu
             </h3>

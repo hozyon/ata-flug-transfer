@@ -184,12 +184,12 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
   };
 
   const card = "rounded-xl border border-white/[0.08] bg-white/[0.03] px-3 py-2.5 min-h-[52px] focus-within:border-[var(--color-primary)]/30 transition-colors";
-  const lbl = "block text-[9px] font-bold text-[var(--color-primary)]/60 uppercase tracking-[0.15em] mb-0.5";
-  const inp = "w-full bg-transparent outline-none text-[12px] text-white font-medium placeholder-white/20";
+  const lbl = "block text-[10px] sm:text-[9px] font-bold text-[var(--color-primary)]/60 uppercase tracking-[0.15em] mb-0.5";
+  const inp = "w-full bg-transparent outline-none text-[13px] sm:text-[12px] text-white font-medium placeholder-white/20";
 
   return (
     <div className="w-full overflow-hidden">
-      <form onSubmit={handleSubmit} className="px-4 pb-2 flex flex-col gap-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
+      <form onSubmit={handleSubmit} className="px-3 sm:px-4 pb-2 flex flex-col gap-2" style={{ fontFamily: "'Outfit', sans-serif" }}>
 
         {/* Nereden / Nereye */}
         <div className="relative">
@@ -217,7 +217,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
             </div>
           </div>
           <button type="button" onClick={handleSwapLocations}
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-[#0a0a0e] border border-white/[0.1] shadow-lg hover:border-[var(--color-primary)]/40 flex items-center justify-center text-white/40 hover:text-[var(--color-primary)] transition-all active:scale-90 z-10">
+            className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-7 sm:h-7 rounded-full bg-[#0a0a0e] border border-white/[0.1] shadow-lg hover:border-[var(--color-primary)]/40 flex items-center justify-center text-white/40 hover:text-[var(--color-primary)] transition-all active:scale-90 z-10">
             <i className="fa-solid fa-arrow-right-arrow-left text-[9px] rotate-90"></i>
           </button>
         </div>
@@ -258,7 +258,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
           <div className="flex items-center gap-1.5">
             <i className="fa-solid fa-phone text-[var(--color-primary)] text-[9px] flex-shrink-0"></i>
             <select name="countryCode" value={formData.countryCode} onChange={handleChange}
-              className="w-[72px] bg-transparent outline-none text-[12px] text-white font-medium appearance-none cursor-pointer shrink-0">
+              className="w-16 sm:w-[72px] bg-transparent outline-none text-[12px] text-white font-medium appearance-none cursor-pointer shrink-0">
               {COUNTRY_CODES.map(cc => (
                 <option key={cc.code} value={cc.code} className="bg-[#0a0a0e] text-white">{cc.flag} {cc.code}</option>
               ))}
@@ -291,7 +291,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
         </div>
 
         {/* Yolcu + Araç + Uçuş */}
-        <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <div className={card}>
             <label className={lbl}>{t('Yolcu')}</label>
             <div className="flex items-center gap-1.5">

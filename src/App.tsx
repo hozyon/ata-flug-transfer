@@ -322,7 +322,7 @@ const App: React.FC = () => {
                     </div>
 
                     {/* Content Layer */}
-                    <div className="relative z-20 max-w-7xl mx-auto px-5 lg:px-10 w-full flex-1 flex flex-col justify-end lg:justify-center pb-32 lg:pb-20 pt-24 lg:pt-20">
+                    <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-5 lg:px-10 w-full flex-1 flex flex-col justify-end lg:justify-center pb-32 lg:pb-20 pt-24 lg:pt-20">
                       <div className="flex flex-col lg:flex-row items-start lg:items-center gap-10 lg:gap-16 w-full">
 
                         {/* Left: Text Content */}
@@ -334,7 +334,7 @@ const App: React.FC = () => {
                           </div>
 
                           {/* Headline */}
-                          <h1 className="text-[2.6rem] sm:text-5xl md:text-6xl lg:text-[72px] font-bold text-white leading-[1.05] mb-5 tracking-[-0.02em]" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                          <h1 className="text-[1.9rem] sm:text-[2.6rem] md:text-5xl lg:text-6xl xl:text-[72px] font-bold text-white leading-[1.1] sm:leading-[1.05] mb-5 tracking-[-0.02em]" style={{ fontFamily: "'Outfit', sans-serif" }}>
                             {t('hero.title')}
                             <br />
                             <span className="bg-gradient-to-r from-[#ebd299] via-[var(--color-primary)] to-[#a8864a] bg-clip-text text-transparent">{t('hero.titleAccent')}</span>
@@ -346,7 +346,7 @@ const App: React.FC = () => {
                           </p>
 
                           {/* Dual CTA */}
-                          <div className="flex flex-wrap items-center gap-3 mb-10 lg:mb-0">
+                          <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2.5 sm:gap-3 mb-10 lg:mb-0">
                             <style>
                               {`
                                 @keyframes breathe {
@@ -357,7 +357,7 @@ const App: React.FC = () => {
                             </style>
                             <button
                               onClick={() => setIsBookingFormOpen(true)}
-                              className="group border border-[var(--color-primary)]/40 hover:border-[var(--color-primary)] bg-white/5 hover:bg-[var(--color-primary)]/10 backdrop-blur-sm text-white font-semibold text-sm md:text-base px-7 py-3.5 md:px-9 md:py-4 rounded-full flex items-center gap-3 transition-all duration-300"
+                              className="group border border-[var(--color-primary)]/40 hover:border-[var(--color-primary)] bg-white/5 hover:bg-[var(--color-primary)]/10 backdrop-blur-sm text-white font-semibold text-sm md:text-base px-7 py-3.5 md:px-9 md:py-4 rounded-full flex items-center justify-center gap-3 transition-all duration-300"
                               style={{ fontFamily: "'Outfit', sans-serif", animation: 'breathe 3s ease-in-out infinite' }}
                             >
                               <i className="fa-solid fa-calendar-check text-sm text-[var(--color-primary)]"></i>
@@ -368,7 +368,7 @@ const App: React.FC = () => {
                               href={`https://wa.me/${siteContent.business.whatsapp}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="group border border-white/20 hover:border-[#25D366]/60 bg-white/5 hover:bg-[#25D366]/10 backdrop-blur-sm text-white font-semibold text-sm md:text-base px-7 py-3.5 md:px-9 md:py-4 rounded-full flex items-center gap-3 transition-all duration-300"
+                              className="group border border-white/20 hover:border-[#25D366]/60 bg-white/5 hover:bg-[#25D366]/10 backdrop-blur-sm text-white font-semibold text-sm md:text-base px-7 py-3.5 md:px-9 md:py-4 rounded-full flex items-center justify-center gap-3 transition-all duration-300"
                               style={{ fontFamily: "'Outfit', sans-serif" }}
                             >
                               <i className="fa-brands fa-whatsapp text-lg text-[#25D366]"></i>
@@ -445,7 +445,7 @@ const App: React.FC = () => {
 
                     {/* Trust Bar (Bottom) */}
                     <div className="absolute bottom-0 left-0 right-0 z-30">
-                      <div className="max-w-7xl mx-auto px-5 lg:px-10 pb-5 md:pb-6 flex items-center gap-4 md:gap-6" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                      <div className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-10 pb-5 md:pb-6 flex items-center gap-2 sm:gap-4 md:gap-6 overflow-x-auto scrollbar-hide" style={{ fontFamily: "'Outfit', sans-serif" }}>
                         <div className="flex items-center gap-2 text-white/50 text-xs md:text-sm">
                           <i className="fa-solid fa-headset text-[var(--color-primary)] text-sm"></i>
                           <span>{t('hero.trust.247')}</span>
