@@ -772,67 +772,6 @@ Aşağıdaki butona tıklayarak WhatsApp üzerinden saniyeler içinde fiyat alab
 
 import { Booking } from './types';
 
-export const MOCK_BOOKINGS: Booking[] = [
-  {
-    id: 'TR-84921',
-    customerName: 'Ahmet Yılmaz',
-    phone: '0532 555 1234',
-    pickup: 'Antalya Havalimanı (AYT)',
-    destination: 'Belek Oteller Bölgesi',
-    date: '2024-05-15',
-    time: '14:30',
-    passengers: 3,
-    vehicleId: 'v1',
-    status: 'Completed',
-    totalPrice: 50,
-    createdAt: '2024-05-10T10:00:00.000Z',
-    flightNumber: 'TK2414',
-    notes: 'Bebek koltuğu gerekli'
-  },
-  {
-    id: 'TR-15203',
-    customerName: 'John Smith',
-    phone: '+44 7700 900500',
-    pickup: 'Antalya Havalimanı (AYT)',
-    destination: 'Side / Manavgat',
-    date: '2024-06-20',
-    time: '18:45',
-    passengers: 4,
-    vehicleId: 'v1',
-    status: 'Confirmed',
-    totalPrice: 55,
-    createdAt: '2024-06-01T09:15:00.000Z',
-    flightNumber: 'BA2107'
-  },
-  {
-    id: 'TR-93482',
-    customerName: 'Elena Petrova',
-    phone: '+7 900 123-45-67',
-    pickup: 'Kemer',
-    destination: 'Antalya Havalimanı (AYT)',
-    date: '2024-07-10',
-    time: '04:00',
-    passengers: 2,
-    vehicleId: 'v2',
-    status: 'Pending',
-    totalPrice: 45,
-    createdAt: '2024-07-09T20:30:00.000Z',
-    notes: 'Extra bagaj 3 adet'
-  },
-  {
-    id: 'TR-27156',
-    customerName: 'Mehmet Demir',
-    phone: '0505 123 4567',
-    pickup: 'Alanya',
-    destination: 'Antalya Havalimanı (AYT)',
-    date: '2024-08-05',
-    time: '11:00',
-    passengers: 6,
-    vehicleId: 'v2',
-    status: 'Confirmed',
-    totalPrice: 85,
-    createdAt: '2024-08-01T14:20:00.000Z'
-  }
-];
+export const MOCK_BOOKINGS: Booking[] = [];
 
 
