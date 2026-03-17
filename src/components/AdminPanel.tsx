@@ -415,6 +415,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFirstRender = useRef(true);
+  // Ref so the timer closure always reads the LATEST siteContent, not a stale snapshot
+  const siteContentRef = useRef(siteContent);
+  useEffect(() => { siteContentRef.current = siteContent; }, [siteContent]);
 
   useEffect(() => {
     if (isFirstRender.current) {
@@ -424,9 +427,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     setSaveStatus('saving');
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(() => {
-      // Always preserve adminAccount from the Zustand store — never from editContent
-      // This prevents editContent (initialized before Supabase loads) from wiping adminAccount
-      onUpdateSiteContent({ ...editContent, adminAccount: siteContent.adminAccount });
+      // Use siteContentRef.current so we always get the latest adminAccount,
+      // even if it was updated (e.g. phone/email save) after this effect ran
+      onUpdateSiteContent({ ...editContent, adminAccount: siteContentRef.current.adminAccount });
       setSaveStatus('saved');
       setTimeout(() => setSaveStatus('idle'), 2000);
     }, 1500);
