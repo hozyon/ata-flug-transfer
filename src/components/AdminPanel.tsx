@@ -582,10 +582,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
   const handleUpdatePassword = async (currentPassword: string, newPassword: string): Promise<{ error: string | null }> => {
     if (isSupabaseConfigured) {
+      // Re-authenticate with current password to verify it and ensure an active session exists
+      const email = siteContent.adminAccount?.email || accountForm.email;
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password: currentPassword });
+      if (signInError) return { error: 'Mevcut şifre yanlış' };
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) return { error: error.message };
     }
-    // fallback: in dev mode (localStorage) password is checked in App.tsx hardcoded — just succeed
     return { error: null };
   };
 
