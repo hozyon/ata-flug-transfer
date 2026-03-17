@@ -85,7 +85,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
             }, 800);
         } else {
             // Dev fallback: simple hardcoded check
-            if (email === 'admin@ataflugtransfer.com' && password === 'admin123') {
+            if (email === 'isozyon0771@ataflugtransfer.com' && password === 'Trak1ng-16') {
                 setLoginStage('success');
                 setTimeout(() => {
                     setIsLoading(false);
@@ -94,7 +94,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
             } else {
                 setLoginStage('error');
                 setIsLoading(false);
-                setErrorMessage('E-posta veya şifre hatalı. (Dev modu: admin@ataflugtransfer.com / admin123)');
+                setErrorMessage('E-posta veya şifre hatalı. Lütfen tekrar deneyin.');
                 setTimeout(() => setLoginStage('idle'), 2000);
             }
         }
@@ -241,7 +241,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                                                     onFocus={() => setIsFocused('email')}
                                                     onBlur={() => setIsFocused(null)}
                                                     className="w-full bg-transparent pl-11 pr-4 py-3.5 text-sm text-white placeholder-slate-600 outline-none"
-                                                    placeholder="admin@ataflugtransfer.com"
+                                                    placeholder=""
                                                     autoComplete="email"
                                                     required
                                                 />
@@ -270,7 +270,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                                                     onFocus={() => setIsFocused('password')}
                                                     onBlur={() => setIsFocused(null)}
                                                     className="w-full bg-transparent pl-11 pr-12 py-3.5 text-sm text-white placeholder-slate-600 outline-none"
-                                                    placeholder="••••••••"
+                                                    placeholder=""
                                                     autoComplete="current-password"
                                                     required
                                                 />
