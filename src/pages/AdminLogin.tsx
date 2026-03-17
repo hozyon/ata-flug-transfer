@@ -143,18 +143,31 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                     100% { opacity: 1; transform: translateY(0); }
                 }
                 @keyframes blobMove1 {
-                    0%, 100% { transform: translate(0px, 0px) scale(1); }
-                    33% { transform: translate(60px, -80px) scale(1.15); }
-                    66% { transform: translate(-40px, 50px) scale(0.9); }
+                    0%   { transform: translate(0px, 0px) scale(1); }
+                    20%  { transform: translate(80px, -100px) scale(1.2); }
+                    40%  { transform: translate(160px, -40px) scale(0.85); }
+                    60%  { transform: translate(100px, 80px) scale(1.1); }
+                    80%  { transform: translate(-40px, 60px) scale(0.9); }
+                    100% { transform: translate(0px, 0px) scale(1); }
                 }
                 @keyframes blobMove2 {
-                    0%, 100% { transform: translate(0px, 0px) scale(1); }
-                    33% { transform: translate(-70px, 60px) scale(1.1); }
-                    66% { transform: translate(50px, -40px) scale(0.95); }
+                    0%   { transform: translate(0px, 0px) scale(1); }
+                    25%  { transform: translate(-100px, 80px) scale(1.15); }
+                    50%  { transform: translate(-60px, -90px) scale(0.8); }
+                    75%  { transform: translate(70px, -50px) scale(1.1); }
+                    100% { transform: translate(0px, 0px) scale(1); }
                 }
                 @keyframes blobMove3 {
-                    0%, 100% { transform: translate(0px, 0px) scale(1); }
-                    50% { transform: translate(40px, 70px) scale(1.2); }
+                    0%   { transform: translate(0px, 0px) scale(1); }
+                    30%  { transform: translate(60px, 100px) scale(1.25); }
+                    60%  { transform: translate(-80px, 60px) scale(0.85); }
+                    100% { transform: translate(0px, 0px) scale(1); }
+                }
+                @keyframes blobMove4 {
+                    0%   { transform: translate(0px, 0px) scale(1); }
+                    35%  { transform: translate(-90px, -70px) scale(1.2); }
+                    70%  { transform: translate(50px, 90px) scale(0.9); }
+                    100% { transform: translate(0px, 0px) scale(1); }
                 }
             `}</style>
 
@@ -287,14 +300,16 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
             {/* ── RIGHT: Animated Visual Panel ── */}
             <div className="hidden lg:flex flex-1 relative overflow-hidden items-center justify-center bg-[#050010]">
                 {/* Animated blobs */}
-                <div className="absolute w-[500px] h-[500px] rounded-full opacity-60 blur-[100px]"
-                    style={{ background: 'radial-gradient(circle, #7c3aed, #4f1d96)', top: '5%', left: '10%', animation: 'blobMove1 12s ease-in-out infinite' }} />
-                <div className="absolute w-[400px] h-[400px] rounded-full opacity-50 blur-[90px]"
-                    style={{ background: 'radial-gradient(circle, #2563eb, #1e3a8a)', bottom: '10%', right: '5%', animation: 'blobMove2 15s ease-in-out infinite' }} />
-                <div className="absolute w-[350px] h-[350px] rounded-full opacity-40 blur-[110px]"
-                    style={{ background: 'radial-gradient(circle, #a855f7, #6d28d9)', bottom: '30%', left: '35%', animation: 'blobMove3 10s ease-in-out infinite' }} />
-                <div className="absolute w-[250px] h-[250px] rounded-full opacity-30 blur-[80px]"
-                    style={{ background: 'radial-gradient(circle, #3b82f6, #1d4ed8)', top: '40%', right: '25%', animation: 'blobMove1 18s ease-in-out infinite reverse' }} />
+                <div className="absolute w-[420px] h-[420px] rounded-full blur-[120px]"
+                    style={{ background: '#7c3aed', opacity: 0.45, top: '0%', left: '5%', animation: 'blobMove1 9s ease-in-out infinite' }} />
+                <div className="absolute w-[380px] h-[380px] rounded-full blur-[110px]"
+                    style={{ background: '#2563eb', opacity: 0.40, bottom: '5%', right: '0%', animation: 'blobMove2 11s ease-in-out infinite' }} />
+                <div className="absolute w-[320px] h-[320px] rounded-full blur-[100px]"
+                    style={{ background: '#a855f7', opacity: 0.35, top: '45%', left: '40%', animation: 'blobMove3 8s ease-in-out infinite' }} />
+                <div className="absolute w-[280px] h-[280px] rounded-full blur-[90px]"
+                    style={{ background: '#1d4ed8', opacity: 0.35, top: '15%', right: '10%', animation: 'blobMove4 13s ease-in-out infinite' }} />
+                <div className="absolute w-[240px] h-[240px] rounded-full blur-[80px]"
+                    style={{ background: '#6d28d9', opacity: 0.30, bottom: '20%', left: '15%', animation: 'blobMove2 7s ease-in-out infinite reverse' }} />
 
                 {/* Noise texture overlay */}
                 <div className="absolute inset-0 opacity-[0.03]"
