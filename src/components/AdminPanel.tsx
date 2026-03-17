@@ -371,45 +371,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     };
   }, [bookings, editContent.vehicles, userReviews]);
 
-  // Seed Mock Bookings if DB is empty or very low (< 10)
-  useEffect(() => {
-    if (bookings.length <= 10 && editContent.vehicles.length > 0) {
-      const vehicles = editContent.vehicles;
-      const newMocks: Booking[] = [];
-      const statuses: ('Confirmed' | 'Pending' | 'Completed')[] = ['Confirmed', 'Completed', 'Completed', 'Completed', 'Confirmed', 'Pending'];
-      const mockNames = ['Ahmet Yılmaz', 'John Smith', 'Elena Ivanova', 'Hans Müller', 'Ayşe Demir'];
-
-      for (let i = 0; i < 10; i++) {
-        const pickup = DESTINATIONS[Math.floor(Math.random() * DESTINATIONS.length)];
-        let dest = DESTINATIONS[Math.floor(Math.random() * DESTINATIONS.length)];
-        while (dest === pickup) dest = DESTINATIONS[Math.floor(Math.random() * DESTINATIONS.length)];
-
-        const vehicle = vehicles[Math.floor(Math.random() * vehicles.length)];
-        const status = statuses[Math.floor(Math.random() * statuses.length)];
-
-        // Generate date within last 7 days
-        const d = new Date();
-        d.setDate(d.getDate() - Math.floor(Math.random() * 7));
-        const dateStr = d.toISOString().split('T')[0];
-
-        onAddBooking({
-          id: `MOCK-${Date.now()}-${i}`,
-          customerName: mockNames[Math.floor(Math.random() * mockNames.length)],
-          phone: `+90555${Math.floor(1000000 + Math.random() * 9000000)}`,
-          email: 'mock@example.com',
-          pickup,
-          destination: dest,
-          date: dateStr,
-          time: `${Math.floor(10 + Math.random() * 8)}:00`,
-          passengers: Math.floor(1 + Math.random() * vehicle.capacity) || 1,
-          vehicleId: vehicle.id,
-          status,
-          totalPrice: Math.floor(50 + Math.random() * 150),
-          createdAt: d.toISOString()
-        });
-      }
-    }
-  }, [bookings.length, editContent.vehicles, onAddBooking]);
 
   // Keyboard Shortcuts
   useEffect(() => {
