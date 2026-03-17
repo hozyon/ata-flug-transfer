@@ -149,6 +149,7 @@ export interface SiteContent {
     notifyEmail: boolean;
     notifySms: boolean;
     notifySystem: boolean;
+    twoFa: boolean;
   };
 }
 

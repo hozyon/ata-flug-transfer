@@ -8,7 +8,8 @@ interface AccountViewProps {
     ADMIN_AVATARS: string[];
     showToast: (message: string, type: 'success' | 'error' | 'info' | 'delete') => void;
     onExitAdmin: () => void;
-    onSaveAccount: () => void;
+    onSaveAccount: (form?: any) => void;
+    onUpdatePassword: (currentPassword: string, newPassword: string) => Promise<{ error: string | null }>;
     systemUsers: any[];
     setIsAddUserModalOpen: (isOpen: boolean) => void;
     setEditingUserId: (id: string | null) => void;
@@ -21,12 +22,11 @@ const LABEL = "text-[10px] font-black text-slate-500 uppercase tracking-widest";
 
 export const AccountView: React.FC<AccountViewProps> = ({
     accountForm, setAccountForm, accountTab, setAccountTab,
-    ADMIN_AVATARS, showToast, onExitAdmin, onSaveAccount, systemUsers,
+    ADMIN_AVATARS, showToast, onExitAdmin, onSaveAccount, onUpdatePassword, systemUsers,
     setIsAddUserModalOpen, setEditingUserId, setNewUserForm, handleDeleteUser
 }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [showPwFields, setShowPwFields] = useState(false);
-    const [twoFaEnabled, setTwoFaEnabled] = useState(false);
 
     const initials = accountForm.fullName
         ? accountForm.fullName.split(' ').map((w: string) => w[0]).slice(0, 2).join('').toUpperCase()
@@ -195,10 +195,15 @@ export const AccountView: React.FC<AccountViewProps> = ({
                                         </div>
                                     </div>
                                     <button
-                                        onClick={() => { setTwoFaEnabled(!twoFaEnabled); showToast(twoFaEnabled ? '2FA devre dışı' : '2FA etkinleştirildi', 'success'); }}
-                                        className={`relative w-12 h-6 rounded-full transition-colors duration-300 shrink-0 ${twoFaEnabled ? 'bg-emerald-500' : 'bg-white/10'}`}
+                                        onClick={() => {
+                                            const updated = { ...accountForm, twoFa: !accountForm.twoFa };
+                                            setAccountForm(updated);
+                                            onSaveAccount(updated);
+                                            showToast(accountForm.twoFa ? '2FA devre dışı bırakıldı' : '2FA etkinleştirildi', 'success');
+                                        }}
+                                        className={`relative w-12 h-6 rounded-full transition-colors duration-300 shrink-0 ${accountForm.twoFa ? 'bg-emerald-500' : 'bg-white/10'}`}
                                     >
-                                        <div className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-transform duration-300 ${twoFaEnabled ? 'translate-x-7' : 'translate-x-1'}`}></div>
+                                        <div className={`absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-transform duration-300 ${accountForm.twoFa ? 'translate-x-7' : 'translate-x-1'}`}></div>
                                     </button>
                                 </div>
 
@@ -247,10 +252,12 @@ export const AccountView: React.FC<AccountViewProps> = ({
                                                 </div>
                                             )}
                                             <div className="flex justify-end">
-                                                <button onClick={() => {
+                                                <button onClick={async () => {
                                                     if (!accountForm.currentPassword) { showToast('Mevcut şifreyi girin', 'error'); return; }
                                                     if (accountForm.newPassword !== accountForm.confirmPassword) { showToast('Şifreler eşleşmiyor', 'error'); return; }
                                                     if (accountForm.newPassword.length < 6) { showToast('En az 6 karakter gerekli', 'error'); return; }
+                                                    const { error } = await onUpdatePassword(accountForm.currentPassword, accountForm.newPassword);
+                                                    if (error) { showToast(`Şifre güncellenemedi: ${error}`, 'error'); return; }
                                                     showToast('Şifre güncellendi', 'success');
                                                     setAccountForm({ ...accountForm, currentPassword: '', newPassword: '', confirmPassword: '' });
                                                     setShowPwFields(false);
@@ -317,7 +324,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                                                     <p className="text-[10px] text-slate-600">{item.desc}</p>
                                                 </div>
                                             </div>
-                                            <button onClick={() => setAccountForm({ ...accountForm, [item.key]: !accountForm[item.key] })}
+                                            <button onClick={() => { const updated = { ...accountForm, [item.key]: !accountForm[item.key] }; setAccountForm(updated); onSaveAccount(updated); }}
                                                 className={`relative w-10 h-5 rounded-full transition-colors duration-300 shrink-0 ${accountForm[item.key] ? 'bg-emerald-500' : 'bg-white/10'}`}>
                                                 <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform duration-300 ${accountForm[item.key] ? 'translate-x-5' : 'translate-x-0.5'}`}></div>
                                             </button>

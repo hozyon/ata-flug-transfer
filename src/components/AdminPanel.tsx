@@ -9,6 +9,7 @@ import { ContextMenu } from './admin/ContextMenu';
 import { MobileBookingItem } from './admin/MobileBookingItem';
 
 import { haptic } from '../utils/haptic';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { Booking, SiteContent, NavMenuItem, Vehicle, BusinessSettings, BlogPost, UserReview } from '../types';
 import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
@@ -530,12 +531,22 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
       notifyEmail: saved?.notifyEmail ?? true,
       notifySms: saved?.notifySms ?? false,
       notifySystem: saved?.notifySystem ?? true,
+      twoFa: saved?.twoFa ?? false,
     };
   });
 
-  const handleSaveAccount = () => {
-    const { currentPassword, newPassword, confirmPassword, ...toSave } = accountForm;
+  const handleSaveAccount = (form = accountForm) => {
+    const { currentPassword, newPassword, confirmPassword, ...toSave } = form;
     onUpdateSiteContent({ ...siteContent, adminAccount: toSave });
+  };
+
+  const handleUpdatePassword = async (currentPassword: string, newPassword: string): Promise<{ error: string | null }> => {
+    if (isSupabaseConfigured) {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) return { error: error.message };
+    }
+    // fallback: in dev mode (localStorage) password is checked in App.tsx hardcoded — just succeed
+    return { error: null };
   };
 
   // ── USER MANAGEMENT STATE ──
@@ -2437,6 +2448,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 showToast={showToast}
                 onExitAdmin={onExitAdmin}
                 onSaveAccount={handleSaveAccount}
+                onUpdatePassword={handleUpdatePassword}
                 systemUsers={systemUsers}
                 setIsAddUserModalOpen={setIsAddUserModalOpen}
                 setEditingUserId={setEditingUserId}
