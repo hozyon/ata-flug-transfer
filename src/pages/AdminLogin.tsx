@@ -123,37 +123,10 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
     const activeSlogan = LOGIN_SLOGANS[sloganIndex];
 
     return (
-        <div className="h-screen h-[100dvh] flex flex-col lg:flex-row bg-[#030712] relative overflow-hidden">
-            {/* Animated Background */}
-            <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-[-20%] right-[-10%] w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] bg-[var(--color-primary)]/8 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '8s' }} />
-                <div className="absolute bottom-[-20%] left-[-10%] w-[250px] sm:w-[500px] h-[250px] sm:h-[500px] bg-blue-600/5 rounded-full blur-[120px] animate-pulse" style={{ animationDuration: '12s' }} />
-                <div className="hidden sm:block absolute top-[40%] left-[30%] w-[300px] h-[300px] bg-violet-600/5 rounded-full blur-[100px] animate-pulse" style={{ animationDuration: '10s' }} />
-
-                {particles.map(p => (
-                    <div key={p.id}
-                        className="absolute rounded-full bg-[var(--color-primary)]"
-                        style={{
-                            left: `${p.x}%`, width: `${p.size}px`, height: `${p.size}px`,
-                            opacity: p.opacity,
-                            animation: `floatUp ${p.speed}s linear infinite`,
-                            animationDelay: `-${p.delay}s`,
-                        }} />
-                ))}
-
-                <div className="absolute inset-0 opacity-[0.02]"
-                    style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
-            </div>
-
+        <div className="h-screen h-[100dvh] flex bg-[#020617] overflow-hidden">
             <style>{`
-                @keyframes floatUp {
-                    0% { transform: translateY(100vh) scale(0); opacity: 0; }
-                    10% { opacity: var(--particle-opacity, 0.2); transform: scale(1); }
-                    90% { opacity: var(--particle-opacity, 0.2); }
-                    100% { transform: translateY(-20vh) scale(0); opacity: 0; }
-                }
                 @keyframes slideInText {
-                    0% { opacity: 0; transform: translateY(20px); }
+                    0% { opacity: 0; transform: translateY(24px); }
                     100% { opacity: 1; transform: translateY(0); }
                 }
                 @keyframes successPulse {
@@ -165,234 +138,203 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                     20%, 60% { transform: translateX(-6px); }
                     40%, 80% { transform: translateX(6px); }
                 }
+                @keyframes goldShimmer {
+                    0% { background-position: -200% center; }
+                    100% { background-position: 200% center; }
+                }
+                @keyframes fadeUp {
+                    0% { opacity: 0; transform: translateY(16px); }
+                    100% { opacity: 1; transform: translateY(0); }
+                }
             `}</style>
 
-            {/* Left: Login Form */}
-            <div className="w-full lg:w-[480px] xl:w-[520px] shrink-0 flex flex-col justify-center items-center px-5 sm:px-8 md:px-12 py-6 sm:py-8 relative z-10 flex-1 lg:flex-initial overflow-hidden">
-                <div className="w-full max-w-[380px]">
-                    {/* Logo */}
-                    <div className="flex flex-col items-center mb-8 sm:mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-amber-700 flex items-center justify-center shadow-2xl shadow-[var(--color-primary)]/30 mb-5 relative">
-                            <img src="/logo.png" alt="Logo" className="h-10 w-auto object-contain brightness-0 invert" />
-                            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-[3px] border-[#030712] flex items-center justify-center">
-                                <i className="fa-solid fa-check text-[6px] text-white"></i>
+            {/* ── LEFT: Login Panel ── */}
+            <div className="relative w-full lg:w-[460px] xl:w-[500px] shrink-0 flex flex-col justify-between px-8 sm:px-12 py-10 z-10 overflow-hidden">
+                {/* Subtle background texture */}
+                <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(197,160,89,0.06) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(197,160,89,0.04) 0%, transparent 50%)' }} />
+                    <div className="absolute inset-0 opacity-[0.015]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+                    {/* Gold right border */}
+                    <div className="hidden lg:block absolute right-0 top-[10%] bottom-[10%] w-px bg-gradient-to-b from-transparent via-[#c5a059]/20 to-transparent" />
+                </div>
+
+                {/* Top: Logo */}
+                <div className="relative animate-in fade-in slide-in-from-bottom-3 duration-700">
+                    <div className="flex items-center gap-3">
+                        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#c5a059] to-amber-700 flex items-center justify-center shadow-lg shadow-[#c5a059]/20">
+                            <img src="/logo.png" alt="Logo" className="h-7 w-auto object-contain brightness-0 invert" />
+                        </div>
+                        <div>
+                            <p className="text-white font-black text-[13px] tracking-wide">ATA FLUG TRANSFER</p>
+                            <p className="text-[#c5a059]/60 text-[10px] font-bold tracking-[0.2em] uppercase">Yönetim Paneli</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Center: Form */}
+                <div className="relative w-full max-w-[360px] mx-auto">
+                    {loginStage === 'success' ? (
+                        <div className="text-center py-12 animate-in fade-in zoom-in duration-500">
+                            <div className="w-20 h-20 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-5" style={{ animation: 'successPulse 1.5s ease infinite' }}>
+                                <i className="fa-solid fa-check text-emerald-400 text-3xl"></i>
                             </div>
+                            <h3 className="text-white font-black text-xl mb-2 tracking-wide">Hoş Geldiniz</h3>
+                            <p className="text-slate-500 text-sm">Panele yönlendiriliyorsunuz...</p>
                         </div>
-                        <h2 className="text-white/40 font-bold text-[10px] tracking-[0.4em] uppercase">Admin Panel</h2>
-                    </div>
+                    ) : (
+                        <>
+                            <div className="mb-8" style={{ animation: 'fadeUp 0.6s ease both' }}>
+                                <h1 className="text-[28px] font-black text-white mb-2 tracking-tight">Güvenli Giriş</h1>
+                                <p className="text-slate-500 text-[13px]">Yetkili personel erişimi</p>
+                            </div>
 
-                    {/* Login Card */}
-                    <div className={`relative rounded-2xl border transition-all duration-500 ${
-                        loginStage === 'success'
-                            ? 'bg-emerald-500/5 border-emerald-500/20'
-                            : loginStage === 'error'
-                            ? 'bg-red-500/5 border-red-500/20'
-                            : 'bg-white/[0.03] border-white/[0.06]'
-                    }`}
-                        style={loginStage === 'error' ? { animation: 'errorShake 0.5s ease-out' } : undefined}>
-
-                        {isFocused && <div className="absolute -inset-px rounded-2xl bg-gradient-to-b from-[var(--color-primary)]/20 to-transparent opacity-50 pointer-events-none" />}
-
-                        <div className="relative p-5 sm:p-8">
-                            {loginStage === 'success' ? (
-                                <div className="text-center py-8 animate-in fade-in zoom-in duration-500">
-                                    <div className="w-16 h-16 mx-auto rounded-full bg-emerald-500 flex items-center justify-center mb-4 shadow-2xl" style={{ animation: 'successPulse 1.5s ease infinite' }}>
-                                        <i className="fa-solid fa-check text-white text-2xl"></i>
-                                    </div>
-                                    <h3 className="text-white font-bold text-lg mb-1">Hoş Geldiniz!</h3>
-                                    <p className="text-slate-400 text-sm">Yönlendiriliyorsunuz...</p>
+                            {resetSent && (
+                                <div className="mb-5 flex items-center gap-3 px-4 py-3 rounded-xl bg-emerald-500/8 border border-emerald-500/20 animate-in fade-in duration-300">
+                                    <i className="fa-solid fa-envelope-circle-check text-emerald-400 shrink-0"></i>
+                                    <p className="text-emerald-400 text-[12px]">Sıfırlama bağlantısı e-postanıza gönderildi.</p>
                                 </div>
-                            ) : (
-                                <>
-                                    <div className="mb-7 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
-                                        <h1 className="text-[22px] font-bold text-white mb-1.5">Giriş Yapın</h1>
-                                        <p className="text-slate-500 text-[13px]">Panel erişimi için hesap bilgilerinizi girin</p>
-                                    </div>
-
-                                    {/* Password reset success message */}
-                                    {resetSent && (
-                                        <div className="mb-4 flex items-center gap-2.5 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 animate-in fade-in duration-300">
-                                            <i className="fa-solid fa-envelope-circle-check text-emerald-400 text-sm"></i>
-                                            <p className="text-emerald-400 text-[12px]">Şifre sıfırlama bağlantısı e-postanıza gönderildi.</p>
-                                        </div>
-                                    )}
-
-                                    {/* Error message */}
-                                    {errorMessage && (
-                                        <div className="mb-4 flex items-start gap-2.5 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/20 animate-in fade-in duration-300">
-                                            <i className="fa-solid fa-circle-exclamation text-red-400 text-sm mt-0.5 flex-shrink-0"></i>
-                                            <p className="text-red-400 text-[12px] leading-relaxed">{errorMessage}</p>
-                                        </div>
-                                    )}
-
-                                    <form onSubmit={handleSubmit} className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-                                        {/* Email */}
-                                        <div>
-                                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5 mb-2.5">
-                                                <i className="fa-solid fa-envelope text-[8px] text-[var(--color-primary)]"></i> E-posta
-                                            </label>
-                                            <div className={`relative rounded-xl border transition-all duration-300 ${isFocused === 'email' ? 'border-[var(--color-primary)]/50 bg-white/[0.04] shadow-lg shadow-[var(--color-primary)]/5' : 'border-white/[0.06] bg-white/[0.02] hover:border-white/10'}`}>
-                                                <i className={`fa-solid fa-at absolute left-4 top-1/2 -translate-y-1/2 text-sm transition-colors duration-300 ${isFocused === 'email' ? 'text-[var(--color-primary)]' : 'text-slate-600'}`}></i>
-                                                <input
-                                                    ref={emailRef}
-                                                    type="email"
-                                                    value={email}
-                                                    onChange={e => setEmail(e.target.value)}
-                                                    onFocus={() => setIsFocused('email')}
-                                                    onBlur={() => setIsFocused(null)}
-                                                    className="w-full bg-transparent pl-11 pr-4 py-3.5 text-sm text-white placeholder-slate-600 outline-none"
-                                                    placeholder=""
-                                                    autoComplete="email"
-                                                    required
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* Password */}
-                                        <div>
-                                            <div className="flex justify-between items-center mb-2.5">
-                                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                                                    <i className="fa-solid fa-lock text-[8px] text-[var(--color-primary)]"></i> Şifre
-                                                </label>
-                                                <button
-                                                    type="button"
-                                                    onClick={handleForgotPassword}
-                                                    className="text-[10px] text-[var(--color-primary)]/60 hover:text-[var(--color-primary)] font-bold transition-colors">
-                                                    Şifremi Unuttum?
-                                                </button>
-                                            </div>
-                                            <div className={`relative rounded-xl border transition-all duration-300 ${isFocused === 'password' ? 'border-[var(--color-primary)]/50 bg-white/[0.04] shadow-lg shadow-[var(--color-primary)]/5' : 'border-white/[0.06] bg-white/[0.02] hover:border-white/10'}`}>
-                                                <i className={`fa-solid fa-fingerprint absolute left-4 top-1/2 -translate-y-1/2 text-sm transition-colors duration-300 ${isFocused === 'password' ? 'text-[var(--color-primary)]' : 'text-slate-600'}`}></i>
-                                                <input
-                                                    type={showPassword ? 'text' : 'password'}
-                                                    value={password}
-                                                    onChange={e => setPassword(e.target.value)}
-                                                    onFocus={() => setIsFocused('password')}
-                                                    onBlur={() => setIsFocused(null)}
-                                                    className="w-full bg-transparent pl-11 pr-12 py-3.5 text-sm text-white placeholder-slate-600 outline-none"
-                                                    placeholder=""
-                                                    autoComplete="current-password"
-                                                    required
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setShowPassword(!showPassword)}
-                                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-300 transition-colors">
-                                                    <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'} text-sm`}></i>
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        {/* Submit */}
-                                        <button
-                                            type="submit"
-                                            disabled={isLoading || !email || !password}
-                                            className="group relative w-full h-[52px] rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0">
-                                            <div className="absolute inset-0 bg-gradient-to-r from-[var(--color-primary)] to-amber-600 transition-all duration-300 group-hover:from-amber-600 group-hover:to-[var(--color-primary)]" />
-                                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                                                <div className="absolute -inset-full top-0 h-full w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shine_1.5s_ease-in-out_infinite]" />
-                                            </div>
-                                            <div className="relative h-full flex items-center justify-center gap-2.5">
-                                                {loginStage === 'authenticating' ? (
-                                                    <>
-                                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                                                        <span className="font-bold text-white text-sm tracking-wide">Doğrulanıyor...</span>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <span className="font-bold text-white text-sm tracking-wider uppercase">Giriş Yap</span>
-                                                        <i className="fa-solid fa-arrow-right text-white/80 text-sm transition-transform duration-300 group-hover:translate-x-1"></i>
-                                                    </>
-                                                )}
-                                            </div>
-                                        </button>
-                                    </form>
-                                </>
                             )}
-                        </div>
-                    </div>
+                            {errorMessage && (
+                                <div className="mb-5 flex items-start gap-3 px-4 py-3 rounded-xl bg-red-500/8 border border-red-500/20 animate-in fade-in duration-300"
+                                    style={loginStage === 'error' ? { animation: 'errorShake 0.5s ease-out' } : undefined}>
+                                    <i className="fa-solid fa-circle-exclamation text-red-400 text-sm mt-0.5 shrink-0"></i>
+                                    <p className="text-red-400 text-[12px] leading-relaxed">{errorMessage}</p>
+                                </div>
+                            )}
 
-                    {!isSupabaseConfigured && (
-                        <div className="mt-4 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                            <p className="text-amber-400/80 text-[11px] text-center">
-                                <i className="fa-solid fa-triangle-exclamation mr-1.5"></i>
-                                Geliştirme modu — Supabase yapılandırılmadı
-                            </p>
-                        </div>
+                            <form onSubmit={handleSubmit} className="space-y-4" style={{ animation: 'fadeUp 0.6s ease 0.1s both' }}>
+                                {/* Email */}
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-600 uppercase tracking-[0.15em]">E-posta</label>
+                                    <div className={`relative rounded-xl border transition-all duration-200 ${isFocused === 'email' ? 'border-[#c5a059]/40 bg-[#c5a059]/[0.04] shadow-[0_0_20px_rgba(197,160,89,0.08)]' : 'border-white/[0.07] bg-white/[0.02] hover:border-white/[0.12]'}`}>
+                                        <i className={`fa-solid fa-at absolute left-4 top-1/2 -translate-y-1/2 text-xs transition-colors ${isFocused === 'email' ? 'text-[#c5a059]' : 'text-slate-700'}`}></i>
+                                        <input ref={emailRef} type="email" value={email}
+                                            onChange={e => setEmail(e.target.value)}
+                                            onFocus={() => setIsFocused('email')} onBlur={() => setIsFocused(null)}
+                                            className="w-full bg-transparent pl-10 pr-4 py-3.5 text-[13px] text-white placeholder-slate-700 outline-none"
+                                            placeholder="mail@örnek.com" autoComplete="email" required />
+                                    </div>
+                                </div>
+
+                                {/* Password */}
+                                <div className="space-y-2">
+                                    <div className="flex justify-between items-center">
+                                        <label className="text-[10px] font-black text-slate-600 uppercase tracking-[0.15em]">Şifre</label>
+                                        <button type="button" onClick={handleForgotPassword}
+                                            className="text-[10px] text-[#c5a059]/50 hover:text-[#c5a059] font-bold transition-colors">
+                                            Şifremi Unuttum?
+                                        </button>
+                                    </div>
+                                    <div className={`relative rounded-xl border transition-all duration-200 ${isFocused === 'password' ? 'border-[#c5a059]/40 bg-[#c5a059]/[0.04] shadow-[0_0_20px_rgba(197,160,89,0.08)]' : 'border-white/[0.07] bg-white/[0.02] hover:border-white/[0.12]'}`}>
+                                        <i className={`fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-xs transition-colors ${isFocused === 'password' ? 'text-[#c5a059]' : 'text-slate-700'}`}></i>
+                                        <input type={showPassword ? 'text' : 'password'} value={password}
+                                            onChange={e => setPassword(e.target.value)}
+                                            onFocus={() => setIsFocused('password')} onBlur={() => setIsFocused(null)}
+                                            className="w-full bg-transparent pl-10 pr-12 py-3.5 text-[13px] text-white placeholder-slate-700 outline-none"
+                                            placeholder="••••••••••" autoComplete="current-password" required />
+                                        <button type="button" onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-700 hover:text-slate-400 transition-colors">
+                                            <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'} text-xs`}></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Submit */}
+                                <button type="submit" disabled={isLoading || !email || !password}
+                                    className="group relative w-full h-[50px] rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 mt-2">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-[#c5a059] via-amber-500 to-[#c5a059] bg-[length:200%_100%] transition-all duration-500 group-hover:bg-[position:100%_0]" style={{ backgroundPosition: '0% 0%' }} />
+                                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-amber-600 to-amber-500" />
+                                    <div className="relative h-full flex items-center justify-center gap-2.5">
+                                        {loginStage === 'authenticating' ? (
+                                            <>
+                                                <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></div>
+                                                <span className="font-black text-white text-[13px] tracking-widest uppercase">Doğrulanıyor</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <span className="font-black text-white text-[13px] tracking-widest uppercase">Giriş Yap</span>
+                                                <i className="fa-solid fa-arrow-right text-white/70 text-xs transition-transform duration-300 group-hover:translate-x-1"></i>
+                                            </>
+                                        )}
+                                    </div>
+                                </button>
+                            </form>
+                        </>
                     )}
                 </div>
 
-                <div className="absolute bottom-4 left-0 right-0 text-center z-20">
-                    <p className="text-slate-700 text-[10px] font-medium">
-                        © {new Date().getFullYear()} ATA FLUG TRANSFER · <span className="text-slate-600">v3.0.0</span>
-                    </p>
+                {/* Bottom */}
+                <div className="relative flex items-center justify-between">
+                    <p className="text-slate-800 text-[10px]">© {new Date().getFullYear()} Ata Flug Transfer</p>
+                    {!isSupabaseConfigured && (
+                        <span className="text-amber-600/60 text-[10px] flex items-center gap-1">
+                            <i className="fa-solid fa-triangle-exclamation text-[8px]"></i> Dev modu
+                        </span>
+                    )}
                 </div>
             </div>
 
-            {/* Right: Visual Panel */}
-            <div className="hidden lg:flex flex-1 relative overflow-hidden items-center justify-center">
-                <div className="absolute inset-0">
-                    <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=2070&auto=format&fit=crop"
-                        alt="" className="w-full h-full object-cover opacity-30 scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#030712] via-[#030712]/90 to-[#030712]/60"></div>
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#030712] via-transparent to-[#030712]/50"></div>
-                </div>
+            {/* ── RIGHT: Visual Panel ── */}
+            <div className="hidden lg:block flex-1 relative overflow-hidden">
+                {/* Background image */}
+                <img
+                    src="https://images.unsplash.com/photo-1571607388263-1044f9ea01dd?q=85&w=2070&auto=format&fit=crop"
+                    alt=""
+                    className="absolute inset-0 w-full h-full object-cover scale-105"
+                    style={{ filter: 'brightness(0.35) saturate(0.8)' }}
+                />
+                {/* Gradient overlays */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#020617] via-[#020617]/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#020617]/80 via-transparent to-[#020617]/40" />
 
-                <div className="relative z-10 max-w-xl px-8 xl:px-16">
-                    <div className="flex flex-wrap gap-3 lg:gap-4 mb-10">
-                        {[
-                            { value: '99.9%', label: 'Uptime', icon: 'fa-server', color: 'text-emerald-400' },
-                            { value: '256-bit', label: 'Şifreleme', icon: 'fa-shield-halved', color: 'text-blue-400' },
-                            { value: '24/7', label: 'Erişim', icon: 'fa-clock', color: 'text-violet-400' },
-                        ].map((stat, i) => (
-                            <div key={i} className="px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.06] backdrop-blur-sm animate-in fade-in slide-in-from-bottom-4 duration-700"
-                                style={{ animationDelay: `${i * 150 + 300}ms` }}>
-                                <div className="flex items-center gap-2 mb-1">
-                                    <i className={`fa-solid ${stat.icon} ${stat.color} text-[10px]`}></i>
-                                    <span className="text-white font-black text-sm">{stat.value}</span>
-                                </div>
-                                <p className="text-slate-600 text-[9px] font-bold uppercase tracking-wider">{stat.label}</p>
-                            </div>
-                        ))}
+                {/* Diagonal gold accent line */}
+                <div className="absolute top-0 right-[30%] w-px h-full opacity-20"
+                    style={{ background: 'linear-gradient(to bottom, transparent 0%, #c5a059 30%, #c5a059 70%, transparent 100%)', transform: 'rotate(15deg) scaleY(1.5)', transformOrigin: 'top' }} />
+
+                {/* Content */}
+                <div className="absolute inset-0 flex flex-col justify-between p-12 xl:p-16">
+                    {/* Top badge */}
+                    <div className="flex items-center gap-2 animate-in fade-in slide-in-from-left-4 duration-700 delay-300">
+                        <div className="w-1 h-8 rounded-full bg-gradient-to-b from-[#c5a059] to-amber-700" />
+                        <div>
+                            <p className="text-[#c5a059] text-[10px] font-black tracking-[0.3em] uppercase">Antalya'nın</p>
+                            <p className="text-white/60 text-[10px] font-bold tracking-[0.2em] uppercase">VIP Transfer Hizmeti</p>
+                        </div>
                     </div>
 
-                    <div className="mb-8" key={sloganIndex}>
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 mb-6"
-                            style={{ animation: 'slideInText 0.6s ease-out' }}>
-                            <span className="w-1.5 h-1.5 bg-[var(--color-primary)] rounded-full shadow-[0_0_8px_var(--color-primary)]"></span>
-                            <span className="text-[10px] font-bold text-[var(--color-primary)] uppercase tracking-widest">Güvenli Erişim</span>
-                        </div>
-                        <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-white mb-5 leading-[1.15]"
-                            style={{ animation: 'slideInText 0.6s ease-out 0.1s both' }}>
-                            {activeSlogan.title}{' '}
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-primary)] to-amber-400">
-                                {activeSlogan.highlight}
+                    {/* Center: Main headline */}
+                    <div className="max-w-lg">
+                        <p className="text-[#c5a059]/60 text-xs font-black tracking-[0.4em] uppercase mb-4"
+                            style={{ animation: 'slideInText 0.7s ease 0.4s both' }}>
+                            Yönetim Merkezi
+                        </p>
+                        <h2 className="text-4xl xl:text-5xl font-black text-white leading-[1.1] mb-6 tracking-tight"
+                            style={{ animation: 'slideInText 0.7s ease 0.5s both' }}>
+                            Kusursuz Hizmet,<br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#c5a059] via-amber-400 to-[#c5a059]">
+                                Akıllı Yönetim
                             </span>
                         </h2>
-                        <p className="text-slate-400 text-[15px] leading-relaxed max-w-md"
-                            style={{ animation: 'slideInText 0.6s ease-out 0.2s both' }}>
-                            {activeSlogan.desc}
+                        <p className="text-slate-400 text-[14px] leading-relaxed max-w-sm"
+                            style={{ animation: 'slideInText 0.7s ease 0.6s both' }}>
+                            Tüm transfer operasyonlarınızı tek ekrandan yönetin. Gerçek zamanlı rezervasyon takibi, gelir analizi ve filo yönetimi.
                         </p>
                     </div>
 
-                    <div className="flex gap-1.5">
-                        {LOGIN_SLOGANS.map((_, i) => (
-                            <button key={i} onClick={() => setSloganIndex(i)}
-                                className={`h-1 rounded-full transition-all duration-500 ${i === sloganIndex ? 'w-8 bg-[var(--color-primary)]' : 'w-1.5 bg-white/10 hover:bg-white/20'}`} />
-                        ))}
-                    </div>
-
-                    <div className="mt-14 grid grid-cols-3 gap-3">
+                    {/* Bottom: Stats row */}
+                    <div className="flex items-center gap-6" style={{ animation: 'slideInText 0.7s ease 0.7s both' }}>
                         {[
-                            { icon: 'fa-chart-mixed', label: 'Analitik Dashboard', color: 'from-blue-500/10 to-indigo-500/5', border: 'border-blue-500/10' },
-                            { icon: 'fa-users-gear', label: 'Çoklu Kullanıcı', color: 'from-violet-500/10 to-purple-500/5', border: 'border-violet-500/10' },
-                            { icon: 'fa-bell', label: 'Akıllı Bildirimler', color: 'from-[var(--color-primary)]/10 to-amber-500/5', border: 'border-[var(--color-primary)]/10' },
-                        ].map((feat, i) => (
-                            <div key={i} className={`p-3 rounded-xl bg-gradient-to-br ${feat.color} border ${feat.border} backdrop-blur-sm animate-in fade-in slide-in-from-bottom-4 duration-700`}
-                                style={{ animationDelay: `${i * 100 + 600}ms` }}>
-                                <i className={`fa-solid ${feat.icon} text-white/40 text-lg mb-2 block`}></i>
-                                <p className="text-white/50 text-[10px] font-bold">{feat.label}</p>
-                            </div>
+                            { value: '7/24', label: 'Kesintisiz Erişim' },
+                            { value: '256-bit', label: 'SSL Şifreleme' },
+                            { value: '99.9%', label: 'Sistem Uptime' },
+                        ].map((stat, i) => (
+                            <React.Fragment key={stat.label}>
+                                <div>
+                                    <p className="text-white font-black text-lg leading-none">{stat.value}</p>
+                                    <p className="text-slate-600 text-[10px] font-bold uppercase tracking-wider mt-1">{stat.label}</p>
+                                </div>
+                                {i < 2 && <div className="w-px h-8 bg-white/[0.07]" />}
+                            </React.Fragment>
                         ))}
                     </div>
                 </div>
