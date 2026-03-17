@@ -226,117 +226,7 @@ export const DESTINATIONS = [
 
 export const BUSINESS_INFO = INITIAL_SITE_CONTENT.business;
 
-export const REVIEWS = [
-  // Almanca Yorumlar (35 adet)
-  { id: 1, name: "Hans Müller", country: "🇩🇪", lang: "de", rating: 5, text: "Ausgezeichneter Service von Ata Flug Transfer! Der Fahrer Herr İsmail war pünktlich und sehr freundlich. Das Fahrzeug war sauber und komfortabel. Absolut empfehlenswert!" },
-  { id: 2, name: "Klaus Schmidt", country: "🇩🇪", lang: "de", rating: 5, text: "Perfekter Transfer vom Flughafen Antalya zum Hotel in Belek. Herr İsmail hat auf unseren verspäteten Flug gewartet. Super Service!" },
-  { id: 3, name: "Wolfgang Bauer", country: "🇩🇪", lang: "de", rating: 5, text: "Wir haben den VIP-Transfer von Ata Flug für unsere Familie gebucht. Alles war perfekt organisiert. Die Mercedes V-Klasse war sehr luxuriös." },
-  { id: 4, name: "Thomas Weber", country: "🇦🇹", lang: "de", rating: 5, text: "Lieber İsmail, vielen Dank für den tollen Service! Wir kommen jedes Jahr nach Antalya und werden immer Ata Flug Transfer nutzen." },
-  { id: 5, name: "Markus Fischer", country: "🇩🇪", lang: "de", rating: 5, text: "Der Fahrer hat auf unseren verspäteten Flug gewartet - 3 Stunden ohne Aufpreis! Das nenne ich Kundenservice. Danke Herr İsmail!" },
-  { id: 6, name: "Stefan Huber", country: "🇨🇭", lang: "de", rating: 5, text: "Wir kommen jedes Jahr nach Antalya und nutzen immer Ata Flug Transfer. Herr İsmail ist der beste! Zuverlässig, freundlich, professionell." },
-  { id: 7, name: "Heinz Braun", country: "🇩🇪", lang: "de", rating: 4, text: "Preis-Leistung stimmt bei Ata Flug. Fahrer İsmail war sehr professionell. Wir hatten eine angenehme Fahrt nach Side." },
-  { id: 8, name: "Gerhard Hoffmann", country: "🇩🇪", lang: "de", rating: 5, text: "Sauberes Fahrzeug, klimatisiert, Wasser und Snacks. Perfekt für den heißen Sommer! Ata Flug Transfer - immer wieder gerne!" },
-  { id: 9, name: "Franz Schneider", country: "🇦🇹", lang: "de", rating: 5, text: "Absolut empfehlenswert! Herr İsmail hat uns sogar Restaurant-Tipps gegeben. Werden bei unserem nächsten Urlaub wiederkommen." },
-  { id: 10, name: "Jürgen Meyer", country: "🇩🇪", lang: "de", rating: 5, text: "Lieber İsmail, danke für den tollen Service! Ihre Firma Ata Flug ist die beste in Antalya. Wir werden Sie all unseren Freunden empfehlen." },
-  { id: 11, name: "Ralf Zimmermann", country: "🇩🇪", lang: "de", rating: 5, text: "Unser Flug hatte 4 Stunden Verspätung. Herr İsmail hat die ganze Zeit gewartet und uns freundlich empfangen. Top Service!" },
-  { id: 12, name: "Peter Krause", country: "🇩🇪", lang: "de", rating: 5, text: "Die Buchung über WhatsApp war super einfach. Ata Flug hat sofort geantwortet. Am Flughafen stand Herr İsmail mit Namensschild bereit." },
-  { id: 13, name: "Uwe Richter", country: "🇩🇪", lang: "de", rating: 4, text: "Wir sind eine Gruppe von 8 Personen. Ata Flug hat uns einen Sprinter geschickt. Sehr komfortabel und günstig!" },
-  { id: 14, name: "Dieter Koch", country: "🇩🇪", lang: "de", rating: 5, text: "Kindersitze wurden kostenlos bereitgestellt. Bei Ata Flug denkt man an alles. Vielen Dank Herr İsmail!" },
-  { id: 15, name: "Bernd Schäfer", country: "🇩🇪", lang: "de", rating: 5, text: "Vom Flughafen Antalya nach Kemer - schnell, sicher, komfortabel. Ata Flug Transfer ist unser Favorit!" },
-  { id: 16, name: "Günter Wagner", country: "🇩🇪", lang: "de", rating: 5, text: "Herr İsmail spricht sehr gut Deutsch! Das hat die Kommunikation so einfach gemacht. Ata Flug - wir kommen wieder!" },
-  { id: 17, name: "Helmut Becker", country: "🇩🇪", lang: "de", rating: 5, text: "Nachtflug um 3 Uhr morgens - kein Problem für Ata Flug. Herr İsmail war pünktlich da. Großartig!" },
-  { id: 18, name: "Werner Schulz", country: "🇩🇪", lang: "de", rating: 5, text: "Die Mercedes E-Klasse war wie neu. Leder, Klimaanlage, Wasser - alles dabei. Danke Ata Flug Transfer!" },
-  { id: 19, name: "Karl Lange", country: "🇩🇪", lang: "de", rating: 5, text: "Lieber İsmail, Sie haben unseren Urlaub perfekt gestartet. Vielen herzlichen Dank für alles!" },
-  { id: 20, name: "Fritz Maier", country: "🇦🇹", lang: "de", rating: 5, text: "Ata Flug Transfer - jahrelange Erfahrung merkt man sofort. Professionell von A bis Z. Herr İsmail ist ein Profi!" },
-  { id: 21, name: "Manfred Keller", country: "🇩🇪", lang: "de", rating: 4, text: "Transfer nach Alanya - 1,5 Stunden Fahrt wie im Flug vergangen. Bequeme Sitze, gute Musik. Danke İsmail!" },
-  { id: 22, name: "Horst Braun", country: "🇩🇪", lang: "de", rating: 5, text: "Wir haben Ata Flug über Google gefunden. Beste Entscheidung! İsmail Bey ist sehr zuverlässig." },
-  { id: 23, name: "Erich Neumann", country: "🇩🇪", lang: "de", rating: 5, text: "Der Rücktransfer zum Flughafen war genauso perfekt. Ata Flug denkt an alles. Pünktlich wie immer!" },
-  { id: 24, name: "Otto Schwarz", country: "🇨🇭", lang: "de", rating: 5, text: "Dear İsmail, your service is outstanding! Ata Flug Transfer is the best in Turkey. Thank you so much!" },
-  { id: 25, name: "Ludwig Herrmann", country: "🇩🇪", lang: "de", rating: 5, text: "Hin- und Rücktransfer gebucht. Beide Male pünktlich, freundlich, professionell. İsmail Bey - Sie sind der Beste!" },
-  { id: 26, name: "Siegfried Paul", country: "🇩🇪", lang: "de", rating: 5, text: "Unser Gepäck wurde sorgfältig behandelt. Der Fahrer hat uns bei allem geholfen. Ata Flug - Top Service!" },
-  { id: 27, name: "Rudolf Frank", country: "🇩🇪", lang: "de", rating: 5, text: "Die WhatsApp-Kommunikation mit İsmail Bey war super. Schnelle Antworten, klare Infos. Sehr professionell!" },
-  { id: 28, name: "Herbert König", country: "🇦🇹", lang: "de", rating: 5, text: "Wir sind Stammkunden bei Ata Flug Transfer. Seit 5 Jahren immer zufrieden. İsmail Bey kennt uns schon!" },
-  { id: 29, name: "Erwin Kaiser", country: "🇩🇪", lang: "de", rating: 5, text: "Nach Kaş gefahren - lange Strecke, aber sehr angenehm. İsmail Bey hat uns viel über die Region erzählt." },
-  { id: 30, name: "Alfred Vogel", country: "🇩🇪", lang: "de", rating: 5, text: "Ata Flug Transfer hat unsere Hochzeitsreise perfekt gestartet. Champagner im Auto! Danke İsmail Bey!" },
-  { id: 31, name: "Joachim Roth", country: "🇩🇪", lang: "de", rating: 4, text: "Flughafen Antalya nach Lara - nur 20 Minuten. Schnell, sauber, günstig. Ata Flug ist die beste Wahl!" },
-  { id: 32, name: "Ernst Werner", country: "🇩🇪", lang: "de", rating: 5, text: "İsmail Bey hat auf uns mit einem Schild gewartet. Sehr organisiert. Ata Flug Transfer - immer wieder!" },
-  { id: 33, name: "Gottfried Fuchs", country: "🇨🇭", lang: "de", rating: 5, text: "Schweizer Pünktlichkeit trifft auf türkische Gastfreundschaft. Ata Flug ist perfekt! Danke İsmail!" },
-  { id: 34, name: "Wilfried Haas", country: "🇩🇪", lang: "de", rating: 5, text: "Wir haben 3 Kindersitze gebraucht. Ata Flug hat alles organisiert. Kostenlos! Vielen Dank!" },
-  { id: 35, name: "Reinhard Berg", country: "🇩🇪", lang: "de", rating: 5, text: "Lieber İsmail Bey, Sie haben uns den Start in den Urlaub versüßt. Ata Flug Transfer ist einfach klasse!" },
-
-  // Rusça Yorumlar (35 adet)
-  { id: 36, name: "Иван Петров", country: "🇷🇺", lang: "ru", rating: 5, text: "Отличный сервис от Ata Flug Transfer! Водитель Исмаил Бей был вовремя и очень вежлив. Машина была чистой и удобной. Рекомендую!" },
-  { id: 37, name: "Александр Иванов", country: "🇷🇺", lang: "ru", rating: 5, text: "Лучший трансфер в Анталии! Ata Flug - это качество и надежность. Исмаил Бей - профессионал своего дела!" },
-  { id: 38, name: "Дмитрий Соколов", country: "🇷🇺", lang: "ru", rating: 5, text: "Заказывали трансфер в Сиде через Ata Flug. Все прошло отлично! Исмаил Бей ждал нас с табличкой. Спасибо!" },
-  { id: 39, name: "Сергей Новиков", country: "🇷🇺", lang: "ru", rating: 5, text: "Водитель Исмаил встретил нас с табличкой в аэропорту. Всё очень организовано. Ata Flug Transfer - лучшие!" },
-  { id: 40, name: "Ольга Козлова", country: "🇷🇺", lang: "ru", rating: 5, text: "Детское кресло предоставили бесплатно. Ata Flug думает о клиентах! Очень довольны сервисом Исмаила Бея!" },
-  { id: 41, name: "Елена Морозова", country: "🇷🇺", lang: "ru", rating: 5, text: "Быстрый ответ в WhatsApp от Исмаила. Удобное бронирование! Ata Flug Transfer - рекомендую всем друзьям!" },
-  { id: 42, name: "Андрей Волков", country: "🇷🇺", lang: "ru", rating: 5, text: "Водитель Исмаил Бей был очень дружелюбным и помог с багажом. Ata Flug - это VIP сервис по доступной цене!" },
-  { id: 43, name: "Наталья Белова", country: "🇷🇺", lang: "ru", rating: 5, text: "Кондиционер, холодная вода, Wi-Fi в машине. Пять звезд для Ata Flug Transfer! Исмаил Бей - лучший водитель!" },
-  { id: 44, name: "Михаил Кузнецов", country: "🇷🇺", lang: "ru", rating: 5, text: "Дорогой Исмаил, спасибо за отличный сервис! Ata Flug Transfer - это надежность и комфорт. Будем рекомендовать!" },
-  { id: 45, name: "Татьяна Смирнова", country: "🇷🇺", lang: "ru", rating: 5, text: "Наш рейс задержался на 5 часов. Исмаил Бей ждал нас без дополнительной платы! Ata Flug - это сервис!" },
-  { id: 46, name: "Владимир Попов", country: "🇷🇺", lang: "ru", rating: 5, text: "Трансфер в Кемер прошел идеально. Мерседес V-класса, кожаные сиденья. Ata Flug Transfer - наш выбор!" },
-  { id: 47, name: "Анна Федорова", country: "🇷🇺", lang: "ru", rating: 4, text: "Исмаил Бей говорит по-русски! Это так удобно. Ata Flug думает о русских туристах. Большое спасибо!" },
-  { id: 48, name: "Николай Семенов", country: "🇷🇺", lang: "ru", rating: 5, text: "Заказали трансфер для группы 12 человек. Ata Flug прислали 2 машины. Все было организовано идеально!" },
-  { id: 49, name: "Марина Орлова", country: "🇷🇺", lang: "ru", rating: 5, text: "Летели ночным рейсом. Исмаил Бей встретил нас в 4 утра с улыбкой! Ata Flug - настоящие профессионалы!" },
-  { id: 50, name: "Алексей Лебедев", country: "🇷🇺", lang: "ru", rating: 5, text: "Ata Flug Transfer работает уже много лет. Это чувствуется в каждой детали. Исмаил Бей - мастер своего дела!" },
-  { id: 51, name: "Екатерина Новикова", country: "🇷🇺", lang: "ru", rating: 5, text: "Дорогой Исмаил, спасибо за прекрасный сервис! Вы сделали наш отпуск незабываемым с первых минут!" },
-  { id: 52, name: "Виктор Зайцев", country: "🇷🇺", lang: "ru", rating: 5, text: "Мы ездим в Анталию каждый год и всегда выбираем Ata Flug. Исмаил Бей уже как друг семьи!" },
-  { id: 53, name: "Светлана Павлова", country: "🇷🇺", lang: "ru", rating: 4, text: "Трансфер в Аланью - долгая дорога, но с Ata Flug время пролетело незаметно. Удобно и комфортно!" },
-  { id: 54, name: "Игорь Голубев", country: "🇷🇺", lang: "ru", rating: 5, text: "Исмаил Бей порекомендовал отличные рестораны в Сиде. Не просто водитель, а настоящий гид! Ata Flug - супер!" },
-  { id: 55, name: "Оксана Тимофеева", country: "🇷🇺", lang: "ru", rating: 5, text: "Заказывали через WhatsApp у Исмаила. Ответил за 5 минут! Ata Flug Transfer - быстро и удобно!" },
-  { id: 56, name: "Роман Соловьев", country: "🇷🇺", lang: "ru", rating: 5, text: "VIP трансфер - это про Ata Flug. Мерседес S-класса, шампанское, фрукты. Исмаил Бей - профессионал!" },
-  { id: 57, name: "Людмила Королева", country: "🇷🇺", lang: "ru", rating: 5, text: "Мы с мужем отмечали годовщину свадьбы. Ata Flug украсили машину цветами! Спасибо Исмаилу Бею!" },
-  { id: 58, name: "Денис Воробьев", country: "🇷🇺", lang: "ru", rating: 4, text: "Цена-качество у Ata Flug Transfer на высоте. Исмаил Бей - честный и надежный. Рекомендую!" },
-  { id: 59, name: "Ирина Максимова", country: "🇷🇺", lang: "ru", rating: 5, text: "Трое детей с нами - Ata Flug предоставили 3 детских кресла бесплатно! Исмаил Бей - спасибо огромное!" },
-  { id: 60, name: "Павел Егоров", country: "🇷🇺", lang: "ru", rating: 5, text: "Обратный трансфер в аэропорт был таким же идеальным. Ata Flug - стабильное качество. Исмаил Бей - лучший!" },
-  { id: 61, name: "Юлия Романова", country: "🇷🇺", lang: "ru", rating: 5, text: "Дорогой Исмаил, ваш сервис превзошел все ожидания! Ata Flug Transfer - это эталон качества в Турции!" },
-  { id: 62, name: "Константин Миронов", country: "🇷🇺", lang: "ru", rating: 5, text: "Летели из Москвы, трансфер до Каша - 4 часа дороги. С Ata Flug это было комфортное путешествие!" },
-  { id: 63, name: "Валентина Степанова", country: "🇷🇺", lang: "ru", rating: 5, text: "Исмаил Бей встретил нас с холодными напитками в жару. Такая забота о клиентах! Ata Flug - молодцы!" },
-  { id: 64, name: "Артем Козлов", country: "🇷🇺", lang: "ru", rating: 5, text: "Бронировал через сайт Ata Flug. Получил подтверждение и инструкции моментально. Исмаил Бей на связи 24/7!" },
-  { id: 65, name: "Кристина Белова", country: "🇷🇺", lang: "ru", rating: 5, text: "Мы группа из 15 человек. Ata Flug организовали трансфер безупречно. Исмаил Бей - организатор от бога!" },
-  { id: 66, name: "Евгений Крылов", country: "🇷🇺", lang: "ru", rating: 5, text: "Многолетний опыт Ata Flug чувствуется сразу. Всё продумано до мелочей. Исмаил Бей знает свое дело!" },
-  { id: 67, name: "Надежда Сорокина", country: "🇷🇺", lang: "ru", rating: 5, text: "Ночной рейс, уставшие дети - Исмаил Бей создал тихую атмосферу в машине. Ata Flug думает о семьях!" },
-  { id: 68, name: "Григорий Макаров", country: "🇷🇺", lang: "ru", rating: 5, text: "Прилетели в Анталию в 10-й раз. И в 10-й раз выбираем Ata Flug Transfer! Исмаил Бей - наш постоянный водитель!" },
-  { id: 69, name: "Анастасия Филиппова", country: "🇷🇺", lang: "ru", rating: 5, text: "Дорогой Исмаил, вы и ваша команда Ata Flug - просто супер! Сервис мирового класса в Турции. Браво!" },
-  { id: 70, name: "Вадим Комаров", country: "🇷🇺", lang: "ru", rating: 5, text: "Ata Flug Transfer - это гарантия спокойного начала отпуска. Исмаил Бей никогда не подводит. Спасибо!" },
-
-  // İngilizce Yorumlar (15 adet)
-  { id: 71, name: "John Smith", country: "🇬🇧", lang: "en", rating: 5, text: "Amazing transfer service from Ata Flug! Professional driver Mr. İsmail, clean Mercedes, smooth ride. Highly recommend for airport transfers!" },
-  { id: 72, name: "Emma Wilson", country: "🇬🇧", lang: "en", rating: 5, text: "Best transfer service in Antalya! Mr. İsmail from Ata Flug tracked our flight and was waiting for us. Exceptional service!" },
-  { id: 73, name: "Sarah Johnson", country: "🇺🇸", lang: "en", rating: 5, text: "Smooth and comfortable ride with Ata Flug Transfer. Dear İsmail was waiting with a sign. Great experience from start to finish!" },
-  { id: 74, name: "Michael Brown", country: "🇬🇧", lang: "en", rating: 5, text: "Used Ata Flug Transfer twice now. Mr. İsmail provides consistently excellent service! Will use again and again!" },
-  { id: 75, name: "James Taylor", country: "🇦🇺", lang: "en", rating: 5, text: "Long drive to Kas but the Mercedes from Ata Flug was so comfortable. Mr. İsmail made the journey enjoyable. Great service!" },
-  { id: 76, name: "David Miller", country: "🇨🇦", lang: "en", rating: 5, text: "WhatsApp support from Ata Flug was very responsive. İsmail answered within minutes. Easy booking process!" },
-  { id: 77, name: "Lisa Anderson", country: "🇺🇸", lang: "en", rating: 4, text: "Our driver Mr. İsmail from Ata Flug was amazing! So friendly and helpful. Made us feel like VIPs!" },
-  { id: 78, name: "Robert Williams", country: "🇬🇧", lang: "en", rating: 5, text: "Air-conditioned Mercedes, cold water, wifi - all provided by Ata Flug Transfer. Five star service from Mr. İsmail!" },
-  { id: 79, name: "Jennifer Davis", country: "🇺🇸", lang: "en", rating: 5, text: "Will definitely use Ata Flug again on our next trip to Antalya. Dear İsmail, thank you for everything!" },
-  { id: 80, name: "Christopher Martin", country: "🇬🇧", lang: "en", rating: 5, text: "Ata Flug Transfer is the gold standard for airport transfers in Turkey. Mr. İsmail sets the bar high!" },
-  { id: 81, name: "Amanda White", country: "🇺🇸", lang: "en", rating: 5, text: "Family of 6 with lots of luggage - no problem for Ata Flug! Mr. İsmail organized everything perfectly." },
-  { id: 82, name: "Daniel Thompson", country: "🇦🇺", lang: "en", rating: 5, text: "Dear İsmail and the Ata Flug team - you made our honeymoon start perfectly. Champagne in the car was a nice touch!" },
-  { id: 83, name: "Jessica Garcia", country: "🇺🇸", lang: "en", rating: 4, text: "Years of experience shows! Ata Flug Transfer knows exactly what travelers need. Mr. İsmail is a pro!" },
-  { id: 84, name: "Andrew Robinson", country: "🇬🇧", lang: "en", rating: 5, text: "Flight delayed by 3 hours - Mr. İsmail from Ata Flug waited without any extra charge. That's real customer service!" },
-  { id: 85, name: "Stephanie Lee", country: "🇨🇦", lang: "en", rating: 5, text: "Ata Flug Transfer - the only transfer company you need in Antalya. Mr. İsmail keeps his word every time!" },
-
-  // Türkçe Yorumlar (10 adet)
-  { id: 86, name: "Ahmet Yılmaz", country: "🇹🇷", lang: "tr", rating: 5, text: "Mukemmel hizmet! Ata Flug ile herşey cok güzeldi. İsmail abi çok nazik ve yardımseverdi. Kesinlkle tavsiye ediyorum herkese." },
-  { id: 87, name: "Mehmet Kaya", country: "🇹🇷", lang: "tr", rating: 5, text: "Yılların tecrübesi kendini gösteriyo. Ata Flug ve İsmail Ağabey ile herşey süperdi! Gelecek seferde yine arayacağız." },
-  { id: 88, name: "Fatma Demir", country: "🇹🇷", lang: "tr", rating: 5, text: "Gece uçuşumuz için transfer aldık. Şoför İsmail Bey saatlerce bekledi, çok teşekkürler Ata Flug!" },
-  { id: 89, name: "Ayşe Öztürk", country: "🇹🇷", lang: "tr", rating: 5, text: "Bebek koltugu istedik, Ata Flug hicbir sorun cıkarmadı. Ucretsiz verdiler. Sevgili İsmail Bey cok yardımcı oldu teşekkurler!" },
-  { id: 90, name: "Ali Çelik", country: "🇹🇷", lang: "tr", rating: 5, text: "Alanya'ya transfer aldık. Fiyat/performans harika! Ata Flug Transfer Antalya'nın en iyisi." },
-  { id: 91, name: "Zeynep Arslan", country: "🇹🇷", lang: "tr", rating: 5, text: "Whatsapptan İsmail abiye ulaştık, cok hızlı donüş aldık. Ata Flug ile iletisim bayağı kolay." },
-  { id: 92, name: "Mustafa Şahin", country: "🇹�R", lang: "tr", rating: 5, text: "Şoför İsmail Bey çok yardımcı oldu. Ata Flug Transfer'e teşekkürler! Her zaman tercihimiz olacak." },
-  { id: 93, name: "Hakan Aydın", country: "🇹🇷", lang: "tr", rating: 4, text: "Klimalı araç, soğuk su ikramı. Ata Flug'dan 5 yıldızlı hizmet! İsmail Bey gerçek bir profesyonel." },
-  { id: 94, name: "Elif Yıldız", country: "🇹🇷", lang: "tr", rating: 5, text: "Sevgili İsmail Ağabey, Ata Flug ile harika bi deneyim yaşadık. Tatilmiz sizinle başladı, cok tesekürler!" },
-  { id: 95, name: "Can Demir", country: "🇹🇷", lang: "tr", rating: 5, text: "10 kişilik grup için Ata Flug'dan minibüs tuttuk. İsmail Bey mükemmel organize etti. Herkese tavsiye ederim!" },
-
-  // Diğer Diller (5 adet)
-  { id: 96, name: "Jan de Vries", country: "🇳🇱", lang: "nl", rating: 5, text: "Perfecte service van Ata Flug Transfer! İsmail Bey was op tijd en zeer vriendelijk. Aanrader!" },
-  { id: 97, name: "محمد علي", country: "🇸🇦", lang: "ar", rating: 5, text: "خدمة ممتازة من Ata Flug! إسماعيل بيه كان محترفاً جداً. السيارة نظيفة ومريحة. شكراً جزيلاً!" },
-  { id: 98, name: "Sophie de Groot", country: "🇳🇱", lang: "nl", rating: 5, text: "Wij zijn zeer tevreden met Ata Flug Transfer. İsmail Bey is een topkeeper. Bedankt!" },
-  { id: 99, name: "أحمد محمد", country: "🇦🇪", lang: "ar", rating: 5, text: "خدمة VIP حقيقية من Ata Flug! سيارة مرسيدس فاخرة وإسماعيل بيه سائق محترف. ننصح بها للجميع." },
-  { id: 100, name: "Pieter van Dijk", country: "🇳🇱", lang: "nl", rating: 5, text: "Dear İsmail, Ata Flug Transfer is de beste in Antalya. Absoluut aan te bevelen. Bedankt voor alles!" }
-];
+export const REVIEWS: { id: number; name: string; country: string; lang: string; rating: number; text: string }[] = [];
 
 import { BlogPost } from './types';
 
@@ -766,7 +656,7 @@ Aşağıdaki butona tıklayarak WhatsApp üzerinden saniyeler içinde fiyat alab
     seoTitle: `${region.name} Transfer ve Gezi Rehberi 2024 | ${region.name} Ulaşım`,
     seoDescription: `${region.name} ulaşım rehberi ve gezilecek yerler. Antalya Havalimanı'ndan ${region.name} VIP transfer, restoran önerileri ve aktiviteler.`,
     isPublished: true,
-    viewCount: Math.floor(Math.random() * 1000) + 100
+    viewCount: 0
   };
 });
 

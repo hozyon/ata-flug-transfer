@@ -87,6 +87,7 @@ const TransferDestination: React.FC = () => {
         <img
           src={region.image || '/bg1.png'}
           alt={`${region.name} Transfer`}
+          loading="lazy"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent" />

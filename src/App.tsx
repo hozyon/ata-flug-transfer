@@ -6,7 +6,7 @@ import Navbar from './components/Navbar';
 import BookingForm from './components/BookingForm';
 import TextureBackground from './components/TextureBackground';
 import { useLanguage } from './i18n/LanguageContext';
-import AdminPanel from './components/AdminPanel';
+const AdminPanel = React.lazy(() => import('./components/AdminPanel'));
 import { REVIEWS, BLOG_POSTS, BUSINESS_INFO } from './constants';
 import { SiteProvider } from './SiteContext';
 import { useAppStore } from './store/useAppStore';
@@ -174,15 +174,17 @@ const App: React.FC = () => {
         <main className={`${isLoginPage ? 'flex-1' : 'flex-grow'} ${isAdmin ? 'bg-slate-900' : ''}`}>
           {isAdmin ? (
             <ErrorBoundary>
-              <AdminPanel
-                bookings={bookings}
-                onUpdateStatus={updateBookingStatus}
-                onAddBooking={handleNewBooking}
-                siteContent={siteContent}
-                onUpdateSiteContent={handleUpdateSiteContent}
-                onDeleteBooking={handleDeleteBooking}
-                onExitAdmin={handleExitAdmin}
-              />
+              <React.Suspense fallback={<div className="flex h-screen w-full items-center justify-center bg-[#0f172a]"><div className="h-10 w-10 animate-spin rounded-full border-4 border-[#c5a059] border-t-transparent" /></div>}>
+                <AdminPanel
+                  bookings={bookings}
+                  onUpdateStatus={updateBookingStatus}
+                  onAddBooking={handleNewBooking}
+                  siteContent={siteContent}
+                  onUpdateSiteContent={handleUpdateSiteContent}
+                  onDeleteBooking={handleDeleteBooking}
+                  onExitAdmin={handleExitAdmin}
+                />
+              </React.Suspense>
             </ErrorBoundary>
           ) : (
             <Routes>

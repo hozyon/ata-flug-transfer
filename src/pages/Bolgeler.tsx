@@ -249,6 +249,7 @@ const Bolgeler: React.FC = () => {
                     <img
                         src="/images/antalya-map-safe.png"
                         alt="Antalya Map Safe Zone"
+                        loading="lazy"
                         className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-slate-900/60"></div>

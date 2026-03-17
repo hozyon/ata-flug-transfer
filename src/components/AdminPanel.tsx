@@ -162,18 +162,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   useEffect(() => { setSelectedBlogs([]); }, [blogTab]);
   useEffect(() => { setSelectedHeroImages([]); }, [heroBackgrounds.length]);
 
-  const DEFAULT_USER_REVIEWS: UserReview[] = [
-    { id: 'ur1', name: 'Hans Müller', country: '🇩🇪', lang: 'de', rating: 5, text: 'Sehr pünktlich und professionell. Der Fahrer war freundlich und das Auto war sehr sauber. Empfehle ich weiter!', status: 'pending', createdAt: '2026-02-18T14:30:00Z' },
-    { id: 'ur2', name: 'Sophie Laurent', country: '🇫🇷', lang: 'fr', rating: 4, text: 'Bon service de transfert depuis l\'aéroport. Le chauffeur était à l\'heure et très poli. Je recommande.', status: 'pending', createdAt: '2026-02-18T10:15:00Z' },
-    { id: 'ur3', name: 'James Wilson', country: '🇬🇧', lang: 'en', rating: 5, text: 'Excellent airport transfer service! Driver was waiting for us at the terminal. Very comfortable Mercedes van.', status: 'pending', createdAt: '2026-02-17T22:45:00Z' },
-    { id: 'ur4', name: 'Marco Rossi', country: '🇮🇹', lang: 'it', rating: 4, text: 'Servizio di trasferimento molto buono. Autista puntuale e gentile. L\'auto era pulita e confortevole.', status: 'pending', createdAt: '2026-02-17T16:20:00Z' },
-    { id: 'ur5', name: 'Elena Petrova', country: '🇷🇺', lang: 'ru', rating: 5, text: 'Отличный трансфер из аэропорта Анталии! Водитель был очень вежливый и пунктуальный. Рекомендую!', status: 'pending', createdAt: '2026-02-17T09:00:00Z' },
-    { id: 'ur6', name: 'Anna Kowalska', country: '🇵🇱', lang: 'pl', rating: 3, text: 'Transfer był OK, ale samochód mógłby być nowszy. Kierowca był miły i punktualny.', status: 'pending', createdAt: '2026-02-16T19:30:00Z' },
-    { id: 'ur7', name: 'Pieter de Vries', country: '🇳🇱', lang: 'nl', rating: 5, text: 'Top service! Chauffeur stond al klaar bij de luchthaven. Comfortabele rit naar het hotel. Aanrader!', status: 'pending', createdAt: '2026-02-16T12:10:00Z' },
-    { id: 'ur8', name: 'Katarina Novak', country: '🇨🇿', lang: 'cs', rating: 4, text: 'Velmi dobrý transfer z letiště. Řidič byl přátelský a auto bylo čisté. Doporučuji tuto službu.', status: 'pending', createdAt: '2026-02-15T20:45:00Z' },
-    { id: 'ur9', name: 'Yuki Tanaka', country: '🇯🇵', lang: 'ja', rating: 5, text: '空港からホテルまでのスムーズな送迎でした。ドライバーも時間通りで、車も快適でした。おすすめです！', status: 'pending', createdAt: '2026-02-15T08:30:00Z' },
-    { id: 'ur10', name: 'Ahmed Al-Rashid', country: '🇸🇦', lang: 'ar', rating: 4, text: 'خدمة نقل ممتازة من المطار. السائق كان محترفاً والسيارة نظيفة ومريحة. أنصح بهذه الخدمة.', status: 'pending', createdAt: '2026-02-14T15:00:00Z' },
-  ];
+  const DEFAULT_USER_REVIEWS: UserReview[] = [];
 
   // Review States — persisted to localStorage
   const [userReviews, setUserReviewsState] = useState<UserReview[]>(() => {
