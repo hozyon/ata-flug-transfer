@@ -8,6 +8,7 @@ interface AccountViewProps {
     ADMIN_AVATARS: string[];
     showToast: (message: string, type: 'success' | 'error' | 'info' | 'delete') => void;
     onExitAdmin: () => void;
+    onSaveAccount: () => void;
     systemUsers: any[];
     setIsAddUserModalOpen: (isOpen: boolean) => void;
     setEditingUserId: (id: string | null) => void;
@@ -20,7 +21,7 @@ const LABEL = "text-[10px] font-black text-slate-500 uppercase tracking-widest";
 
 export const AccountView: React.FC<AccountViewProps> = ({
     accountForm, setAccountForm, accountTab, setAccountTab,
-    ADMIN_AVATARS, showToast, onExitAdmin, systemUsers,
+    ADMIN_AVATARS, showToast, onExitAdmin, onSaveAccount, systemUsers,
     setIsAddUserModalOpen, setEditingUserId, setNewUserForm, handleDeleteUser
 }) => {
     const [showPassword, setShowPassword] = useState(false);
@@ -164,7 +165,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                                     </div>
                                 </div>
                                 <div className="flex justify-end pt-1">
-                                    <button onClick={() => showToast('Kişisel bilgiler kaydedildi', 'success')}
+                                    <button onClick={() => { onSaveAccount(); showToast('Kişisel bilgiler kaydedildi', 'success'); }}
                                         className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-[var(--color-primary)] to-amber-600 text-white text-[11px] font-black tracking-wide hover:from-amber-600 hover:to-amber-700 transition-all shadow-lg shadow-amber-900/20">
                                         <i className="fa-solid fa-floppy-disk text-xs"></i> KAYDET
                                     </button>

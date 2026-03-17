@@ -517,18 +517,29 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   };
 
   // ── ACCOUNT SETTINGS STATE ──
-  const [accountForm, setAccountForm] = useState({
-    fullName: 'Admin',
-    email: 'admin@system.com',
-    phone: '+90 555 123 4567',
-    avatar: ADMIN_AVATARS[0],
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
-    notifyEmail: true,
-    notifySms: false,
-    notifySystem: true
+  const [accountForm, setAccountForm] = useState(() => {
+    try {
+      const saved = localStorage.getItem('ata_admin_account_v1');
+      if (saved) return { currentPassword: '', newPassword: '', confirmPassword: '', ...JSON.parse(saved) };
+    } catch {}
+    return {
+      fullName: 'Admin',
+      email: 'admin@system.com',
+      phone: '+90 555 123 4567',
+      avatar: ADMIN_AVATARS[0],
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+      notifyEmail: true,
+      notifySms: false,
+      notifySystem: true
+    };
   });
+
+  const handleSaveAccount = () => {
+    const { currentPassword, newPassword, confirmPassword, ...toSave } = accountForm;
+    localStorage.setItem('ata_admin_account_v1', JSON.stringify(toSave));
+  };
 
   // ── USER MANAGEMENT STATE ──
   const [accountTab, setAccountTab] = useState<'profile' | 'users'>('profile');
@@ -2428,6 +2439,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 ADMIN_AVATARS={ADMIN_AVATARS}
                 showToast={showToast}
                 onExitAdmin={onExitAdmin}
+                onSaveAccount={handleSaveAccount}
                 systemUsers={systemUsers}
                 setIsAddUserModalOpen={setIsAddUserModalOpen}
                 setEditingUserId={setEditingUserId}
