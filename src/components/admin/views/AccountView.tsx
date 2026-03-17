@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface AccountViewProps {
     accountForm: any;
@@ -29,6 +29,25 @@ export const AccountView: React.FC<AccountViewProps> = ({
     const [showCurrentPw, setShowCurrentPw] = useState(false);
     const [showNewPw, setShowNewPw] = useState(false);
     const [pwLoading, setPwLoading] = useState(false);
+    const [profileSaveStatus, setProfileSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+    const profileSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const profileInitialized = useRef(false);
+
+    // Debounced auto-save for email and phone
+    useEffect(() => {
+        if (!profileInitialized.current) {
+            profileInitialized.current = true;
+            return;
+        }
+        setProfileSaveStatus('saving');
+        if (profileSaveTimer.current) clearTimeout(profileSaveTimer.current);
+        profileSaveTimer.current = setTimeout(() => {
+            onSaveAccount();
+            setProfileSaveStatus('saved');
+            setTimeout(() => setProfileSaveStatus('idle'), 2000);
+        }, 1500);
+        return () => { if (profileSaveTimer.current) clearTimeout(profileSaveTimer.current); };
+    }, [accountForm.email, accountForm.phone]);
 
     const pwStrength = (pw: string) => {
         if (!pw) return { level: 0, label: '' };
@@ -122,18 +141,32 @@ export const AccountView: React.FC<AccountViewProps> = ({
                                 <i className="fa-solid fa-id-card text-[var(--color-primary)] text-[11px]"></i>
                             </div>
                             <h3 className="text-sm font-black text-white tracking-wide">PROFİL BİLGİLERİ</h3>
+                            <div className="ml-auto">
+                                {profileSaveStatus === 'saving' && (
+                                    <span className="flex items-center gap-1.5 text-[10px] text-slate-500">
+                                        <i className="fa-solid fa-spinner fa-spin text-[9px]"></i> Kaydediliyor...
+                                    </span>
+                                )}
+                                {profileSaveStatus === 'saved' && (
+                                    <span className="flex items-center gap-1.5 text-[10px] text-emerald-500">
+                                        <i className="fa-solid fa-check text-[9px]"></i> Kaydedildi
+                                    </span>
+                                )}
+                            </div>
                         </div>
                         <div className="p-5 space-y-3">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div className="space-y-1.5">
-                                    <label className={LABEL}>Ad Soyad</label>
-                                    <input
-                                        type="text"
-                                        value={accountForm.fullName}
-                                        onChange={e => setAccountForm({ ...accountForm, fullName: e.target.value })}
-                                        className={INPUT}
-                                        placeholder="Adınız Soyadınız"
-                                    />
+                                    <label className={LABEL}>Kullanıcı Adı</label>
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            value={accountForm.fullName}
+                                            disabled
+                                            className={`${INPUT} opacity-40 cursor-not-allowed pr-9`}
+                                        />
+                                        <i className="fa-solid fa-lock absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 text-[10px]"></i>
+                                    </div>
                                 </div>
                                 <div className="space-y-1.5">
                                     <label className={LABEL}>E-posta</label>
@@ -158,14 +191,6 @@ export const AccountView: React.FC<AccountViewProps> = ({
                                         />
                                     </div>
                                 </div>
-                            </div>
-                            <div className="flex justify-end">
-                                <button
-                                    onClick={() => { onSaveAccount(); showToast('Profil bilgileri kaydedildi', 'success'); }}
-                                    className="flex items-center gap-2 px-5 py-2.5 min-h-[44px] rounded-xl bg-gradient-to-r from-[var(--color-primary)] to-amber-600 text-white text-[11px] font-black tracking-wide hover:from-amber-500 hover:to-amber-600 transition-all shadow-lg shadow-amber-900/20"
-                                >
-                                    <i className="fa-solid fa-floppy-disk text-xs"></i> KAYDET
-                                </button>
                             </div>
                         </div>
                     </div>
