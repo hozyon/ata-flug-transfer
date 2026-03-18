@@ -44,6 +44,33 @@
     -webkit-touch-callout: none;
   }
 
+  /* Keyboard focus ring - visible only for keyboard users */
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Respect user motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* iOS dynamic viewport height */
+  .min-h-dvh {
+    min-height: 100dvh;
+  }
+  .h-dvh {
+    height: 100dvh;
+  }
+
   input, button, select, textarea {
     touch-action: manipulation;
   }
@@ -133,6 +160,16 @@
 
   @keyframes navRowIn {
     to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Focus ring for admin interactive elements */
+  .focus-ring {
+    outline: none;
+  }
+  .focus-ring:focus-visible {
+    ring-width: 2px;
+    ring-color: var(--color-primary);
+    ring-offset-width: 2px;
   }
 }
 

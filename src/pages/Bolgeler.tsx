@@ -274,6 +274,7 @@ const Bolgeler: React.FC = () => {
                         <input
                             type="text"
                             placeholder={t('regionsPage.search')}
+                            aria-label="Bölge ara"
                             className="block w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all shadow-2xl"
                             value={searchTerm}
                             onChange={(e) => {
@@ -309,6 +310,7 @@ const Bolgeler: React.FC = () => {
                                                     alt={region.name}
                                                     loading="lazy"
                                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] will-change-transform"
+                                                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
                                                 />
                                                 {region.price && (
                                                     <div className="absolute top-4 left-4 z-20">

@@ -10,6 +10,7 @@ const Iletisim: React.FC = () => {
     const business = siteContent.business;
 
     const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+    const [submitted, setSubmitted] = useState(false);
     const seo = siteContent.seo;
     const canonical = seo?.canonicalUrl || '';
     const pageTitle = seo?.pagesSeo?.contact?.title || 'İletişim';
@@ -19,6 +20,7 @@ const Iletisim: React.FC = () => {
         e.preventDefault();
         const message = `${t('contact.waMsg')}%0A%0A${t('form.name')}: ${formData.name}%0A${t('faq.email')}: ${formData.email}%0A%0A${formData.message}`;
         window.open(`https://wa.me/${business.whatsapp}?text=${message}`, '_blank');
+        setFormData({ name: '', email: '', message: '' }); setSubmitted(true); setTimeout(() => setSubmitted(false), 4000);
     };
 
     return (
@@ -81,19 +83,34 @@ const Iletisim: React.FC = () => {
                                 </div>
                             </div>
                             <form onSubmit={handleSubmit} className="space-y-5 max-w-md">
-                                <input type="text" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    className="w-full px-4 py-3.5 min-h-[48px] border-2 border-slate-200 rounded-2xl text-slate-700 placeholder-slate-400 focus:border-[var(--color-primary)] focus:outline-none transition-colors text-base md:text-sm"
-                                    placeholder={t('contact.namePh')} />
-                                <input type="email" required value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                    className="w-full px-4 py-3.5 min-h-[48px] border-2 border-slate-200 rounded-2xl text-slate-700 placeholder-slate-400 focus:border-[var(--color-primary)] focus:outline-none transition-colors text-base md:text-sm"
-                                    placeholder={t('contact.emailPh')} />
-                                <textarea required rows={5} value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                    className="w-full px-4 py-3.5 min-h-[120px] border-2 border-slate-200 rounded-2xl text-slate-700 placeholder-slate-400 focus:border-[var(--color-primary)] focus:outline-none transition-colors resize-none text-base md:text-sm"
-                                    placeholder={t('contact.msgPh')}></textarea>
+                                <div>
+                                    <label htmlFor="contact-name" className="sr-only">{t('contact.namePh')}</label>
+                                    <input id="contact-name" type="text" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        className="w-full px-4 py-3.5 min-h-[48px] border-2 border-slate-200 rounded-2xl text-slate-700 placeholder-slate-400 focus:border-[var(--color-primary)] focus:outline-none transition-colors text-base md:text-sm"
+                                        placeholder={t('contact.namePh')} />
+                                </div>
+                                <div>
+                                    <label htmlFor="contact-email" className="sr-only">{t('contact.emailPh')}</label>
+                                    <input id="contact-email" type="email" required value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                        className="w-full px-4 py-3.5 min-h-[48px] border-2 border-slate-200 rounded-2xl text-slate-700 placeholder-slate-400 focus:border-[var(--color-primary)] focus:outline-none transition-colors text-base md:text-sm"
+                                        placeholder={t('contact.emailPh')} />
+                                </div>
+                                <div>
+                                    <label htmlFor="contact-message" className="sr-only">{t('contact.msgPh')}</label>
+                                    <textarea id="contact-message" required rows={5} value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                                        className="w-full px-4 py-3.5 min-h-[120px] border-2 border-slate-200 rounded-2xl text-slate-700 placeholder-slate-400 focus:border-[var(--color-primary)] focus:outline-none transition-colors resize-none text-base md:text-sm"
+                                        placeholder={t('contact.msgPh')}></textarea>
+                                </div>
                                 <button type="submit" className="w-full md:w-auto bg-[var(--color-primary)] hover:bg-amber-600 text-white font-bold px-10 py-4 min-h-[52px] rounded-2xl transition-colors uppercase tracking-wider flex items-center justify-center gap-2 active:scale-[0.98]">
                                     <i className="fab fa-whatsapp text-lg"></i>
                                     {t('contact.send')}
                                 </button>
+                                {submitted && (
+                                    <div className="flex items-center gap-2.5 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-medium animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                        <i className="fa-brands fa-whatsapp text-emerald-500 text-lg"></i>
+                                        <span>WhatsApp'a yönlendiriliyorsunuz...</span>
+                                    </div>
+                                )}
                             </form>
                         </div>
                         <div className="w-full lg:w-1/2 h-[280px] md:h-[350px] lg:h-auto min-h-[280px] lg:min-h-[300px] relative order-2 lg:order-1">

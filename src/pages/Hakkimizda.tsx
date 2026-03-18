@@ -51,7 +51,7 @@ const Hakkimizda: React.FC = () => {
                         <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse"></span>
                         <span>{t('about.eyebrow')}</span>
                     </div>
-                    <h1 className="text-5xl md:text-7xl font-playfair font-medium text-white mb-6 tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 drop-shadow-2xl">
+                    <h1 className="text-3xl sm:text-5xl md:text-7xl font-playfair font-medium text-white mb-6 tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 drop-shadow-2xl">
                         {t('page.about.title')}
                     </h1>
                     <p className="text-slate-300 text-lg md:text-xl font-light tracking-wide animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
@@ -66,7 +66,7 @@ const Hakkimizda: React.FC = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 mb-2 items-start">
                         <div className="pt-4">
                             <h2 className="text-4xl font-playfair font-medium text-slate-900 mb-8 leading-tight">{t(about.title)}</h2>
-                            <div className="text-slate-500 text-lg leading-relaxed font-light space-y-6 text-justify whitespace-pre-line border-l-2 border-[var(--color-primary)]/30 pl-6 bg-white/50 backdrop-blur-sm rounded-r-xl p-4">
+                            <div className="text-slate-500 text-lg leading-relaxed font-light space-y-6 text-left md:text-justify whitespace-pre-line border-l-2 border-[var(--color-primary)]/30 pl-6 bg-white/50 backdrop-blur-sm rounded-r-xl p-4">
                                 {t(about.content)}
                             </div>
                             <div className="mt-10 flex items-center gap-6">

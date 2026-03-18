@@ -550,10 +550,10 @@ const App: React.FC = () => {
                     };
 
                     return (
-                      <section className="relative overflow-hidden bg-slate-50">
+                      <section className="relative overflow-hidden bg-slate-50 py-12 md:py-16">
                         <TextureBackground />
 
-                        <div className="relative z-10 max-w-7xl mx-auto px-4 lg:px-6 pt-10 pb-0">
+                        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 pt-10 pb-0">
 
                           {/* ── Header ── */}
                           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">

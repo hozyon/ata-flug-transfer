@@ -6,6 +6,7 @@ import { BLOG_POSTS } from '../constants';
 import TextureBackground from '../components/TextureBackground';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useSiteContent } from '../SiteContext';
+import DOMPurify from 'dompurify';
 
 const BlogPost: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -54,7 +55,11 @@ const BlogPost: React.FC = () => {
             .replace(/\n\n/g, '<div class="h-4"></div>') // spacing
             .replace(/\n/g, ' '); // collapse single newlines
 
-        return html;
+        return DOMPurify.sanitize(html, {
+            ALLOWED_TAGS: ['h1','h2','h3','strong','li','blockquote','a','div','span','i','p','ul','ol'],
+            ALLOWED_ATTR: ['class','href','target','rel'],
+            FORBID_ATTR: ['style','onerror','onload'],
+        });
     };
 
     const otherPosts = BLOG_POSTS.filter(p => p.id !== post?.id && p.isPublished).slice(0, 3);

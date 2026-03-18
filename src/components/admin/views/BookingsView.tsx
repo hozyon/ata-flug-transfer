@@ -14,13 +14,13 @@ interface BookingsViewProps {
     setSelectedBookingForView: (booking: Booking | null) => void;
 }
 
-const STATUS_MAP: Record<string, { label: string; color: string; bg: string; border: string; dot: string }> = {
-    Pending: { label: 'Beklemede', color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20', dot: 'bg-amber-400' },
-    Confirmed: { label: 'Onaylı', color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20', dot: 'bg-blue-400' },
-    Completed: { label: 'Tamamlandı', color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', dot: 'bg-emerald-400' },
-    Cancelled: { label: 'İptal', color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20', dot: 'bg-red-400' },
-    Rejected: { label: 'Reddedildi', color: 'text-slate-400', bg: 'bg-slate-500/10', border: 'border-slate-500/20', dot: 'bg-slate-400' },
-    Deleted: { label: 'Silindi', color: 'text-red-300', bg: 'bg-red-500/5', border: 'border-red-500/10', dot: 'bg-red-300' },
+const STATUS_MAP: Record<string, { label: string; color: string; bg: string; border: string; dot: string; icon: string }> = {
+    Pending: { label: 'Beklemede', color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20', dot: 'bg-amber-400', icon: 'fa-clock' },
+    Confirmed: { label: 'Onaylı', color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20', dot: 'bg-blue-400', icon: 'fa-check' },
+    Completed: { label: 'Tamamlandı', color: 'text-emerald-400', bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', dot: 'bg-emerald-400', icon: 'fa-circle-check' },
+    Cancelled: { label: 'İptal', color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20', dot: 'bg-red-400', icon: 'fa-ban' },
+    Rejected: { label: 'Reddedildi', color: 'text-slate-400', bg: 'bg-slate-500/10', border: 'border-slate-500/20', dot: 'bg-slate-400', icon: 'fa-xmark' },
+    Deleted: { label: 'Silindi', color: 'text-red-300', bg: 'bg-red-500/5', border: 'border-red-500/10', dot: 'bg-red-300', icon: 'fa-trash' },
 };
 
 export const BookingsView: React.FC<BookingsViewProps> = ({
@@ -407,7 +407,7 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                                                 </div>
                                             </div>
                                             <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg shrink-0 ${st.bg} border ${st.border}`}>
-                                                <div className={`w-1.5 h-1.5 rounded-full ${st.dot}`}></div>
+                                                <i className={`fa-solid ${st.icon} ${st.color} text-[9px]`}></i>
                                                 <span className={`text-[10px] font-bold ${st.color}`}>{st.label}</span>
                                             </div>
                                         </div>
@@ -636,7 +636,7 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                                             {/* Status */}
                                             <td className="px-3 py-4">
                                                 <div className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg ${st.bg} border ${st.border}`}>
-                                                    <div className={`w-1.5 h-1.5 rounded-full ${st.dot} ${b.status === 'Pending' ? 'animate-pulse' : ''}`}></div>
+                                                    <i className={`fa-solid ${st.icon} ${st.color} text-[9px]`}></i>
                                                     <span className={`text-[10px] font-black tracking-wide ${st.color}`}>{st.label}</span>
                                                 </div>
                                             </td>

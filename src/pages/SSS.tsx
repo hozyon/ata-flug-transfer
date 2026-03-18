@@ -70,7 +70,7 @@ const SSS: React.FC = () => {
                         <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse"></span>
                         <span>{t('faq.eyebrow')}</span>
                     </div>
-                    <h1 className="text-5xl md:text-7xl font-playfair font-medium text-white mb-6 tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 drop-shadow-2xl">
+                    <h1 className="text-3xl sm:text-5xl md:text-7xl font-playfair font-medium text-white mb-6 tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 drop-shadow-2xl">
                         {t('page.faq.title')}
                     </h1>
                     <p className="text-slate-300 text-lg md:text-xl font-light tracking-wide animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
@@ -89,9 +89,11 @@ const SSS: React.FC = () => {
                                     <span className="font-bold text-slate-800 pr-4">{faq.q}</span>
                                     <i className={`fa-solid fa-chevron-down text-[var(--color-primary)] transition-transform ${openId === faq.id ? 'rotate-180' : ''}`}></i>
                                 </button>
-                                {openId === faq.id && (
-                                    <div className="px-4 sm:px-6 pb-4 sm:pb-5"><p className="text-slate-600 text-sm sm:text-base leading-relaxed">{faq.a}</p></div>
-                                )}
+                                <div className={`overflow-hidden transition-all duration-300 ${openId === faq.id ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                                    <div className="px-4 sm:px-6 pb-4 sm:pb-5 border-t border-slate-100">
+                                        <p className="text-slate-600 text-sm sm:text-base leading-relaxed pt-4">{faq.a}</p>
+                                    </div>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -105,7 +107,7 @@ const SSS: React.FC = () => {
                     </div>
                     <h2 className="text-2xl font-bold text-slate-800">{t('faq.moreQ')}</h2>
                     <p className="text-slate-600 mt-2">{t('faq.moreQDesc')}</p>
-                    <a href={`https://wa.me/${business.whatsapp}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold px-8 py-4 rounded-full mt-6 transition-colors">
+                    <a href={`https://wa.me/${business.whatsapp}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-amber-600 text-white font-bold px-8 py-4 rounded-full mt-6 transition-colors active:scale-[0.98]">
                         <i className="fab fa-whatsapp text-xl"></i>
                         {t('faq.askWhatsapp')}
                     </a>

@@ -431,6 +431,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
       // even if it was updated (e.g. phone/email save) after this effect ran
       onUpdateSiteContent({ ...editContent, adminAccount: siteContentRef.current.adminAccount });
       setSaveStatus('saved');
+      showToast('Değişiklikler kaydedildi', 'success');
       setTimeout(() => setSaveStatus('idle'), 2000);
     }, 1500);
     return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
@@ -877,7 +878,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               <p className="font-semibold text-slate-900 text-sm">{toast.type === 'delete' ? 'Öğe Silindi' : toast.type === 'error' ? 'Hata' : toast.type === 'success' ? 'Başarılı' : toast.type === 'info' ? 'Bilgi' : 'Uyarı'}</p>
               <p className="text-slate-500 text-xs truncate">{toast.message}</p>
             </div>
-            <button onClick={() => setToast(null)} className="w-7 h-7 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors shrink-0">
+            <button onClick={() => setToast(null)} aria-label="Bildirimi kapat" className="w-7 h-7 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors shrink-0">
               <i className="fa-solid fa-xmark text-xs"></i>
             </button>
           </div>
@@ -1239,7 +1240,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
             {isSidebarOpen && <span className="text-white font-bold tracking-wider text-sm whitespace-nowrap">Transfer Panel</span>}
           </div>
           {isSidebarOpen && (
-            <button onClick={() => setIsSidebarOpen(false)} className="text-slate-500 hover:text-white transition-colors shrink-0">
+            <button onClick={() => setIsSidebarOpen(false)} aria-label="Kenar çubuğunu daralt" className="text-slate-500 hover:text-white transition-colors shrink-0">
               <i className="fa-solid fa-chevron-left text-xs"></i>
             </button>
           )}
@@ -1247,7 +1248,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
         {/* Show Expand Button when Closed */}
         {!isSidebarOpen && (
-          <button onClick={() => setIsSidebarOpen(true)} className="absolute -right-3 top-20 w-6 h-6 bg-[var(--color-primary)] rounded-full flex items-center justify-center text-white shadow-lg shadow-black/20 text-[10px] hover:bg-amber-600 transition-colors z-[60]">
+          <button onClick={() => setIsSidebarOpen(true)} aria-label="Kenar çubuğunu genişlet" className="absolute -right-3 top-20 w-6 h-6 bg-[var(--color-primary)] rounded-full flex items-center justify-center text-white shadow-lg shadow-black/20 text-[10px] hover:bg-amber-600 transition-colors z-[60]">
             <i className="fa-solid fa-chevron-right"></i>
           </button>
         )}

@@ -40,6 +40,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
   });
   const [showBlogPreview, setShowBlogPreview] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
 
   const currentPosts = blogPosts
     .filter(p => blogTab === 'published' ? p.isPublished : !p.isPublished)
@@ -111,7 +112,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
               {blogSearchTerm && <button onClick={() => setBlogSearchTerm('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"><i className="fa-solid fa-xmark text-xs"></i></button>}
             </div>
             {/* Add */}
-            <button onClick={() => { setNewBlogPost({ title: '', slug: '', excerpt: '', content: '', category: blogCategories[0] || 'Havalimanı Transfer', featuredImage: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800', isPublished: false }); setEditingBlogPost(null); setIsAddBlogModalOpen(true); }}
+            <button onClick={() => { setNewBlogPost({ title: '', slug: '', excerpt: '', content: '', category: blogCategories[0] || 'Havalimanı Transfer', featuredImage: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800', isPublished: false }); setEditingBlogPost(null); setSlugManuallyEdited(false); setIsAddBlogModalOpen(true); }}
               className="px-4 py-2.5 bg-[var(--color-primary)] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 shrink-0">
               <i className="fa-solid fa-plus text-[10px]"></i> Yeni Yazı
             </button>
@@ -146,7 +147,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
                 {currentPosts.map(post => {
                   const isSelected = selectedBlogs.includes(post.id);
                   return (
-                    <tr key={post.id} onClick={() => { setNewBlogPost(post); setEditingBlogPost(post); setIsAddBlogModalOpen(true); }}
+                    <tr key={post.id} onClick={() => { setNewBlogPost(post); setEditingBlogPost(post); setSlugManuallyEdited(true); setIsAddBlogModalOpen(true); }}
                       className={`border-b border-white/[0.03] cursor-pointer transition-all group ${isSelected ? 'bg-[var(--color-primary)]/[0.06]' : 'hover:bg-white/[0.03]'}`}>
                       <td className="px-4 py-3.5" onClick={e => e.stopPropagation()}>
                         <input type="checkbox" checked={isSelected}
@@ -178,7 +179,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
                       </td>
                       <td className="px-3 py-3.5" onClick={e => e.stopPropagation()}>
                         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity justify-end">
-                          <button onClick={() => { setNewBlogPost(post); setEditingBlogPost(post); setIsAddBlogModalOpen(true); }}
+                          <button onClick={() => { setNewBlogPost(post); setEditingBlogPost(post); setSlugManuallyEdited(true); setIsAddBlogModalOpen(true); }}
                             className="w-7 h-7 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white flex items-center justify-center transition-all">
                             <i className="fa-solid fa-pen text-[10px]"></i>
                           </button>
@@ -267,7 +268,15 @@ export const BlogView: React.FC<BlogViewProps> = ({
                     <div className="sm:col-span-2 space-y-2">
                       <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i className="fa-solid fa-heading text-[8px] text-blue-400"></i> Başlık</label>
                       <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm font-bold text-white focus:border-[var(--color-primary)]/50 outline-none transition-all"
-                        value={newBlogPost.title} onChange={e => setNewBlogPost({ ...newBlogPost, title: e.target.value, slug: e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '-') })} placeholder="Blog başlığı..." />
+                        value={newBlogPost.title} onChange={e => {
+                          const value = e.target.value;
+                          const autoSlug = value.toLowerCase()
+                            .replace(/[ğ]/g, 'g').replace(/[ü]/g, 'u').replace(/[ş]/g, 's')
+                            .replace(/[ı]/g, 'i').replace(/[ö]/g, 'o').replace(/[ç]/g, 'c')
+                            .replace(/[^a-z0-9\s-]/g, '')
+                            .trim().replace(/\s+/g, '-').replace(/-+/g, '-');
+                          setNewBlogPost({ ...newBlogPost, title: value, slug: slugManuallyEdited ? newBlogPost.slug : autoSlug });
+                        }} placeholder="Blog başlığı..." />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i className="fa-solid fa-folder text-[8px] text-violet-400"></i> Kategori</label>

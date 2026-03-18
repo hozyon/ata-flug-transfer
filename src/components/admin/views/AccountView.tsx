@@ -45,7 +45,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
             onSaveAccount();
             setProfileSaveStatus('saved');
             setTimeout(() => setProfileSaveStatus('idle'), 2000);
-        }, 1500);
+        }, 2000);
         return () => { if (profileSaveTimer.current) clearTimeout(profileSaveTimer.current); };
     }, [accountForm.email, accountForm.phone]);
 

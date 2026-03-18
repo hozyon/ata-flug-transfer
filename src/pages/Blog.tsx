@@ -102,6 +102,7 @@ const Blog: React.FC = () => {
                                             alt={tp.title}
                                             loading="lazy"
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] will-change-transform"
+                                            onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/images/placeholder-blog.jpg'; }}
                                         />
                                         <div className="absolute top-4 left-4 z-20">
                                             <span className="inline-block px-3 py-1 bg-white text-[var(--color-dark)] text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm">

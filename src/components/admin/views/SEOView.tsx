@@ -62,7 +62,14 @@ const ScoreBadge: React.FC<{ score: number }> = ({ score }) => {
 
 export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent }) => {
     const [activePage, setActivePage] = useState<PageKey>('home');
+    const [urlErrors, setUrlErrors] = useState<Record<string, string>>({});
     const seo = editContent.seo;
+
+    const validateUrl = (field: string, value: string) => {
+        if (!value) { setUrlErrors(prev => { const n = {...prev}; delete n[field]; return n; }); return; }
+        try { new URL(value); setUrlErrors(prev => { const n = {...prev}; delete n[field]; return n; }); }
+        catch { setUrlErrors(prev => ({...prev, [field]: 'Geçersiz URL formatı'})); }
+    };
 
     const updateSeo = (patch: Partial<typeof seo>) => {
         setEditContent({ ...editContent, seo: { ...seo, ...patch } });
@@ -174,7 +181,9 @@ export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent })
                     <div>
                         <label className={labelClass}>Canonical URL (Alan Adı)</label>
                         <input type="url" value={seo.canonicalUrl} onChange={e => updateSeo({ canonicalUrl: e.target.value })}
-                            placeholder="https://ataflugtransfer.com" className={fieldClass} />
+                            onBlur={e => validateUrl('canonical', e.target.value)}
+                            placeholder="https://ataflugtransfer.com" className={`${fieldClass} ${urlErrors.canonical ? 'border-red-500 focus:border-red-500' : ''}`} />
+                        {urlErrors.canonical && <p className="text-[10px] text-red-400 mt-1">{urlErrors.canonical}</p>}
                         <p className={helpClass}>Sitenizin ana adresi. https ile başlamalı.</p>
                     </div>
 
@@ -227,7 +236,9 @@ export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent })
                     <div className="md:col-span-2">
                         <label className={labelClass}>Varsayılan OG Görseli (URL)</label>
                         <input type="url" value={seo.ogImage} onChange={e => updateSeo({ ogImage: e.target.value })}
-                            placeholder="https://ataflugtransfer.com/og-image.jpg" className={fieldClass} />
+                            onBlur={e => validateUrl('ogImage', e.target.value)}
+                            placeholder="https://ataflugtransfer.com/og-image.jpg" className={`${fieldClass} ${urlErrors.ogImage ? 'border-red-500 focus:border-red-500' : ''}`} />
+                        {urlErrors.ogImage && <p className="text-[10px] text-red-400 mt-1">{urlErrors.ogImage}</p>}
                         <p className={helpClass}>Facebook, Twitter, WhatsApp paylaşımlarında görünür. 1200×630px önerilen boyut.</p>
                     </div>
                     {seo.ogImage && seo.ogImage.startsWith('http') && (
