@@ -80,6 +80,7 @@ export const SiteSettingsView: React.FC<SiteSettingsViewProps> = ({
                             <tbody>
                                 {editContent.navbar.map((item, index) => {
                                     const isExpanded = expandedMenu === index;
+                                    const isBolgeler = item.url === '/bolgeler';
                                     return (
                                         <React.Fragment key={index}>
                                             <tr {...getDragProps(index)} onClick={() => setExpandedMenu(isExpanded ? null : index)}
@@ -103,7 +104,7 @@ export const SiteSettingsView: React.FC<SiteSettingsViewProps> = ({
                                                         value={item.url} onChange={e => { const n = [...editContent.navbar]; if (n[index]) { n[index].url = e.target.value; setEditContent({ ...editContent, navbar: n }); } }} />
                                                 </td>
                                                 <td className="px-2 sm:px-3 py-3.5 text-center">
-                                                    {item.subMenus && item.subMenus.length > 0 ? (
+                                                    {!isBolgeler && item.subMenus && item.subMenus.length > 0 ? (
                                                         <span className="inline-flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2.5 py-1 rounded-lg bg-violet-500/10 border border-violet-500/20">
                                                             <i className="fa-solid fa-sitemap text-[8px] text-violet-400"></i>
                                                             <span className="text-[10px] font-bold text-violet-400">{item.subMenus.length}</span>
@@ -134,7 +135,7 @@ export const SiteSettingsView: React.FC<SiteSettingsViewProps> = ({
                                                 </td>
                                             </tr>
                                             {/* Sub-Menus Expandable */}
-                                            {isExpanded && (
+                                            {isExpanded && !isBolgeler && (
                                                 <tr className="bg-white/[0.02]">
                                                     <td colSpan={6} className="px-6 py-4">
                                                         <div className="animate-in fade-in slide-in-from-top-2 duration-300 space-y-3 ml-8">

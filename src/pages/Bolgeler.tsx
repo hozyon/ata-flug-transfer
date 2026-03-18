@@ -406,7 +406,7 @@ const Bolgeler: React.FC = () => {
                         href={`https://wa.me/${siteContent.business.whatsapp}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold px-8 py-4 rounded-full mt-8 transition-colors"
+                        className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[#d4af6a] text-black font-bold px-8 py-4 rounded-full mt-8 transition-all duration-200 active:scale-[0.98]"
                     >
                         <i className="fab fa-whatsapp text-xl"></i>
                         {t('regionsPage.ctaBtn')}

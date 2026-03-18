@@ -632,6 +632,20 @@ const App: React.FC = () => {
                     );
                   })()}
 
+                  {/* ── Section Divider ── */}
+                  <div className="relative bg-slate-50 flex items-center justify-center py-6">
+                    <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+                    <div className="relative flex items-center gap-3 px-5 py-2 rounded-full border border-slate-200 bg-white shadow-sm">
+                      <span className="w-4 h-px bg-gradient-to-r from-transparent to-[var(--color-primary)]/50"></span>
+                      <i className="fa-solid fa-car-side text-[var(--color-primary)] text-[10px]"></i>
+                      <span className="text-[9px] font-black tracking-[0.3em] text-slate-400 uppercase">VIP Transfer</span>
+                      <i className="fa-solid fa-star text-[var(--color-primary)] text-[7px]"></i>
+                      <span className="text-[9px] font-black tracking-[0.3em] text-slate-400 uppercase">Premium</span>
+                      <i className="fa-solid fa-car-side text-[var(--color-primary)] text-[10px] scale-x-[-1]"></i>
+                      <span className="w-4 h-px bg-gradient-to-l from-transparent to-[var(--color-primary)]/50"></span>
+                    </div>
+                  </div>
+
                   <section id="about" className="py-4 md:py-6 bg-slate-50 relative group/section">
                     <TextureBackground />
 

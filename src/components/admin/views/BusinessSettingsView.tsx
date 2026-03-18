@@ -1,6 +1,19 @@
 import React from 'react';
 import { SiteContent } from '../../../types';
 
+const PALETTES = [
+    { name: 'Gold Prestige', primary: '#c5a059', dark: '#0f172a', deeper: '#020617' },
+    { name: 'Ocean Pro',     primary: '#0ea5e9', dark: '#0c1829', deeper: '#040d1a' },
+    { name: 'Emerald',       primary: '#10b981', dark: '#0a1f18', deeper: '#030f0c' },
+    { name: 'Royal Indigo',  primary: '#6366f1', dark: '#12103a', deeper: '#080520' },
+    { name: 'Violet',        primary: '#8b5cf6', dark: '#180f2a', deeper: '#0c0619' },
+    { name: 'Rose Bold',     primary: '#f43f5e', dark: '#1e0f15', deeper: '#0d0609' },
+    { name: 'Amber Warm',    primary: '#f59e0b', dark: '#1c1307', deeper: '#0d0804' },
+    { name: 'Teal Premium',  primary: '#14b8a6', dark: '#0c1e1d', deeper: '#030f0e' },
+    { name: 'Slate Minimal', primary: '#94a3b8', dark: '#0f172a', deeper: '#020617' },
+    { name: 'Crimson Power', primary: '#ef4444', dark: '#1c0a0a', deeper: '#0d0404' },
+] as const;
+
 interface BusinessSettingsViewProps {
     editContent: SiteContent;
     setEditContent: (content: SiteContent) => void;
@@ -214,37 +227,94 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
                     </div>
                     <div>
                         <h3 className="text-sm font-bold text-white">Marka Renkleri</h3>
-                        <p className="text-[10px] text-slate-500">Sitenin renk şemasını özelleştirin</p>
+                        <p className="text-[10px] text-slate-500">Tek tıkla hazır renk paketi uygulayın</p>
                     </div>
                 </div>
-                <div className="p-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    {[
-                        { key: 'primaryColor' as const, label: 'Ana Renk (Vurgu)', desc: 'Butonlar, ikonlar, vurgular', default: '#c5a059' },
-                        { key: 'darkBg' as const, label: 'Koyu Arka Plan', desc: 'Admin panel, footer', default: '#0f172a' },
-                        { key: 'darkBgDeep' as const, label: 'Derin Arka Plan', desc: 'Hero bölümü, overlaylar', default: '#020617' },
-                    ].map(({ key, label, desc, default: def }) => (
-                        <div key={key} className="space-y-2">
-                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{label}</label>
-                            <p className="text-[9px] text-slate-600">{desc}</p>
-                            <div className="flex items-center gap-3">
-                                <input
-                                    type="color"
-                                    value={editContent.branding?.[key] || def}
-                                    onChange={e => setEditContent({ ...editContent, branding: { primaryColor: '#c5a059', darkBg: '#0f172a', darkBgDeep: '#020617', ...editContent.branding, [key]: e.target.value } })}
-                                    className="w-10 h-10 rounded-xl border border-white/10 cursor-pointer bg-transparent"
-                                    style={{ padding: '2px' }}
-                                />
-                                <input
-                                    type="text"
-                                    value={editContent.branding?.[key] || def}
-                                    onChange={e => setEditContent({ ...editContent, branding: { primaryColor: '#c5a059', darkBg: '#0f172a', darkBgDeep: '#020617', ...editContent.branding, [key]: e.target.value } })}
-                                    className="flex-1 bg-white/5 border border-white/[0.06] rounded-xl px-3 py-2 text-xs text-white font-mono placeholder-slate-600 outline-none focus:border-white/20 transition-all"
-                                    placeholder={def}
-                                    maxLength={7}
-                                />
-                            </div>
+                <div className="p-5 space-y-5">
+                    {/* Palette grid */}
+                    <div>
+                        <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3">Hazır Paketler</p>
+                        <div className="grid grid-cols-5 gap-2">
+                            {PALETTES.map((palette, i) => {
+                                const isActive =
+                                    editContent.branding?.primaryColor === palette.primary &&
+                                    editContent.branding?.darkBg === palette.dark &&
+                                    editContent.branding?.darkBgDeep === palette.deeper;
+                                return (
+                                    <button
+                                        key={i}
+                                        type="button"
+                                        onClick={() => setEditContent({
+                                            ...editContent,
+                                            branding: {
+                                                favicon: editContent.branding?.favicon || '/favicon.ico',
+                                                primaryColor: palette.primary,
+                                                darkBg: palette.dark,
+                                                darkBgDeep: palette.deeper,
+                                            }
+                                        })}
+                                        className={`relative flex flex-col gap-1.5 p-2 rounded-xl border transition-all duration-200 text-left ${isActive ? 'border-white/30 bg-white/10 ring-1 ring-white/20' : 'border-white/[0.07] bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.05]'}`}
+                                        title={palette.name}
+                                    >
+                                        <div className="flex gap-0.5 w-full h-3.5 rounded-md overflow-hidden">
+                                            <div className="flex-1" style={{ background: palette.primary }} />
+                                            <div className="w-3" style={{ background: palette.dark }} />
+                                            <div className="w-2" style={{ background: palette.deeper }} />
+                                        </div>
+                                        <span className="text-[8px] font-bold text-slate-400 leading-tight truncate block w-full">{palette.name}</span>
+                                        {isActive && (
+                                            <div className="absolute top-1.5 right-1.5 w-3.5 h-3.5 rounded-full bg-emerald-500 flex items-center justify-center">
+                                                <i className="fa-solid fa-check text-white" style={{ fontSize: '6px' }}></i>
+                                            </div>
+                                        )}
+                                        {i === 0 && (
+                                            <div className="absolute -top-1 -left-1 px-1 rounded" style={{ background: '#c5a059', fontSize: '6px', fontWeight: 900, color: '#000', lineHeight: 1.4, textTransform: 'uppercase' }}>LOGO</div>
+                                        )}
+                                    </button>
+                                );
+                            })}
                         </div>
-                    ))}
+                    </div>
+
+                    {/* Manual fine-tune - collapsible */}
+                    <details className="group/det">
+                        <summary className="flex items-center gap-2 text-[10px] font-bold text-slate-500 hover:text-slate-300 cursor-pointer select-none list-none transition-colors py-1">
+                            <i className="fa-solid fa-sliders text-[9px]"></i>
+                            <span>Manuel Düzenle</span>
+                            <i className="fa-solid fa-chevron-down text-[8px] ml-auto transition-transform duration-200 group-open/det:rotate-180"></i>
+                        </summary>
+                        <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-white/[0.04]">
+                            {[
+                                { key: 'primaryColor' as const, label: 'Ana Renk', desc: 'Butonlar, ikonlar', default: '#c5a059' },
+                                { key: 'darkBg' as const, label: 'Koyu Arka Plan', desc: 'Panel, footer', default: '#0f172a' },
+                                { key: 'darkBgDeep' as const, label: 'Derin Arka Plan', desc: 'Hero, overlaylar', default: '#020617' },
+                            ].map(({ key, label, desc, default: def }) => (
+                                <div key={key} className="space-y-1.5">
+                                    <div>
+                                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">{label}</p>
+                                        <p className="text-[8px] text-slate-600">{desc}</p>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            type="color"
+                                            value={editContent.branding?.[key] || def}
+                                            onChange={e => setEditContent({ ...editContent, branding: { primaryColor: '#c5a059', darkBg: '#0f172a', darkBgDeep: '#020617', ...editContent.branding, [key]: e.target.value } })}
+                                            className="w-8 h-8 rounded-lg border border-white/10 cursor-pointer bg-transparent shrink-0"
+                                            style={{ padding: '2px' }}
+                                        />
+                                        <input
+                                            type="text"
+                                            value={editContent.branding?.[key] || def}
+                                            onChange={e => setEditContent({ ...editContent, branding: { primaryColor: '#c5a059', darkBg: '#0f172a', darkBgDeep: '#020617', ...editContent.branding, [key]: e.target.value } })}
+                                            className="flex-1 bg-white/5 border border-white/[0.06] rounded-lg px-2 py-1.5 text-xs text-white font-mono outline-none focus:border-white/20 transition-all"
+                                            placeholder={def}
+                                            maxLength={7}
+                                        />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </details>
                 </div>
             </div>
 

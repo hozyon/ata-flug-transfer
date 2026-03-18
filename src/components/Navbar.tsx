@@ -259,24 +259,26 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
 
             {/* Desktop nav */}
             <div className="hidden lg:flex items-center space-x-2 font-bold text-[13px] h-full text-white">
-              {menuItems.map(item => (
+              {menuItems.map(item => {
+                const hasSubMenu = !!(item.subMenus && item.subMenus.length > 0 && item.url !== '/bolgeler');
+                return (
                 <div
                   key={item.id}
                   className="relative h-full flex items-center"
-                  onMouseEnter={() => item.subMenus && setActiveDropdown(item.id)}
+                  onMouseEnter={() => hasSubMenu && setActiveDropdown(item.id)}
                   onMouseLeave={() => setActiveDropdown(null)}
                 >
                   <Link
                     to={item.url}
                     className="px-4 py-2 transition-all flex items-center group relative hover:text-[var(--color-primary)]"
                   >
-                    {translateNav(item)}
-                    {item.subMenus && (
+                    <span className="uppercase">{translateNav(item)}</span>
+                    {hasSubMenu && (
                       <i className="fa-solid fa-chevron-down ml-2 text-[10px] opacity-50 group-hover:rotate-180 transition-transform" />
                     )}
                     <span className="absolute bottom-0 left-4 right-4 h-0.5 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 bg-[var(--color-primary)]" />
                   </Link>
-                  {item.subMenus && activeDropdown === item.id && (
+                  {hasSubMenu && activeDropdown === item.id && (
                     <div
                       className="absolute top-[80%] left-0 w-56 shadow-2xl rounded-xl border border-white/[0.12] py-3 animate-in fade-in slide-in-from-top-2 duration-200"
                       style={{ background: 'rgba(15,23,42,.06)', backdropFilter: 'blur(80px)', WebkitBackdropFilter: 'blur(80px)' }}
@@ -290,7 +292,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                     </div>
                   )}
                 </div>
-              ))}
+              );})}
               <div className="pl-4 ml-4 flex items-center border-l border-white/20 gap-3">
                 <LanguageSwitcher />
                 <button
@@ -467,8 +469,9 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
 
                 <div className="space-y-0.5">
                   {menuItems.map((item, idx) => {
+                    const hasSubMenu = !!(item.subMenus && item.subMenus.length > 0 && item.url !== '/bolgeler');
                     const isActive = location.pathname === item.url ||
-                      (item.subMenus?.some(s => location.pathname === s.url));
+                      (hasSubMenu && item.subMenus?.some(s => location.pathname === s.url));
                     const isExpanded = expandedItems.includes(item.id);
                     const icon = getIcon(item.label);
 
@@ -483,7 +486,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                           <div className="flex items-center">
                             <Link
                               to={item.url}
-                              onClick={() => !item.subMenus && close()}
+                              onClick={() => !hasSubMenu && close()}
                               className="flex items-center gap-4 flex-1 px-4 py-[17px] active:bg-white/[0.04] transition-colors"
                             >
                               {/* icon container */}
@@ -496,19 +499,19 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                               </div>
 
                               {/* label */}
-                              <span className={`font-bold text-[15.5px] tracking-[-0.01em] transition-colors
+                              <span className={`uppercase font-bold text-[15.5px] tracking-[-0.01em] transition-colors
                                 ${isActive ? 'text-white' : 'text-white/55'}`}>
                                 {translateNav(item)}
                               </span>
 
                               {/* active dot */}
-                              {isActive && !item.subMenus && (
+                              {isActive && !hasSubMenu && (
                                 <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] mr-1" />
                               )}
                             </Link>
 
                             {/* submenu toggle */}
-                            {item.subMenus && (
+                            {hasSubMenu && (
                               <button
                                 onClick={() => toggleSubmenu(item.id)}
                                 className="px-4 py-[17px] flex items-center justify-center text-white/25 hover:text-white/60 active:bg-white/[0.04] transition-colors"
@@ -519,16 +522,16 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                               </button>
                             )}
                             {/* right arrow for non-submenu */}
-                            {!item.subMenus && !isActive && (
+                            {!hasSubMenu && !isActive && (
                               <i className="fa-solid fa-chevron-right text-[9px] text-white/[0.12] mr-4" />
                             )}
                           </div>
 
                           {/* collapsible sub-items */}
                           <div className={`transition-all duration-300 ease-in-out overflow-hidden
-                            ${isExpanded ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}>
+                            ${isExpanded && hasSubMenu ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}>
                             <div className="ml-[2.5rem] sm:ml-[3.25rem] mr-3 mb-2 border-l-2 border-white/[0.06] pl-4 space-y-0.5">
-                              {item.subMenus?.map(sub => (
+                              {hasSubMenu && item.subMenus?.map(sub => (
                                 <Link
                                   key={sub.id} to={sub.url} onClick={close}
                                   className={`flex items-center gap-2 py-3 px-2 text-[13.5px] font-semibold rounded-xl transition-colors active:bg-white/[0.06]

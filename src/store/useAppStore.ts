@@ -164,6 +164,12 @@ function mergeContent(parsed: SiteContent): SiteContent {
     if (!Array.isArray(merged.hero.backgrounds) || merged.hero.backgrounds.length === 0) {
         merged.hero.backgrounds = INITIAL_SITE_CONTENT.hero.backgrounds;
     }
+    // Strip subMenus from /bolgeler nav item (enforced rule)
+    if (Array.isArray(merged.navbar)) {
+        merged.navbar = merged.navbar.map(item =>
+            item.url === '/bolgeler' ? { ...item, subMenus: [] } : item
+        );
+    }
     return merged;
 }
 

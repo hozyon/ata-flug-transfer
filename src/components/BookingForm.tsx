@@ -258,7 +258,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
           <div className="flex items-center gap-1.5">
             <i className="fa-solid fa-phone text-[var(--color-primary)] text-[9px] flex-shrink-0"></i>
             <select name="countryCode" value={formData.countryCode} onChange={handleChange}
-              className="w-16 sm:w-[72px] bg-transparent outline-none text-[12px] text-white font-medium appearance-none cursor-pointer shrink-0">
+              className="w-[72px] bg-transparent outline-none text-[12px] text-white font-medium appearance-none cursor-pointer shrink-0">
               {COUNTRY_CODES.map(cc => (
                 <option key={cc.code} value={cc.code} className="bg-[#0a0a0e] text-white">{cc.flag} {cc.code}</option>
               ))}
@@ -291,7 +291,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
         </div>
 
         {/* Yolcu + Araç + Uçuş */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           <div className={card}>
             <label className={lbl}>{t('Yolcu')}</label>
             <div className="flex items-center gap-1.5">
@@ -346,7 +346,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
 
         {/* Submit */}
         <button type="submit"
-          className="group w-full bg-[var(--color-primary)] hover:bg-[#d4af6a] text-[#0a0a0e] rounded-xl px-5 py-3 font-bold text-sm tracking-wide transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2.5 mt-1">
+          className="group w-full bg-[var(--color-primary)] hover:bg-[#d4af6a] text-[#0a0a0e] rounded-xl px-5 py-3.5 font-bold text-sm tracking-wide transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-2.5 mt-1 min-h-[52px]">
           <i className="fa-brands fa-whatsapp text-lg"></i>
           <span>{t("Teklif Al & WhatsApp'a Gönder")}</span>
           <i className="fa-solid fa-arrow-right text-xs opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"></i>
