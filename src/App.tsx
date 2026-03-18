@@ -50,11 +50,18 @@ const App: React.FC = () => {
     if (!isSupabaseConfigured) return;
     const token = crypto.randomUUID();
     sessionStorage.setItem('ata_session_token', token);
+    // Update in-memory store immediately (sync)
     const { siteContent: sc } = useAppStore.getState();
-    await useAppStore.getState().updateSiteContent({
-      ...sc,
-      adminAccount: { ...sc.adminAccount!, activeSessionToken: token },
-    });
+    const newContent = { ...sc, adminAccount: { ...sc.adminAccount!, activeSessionToken: token } };
+    useAppStore.getState().setSiteContent(newContent);
+    // Write directly to Supabase — if it fails, clear sessionStorage so checks won't false-kick
+    const { error } = await supabase
+      .from('site_content')
+      .upsert({ id: 1, content: newContent as unknown as Record<string, unknown> });
+    if (error) {
+      console.error('Session token write failed:', error);
+      sessionStorage.removeItem('ata_session_token');
+    }
   };
 
   // Handle successful login
@@ -115,10 +122,12 @@ const App: React.FC = () => {
   // Single-session enforcement: check every 30s if our token is still active
   useEffect(() => {
     if (!isAdmin || !isSupabaseConfigured) return;
-    const localToken = sessionStorage.getItem('ata_session_token');
-    if (!localToken) return;
 
     const interval = setInterval(async () => {
+      // Read fresh each tick (token may have been set after effect ran)
+      const localToken = sessionStorage.getItem('ata_session_token');
+      if (!localToken) return;
+
       const { data } = await supabase
         .from('site_content')
         .select('content')
