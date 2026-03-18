@@ -45,8 +45,21 @@ const App: React.FC = () => {
   const isRecoveryModeRef = useRef(false);
   const { t, language } = useLanguage();
 
+  // Generate and persist a session token (single-session enforcement)
+  const applySessionToken = async () => {
+    if (!isSupabaseConfigured) return;
+    const token = crypto.randomUUID();
+    sessionStorage.setItem('ata_session_token', token);
+    const { siteContent: sc } = useAppStore.getState();
+    await useAppStore.getState().updateSiteContent({
+      ...sc,
+      adminAccount: { ...sc.adminAccount!, activeSessionToken: token },
+    });
+  };
+
   // Handle successful login
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = async () => {
+    await applySessionToken();
     setIsAdmin(true);
     navigate('/admin');
   };
@@ -54,6 +67,7 @@ const App: React.FC = () => {
   // Exit admin: sign out and navigate to home
   const handleExitAdmin = async () => {
     if (isSupabaseConfigured) {
+      sessionStorage.removeItem('ata_session_token');
       await supabase.auth.signOut();
     }
     setIsAdmin(false);
@@ -78,6 +92,11 @@ const App: React.FC = () => {
       } else if (event === 'INITIAL_SESSION') {
         if (!isRecoveryModeRef.current) {
           setIsAdmin(!!session);
+          // If restoring session from existing Supabase session (page refresh / browser reopen)
+          // and no sessionStorage token exists, generate a fresh one to invalidate other devices
+          if (session && !sessionStorage.getItem('ata_session_token')) {
+            applySessionToken();
+          }
         }
         setAuthChecking(false);
       } else if (event === 'SIGNED_IN' && session) {
@@ -92,6 +111,30 @@ const App: React.FC = () => {
     });
     return () => subscription.unsubscribe();
   }, []);
+
+  // Single-session enforcement: check every 30s if our token is still active
+  useEffect(() => {
+    if (!isAdmin || !isSupabaseConfigured) return;
+    const localToken = sessionStorage.getItem('ata_session_token');
+    if (!localToken) return;
+
+    const interval = setInterval(async () => {
+      const { data } = await supabase
+        .from('site_content')
+        .select('content')
+        .eq('id', 1)
+        .single();
+      const dbToken = (data?.content as any)?.adminAccount?.activeSessionToken;
+      if (dbToken && dbToken !== localToken) {
+        // Another device has taken over — force logout
+        sessionStorage.removeItem('ata_session_token');
+        await supabase.auth.signOut();
+        // SIGNED_OUT event will handle setIsAdmin(false) + navigate('/')
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [isAdmin]);
 
   // Lock body scroll in Admin Mode for App-like feel
   useEffect(() => {
@@ -473,8 +516,121 @@ const App: React.FC = () => {
                     </div>
                   </section>
 
+                  {/* ── Pricing Section ── */}
+                  {(() => {
+                    const sym = siteContent.currency?.symbol || '€';
+                    const allRegions = siteContent.regions;
+                    if (allRegions.length === 0) return null;
+                    const sorted = [...allRegions].sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
+                    const groups = [
+                      { labelKey: 'pricing.near', dotCls: 'bg-emerald-400', lineCls: 'bg-emerald-400/20', regions: sorted.filter(r => (r.price ?? 0) <= 60) },
+                      { labelKey: 'pricing.mid',  dotCls: 'bg-amber-400',   lineCls: 'bg-amber-400/20',   regions: sorted.filter(r => (r.price ?? 0) > 60 && (r.price ?? 0) <= 120) },
+                      { labelKey: 'pricing.far',  dotCls: 'bg-rose-400',    lineCls: 'bg-rose-400/20',    regions: sorted.filter(r => (r.price ?? 0) > 120) },
+                    ].filter(g => g.regions.length > 0);
 
+                    const LANG_FLAGS: Record<string, string> = { en: '🇬🇧', de: '🇩🇪', fr: '🇫🇷', ru: '🇷🇺', ar: '🇸🇦', tr: '🇹🇷' };
+                    const buildWaUrl = (regionName: string, price: number | undefined) => {
+                      const priceStr = price ? `${sym}${price}` : '—';
+                      const trBody =
+                        `✈️ *${siteContent.business.name}*\n▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔\n\n🇹🇷 *Transfer Rezervasyon Talebi*\n\n🚐  *Güzergah:* Antalya Havalimanı → ${regionName}\n💶  *Fiyat:* ${priceStr}\n📩  Merhaba, bu güzergah için rezervasyon yapmak istiyorum.\n\n⏳ _Yanıt süresi: ~2 dakika_`;
+                      if (language === 'tr') return `https://wa.me/${siteContent.business.whatsapp}?text=${encodeURIComponent(trBody)}`;
+                      const flag = LANG_FLAGS[language] || '🌐';
+                      const intlBody =
+                        `✈️ *${siteContent.business.name}*\n▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔\n\n${flag} *Transfer Booking Request*\n\n🚐  *Route:* Antalya Airport → ${regionName}\n💶  *Price:* ${priceStr}\n📩  Hello, I would like to book a transfer for this route.\n\n┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈\n\n🇹🇷 *Transfer Rezervasyon Talebi*\n\n🚐  *Güzergah:* Antalya Havalimanı → ${regionName}\n💶  *Fiyat:* ${priceStr}\n📩  Merhaba, bu güzergah için rezervasyon yapmak istiyorum.`;
+                      return `https://wa.me/${siteContent.business.whatsapp}?text=${encodeURIComponent(intlBody)}`;
+                    };
 
+                    return (
+                      <section className="relative overflow-hidden bg-slate-50">
+                        <TextureBackground />
+
+                        <div className="relative z-10 max-w-7xl mx-auto px-4 lg:px-6 pt-10 pb-0">
+
+                          {/* ── Header ── */}
+                          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+                            <div>
+                              <div className="flex items-center gap-2.5 mb-2.5">
+                                <i className="fa-solid fa-plane-departure text-[var(--color-primary)] text-[10px]"></i>
+                                <span className="text-[9px] font-black tracking-[0.35em] text-slate-400 uppercase">{t('pricing.eyebrow')}</span>
+                              </div>
+                              <h2 className="text-[26px] md:text-[32px] font-black text-slate-900 tracking-tight leading-none" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                {t('pricing.title')}&nbsp;<span className="text-[var(--color-primary)]">{t('pricing.titleAccent')}</span>
+                              </h2>
+                              <p className="text-slate-400 text-[12px] mt-1.5">{t('pricing.subtitle')}</p>
+                            </div>
+                            {/* Legend */}
+                            <div className="flex items-center gap-4 pb-0.5">
+                              {([
+                                { cls: 'bg-emerald-500', lk: 'pricing.legendNear' },
+                                { cls: 'bg-amber-500',   lk: 'pricing.legendMid' },
+                                { cls: 'bg-rose-500',    lk: 'pricing.legendFar' },
+                              ] as const).map(item => (
+                                <div key={item.lk} className="flex items-center gap-1.5">
+                                  <span className={`w-1.5 h-1.5 rounded-full ${item.cls} shrink-0`}></span>
+                                  <span className="text-[10px] text-slate-400">{t(item.lk)}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* ── Groups ── */}
+                          <div className="space-y-7">
+                            {groups.map(group => (
+                              <div key={group.labelKey}>
+                                {/* Group label */}
+                                <div className="flex items-center gap-3 mb-3.5">
+                                  <span className={`w-1.5 h-1.5 rounded-full ${group.dotCls} shrink-0`}></span>
+                                  <span className="text-[8.5px] font-black uppercase tracking-[0.35em] text-slate-400">{t(group.labelKey)}</span>
+                                  <span className="flex-1 h-px bg-slate-200"></span>
+                                </div>
+                                {/* Cards */}
+                                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+                                  {group.regions.map(region => (
+                                    <a
+                                      key={region.id}
+                                      href={buildWaUrl(region.name, region.price)}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="group flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl border border-slate-200 bg-white hover:border-[var(--color-primary)]/40 hover:bg-amber-50/50 hover:shadow-sm transition-all duration-200 cursor-pointer"
+                                    >
+                                      <div className="flex items-center gap-2 min-w-0">
+                                        <i className="fa-solid fa-location-dot text-slate-300 group-hover:text-[var(--color-primary)] text-[10px] shrink-0 transition-colors duration-200"></i>
+                                        <span className="text-slate-600 text-[11.5px] font-medium truncate group-hover:text-slate-900 transition-colors duration-200" style={{ fontFamily: "'Montserrat', sans-serif" }}>{region.name}</span>
+                                      </div>
+                                      <div className="flex items-center gap-1.5 shrink-0">
+                                        {region.price ? (
+                                          <span className="text-[var(--color-primary)] font-black text-[13px] leading-none">{sym}{region.price}</span>
+                                        ) : (
+                                          <span className="text-slate-300 font-medium text-[11px] leading-none">—</span>
+                                        )}
+                                        <i className="fa-brands fa-whatsapp text-[#25D366] text-[11px] opacity-0 group-hover:opacity-100 transition-opacity duration-200"></i>
+                                      </div>
+                                    </a>
+                                  ))}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* ── Footer ── */}
+                          <div className="mt-8 pt-5 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-10">
+                            <div className="flex items-start gap-2">
+                              <i className="fa-solid fa-circle-info text-slate-300 text-[9px] mt-[3px] shrink-0"></i>
+                              <p className="text-slate-400 text-[10.5px] leading-relaxed max-w-lg">{t('pricing.note')}</p>
+                            </div>
+                            <a
+                              href="/bolgeler"
+                              className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 text-slate-500 hover:border-[var(--color-primary)]/40 hover:text-[var(--color-primary)] text-[10px] font-black tracking-[0.15em] uppercase transition-all duration-200"
+                            >
+                              {t('pricing.allRegions')}
+                              <i className="fa-solid fa-arrow-right text-[8px]"></i>
+                            </a>
+                          </div>
+                        </div>
+
+                      </section>
+                    );
+                  })()}
 
                   <section id="about" className="py-4 md:py-6 bg-slate-50 relative group/section">
                     <TextureBackground />

@@ -108,6 +108,20 @@ const sourceTexts: Record<string, string> = {
     'region.descTemplate': '{name} bölgesine konforlu ve güvenli VIP transfer hizmeti.',
     'region.airportDesc': '{name} transfer hizmeti.',
 
+    // Pricing section (home page)
+    'pricing.eyebrow': 'Antalya Havalimanı → Tüm Bölgeler',
+    'pricing.title': 'Transfer',
+    'pricing.titleAccent': 'Fiyatları',
+    'pricing.subtitle': 'Tek yön, araç başı — kişi sayısından bağımsız sabit fiyat',
+    'pricing.near': 'Yakın Mesafe',
+    'pricing.mid': 'Orta Mesafe',
+    'pricing.far': 'Uzak Mesafe',
+    'pricing.legendNear': 'Yakın mesafe',
+    'pricing.legendMid': 'Orta mesafe',
+    'pricing.legendFar': 'Uzak mesafe',
+    'pricing.note': 'Fiyatlar araç başıdır. Gece transferi (00:00–06:00) ve ekstra bagaj için fiyat değişmez. Listede olmayan bölge için WhatsApp\'tan fiyat alın.',
+    'pricing.allRegions': 'Tüm Bölgeler',
+
     // Blog page
     'blogPage.eyebrow': 'Seyahat & Yaşam', 'blogPage.title': 'Antalya Keşif Rehberi',
     'blogPage.subtitle': 'Antalya\'nın gizli kalmış koylarından en lezzetli restoranlarına, tarihi rotalardan gece hayatına kapsamlı bir yolculuk.',

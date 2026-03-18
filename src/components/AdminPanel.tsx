@@ -583,7 +583,20 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     onUpdateSiteContent({ ...siteContent, adminAccount: toSave });
   };
 
+  const hashPassword = async (password: string): Promise<string> => {
+    const data = new TextEncoder().encode(password);
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+  };
+
   const handleUpdatePassword = async (currentPassword: string, newPassword: string): Promise<{ error: string | null }> => {
+    // Check against last 3 passwords
+    const history = siteContent.adminAccount?.passwordHistory || [];
+    const newHash = await hashPassword(newPassword);
+    if (history.includes(newHash)) {
+      return { error: 'Son 3 şifreden birini kullanamazsınız' };
+    }
+
     if (isSupabaseConfigured) {
       // Re-authenticate with current password to verify it and ensure an active session exists
       const email = siteContent.adminAccount?.email || accountForm.email;
@@ -592,6 +605,14 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) return { error: error.message };
     }
+
+    // Update password history (keep last 3 hashes)
+    const updatedHistory = [...history, newHash].slice(-3);
+    await onUpdateSiteContent({
+      ...siteContent,
+      adminAccount: { ...siteContent.adminAccount!, passwordHistory: updatedHistory },
+    });
+
     return { error: null };
   };
 
