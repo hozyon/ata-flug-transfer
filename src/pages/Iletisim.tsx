@@ -228,12 +228,6 @@ const Iletisim: React.FC = () => {
                                         value: `7/24 — ${t('hero.trust.247')}`,
                                         color: '#c5a059',
                                     },
-                                    {
-                                        icon: 'fa-star',
-                                        label: 'VIP Hizmet',
-                                        value: 'Mercedes araçlar · Profesyonel şoförler',
-                                        color: '#c5a059',
-                                    },
                                 ].map((item, i) => (
                                     <div key={i} className="flex items-start gap-5 py-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                                         <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
