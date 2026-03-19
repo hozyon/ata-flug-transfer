@@ -62,7 +62,7 @@ const SSS: React.FC = () => {
                     ]
                 })}</script>
             </Helmet>
-            <section className="relative pt-28 pb-12 flex items-center justify-center overflow-hidden border-b border-white/5">
+            <section className="relative pt-28 pb-14 flex items-center justify-center overflow-hidden border-b border-white/5">
                 <div className="absolute inset-0 z-0">
                     <img src="/images/sss-banner-custom.png" alt="FAQ Banner" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-slate-900/60"></div>

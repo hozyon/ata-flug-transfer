@@ -854,7 +854,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   const pendingReviews = userReviews.filter(r => r.status === 'pending').length;
 
   return (
-    <div className="flex h-screen overflow-hidden relative bg-[#06080F] text-slate-200 selection:bg-[var(--color-primary)] selection:text-white">
+    <div data-admin-theme={isDarkTheme ? 'dark' : 'light'} className="flex h-screen overflow-hidden relative bg-[#06080F] text-slate-200 selection:bg-[var(--color-primary)] selection:text-white">
       {/* 2026 SaaS Static Premium Background */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         {/* Deep Ambient Base Gradient */}
@@ -1229,244 +1229,215 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
       }
 
 
-      {/* Sidebar — Dynamic Expandable Icon Dock (Desktop Only) */}
+      {/* Sidebar — Premium Luxury Design */}
       <aside
-        className={`hidden xl:flex ${isSidebarOpen ? 'w-64' : 'w-[72px]'} transition-all duration-300 relative flex-col z-50 h-screen border-r border-white/[0.12] shadow-2xl shadow-black/30`}
-        style={{ background: 'rgba(15, 23, 42, 0.05)', backdropFilter: 'blur(80px)', WebkitBackdropFilter: 'blur(80px)' }}
+        className={`hidden xl:flex ${isSidebarOpen ? 'w-[260px]' : 'w-[72px]'} transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] relative flex-col z-50 h-screen shrink-0`}
+        style={{ background: 'linear-gradient(180deg,rgba(10,14,26,0.75) 0%,rgba(6,9,18,0.9) 100%)', backdropFilter: 'blur(80px)', WebkitBackdropFilter: 'blur(80px)', borderRight: '1px solid rgba(255,255,255,0.07)', boxShadow: '4px 0 40px rgba(0,0,0,0.5), inset -1px 0 0 rgba(255,255,255,0.04)' }}
       >
-        {/* Logo & Toggle */}
-        <div className={`h-16 flex items-center ${isSidebarOpen ? 'justify-between px-6' : 'justify-center'} border-b border-white/5 shrink-0 transition-all duration-300 overflow-hidden`}>
-          <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="Logo" className="w-8 h-8 object-contain shrink-0" />
-            {isSidebarOpen && <span className="text-white font-bold tracking-wider text-sm whitespace-nowrap">Transfer Panel</span>}
+        {/* Ambient gold top glow */}
+        <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[var(--color-primary)]/[0.06] to-transparent pointer-events-none z-0" />
+
+        {/* ── HEADER ── */}
+        <div className={`h-16 flex items-center shrink-0 border-b border-white/[0.06] relative z-10 overflow-hidden transition-all duration-500 ${isSidebarOpen ? 'px-4 gap-3' : 'justify-center px-0'}`}>
+          <div className="relative shrink-0">
+            <div className="w-9 h-9 rounded-xl overflow-hidden bg-[var(--color-primary)]/10 ring-1 ring-[var(--color-primary)]/35 shadow-[0_0_14px_rgba(197,160,89,0.18)]">
+              <img src="/logo.png" alt="Logo" className="w-full h-full object-contain p-1" />
+            </div>
           </div>
           {isSidebarOpen && (
-            <button onClick={() => setIsSidebarOpen(false)} aria-label="Kenar çubuğunu daralt" className="text-slate-500 hover:text-white transition-colors shrink-0">
-              <i className="fa-solid fa-chevron-left text-xs"></i>
-            </button>
+            <div className="flex-1 min-w-0 animate-in fade-in slide-in-from-left-2 duration-300">
+              <p className="text-[13px] font-black text-white tracking-widest leading-none">ATA FLUG</p>
+              <p className="text-[9px] font-medium text-[var(--color-primary)]/60 tracking-[0.3em] uppercase mt-0.5">Transfer</p>
+            </div>
+          )}
+          {isSidebarOpen && (
+            <div className="flex items-center gap-2 shrink-0 animate-in fade-in duration-300">
+              <span className="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-[var(--color-primary)]/15 text-[var(--color-primary)] border border-[var(--color-primary)]/25 tracking-widest">ADMIN</span>
+              <button onClick={() => setIsSidebarOpen(false)} aria-label="Kenar çubuğunu daralt" className="w-7 h-7 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] flex items-center justify-center text-slate-500 hover:text-white transition-all">
+                <i className="fa-solid fa-chevron-left text-[10px]"></i>
+              </button>
+            </div>
           )}
         </div>
 
-        {/* Show Expand Button when Closed */}
+        {/* Expand button when collapsed */}
         {!isSidebarOpen && (
-          <button onClick={() => setIsSidebarOpen(true)} aria-label="Kenar çubuğunu genişlet" className="absolute -right-3 top-20 w-6 h-6 bg-[var(--color-primary)] rounded-full flex items-center justify-center text-white shadow-lg shadow-black/20 text-[10px] hover:bg-amber-600 transition-colors z-[60]">
-            <i className="fa-solid fa-chevron-right"></i>
+          <button onClick={() => setIsSidebarOpen(true)} aria-label="Kenar çubuğunu genişlet" className="absolute -right-3 top-[72px] w-6 h-6 bg-[var(--color-primary)] rounded-full flex items-center justify-center text-[#06080F] shadow-lg shadow-[var(--color-primary)]/40 text-[10px] hover:brightness-110 transition-all z-[60]">
+            <i className="fa-solid fa-chevron-right text-[9px]"></i>
           </button>
         )}
 
-        {/* Nav Items — Grouped */}
-        <nav className="flex-1 flex flex-col py-2 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+        {/* ── NAV ── */}
+        <nav className="flex-1 flex flex-col py-3 overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] relative z-10">
 
-  {/* ── OPERASYON ── */}
-  {isSidebarOpen && <p className="px-4 pt-3 pb-1 text-[9px] font-black text-slate-600 uppercase tracking-[0.2em]">Operasyon</p>}
-  <div className="space-y-0 px-2">
-    {[
-      { id: 'overview', label: 'DASHBOARD', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></svg> },
-      { id: 'bookings', label: 'REZERVASYONLAR', badge: pendingCount, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 2v4" /><path d="M16 2v4" /><rect width="18" height="18" x="3" y="4" rx="2" /><path d="M3 10h18" /><path d="M8 14h.01" /><path d="M12 14h.01" /><path d="M16 14h.01" /><path d="M8 18h.01" /><path d="M12 18h.01" /><path d="M16 18h.01" /></svg> },
-      { id: 'reviews', label: 'YORUMLAR', badge: pendingReviews, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg> },
-    ].map(item => (
-      <div key={item.id} className="relative group">
-        <button
-          onClick={() => setActiveView(item.id as DashboardView)}
-          className={`w-full py-2.5 rounded-xl flex items-center ${isSidebarOpen ? 'justify-start px-4 gap-3' : 'justify-center'} transition-all group relative ${activeView === item.id ? 'bg-gradient-to-r from-white/[0.08] to-transparent text-white shadow-[inset_1px_0_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
-        >
-          {activeView === item.id && (
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[var(--color-primary)] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
-          )}
-          <div className={`shrink-0 transition-transform duration-300 ${activeView === item.id ? 'scale-110 text-[var(--color-primary)]' : 'group-hover:scale-110 group-hover:text-white'}`}>
-            {item.icon}
-          </div>
-          {isSidebarOpen && <span className="text-[11px] font-black whitespace-nowrap truncate tracking-wide">{item.label}</span>}
-          {item.badge > 0 && (
-            <span className={`flex items-center justify-center text-[8px] font-black rounded-full bg-red-500 text-white ring-2 ring-[var(--color-darker)] ${isSidebarOpen ? 'ml-auto shrink-0 w-[18px] h-[18px]' : 'absolute top-1 right-1.5 w-[14px] h-[14px]'}`}>
-              {item.badge > 9 ? '9+' : item.badge}
-            </span>
-          )}
-        </button>
-        {!isSidebarOpen && (
-          <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[var(--color-dark)]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
-            <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[var(--color-primary)] to-amber-600" />
-            <div className="flex items-center gap-2.5">
-              <span>{item.label}</span>
-              {item.badge > 0 && <span className="px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 text-[10px] font-black">{item.badge}</span>}
+          {(() => {
+            // Reusable nav item renderer
+            const NavItem = ({ id, label, badge = 0, icon }: { id: string; label: string; badge?: number; icon: React.ReactNode }) => {
+              const isActive = activeView === id;
+              return (
+                <div className="relative group">
+                  <button
+                    onClick={() => setActiveView(id as DashboardView)}
+                    className={`w-full rounded-xl flex items-center transition-all duration-200 relative ${
+                      isSidebarOpen
+                        ? `px-3 py-2.5 gap-3 ${isActive ? 'bg-gradient-to-r from-[var(--color-primary)]/[0.13] via-[var(--color-primary)]/[0.04] to-transparent' : 'hover:bg-white/[0.04]'}`
+                        : `justify-center p-2.5 ${isActive ? 'bg-[var(--color-primary)]/[0.15] rounded-xl' : 'hover:bg-white/[0.05]'}`
+                    }`}
+                  >
+                    {isActive && isSidebarOpen && (
+                      <div className="absolute left-0 top-[18%] bottom-[18%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-amber-500 rounded-r-full shadow-[0_0_14px_rgba(197,160,89,0.65)]" />
+                    )}
+                    <div className={`shrink-0 transition-all duration-200 ${isActive ? 'text-[var(--color-primary)] drop-shadow-[0_0_8px_rgba(197,160,89,0.5)]' : 'text-slate-500 group-hover:text-slate-300'}`}>
+                      {icon}
+                    </div>
+                    {isSidebarOpen && (
+                      <span className={`text-[12px] font-semibold whitespace-nowrap truncate tracking-wide transition-colors ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`}>
+                        {label}
+                      </span>
+                    )}
+                    {badge > 0 && (
+                      <span className={`flex items-center justify-center text-[8px] font-black rounded-full bg-red-500 text-white shadow-[0_0_8px_rgba(239,68,68,0.4)] ${isSidebarOpen ? 'ml-auto w-[18px] h-[18px] shrink-0' : 'absolute -top-0.5 -right-0.5 w-[14px] h-[14px]'}`}>
+                        {badge > 9 ? '9+' : badge}
+                      </span>
+                    )}
+                  </button>
+                  {!isSidebarOpen && (
+                    <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 pointer-events-none opacity-0 group-hover:opacity-100 translate-x-1 group-hover:translate-x-0 transition-all duration-200 z-[100]">
+                      <div className="relative px-3 py-2 rounded-xl bg-[#0a0e1a]/98 backdrop-blur-xl border border-white/[0.08] shadow-2xl shadow-black/70 whitespace-nowrap">
+                        <div className="absolute left-0 top-[22%] bottom-[22%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-amber-500 rounded-r-full" />
+                        <div className="flex items-center gap-2 pl-1">
+                          <span className="text-[12px] font-semibold text-white">{label}</span>
+                          {badge > 0 && <span className="px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-400 text-[9px] font-black border border-red-500/20">{badge}</span>}
+                        </div>
+                        <div className="absolute right-full top-1/2 -translate-y-1/2 border-[5px] border-transparent border-r-[#0a0e1a]" />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            };
+
+            // Group label renderer
+            const GroupLabel = ({ label }: { label: string }) => isSidebarOpen ? (
+              <div className="flex items-center gap-3 px-4 pt-3 pb-1.5">
+                <span className="text-[9px] font-black text-slate-600 uppercase tracking-[0.28em] whitespace-nowrap">{label}</span>
+                <div className="flex-1 h-px bg-gradient-to-r from-white/[0.07] to-transparent" />
+              </div>
+            ) : <div className="pt-2" />;
+
+            return (
+              <>
+                {/* OPERASYON */}
+                <GroupLabel label="Operasyon" />
+                <div className="space-y-0.5 px-2">
+                  <NavItem id="overview" label="Dashboard" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>} />
+                  <NavItem id="bookings" label="Rezervasyonlar" badge={pendingCount} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>} />
+                  <NavItem id="reviews" label="Yorumlar" badge={pendingReviews} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>} />
+                </div>
+
+                <div className={`${isSidebarOpen ? 'mx-4' : 'mx-3'} my-2.5 h-px bg-white/[0.05]`} />
+
+                {/* İÇERİK */}
+                <GroupLabel label="İçerik & Katalog" />
+                <div className="space-y-0.5 px-2">
+                  <NavItem id="blog" label="Blog Yönetimi" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>} />
+                  <NavItem id="regions" label="Bölgeler" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>} />
+                  <NavItem id="pricing" label="Fiyatlar" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42l-8.704-8.704z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>} />
+                  <NavItem id="fleet" label="Araçlar" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>} />
+                </div>
+
+                <div className={`${isSidebarOpen ? 'mx-4' : 'mx-3'} my-2.5 h-px bg-white/[0.05]`} />
+
+                {/* SİTE YÖNETİMİ */}
+                <GroupLabel label="Site Yönetimi" />
+                <div className="space-y-0.5 px-2 pb-1">
+                  <NavItem id="hero-images" label="Anasayfa Banner" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>} />
+                  <NavItem id="site-settings" label="Menü Yönetimi" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>} />
+                  <NavItem id="faq" label="S.S.S" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>} />
+                  <NavItem id="business" label="İşletme Bilgileri" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>} />
+                  <NavItem id="seo" label="SEO Yönetimi" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>} />
+
+                  {/* Kurumsal accordion */}
+                  <div className="relative group">
+                    <button
+                      onClick={() => { if (!isSidebarOpen) setIsSidebarOpen(true); setIsCorporateOpen(!isCorporateOpen); if (!isCorporateOpen) setActiveView('about'); }}
+                      className={`w-full rounded-xl flex items-center transition-all duration-200 relative ${
+                        isSidebarOpen
+                          ? `px-3 py-2.5 gap-3 ${(activeView === 'about' || activeView === 'visionMission') ? 'bg-gradient-to-r from-[var(--color-primary)]/[0.13] via-[var(--color-primary)]/[0.04] to-transparent' : 'hover:bg-white/[0.04]'}`
+                          : `justify-center p-2.5 ${(activeView === 'about' || activeView === 'visionMission') ? 'bg-[var(--color-primary)]/[0.15]' : 'hover:bg-white/[0.05]'}`
+                      }`}
+                    >
+                      {(activeView === 'about' || activeView === 'visionMission') && isSidebarOpen && (
+                        <div className="absolute left-0 top-[18%] bottom-[18%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-amber-500 rounded-r-full shadow-[0_0_14px_rgba(197,160,89,0.65)]" />
+                      )}
+                      <div className={`shrink-0 transition-all duration-200 ${(activeView === 'about' || activeView === 'visionMission') ? 'text-[var(--color-primary)] drop-shadow-[0_0_8px_rgba(197,160,89,0.5)]' : 'text-slate-500 group-hover:text-slate-300'}`}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>
+                      </div>
+                      {isSidebarOpen && (
+                        <>
+                          <span className={`text-[12px] font-semibold whitespace-nowrap truncate flex-1 text-left tracking-wide transition-colors ${(activeView === 'about' || activeView === 'visionMission') ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`}>Kurumsal</span>
+                          <i className={`fa-solid fa-chevron-down text-[10px] transition-transform duration-300 ${isCorporateOpen ? 'rotate-180 text-[var(--color-primary)]' : 'text-slate-600'}`}></i>
+                        </>
+                      )}
+                    </button>
+                    {isSidebarOpen && isCorporateOpen && (
+                      <div className="mt-0.5 space-y-0.5 pl-9 pr-1 animate-in fade-in slide-in-from-top-1 duration-200">
+                        {[{ id: 'about', label: 'Hakkımızda' }, { id: 'visionMission', label: 'Vizyon & Misyon' }].map(s => (
+                          <button key={s.id} onClick={() => setActiveView(s.id as DashboardView)} className={`w-full text-left py-2 px-3 rounded-lg text-[11px] font-medium tracking-wide transition-all flex items-center gap-2 ${activeView === s.id ? 'text-[var(--color-primary)] bg-[var(--color-primary)]/[0.08]' : 'text-slate-500 hover:text-slate-300 hover:bg-white/[0.03]'}`}>
+                            <span className={`w-1 h-1 rounded-full shrink-0 ${activeView === s.id ? 'bg-[var(--color-primary)] shadow-[0_0_5px_rgba(197,160,89,0.8)]' : 'bg-slate-700'}`}></span>
+                            {s.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {!isSidebarOpen && (
+                      <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 pointer-events-none opacity-0 group-hover:opacity-100 translate-x-1 group-hover:translate-x-0 transition-all duration-200 z-[100]">
+                        <div className="relative px-3 py-2 rounded-xl bg-[#0a0e1a]/98 backdrop-blur-xl border border-white/[0.08] shadow-2xl shadow-black/70 whitespace-nowrap">
+                          <div className="absolute left-0 top-[22%] bottom-[22%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-amber-500 rounded-r-full" />
+                          <span className="text-[12px] font-semibold text-white pl-1">Kurumsal</span>
+                          <div className="absolute right-full top-1/2 -translate-y-1/2 border-[5px] border-transparent border-r-[#0a0e1a]" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className={`${isSidebarOpen ? 'mx-2' : 'mx-1'} my-2 h-px bg-white/[0.05]`} />
+                  <NavItem id="account" label="Hesap Ayarları" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>} />
+                </div>
+              </>
+            );
+          })()}
+        </nav>
+
+        {/* ── FOOTER ── */}
+        <div className="shrink-0 border-t border-white/[0.06] relative z-10">
+          {/* Profile card — expanded only */}
+          {isSidebarOpen && (
+            <div className="px-3 pt-3 pb-1 animate-in fade-in duration-300">
+              <button onClick={() => setActiveView('account')} className="w-full flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.05] hover:border-[var(--color-primary)]/25 transition-all group text-left">
+                <div className="w-8 h-8 rounded-xl overflow-hidden ring-1 ring-[var(--color-primary)]/30 shrink-0">
+                  <img src={accountForm.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[12px] font-bold text-white truncate leading-tight group-hover:text-[var(--color-primary)] transition-colors">{accountForm.fullName || 'Admin'}</p>
+                  <p className="text-[10px] text-slate-600 truncate">{accountForm.email || ''}</p>
+                </div>
+                <i className="fa-solid fa-chevron-right text-[9px] text-slate-700 group-hover:text-[var(--color-primary)] transition-colors shrink-0"></i>
+              </button>
             </div>
-            <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[var(--color-dark)]/95" />
-          </div>
-        )}
-      </div>
-    ))}
-  </div>
-
-  <div className="mx-4 my-2 h-px bg-white/5 shrink-0" />
-
-  {/* ── İÇERİK ── */}
-  {isSidebarOpen && <p className="px-4 pt-1 pb-1 text-[9px] font-black text-slate-600 uppercase tracking-[0.2em]">İçerik & Katalog</p>}
-  <div className="space-y-0 px-2">
-    {[
-      { id: 'blog', label: 'BLOG YÖNETİMİ', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" /><path d="M18 14h-8" /><path d="M15 18h-5" /><path d="M10 6h8v4h-8V6Z" /></svg> },
-      { id: 'regions', label: 'BÖLGELER', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg> },
-      { id: 'pricing', label: 'FİYATLAR', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42l-8.704-8.704z" /><circle cx="7.5" cy="7.5" r=".5" fill="currentColor" /></svg> },
-      { id: 'fleet', label: 'ARAÇLAR', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2" /><circle cx="7" cy="17" r="2" /><path d="M9 17h6" /><circle cx="17" cy="17" r="2" /></svg> },
-    ].map(item => (
-      <div key={item.id} className="relative group">
-        <button
-          onClick={() => setActiveView(item.id as DashboardView)}
-          className={`w-full py-2.5 rounded-xl flex items-center ${isSidebarOpen ? 'justify-start px-4 gap-3' : 'justify-center'} transition-all group relative ${activeView === item.id ? 'bg-gradient-to-r from-white/[0.08] to-transparent text-white shadow-[inset_1px_0_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
-        >
-          {activeView === item.id && (
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[var(--color-primary)] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
           )}
-          <div className={`shrink-0 transition-transform duration-300 ${activeView === item.id ? 'scale-110 text-[var(--color-primary)]' : 'group-hover:scale-110 group-hover:text-white'}`}>
-            {item.icon}
-          </div>
-          {isSidebarOpen && <span className="text-[11px] font-black whitespace-nowrap truncate tracking-wide">{item.label}</span>}
-          {item.badge > 0 && (
-            <span className={`flex items-center justify-center text-[8px] font-black rounded-full bg-red-500 text-white ring-2 ring-[var(--color-darker)] ${isSidebarOpen ? 'ml-auto shrink-0 w-[18px] h-[18px]' : 'absolute top-1 right-1.5 w-[14px] h-[14px]'}`}>
-              {item.badge > 9 ? '9+' : item.badge}
-            </span>
-          )}
-        </button>
-        {!isSidebarOpen && (
-          <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[var(--color-dark)]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
-            <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[var(--color-primary)] to-amber-600" />
-            <span>{item.label}</span>
-            <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[var(--color-dark)]/95" />
-          </div>
-        )}
-      </div>
-    ))}
-  </div>
-
-  <div className="mx-4 my-2 h-px bg-white/5 shrink-0" />
-
-  {/* ── SİTE YÖNETİMİ ── */}
-  {isSidebarOpen && <p className="px-4 pt-1 pb-1 text-[9px] font-black text-slate-600 uppercase tracking-[0.2em]">Site Yönetimi</p>}
-  <div className="space-y-0 px-2 pb-2">
-    {[
-      { id: 'hero-images', label: 'ANASAYFA BANNER', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></svg> },
-      { id: 'site-settings', label: 'MENÜ YÖNETİMİ', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12" /><line x1="4" x2="20" y1="6" y2="6" /><line x1="4" x2="20" y1="18" y2="18" /></svg> },
-      { id: 'faq', label: 'S.S.S', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><path d="M12 17h.01" /></svg> },
-      { id: 'business', label: 'İŞLETME BİLGİLERİ', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2" /><path d="M9 22v-4h6v4" /><path d="M8 6h.01" /><path d="M16 6h.01" /><path d="M12 6h.01" /><path d="M12 10h.01" /><path d="M12 14h.01" /><path d="M16 10h.01" /><path d="M16 14h.01" /><path d="M8 10h.01" /><path d="M8 14h.01" /></svg> },
-      { id: 'seo', label: 'SEO YÖNETİMİ', badge: 0, icon: <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg> },
-    ].map(item => (
-      <div key={item.id} className="relative group">
-        <button
-          onClick={() => setActiveView(item.id as DashboardView)}
-          className={`w-full py-2.5 rounded-xl flex items-center ${isSidebarOpen ? 'justify-start px-4 gap-3' : 'justify-center'} transition-all group relative ${activeView === item.id ? 'bg-gradient-to-r from-white/[0.08] to-transparent text-white shadow-[inset_1px_0_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
-        >
-          {activeView === item.id && (
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[var(--color-primary)] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
-          )}
-          <div className={`shrink-0 transition-transform duration-300 ${activeView === item.id ? 'scale-110 text-[var(--color-primary)]' : 'group-hover:scale-110 group-hover:text-white'}`}>
-            {item.icon}
-          </div>
-          {isSidebarOpen && <span className="text-[11px] font-black whitespace-nowrap truncate tracking-wide">{item.label}</span>}
-        </button>
-        {!isSidebarOpen && (
-          <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[var(--color-dark)]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
-            <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[var(--color-primary)] to-amber-600" />
-            <span>{item.label}</span>
-            <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[var(--color-dark)]/95" />
-          </div>
-        )}
-      </div>
-    ))}
-
-    {/* Kurumsal Accordion */}
-    <div className="relative group">
-      <button
-        onClick={() => {
-          if (!isSidebarOpen) setIsSidebarOpen(true);
-          setIsCorporateOpen(!isCorporateOpen);
-          setActiveView('about');
-        }}
-        className={`w-full py-2.5 rounded-xl flex items-center ${isSidebarOpen ? 'justify-start px-4 gap-3' : 'justify-center'} transition-all group relative ${(activeView === 'about' || activeView === 'visionMission') ? 'bg-gradient-to-r from-white/[0.08] to-transparent text-white shadow-[inset_1px_0_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
-      >
-        {(activeView === 'about' || activeView === 'visionMission') && (
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[var(--color-primary)] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
-        )}
-        <div className={`shrink-0 transition-transform duration-300 ${(activeView === 'about' || activeView === 'visionMission') ? 'scale-110 text-[var(--color-primary)]' : 'group-hover:scale-110 group-hover:text-white'}`}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /><rect width="20" height="14" x="2" y="6" rx="2" /></svg>
-        </div>
-        {isSidebarOpen && <span className="text-[11px] font-black whitespace-nowrap truncate tracking-wide flex-1 text-left">KURUMSAL</span>}
-        {isSidebarOpen && (
-          <i className={`fa-solid fa-chevron-down text-[10px] transition-transform duration-300 ${isCorporateOpen ? 'rotate-180 text-[var(--color-primary)]' : 'opacity-50'}`}></i>
-        )}
-      </button>
-      {isSidebarOpen && isCorporateOpen && (
-        <div className="mt-1 space-y-1 pl-11 pr-2 animate-in fade-in slide-in-from-top-2 duration-300">
-          {[
-            { id: 'about', label: 'HAKKIMIZDA' },
-            { id: 'visionMission', label: 'VİZYON & MİSYON' }
-          ].map(subItem => (
-            <button
-              key={subItem.id}
-              onClick={() => setActiveView(subItem.id as DashboardView)}
-              className={`w-full text-left py-2 px-3 rounded-lg text-[11px] font-black tracking-wide transition-all relative ${activeView === subItem.id ? 'text-[var(--color-primary)] bg-white/[0.04]' : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'}`}
-            >
-              <span className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full transition-all ${activeView === subItem.id ? 'bg-[var(--color-primary)] shadow-[0_0_5px_rgba(197,160,89,0.8)]' : 'bg-transparent'}`}></span>
-              <span className={activeView === subItem.id ? 'pl-2' : ''}>{subItem.label}</span>
-            </button>
-          ))}
-        </div>
-      )}
-      {!isSidebarOpen && (
-        <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[var(--color-dark)]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
-          <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[var(--color-primary)] to-amber-600" />
-          <span>KURUMSAL</span>
-          <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[var(--color-dark)]/95" />
-        </div>
-      )}
-    </div>
-
-    <div className="mx-2 my-2 h-px bg-white/5 shrink-0" />
-
-    {/* Account */}
-    <div className="relative group">
-      <button
-        onClick={() => setActiveView('account' as DashboardView)}
-        className={`w-full py-2.5 rounded-xl flex items-center ${isSidebarOpen ? 'justify-start px-4 gap-3' : 'justify-center'} transition-all group relative ${activeView === 'account' ? 'bg-gradient-to-r from-white/[0.08] to-transparent text-white shadow-[inset_1px_0_0_rgba(255,255,255,0.05)]' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
-      >
-        {activeView === 'account' && (
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-1/2 bg-gradient-to-b from-[var(--color-primary)] to-amber-600 rounded-r-full shadow-[0_0_10px_rgba(197,160,89,0.5)]" />
-        )}
-        <div className={`shrink-0 transition-transform duration-300 ${activeView === 'account' ? 'scale-110 text-[var(--color-primary)]' : 'group-hover:scale-110 group-hover:text-white'}`}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
-        </div>
-        {isSidebarOpen && <span className="text-[11px] font-black whitespace-nowrap truncate tracking-wide">HESAP AYARLARI</span>}
-      </button>
-      {!isSidebarOpen && (
-        <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[var(--color-dark)]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
-          <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[var(--color-primary)] to-amber-600" />
-          <span>HESAP AYARLARI</span>
-          <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[var(--color-dark)]/95" />
-        </div>
-      )}
-    </div>
-  </div>
-</nav>
-
-        {/* Bottom — Site Link */}
-        <div className="px-2 py-2 border-t border-white/5 shrink-0 space-y-0">
-          <div className="relative group">
-            <a
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-2.5 rounded-xl flex items-center justify-start px-4 gap-3 transition-all group relative text-slate-400 hover:text-white hover:bg-white/5"
-            >
-              <div className="shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:text-white">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" x2="21" y1="14" y2="3" /></svg>
-              </div>
-              {isSidebarOpen && <span className="text-[13px] font-bold whitespace-nowrap truncate">Siteyi Görüntüle</span>}
+          {/* Action row */}
+          <div className={`flex items-center gap-1 p-2 ${isSidebarOpen ? 'px-3' : 'flex-col px-2'}`}>
+            <a href="/" target="_blank" rel="noopener noreferrer" title="Siteyi Görüntüle" className={`flex items-center gap-2 rounded-lg text-slate-500 hover:text-slate-200 hover:bg-white/[0.05] transition-all group ${isSidebarOpen ? 'flex-1 px-3 py-2' : 'w-full justify-center py-2.5'}`}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
+              {isSidebarOpen && <span className="text-[11px] font-semibold">Siteyi Gör</span>}
             </a>
-            {!isSidebarOpen && (
-              <div className="absolute left-full top-1/2 -translate-y-1/2 ml-4 px-4 py-2.5 rounded-xl bg-[var(--color-dark)]/95 backdrop-blur-xl border border-white/10 text-[13px] font-bold text-white whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 scale-95 group-hover:scale-100 transition-all duration-200 z-[100] shadow-2xl shadow-black/40">
-                <div className="absolute left-0 top-0 bottom-0 w-[3px] rounded-l-xl bg-gradient-to-b from-[var(--color-primary)] to-amber-600" />
-                Siteyi Görüntüle
-                <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[6px] border-r-[var(--color-dark)]/95" />
-              </div>
-            )}
+            <button onClick={toggleTheme} title={isDarkTheme ? 'Açık Tema' : 'Koyu Tema'} className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-200 hover:bg-white/[0.05] transition-all shrink-0">
+              <i className={`fa-solid ${isDarkTheme ? 'fa-sun' : 'fa-moon'} text-xs`}></i>
+            </button>
+            <button onClick={onExitAdmin} title="Çıkış" className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-red-400 hover:bg-red-500/[0.08] transition-all shrink-0">
+              <i className="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+            </button>
           </div>
         </div>
       </aside>
@@ -1844,6 +1815,23 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                         <kbd key={k} className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/[0.04] font-mono text-slate-500">{k}</kbd>
                       ))}
                     </div>
+                    {/* Theme toggle — iOS pill */}
+                    <button onClick={toggleTheme} title={isDarkTheme ? 'Açık Temaya Geç' : 'Koyu Temaya Geç'}
+                      className="relative shrink-0 rounded-full cursor-pointer select-none ml-1"
+                      style={{ width: 100, height: 28, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                      <span className="absolute inset-y-[3px] w-[47px] rounded-full transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+                        style={{ left: isDarkTheme ? 3 : 50, background: 'linear-gradient(135deg,rgba(197,160,89,0.85),rgba(197,160,89,0.55))', boxShadow: '0 2px 10px rgba(197,160,89,0.3)' }} />
+                      <span className="absolute inset-0 flex">
+                        <span className={`flex-1 flex items-center justify-center gap-1 z-10 transition-colors duration-200 ${isDarkTheme ? 'text-slate-900' : 'text-slate-500'}`}>
+                          <i className="fa-solid fa-moon" style={{ fontSize: 9 }}></i>
+                          <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.04em' }}>Dark</span>
+                        </span>
+                        <span className={`flex-1 flex items-center justify-center gap-1 z-10 transition-colors duration-200 ${!isDarkTheme ? 'text-slate-900' : 'text-slate-500'}`}>
+                          <i className="fa-solid fa-sun" style={{ fontSize: 9 }}></i>
+                          <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.04em' }}>Light</span>
+                        </span>
+                      </span>
+                    </button>
                   </div>
 
                 </div>

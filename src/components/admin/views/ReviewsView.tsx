@@ -160,7 +160,12 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
                             <span className="text-xs text-slate-400 font-medium">{selectedReviews.length} seçili</span>
                             {editableReviewsTab === 'pending' && (
                                 <button onClick={() => handleBulkAction('approved')} className="px-3 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 text-xs font-bold transition-all">
-                                    <i className="fa-solid fa-check mr-1.5"></i>Toplu Onayla
+                                    <i className="fa-solid fa-eye mr-1.5"></i>Yayınla
+                                </button>
+                            )}
+                            {editableReviewsTab === 'approved' && (
+                                <button onClick={() => handleBulkAction('rejected')} className="px-3 py-2 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 text-xs font-bold transition-all">
+                                    <i className="fa-solid fa-eye-slash mr-1.5"></i>Yayından Kaldır
                                 </button>
                             )}
                             {editableReviewsTab !== 'deleted' && (
@@ -248,23 +253,35 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
                                         {/* Bottom: Date + Actions */}
                                         <div className="flex items-center justify-between mt-3 pt-2 border-t border-white/[0.04]">
                                             <p className="text-[11px] text-slate-500 tabular-nums">{r.createdAt ? new Date(r.createdAt).toLocaleDateString('tr-TR') : '—'}</p>
-                                            <div className="flex items-center gap-1">
+                                            <div className="flex items-center gap-1.5 flex-wrap">
                                                 {editableReviewsTab === 'pending' && (
                                                     <>
                                                         <button onClick={e => { e.stopPropagation(); haptic.success(); setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'approved' } : item)); }}
-                                                            className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 active:bg-emerald-500/20 flex items-center justify-center transition-all">
-                                                            <i className="fa-solid fa-check text-xs"></i>
+                                                            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 active:bg-emerald-500/20 text-[11px] font-bold transition-all">
+                                                            <i className="fa-solid fa-eye text-[9px]"></i>Yayınla
                                                         </button>
                                                         <button onClick={e => { e.stopPropagation(); haptic.error(); setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'rejected' } : item)); }}
-                                                            className="w-8 h-8 rounded-lg bg-red-500/10 text-red-400 active:bg-red-500/20 flex items-center justify-center transition-all">
-                                                            <i className="fa-solid fa-xmark text-xs"></i>
+                                                            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-red-500/10 text-red-400 active:bg-red-500/20 text-[11px] font-bold transition-all">
+                                                            <i className="fa-solid fa-xmark text-[9px]"></i>Reddet
                                                         </button>
                                                     </>
                                                 )}
-                                                {(editableReviewsTab === 'rejected' || editableReviewsTab === 'deleted') && (
-                                                    <button onClick={e => { e.stopPropagation(); haptic.success(); setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: editableReviewsTab === 'deleted' ? 'pending' : 'approved' } : item)); }}
-                                                        className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 active:bg-emerald-500/20 flex items-center justify-center transition-all">
-                                                        <i className="fa-solid fa-rotate-left text-xs"></i>
+                                                {editableReviewsTab === 'approved' && r.source !== 'site' && (
+                                                    <button onClick={e => { e.stopPropagation(); haptic.error(); setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'rejected' } : item)); }}
+                                                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 active:bg-emerald-500/20 text-[11px] font-bold transition-all">
+                                                        <i className="fa-solid fa-eye-slash text-[9px]"></i>Yayından Kaldır
+                                                    </button>
+                                                )}
+                                                {editableReviewsTab === 'rejected' && (
+                                                    <button onClick={e => { e.stopPropagation(); haptic.success(); setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'approved' } : item)); }}
+                                                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 active:bg-emerald-500/20 text-[11px] font-bold transition-all">
+                                                        <i className="fa-solid fa-eye text-[9px]"></i>Yayınla
+                                                    </button>
+                                                )}
+                                                {editableReviewsTab === 'deleted' && (
+                                                    <button onClick={e => { e.stopPropagation(); haptic.success(); setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'pending' } : item)); }}
+                                                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 active:bg-emerald-500/20 text-[11px] font-bold transition-all">
+                                                        <i className="fa-solid fa-rotate-left text-[9px]"></i>Geri Al
                                                     </button>
                                                 )}
                                                 {editableReviewsTab !== 'deleted' && r.source !== 'site' && (
@@ -369,26 +386,32 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
                                                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity justify-end">
                                                         {editableReviewsTab === 'pending' && (
                                                             <>
-                                                                <button onClick={() => setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'approved' } : item))} title="Onayla"
-                                                                    className="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white flex items-center justify-center transition-all">
-                                                                    <i className="fa-solid fa-check text-[10px]"></i>
+                                                                <button onClick={() => setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'approved' } : item))}
+                                                                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white text-[10px] font-bold transition-all">
+                                                                    <i className="fa-solid fa-eye text-[9px]"></i>Yayınla
                                                                 </button>
-                                                                <button onClick={() => setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'rejected' } : item))} title="Reddet"
-                                                                    className="w-7 h-7 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white flex items-center justify-center transition-all">
-                                                                    <i className="fa-solid fa-xmark text-[10px]"></i>
+                                                                <button onClick={() => setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'rejected' } : item))}
+                                                                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white text-[10px] font-bold transition-all">
+                                                                    <i className="fa-solid fa-xmark text-[9px]"></i>Reddet
                                                                 </button>
                                                             </>
                                                         )}
                                                         {editableReviewsTab === 'approved' && r.source !== 'site' && (
-                                                            <button onClick={() => setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'rejected' } : item))} title="Yayından Kaldır"
-                                                                className="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-500 hover:text-white flex items-center justify-center transition-all">
-                                                                <i className="fa-solid fa-eye-slash text-[10px]"></i>
+                                                            <button onClick={() => setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'rejected' } : item))}
+                                                                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white text-[10px] font-bold transition-all">
+                                                                <i className="fa-solid fa-eye-slash text-[9px]"></i>Yayından Kaldır
                                                             </button>
                                                         )}
-                                                        {(editableReviewsTab === 'rejected' || editableReviewsTab === 'deleted') && (
-                                                            <button onClick={() => setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: editableReviewsTab === 'deleted' ? 'pending' : 'approved' } : item))} title="Geri Al"
-                                                                className="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white flex items-center justify-center transition-all">
-                                                                <i className="fa-solid fa-rotate-left text-[10px]"></i>
+                                                        {editableReviewsTab === 'rejected' && (
+                                                            <button onClick={() => setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'approved' } : item))}
+                                                                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white text-[10px] font-bold transition-all">
+                                                                <i className="fa-solid fa-eye text-[9px]"></i>Yayınla
+                                                            </button>
+                                                        )}
+                                                        {editableReviewsTab === 'deleted' && (
+                                                            <button onClick={() => setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'pending' } : item))}
+                                                                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white text-[10px] font-bold transition-all">
+                                                                <i className="fa-solid fa-rotate-left text-[9px]"></i>Geri Al
                                                             </button>
                                                         )}
                                                         {editableReviewsTab !== 'deleted' && r.source !== 'site' && (

@@ -44,7 +44,7 @@ const Hakkimizda: React.FC = () => {
                 <meta name="twitter:title" content={pageTitle} />
                 <meta name="twitter:description" content={pageDesc} />
             </Helmet>
-            <section className="relative pt-28 pb-12 flex items-center justify-center overflow-hidden border-b border-white/5">
+            <section className="relative pt-28 pb-14 flex items-center justify-center overflow-hidden border-b border-white/5">
                 <div className="absolute inset-0 z-0">
                     <img src={about.bannerImage || "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=2000"} alt="Antalya Luxury" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-slate-900/80"></div>

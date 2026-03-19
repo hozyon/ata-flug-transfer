@@ -10,7 +10,7 @@ const VizyonMisyon: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-slate-50">
-            <section className="relative pt-28 pb-12 flex items-center justify-center overflow-hidden border-b border-white/5">
+            <section className="relative pt-28 pb-14 flex items-center justify-center overflow-hidden border-b border-white/5">
                 <div className="absolute inset-0 z-0">
                     <img src={vm?.hero?.bannerImage || "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=2000"} alt="Antalya Luxury" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-slate-900/80"></div>

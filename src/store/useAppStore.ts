@@ -31,6 +31,7 @@ interface AppStore {
     deleteBlogPost: (id: string) => Promise<void>;
 
     // Reviews
+    addReview: (review: Omit<UserReview, 'id' | 'status' | 'createdAt'>) => Promise<void>;
     updateReviewStatus: (id: string, status: UserReview['status']) => Promise<void>;
     deleteReview: (id: string) => Promise<void>;
 }
@@ -438,6 +439,38 @@ export const useAppStore = create<AppStore>((set, get) => ({
     },
 
     // ── Review CRUD ───────────────────────────────────────────────────────────
+    addReview: async (review) => {
+        const newReview: UserReview = {
+            ...review,
+            id: crypto.randomUUID(),
+            status: 'pending',
+            createdAt: new Date().toISOString(),
+        };
+        const { userReviews } = get();
+        const updated = [newReview, ...userReviews];
+        set({ userReviews: updated });
+        if (isSupabaseConfigured) {
+            try {
+                const { error } = await supabase.from('reviews').insert({
+                    id: newReview.id,
+                    name: newReview.name,
+                    country: newReview.country,
+                    lang: newReview.lang,
+                    rating: newReview.rating,
+                    text: newReview.text,
+                    status: newReview.status,
+                    created_at: newReview.createdAt,
+                });
+                if (error) throw error;
+            } catch (err) {
+                console.error('Failed to add review to Supabase:', err);
+                saveReviewsToLS(updated);
+            }
+        } else {
+            saveReviewsToLS(updated);
+        }
+    },
+
     updateReviewStatus: async (id, status) => {
         const { userReviews } = get();
         const updated = userReviews.map(r => r.id === id ? { ...r, status } : r);

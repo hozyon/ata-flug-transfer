@@ -56,7 +56,7 @@ const Blog: React.FC = () => {
 
             {/* Premium Header */}
             {/* Premium Header - Blog Banner */}
-            <div className="relative pt-28 pb-12 overflow-hidden">
+            <div className="relative pt-28 pb-14 overflow-hidden">
                 <div className="absolute inset-0">
                     <img
                         src="/images/contact-banner.png"

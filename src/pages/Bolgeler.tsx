@@ -245,7 +245,7 @@ const Bolgeler: React.FC = () => {
             `}</style>
 
             {/* STANDARDIZED HERO SECTION - IMAGE BACKGROUND */}
-            <section className="relative pt-28 pb-12 overflow-hidden border-b border-white/5">
+            <section className="relative pt-28 pb-14 overflow-hidden border-b border-white/5">
                 {/* ... existing hero code ... */}
                 <div className="absolute inset-0 z-0">
                     <img
