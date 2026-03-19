@@ -229,9 +229,9 @@ const Iletisim: React.FC = () => {
                                         color: '#c5a059',
                                     },
                                     {
-                                        icon: 'fa-plane-departure',
-                                        label: t('hero.trust.airports'),
-                                        value: 'Antalya (AYT) · Gazipaşa (GZP)',
+                                        icon: 'fa-star',
+                                        label: 'VIP Hizmet',
+                                        value: 'Mercedes araçlar · Profesyonel şoförler',
                                         color: '#c5a059',
                                     },
                                 ].map((item, i) => (
@@ -520,41 +520,6 @@ const Iletisim: React.FC = () => {
                 </div>
             </section>
 
-            {/* ── BOTTOM STRIP ───────────────────────────────────── */}
-            <section className="bg-slate-50 border-t border-slate-100">
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div className="flex flex-wrap items-center gap-6 sm:gap-10 stagger-children">
-                            <div className="reveal flex items-center gap-3">
-                                <i className="fa-solid fa-clock text-sm" style={{ color: '#c5a059' }} />
-                                <span className="text-slate-500 text-[12px]" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-                                    <span className="text-slate-700 font-bold">7/24</span> {t('faq.workHours')}
-                                </span>
-                            </div>
-                            <div className="reveal flex items-center gap-3">
-                                <i className="fa-solid fa-headset text-sm" style={{ color: '#c5a059' }} />
-                                <span className="text-slate-500 text-[12px]" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-                                    <span className="text-slate-700 font-bold">{t('hero.trust.247')}</span> {t('services.card4.title')}
-                                </span>
-                            </div>
-                            <div className="reveal flex items-center gap-3">
-                                <i className="fa-solid fa-plane-arrival text-sm" style={{ color: '#c5a059' }} />
-                                <span className="text-slate-700 font-bold text-[12px]" style={{ fontFamily: "'Montserrat', sans-serif" }}>
-                                    {t('hero.trust.tracking')}
-                                </span>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2 px-4 py-2 rounded-full"
-                            style={{ background: 'rgba(197,160,89,0.08)', border: '1px solid rgba(197,160,89,0.2)' }}>
-                            <div className="w-1.5 h-1.5 rounded-full" style={{ background: '#c5a059' }} />
-                            <span className="text-[10px] font-black tracking-[0.2em] uppercase"
-                                style={{ color: '#c5a059', fontFamily: "'Outfit', sans-serif" }}>
-                                VIP Transfer · Antalya
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </section>
 
         </div>
     );
