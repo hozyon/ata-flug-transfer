@@ -3,8 +3,10 @@ import { Helmet } from 'react-helmet-async';
 import TextureBackground from '../components/TextureBackground';
 import { useSiteContent } from '../SiteContext';
 import { useLanguage } from '../i18n/LanguageContext';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 const SSS: React.FC = () => {
+    useScrollReveal();
     const { siteContent } = useSiteContent();
     const { t } = useLanguage();
     const faqs = siteContent.faq;
@@ -82,9 +84,9 @@ const SSS: React.FC = () => {
             <section className="py-16 relative z-20 overflow-hidden">
                 <TextureBackground />
                 <div className="max-w-4xl mx-auto px-4 relative z-10">
-                    <div className="space-y-4">
+                    <div className="space-y-4 stagger-children">
                         {translatedFaqs.map((faq) => (
-                            <div key={faq.id} className="bg-white rounded-2xl shadow-sm overflow-hidden">
+                            <div key={faq.id} className="reveal bg-white rounded-2xl shadow-sm overflow-hidden">
                                 <button onClick={() => setOpenId(openId === faq.id ? null : faq.id)} className="w-full px-4 sm:px-6 py-4 sm:py-5 min-h-[56px] flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
                                     <span className="font-bold text-slate-800 pr-4">{faq.q}</span>
                                     <i className={`fa-solid fa-chevron-down text-[var(--color-primary)] transition-transform ${openId === faq.id ? 'rotate-180' : ''}`}></i>
@@ -107,7 +109,7 @@ const SSS: React.FC = () => {
                     </div>
                     <h2 className="text-2xl font-bold text-slate-800">{t('faq.moreQ')}</h2>
                     <p className="text-slate-600 mt-2">{t('faq.moreQDesc')}</p>
-                    <a href={`https://wa.me/${business.whatsapp}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-amber-600 text-white font-bold px-8 py-4 rounded-full mt-6 transition-colors active:scale-[0.98]">
+                    <a href={`https://wa.me/${business.whatsapp}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[#d4af6a] text-[#0f172a] font-bold px-8 py-4 rounded-full mt-6 transition-colors active:scale-[0.98]">
                         <i className="fab fa-whatsapp text-xl"></i>
                         {t('faq.askWhatsapp')}
                     </a>
@@ -116,19 +118,19 @@ const SSS: React.FC = () => {
 
             <section className="py-16 bg-[var(--color-dark)]">
                 <div className="max-w-7xl mx-auto px-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div className="text-center">
-                            <div className="w-16 h-16 bg-[var(--color-primary)] rounded-2xl mx-auto flex items-center justify-center text-white text-2xl"><i className="fa-solid fa-phone"></i></div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 stagger-children">
+                        <div className="reveal text-center">
+                            <div className="w-16 h-16 bg-[var(--color-primary)] rounded-2xl mx-auto flex items-center justify-center text-[#0f172a] text-2xl"><i className="fa-solid fa-phone"></i></div>
                             <h3 className="text-white font-bold mt-4">{t('faq.phone')}</h3>
                             <p className="text-slate-300 mt-1">{business.phone}</p>
                         </div>
-                        <div className="text-center">
-                            <div className="w-16 h-16 bg-[var(--color-primary)] rounded-2xl mx-auto flex items-center justify-center text-white text-2xl"><i className="fa-solid fa-envelope"></i></div>
+                        <div className="reveal text-center">
+                            <div className="w-16 h-16 bg-[var(--color-primary)] rounded-2xl mx-auto flex items-center justify-center text-[#0f172a] text-2xl"><i className="fa-solid fa-envelope"></i></div>
                             <h3 className="text-white font-bold mt-4">{t('faq.email')}</h3>
                             <p className="text-slate-300 mt-1">{business.email}</p>
                         </div>
-                        <div className="text-center">
-                            <div className="w-16 h-16 bg-[var(--color-primary)] rounded-2xl mx-auto flex items-center justify-center text-white text-2xl"><i className="fa-solid fa-clock"></i></div>
+                        <div className="reveal text-center">
+                            <div className="w-16 h-16 bg-[var(--color-primary)] rounded-2xl mx-auto flex items-center justify-center text-[#0f172a] text-2xl"><i className="fa-solid fa-clock"></i></div>
                             <h3 className="text-white font-bold mt-4">{t('faq.workHours')}</h3>
                             <p className="text-slate-300 mt-1">{t('faq.service247')}</p>
                         </div>

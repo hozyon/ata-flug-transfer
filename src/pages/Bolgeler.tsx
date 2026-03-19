@@ -6,8 +6,10 @@ import { INITIAL_SITE_CONTENT } from '../constants';
 import TextureBackground from '../components/TextureBackground';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useAppStore } from '../store/useAppStore';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 const Bolgeler: React.FC = () => {
+    useScrollReveal();
     const { t, language } = useLanguage();
     const { siteContent } = useAppStore();
     // Language → flag mapping

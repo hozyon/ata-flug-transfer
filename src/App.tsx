@@ -11,6 +11,7 @@ import { REVIEWS, BLOG_POSTS, BUSINESS_INFO } from './constants';
 import { SiteProvider } from './SiteContext';
 import { useAppStore } from './store/useAppStore';
 import { supabase, isSupabaseConfigured } from './lib/supabase';
+import { useScrollReveal } from './hooks/useScrollReveal';
 
 // Page imports
 import Blog from './pages/Blog';
@@ -31,16 +32,39 @@ const App: React.FC = () => {
     bookings, isBookingFormOpen, setBookingFormOpen: setIsBookingFormOpen,
     initializeStore, addBooking: handleNewBooking, updateBookingStatus, deleteBooking: handleDeleteBooking,
     blogPosts, addBlogPost, updateBlogPost, deleteBlogPost,
-    userReviews, updateReviewStatus, deleteReview,
+    userReviews, addReview, updateReviewStatus, deleteReview,
   } = useAppStore();
 
+  useScrollReveal();
+
   const [reviewRating, setReviewRating] = useState(0);
+  const [reviewFirst, setReviewFirst] = useState('');
+  const [reviewLast, setReviewLast] = useState('');
+  const [reviewText, setReviewText] = useState('');
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewDone, setReviewDone] = useState(false);
+  const [priceSearch, setPriceSearch] = useState('');
   const [authChecking, setAuthChecking] = useState(isSupabaseConfigured);
   const [showResetModal, setShowResetModal] = useState(false);
   const [resetNewPassword, setResetNewPassword] = useState('');
   const [resetConfirmPassword, setResetConfirmPassword] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
   const [resetMessage, setResetMessage] = useState('');
+  const handleReviewSubmit = async () => {
+    if (!reviewFirst.trim() || !reviewText.trim() || reviewRating === 0) return;
+    setReviewSubmitting(true);
+    await addReview({
+      name: `${reviewFirst.trim()} ${reviewLast.trim()}`.trim(),
+      country: '',
+      lang: 'tr',
+      rating: reviewRating,
+      text: reviewText.trim(),
+    });
+    setReviewFirst(''); setReviewLast(''); setReviewText(''); setReviewRating(0);
+    setReviewSubmitting(false); setReviewDone(true);
+    setTimeout(() => setReviewDone(false), 4000);
+  };
+
   // Ref to block isAdmin=true when PASSWORD_RECOVERY token is in URL
   const isRecoveryModeRef = useRef(false);
   const { t, language } = useLanguage();
@@ -266,17 +290,17 @@ const App: React.FC = () => {
               </React.Suspense>
             </ErrorBoundary>
           ) : (
-            <Routes>
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:slug" element={<BlogPost />} />
-              <Route path="/hakkimizda" element={<Hakkimizda />} />
-              <Route path="/vizyon-misyon" element={<VizyonMisyon />} />
-              <Route path="/bolgeler" element={<Bolgeler />} />
-              <Route path="/sss" element={<SSS />} />
-              <Route path="/iletisim" element={<Iletisim />} />
-              <Route path="/login" element={<AdminLogin onLogin={handleLoginSuccess} />} />
+            <Routes location={location} key={location.pathname}>
+              <Route path="/blog" element={<div className="page-enter"><Blog /></div>} />
+              <Route path="/blog/:slug" element={<div className="page-enter"><BlogPost /></div>} />
+              <Route path="/hakkimizda" element={<div className="page-enter"><Hakkimizda /></div>} />
+              <Route path="/vizyon-misyon" element={<div className="page-enter"><VizyonMisyon /></div>} />
+              <Route path="/bolgeler" element={<div className="page-enter"><Bolgeler /></div>} />
+              <Route path="/sss" element={<div className="page-enter"><SSS /></div>} />
+              <Route path="/iletisim" element={<div className="page-enter"><Iletisim /></div>} />
+              <Route path="/login" element={<div className="page-enter"><AdminLogin onLogin={handleLoginSuccess} /></div>} />
               <Route path="/admin/*" element={<Navigate to="/login" replace />} />
-              <Route path="/:transferSlug" element={<TransferDestination />} />
+              <Route path="/:transferSlug" element={<div className="page-enter"><TransferDestination /></div>} />
               <Route path="*" element={<Navigate to="/" replace />} />
               <Route path="/" element={
                 <>
@@ -516,7 +540,10 @@ const App: React.FC = () => {
                         <div className="flex items-center gap-2 text-white/50 text-xs md:text-sm">
                           <i className="fa-solid fa-location-dot text-[var(--color-primary)] text-sm"></i>
                           <div className="w-[100px] sm:w-[140px] overflow-hidden">
-                            <span className={`block transition-opacity duration-300 whitespace-nowrap text-ellipsis overflow-hidden ${isFading ? 'opacity-0' : 'opacity-100'}`}>
+                            <span
+                              key={currentRegionIndex}
+                              className={`block whitespace-nowrap text-ellipsis overflow-hidden transition-all duration-300 ${isFading ? 'opacity-0 -translate-y-2' : 'opacity-100 translate-y-0 region-animate'}`}
+                            >
                               {siteContent.regions[currentRegionIndex]?.name || 'Antalya'}
                             </span>
                           </div>
@@ -549,6 +576,20 @@ const App: React.FC = () => {
                       return `https://wa.me/${siteContent.business.whatsapp}?text=${encodeURIComponent(intlBody)}`;
                     };
 
+                    const sym2 = sym;
+                    const filteredRegions = priceSearch.trim()
+                      ? allRegions.filter(r => {
+                          const q = priceSearch.trim().toLowerCase();
+                          return r.name.toLowerCase().includes(q) || String(r.price ?? '').includes(q);
+                        })
+                      : allRegions;
+                    const filteredGroups = [
+                      { labelKey: 'pricing.near', dotCls: 'bg-emerald-400', lineCls: 'bg-emerald-400/20', regions: filteredRegions.filter(r => (r.price ?? 0) <= 60) },
+                      { labelKey: 'pricing.mid',  dotCls: 'bg-amber-400',   lineCls: 'bg-amber-400/20',   regions: filteredRegions.filter(r => (r.price ?? 0) > 60 && (r.price ?? 0) <= 120) },
+                      { labelKey: 'pricing.far',  dotCls: 'bg-rose-400',    lineCls: 'bg-rose-400/20',    regions: filteredRegions.filter(r => (r.price ?? 0) > 120) },
+                    ].filter(g => g.regions.length > 0);
+                    void sym2;
+
                     return (
                       <section className="relative overflow-hidden bg-slate-50 py-12 md:py-16">
                         <TextureBackground />
@@ -557,7 +598,7 @@ const App: React.FC = () => {
 
                           {/* ── Header ── */}
                           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
-                            <div>
+                            <div className="reveal">
                               <div className="flex items-center gap-2.5 mb-2.5">
                                 <i className="fa-solid fa-plane-departure text-[var(--color-primary)] text-[10px]"></i>
                                 <span className="text-[9px] font-black tracking-[0.35em] text-slate-400 uppercase">{t('pricing.eyebrow')}</span>
@@ -567,8 +608,26 @@ const App: React.FC = () => {
                               </h2>
                               <p className="text-slate-400 text-[12px] mt-1.5">{t('pricing.subtitle')}</p>
                             </div>
+                            {/* Search + Legend */}
+                            <div className="flex flex-col items-end gap-3 pb-0.5">
+                            {/* Search box */}
+                            <div className="relative">
+                              <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[11px] pointer-events-none"></i>
+                              <input
+                                type="text"
+                                value={priceSearch}
+                                onChange={e => setPriceSearch(e.target.value)}
+                                placeholder={t('pricing.search') || 'Bölge adı veya fiyat ara...'}
+                                className="pl-8 pr-3 py-2 text-[12px] rounded-xl border border-slate-200 bg-white text-slate-700 placeholder-slate-400 focus:outline-none focus:border-[var(--color-primary)] transition-colors w-52"
+                              />
+                              {priceSearch && (
+                                <button onClick={() => setPriceSearch('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                  <i className="fa-solid fa-xmark text-[10px]"></i>
+                                </button>
+                              )}
+                            </div>
                             {/* Legend */}
-                            <div className="flex items-center gap-4 pb-0.5">
+                            <div className="flex items-center gap-4">
                               {([
                                 { cls: 'bg-emerald-500', lk: 'pricing.legendNear' },
                                 { cls: 'bg-amber-500',   lk: 'pricing.legendMid' },
@@ -580,11 +639,12 @@ const App: React.FC = () => {
                                 </div>
                               ))}
                             </div>
+                            </div>
                           </div>
 
                           {/* ── Groups ── */}
                           <div className="space-y-7">
-                            {groups.map(group => (
+                            {(priceSearch.trim() ? filteredGroups : groups).map(group => (
                               <div key={group.labelKey}>
                                 {/* Group label */}
                                 <div className="flex items-center gap-3 mb-3.5">
@@ -593,14 +653,14 @@ const App: React.FC = () => {
                                   <span className="flex-1 h-px bg-slate-200"></span>
                                 </div>
                                 {/* Cards */}
-                                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 stagger-children">
                                   {group.regions.map(region => (
                                     <a
                                       key={region.id}
                                       href={buildWaUrl(region.name, region.price)}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="group flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl border border-slate-200 bg-white hover:border-[var(--color-primary)]/40 hover:bg-amber-50/50 hover:shadow-sm transition-all duration-200 cursor-pointer"
+                                      className="reveal group flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl border border-slate-200 bg-white hover:border-[var(--color-primary)]/40 hover:bg-amber-50/50 hover:shadow-sm transition-all duration-200 cursor-pointer"
                                     >
                                       <div className="flex items-center gap-2 min-w-0">
                                         <i className="fa-solid fa-location-dot text-slate-300 group-hover:text-[var(--color-primary)] text-[10px] shrink-0 transition-colors duration-200"></i>
@@ -678,9 +738,9 @@ const App: React.FC = () => {
                         </div>
 
                         {/* Premium Services Grid Minimal */}
-                        <div className="w-full mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
+                        <div className="w-full mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 stagger-children">
                           {/* Card 1 */}
-                          <div className="bg-white rounded-[2rem] p-6 xl:p-8 border border-slate-100 transition-all duration-200 hover:border-[var(--color-primary)]/30 hover:shadow-md hover:bg-slate-50/50 group flex flex-col items-center text-center">
+                          <div className="reveal bg-white rounded-[2rem] p-6 xl:p-8 border border-slate-100 transition-all duration-200 hover:border-[var(--color-primary)]/30 hover:shadow-md hover:bg-slate-50/50 group flex flex-col items-center text-center">
                             <div className="w-14 h-14 rounded-xl bg-amber-50/50 flex items-center justify-center text-[var(--color-primary)] mb-4 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors duration-200">
                               <i className="fa-solid fa-plane-arrival text-xl"></i>
                             </div>
@@ -691,7 +751,7 @@ const App: React.FC = () => {
                           </div>
 
                           {/* Card 2 */}
-                          <div className="bg-white rounded-[2rem] p-6 xl:p-8 border border-slate-100 transition-all duration-200 hover:border-[var(--color-primary)]/30 hover:shadow-md hover:bg-slate-50/50 group flex flex-col items-center text-center">
+                          <div className="reveal bg-white rounded-[2rem] p-6 xl:p-8 border border-slate-100 transition-all duration-200 hover:border-[var(--color-primary)]/30 hover:shadow-md hover:bg-slate-50/50 group flex flex-col items-center text-center">
                             <div className="w-14 h-14 rounded-xl bg-amber-50/50 flex items-center justify-center text-[var(--color-primary)] mb-4 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors duration-200">
                               <i className="fa-solid fa-map text-xl"></i>
                             </div>
@@ -702,7 +762,7 @@ const App: React.FC = () => {
                           </div>
 
                           {/* Card 3 */}
-                          <div className="bg-white rounded-[2rem] p-6 xl:p-8 border border-slate-100 transition-all duration-200 hover:border-[var(--color-primary)]/30 hover:shadow-md hover:bg-slate-50/50 group flex flex-col items-center text-center">
+                          <div className="reveal bg-white rounded-[2rem] p-6 xl:p-8 border border-slate-100 transition-all duration-200 hover:border-[var(--color-primary)]/30 hover:shadow-md hover:bg-slate-50/50 group flex flex-col items-center text-center">
                             <div className="w-14 h-14 rounded-xl bg-amber-50/50 flex items-center justify-center text-[var(--color-primary)] mb-4 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors duration-200">
                               <i className="fa-solid fa-route text-xl"></i>
                             </div>
@@ -713,7 +773,7 @@ const App: React.FC = () => {
                           </div>
 
                           {/* Card 4 */}
-                          <div className="bg-white rounded-[2rem] p-6 xl:p-8 border border-slate-100 transition-all duration-200 hover:border-[var(--color-primary)]/30 hover:shadow-md hover:bg-slate-50/50 group flex flex-col items-center text-center">
+                          <div className="reveal bg-white rounded-[2rem] p-6 xl:p-8 border border-slate-100 transition-all duration-200 hover:border-[var(--color-primary)]/30 hover:shadow-md hover:bg-slate-50/50 group flex flex-col items-center text-center">
                             <div className="w-14 h-14 rounded-xl bg-amber-50/50 flex items-center justify-center text-[var(--color-primary)] mb-4 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors duration-200">
                               <i className="fa-solid fa-car-side text-xl"></i>
                             </div>
@@ -901,6 +961,14 @@ const App: React.FC = () => {
                             </div>
                           </div>
 
+                          {reviewDone ? (
+                            <div className="flex items-center justify-center gap-3 py-3">
+                              <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                                <i className="fa-solid fa-check text-emerald-400 text-sm"></i>
+                              </div>
+                              <p className="text-emerald-400 font-semibold text-sm">{t('reviews.thankYou') || 'Yorumunuz alındı, inceleme sonrası yayınlanacak.'}</p>
+                            </div>
+                          ) : (<>
                           {/* Desktop Layout */}
                           <div className="hidden md:flex items-center gap-3">
                             <div className="flex items-center gap-2 shrink-0">
@@ -909,20 +977,18 @@ const App: React.FC = () => {
                             </div>
                             <div className="flex gap-0.5 shrink-0">
                               {[1, 2, 3, 4, 5].map(star => (
-                                <button
-                                  key={star}
-                                  onClick={() => setReviewRating(star)}
-                                  className={`text-sm transition-colors ${star <= reviewRating ? 'text-amber-400' : 'text-slate-600 hover:text-amber-400'}`}
-                                >
+                                <button key={star} onClick={() => setReviewRating(star)}
+                                  className={`text-sm transition-colors ${star <= reviewRating ? 'text-amber-400' : 'text-slate-600 hover:text-amber-400'}`}>
                                   <i className="fa-solid fa-star"></i>
                                 </button>
                               ))}
                             </div>
-                            <input type="text" placeholder={t('reviews.firstName')} className="flex-1 min-w-[60px] bg-white/[0.03] border border-white/[0.08] rounded-xl px-3 py-2 text-white text-xs placeholder-slate-500 focus:border-[var(--color-primary)] focus:outline-none transition-colors" />
-                            <input type="text" placeholder={t('reviews.lastName')} className="flex-1 min-w-[60px] bg-white/[0.03] border border-white/[0.08] rounded-xl px-3 py-2 text-white text-xs placeholder-slate-500 focus:border-[var(--color-primary)] focus:outline-none transition-colors" />
-                            <input type="text" placeholder={t('reviews.yourReview')} className="flex-[2] min-w-[100px] bg-white/[0.03] border border-white/[0.08] rounded-xl px-3 py-2 text-white text-xs placeholder-slate-500 focus:border-[var(--color-primary)] focus:outline-none transition-colors" />
-                            <button className="shrink-0 bg-gradient-to-r from-[var(--color-primary)] to-amber-600 hover:from-amber-600 hover:to-[var(--color-primary)] text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all flex items-center gap-1.5 shadow-lg shadow-[var(--color-primary)]/10 hover:shadow-[var(--color-primary)]/20">
-                              <i className="fa-solid fa-paper-plane text-[10px]"></i>
+                            <input type="text" value={reviewFirst} onChange={e => setReviewFirst(e.target.value)} placeholder={t('reviews.firstName')} className="flex-1 min-w-[60px] bg-white/[0.03] border border-white/[0.08] rounded-xl px-3 py-2 text-white text-xs placeholder-slate-500 focus:border-[var(--color-primary)] focus:outline-none transition-colors" />
+                            <input type="text" value={reviewLast} onChange={e => setReviewLast(e.target.value)} placeholder={t('reviews.lastName')} className="flex-1 min-w-[60px] bg-white/[0.03] border border-white/[0.08] rounded-xl px-3 py-2 text-white text-xs placeholder-slate-500 focus:border-[var(--color-primary)] focus:outline-none transition-colors" />
+                            <input type="text" value={reviewText} onChange={e => setReviewText(e.target.value)} placeholder={t('reviews.yourReview')} className="flex-[2] min-w-[100px] bg-white/[0.03] border border-white/[0.08] rounded-xl px-3 py-2 text-white text-xs placeholder-slate-500 focus:border-[var(--color-primary)] focus:outline-none transition-colors" />
+                            <button onClick={handleReviewSubmit} disabled={reviewSubmitting || !reviewFirst.trim() || !reviewText.trim() || reviewRating === 0}
+                              className="shrink-0 bg-gradient-to-r from-[var(--color-primary)] to-amber-600 hover:from-amber-600 hover:to-[var(--color-primary)] disabled:opacity-40 disabled:cursor-not-allowed text-white text-xs font-bold px-5 py-2.5 rounded-xl transition-all flex items-center gap-1.5 shadow-lg shadow-[var(--color-primary)]/10 hover:shadow-[var(--color-primary)]/20">
+                              {reviewSubmitting ? <i className="fa-solid fa-circle-notch fa-spin text-[10px]"></i> : <i className="fa-solid fa-paper-plane text-[10px]"></i>}
                               {t('reviews.send')}
                             </button>
                           </div>
@@ -930,28 +996,38 @@ const App: React.FC = () => {
                           {/* Mobile Layout - Vertical Stack */}
                           <div className="md:hidden space-y-3">
                             <div className="grid grid-cols-2 gap-3">
-                              <input type="text" placeholder={t('reviews.firstName')} className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 min-h-[48px] text-white text-sm placeholder-slate-500 focus:border-[var(--color-primary)] focus:outline-none transition-colors" />
-                              <input type="text" placeholder={t('reviews.lastName')} className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 min-h-[48px] text-white text-sm placeholder-slate-500 focus:border-[var(--color-primary)] focus:outline-none transition-colors" />
+                              <input type="text" value={reviewFirst} onChange={e => setReviewFirst(e.target.value)} placeholder={t('reviews.firstName')} className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 min-h-[48px] text-white text-sm placeholder-slate-500 focus:border-[var(--color-primary)] focus:outline-none transition-colors" />
+                              <input type="text" value={reviewLast} onChange={e => setReviewLast(e.target.value)} placeholder={t('reviews.lastName')} className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 min-h-[48px] text-white text-sm placeholder-slate-500 focus:border-[var(--color-primary)] focus:outline-none transition-colors" />
                             </div>
-                            <input type="text" placeholder={t('reviews.yourReview')} className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 min-h-[48px] text-white text-sm placeholder-slate-500 focus:border-[var(--color-primary)] focus:outline-none transition-colors" />
-                            <button className="w-full bg-gradient-to-r from-[var(--color-primary)] to-amber-600 hover:from-amber-600 hover:to-[var(--color-primary)] text-white text-sm font-bold px-4 py-3.5 min-h-[48px] rounded-xl transition-all flex items-center justify-center gap-2 active:scale-[0.98] shadow-lg shadow-[var(--color-primary)]/10">
-                              <i className="fa-solid fa-paper-plane"></i>
+                            <input type="text" value={reviewText} onChange={e => setReviewText(e.target.value)} placeholder={t('reviews.yourReview')} className="w-full bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 min-h-[48px] text-white text-sm placeholder-slate-500 focus:border-[var(--color-primary)] focus:outline-none transition-colors" />
+                            <button onClick={handleReviewSubmit} disabled={reviewSubmitting || !reviewFirst.trim() || !reviewText.trim() || reviewRating === 0}
+                              className="w-full bg-gradient-to-r from-[var(--color-primary)] to-amber-600 hover:from-amber-600 hover:to-[var(--color-primary)] disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-bold px-4 py-3.5 min-h-[48px] rounded-xl transition-all flex items-center justify-center gap-2 active:scale-[0.98] shadow-lg shadow-[var(--color-primary)]/10">
+                              {reviewSubmitting ? <i className="fa-solid fa-circle-notch fa-spin"></i> : <i className="fa-solid fa-paper-plane"></i>}
                               {t('reviews.submit')}
                             </button>
                           </div>
+                          </>)}
                         </div>
                       </div>
                     </div>
 
                     {/* Dual-Row Kayan Yorumlar — GPU Accelerated */}
+                    {(() => {
+                      const approvedUserReviews = userReviews.filter(r => r.status === 'approved');
+                      const allMarquee = [...approvedUserReviews, ...REVIEWS];
+                      const row1 = allMarquee.slice(0, Math.max(15, approvedUserReviews.length + 8));
+                      const row2 = allMarquee.slice(row1.length, row1.length + 15).length >= 5
+                        ? allMarquee.slice(row1.length, row1.length + 15)
+                        : REVIEWS.slice(35, 50);
+                      return (
                     <div className="relative space-y-4">
                       {/* Fade edges */}
                       <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-[var(--color-dark)] to-transparent z-20 pointer-events-none"></div>
                       <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-[var(--color-dark)] to-transparent z-20 pointer-events-none"></div>
 
-                      {/* Row 1 — Left to Right (15 reviews × 2) */}
+                      {/* Row 1 — Left to Right */}
                       <div className="flex gap-4 marquee-row-1 px-4">
-                        {[...REVIEWS.slice(0, 15), ...REVIEWS.slice(0, 15)].map((review, index) => (
+                        {[...row1, ...row1].map((review, index) => (
                           <div key={`r1-${review.id}-${index}`} className="review-card-2026 w-[300px] md:w-[360px] flex-shrink-0 rounded-2xl p-5">
                             <div className="flex items-center gap-3 mb-3">
                               {/* Avatar with gradient ring */}
@@ -987,9 +1063,9 @@ const App: React.FC = () => {
                         ))}
                       </div>
 
-                      {/* Row 2 — Right to Left (15 reviews × 2, different set) */}
+                      {/* Row 2 — Right to Left */}
                       <div className="flex gap-4 marquee-row-2 px-4">
-                        {[...REVIEWS.slice(35, 50), ...REVIEWS.slice(35, 50)].map((review, index) => (
+                        {[...row2, ...row2].map((review, index) => (
                           <div key={`r2-${review.id}-${index}`} className="review-card-2026 w-[300px] md:w-[360px] flex-shrink-0 rounded-2xl p-5">
                             <div className="flex items-center gap-3 mb-3">
                               {/* Avatar with gradient ring */}
@@ -1025,6 +1101,8 @@ const App: React.FC = () => {
                         ))}
                       </div>
                     </div>
+                      );
+                    })()}
                   </section>
                 </>
               } />

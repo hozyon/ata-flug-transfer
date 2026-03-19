@@ -3,12 +3,15 @@ import { Helmet } from 'react-helmet-async';
 import TextureBackground from '../components/TextureBackground';
 import { useSiteContent } from '../SiteContext';
 import { useLanguage } from '../i18n/LanguageContext';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 const Hakkimizda: React.FC = () => {
     const { siteContent } = useSiteContent();
     const { t } = useLanguage();
     const about = siteContent.about;
     const business = siteContent.business;
+
+    useScrollReveal();
 
     const features = [
         { icon: "fa-shield-halved", title: t('about.feat1.title'), desc: t('about.feat1.desc') },
@@ -64,7 +67,7 @@ const Hakkimizda: React.FC = () => {
                 <TextureBackground />
                 <div className="max-w-7xl mx-auto px-4 relative z-10">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 mb-2 items-start">
-                        <div className="pt-4">
+                        <div className="pt-4 reveal-left">
                             <h2 className="text-4xl font-playfair font-medium text-slate-900 mb-8 leading-tight">{t(about.title)}</h2>
                             <div className="text-slate-500 text-lg leading-relaxed font-light space-y-6 text-left md:text-justify whitespace-pre-line border-l-2 border-[var(--color-primary)]/30 pl-6 bg-white/50 backdrop-blur-sm rounded-r-xl p-4">
                                 {t(about.content)}
@@ -76,7 +79,7 @@ const Hakkimizda: React.FC = () => {
                                 </a>
                             </div>
                         </div>
-                        <div className="relative">
+                        <div className="relative reveal">
                             <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
                                 <img src={about.image || '/images/about-custom.jpg'} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" alt="About Us Feature" />
                             </div>
@@ -91,9 +94,9 @@ const Hakkimizda: React.FC = () => {
 
             <section className="py-12 bg-[var(--color-dark)] border-t border-slate-800">
                 <div className="max-w-7xl mx-auto px-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 stagger-children">
                         {features.map((feature, idx) => (
-                            <div key={idx} className="bg-transparent rounded-2xl p-6 border border-slate-800 hover:border-[var(--color-primary)]/50 hover:bg-slate-800/50 transition-all duration-300 group hover:-translate-y-1">
+                            <div key={idx} className="reveal bg-transparent rounded-2xl p-6 border border-slate-800 hover:border-[var(--color-primary)]/50 hover:bg-slate-800/50 transition-all duration-300 group hover:-translate-y-1">
                                 <div className="flex flex-col items-center text-center gap-4">
                                     <div className="w-12 h-12 rounded-xl bg-slate-800 text-[var(--color-primary)] flex items-center justify-center text-xl shrink-0 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-all duration-300 mb-2 border border-slate-700/50">
                                         <i className={`fa-solid ${feature.icon}`}></i>

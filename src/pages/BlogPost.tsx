@@ -26,7 +26,7 @@ const BlogPost: React.FC = () => {
                 <div className="text-center px-4">
                     <h1 className="text-6xl font-playfair font-bold text-slate-800 mb-4">404</h1>
                     <p className="text-slate-500 text-lg mb-8">{t('blogPost.notFound')}</p>
-                    <Link to="/blog" className="inline-flex items-center gap-2 bg-[var(--color-primary)] text-white px-8 py-3 rounded-full hover:bg-amber-600 transition-colors">
+                    <Link to="/blog" className="inline-flex items-center gap-2 bg-[var(--color-primary)] text-[#0f172a] font-bold px-8 py-3 rounded-full hover:bg-[#d4af6a] transition-colors">
                         <i className="fa-solid fa-arrow-left"></i>
                         <span>{t('blogPost.backToBlog')}</span>
                     </Link>

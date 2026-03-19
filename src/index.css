@@ -1,5 +1,16 @@
 @import "tailwindcss";
 
+/* Admin panel light theme */
+[data-admin-theme="light"] {
+  filter: invert(1) hue-rotate(180deg);
+}
+/* Counter-invert images/videos so they look natural in light mode */
+[data-admin-theme="light"] img,
+[data-admin-theme="light"] video,
+[data-admin-theme="light"] iframe {
+  filter: invert(1) hue-rotate(180deg);
+}
+
 :root {
   --color-primary: #c5a059;
   --color-dark: #0f172a;
@@ -83,6 +94,91 @@
   .font-playfair {
     font-family: 'Playfair Display', serif;
   }
+}
+
+/* ── Type Scale Tokens ────────────────────────────────────── */
+:root {
+  --text-xs:   0.6875rem; /* 11px */
+  --text-sm:   0.75rem;   /* 12px */
+  --text-base: 0.875rem;  /* 14px */
+  --text-md:   1rem;      /* 16px */
+  --text-lg:   1.125rem;  /* 18px */
+  --text-xl:   1.25rem;   /* 20px */
+  --text-2xl:  1.5rem;    /* 24px */
+  --text-3xl:  1.875rem;  /* 30px */
+  --text-4xl:  2.25rem;   /* 36px */
+  --text-5xl:  3rem;      /* 48px */
+  --text-6xl:  3.75rem;   /* 60px */
+  --text-7xl:  4.5rem;    /* 72px */
+
+  /* Spacing scale */
+  --section-py: clamp(3rem, 6vw, 5rem);
+}
+
+/* ── Scroll-triggered Reveal Animations ─────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-24px);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal-left.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.94);
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal-scale.is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Stagger delays for children */
+.stagger-children > *:nth-child(1) { transition-delay: 0ms; }
+.stagger-children > *:nth-child(2) { transition-delay: 80ms; }
+.stagger-children > *:nth-child(3) { transition-delay: 160ms; }
+.stagger-children > *:nth-child(4) { transition-delay: 240ms; }
+.stagger-children > *:nth-child(5) { transition-delay: 320ms; }
+.stagger-children > *:nth-child(6) { transition-delay: 400ms; }
+
+/* Individual stagger delays */
+.delay-0   { transition-delay: 0ms !important; }
+.delay-80  { transition-delay: 80ms !important; }
+.delay-160 { transition-delay: 160ms !important; }
+.delay-240 { transition-delay: 240ms !important; }
+.delay-320 { transition-delay: 320ms !important; }
+.delay-400 { transition-delay: 400ms !important; }
+
+/* ── Page Transition ─────────────────────────────────────── */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-enter {
+  animation: pageIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ── Hero trust bar region text animation ───────────────── */
+@keyframes regionIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.region-animate {
+  animation: regionIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 @layer utilities {

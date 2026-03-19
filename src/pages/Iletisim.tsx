@@ -101,7 +101,7 @@ const Iletisim: React.FC = () => {
                                         className="w-full px-4 py-3.5 min-h-[120px] border-2 border-slate-200 rounded-2xl text-slate-700 placeholder-slate-400 focus:border-[var(--color-primary)] focus:outline-none transition-colors resize-none text-base md:text-sm"
                                         placeholder={t('contact.msgPh')}></textarea>
                                 </div>
-                                <button type="submit" className="w-full md:w-auto bg-[var(--color-primary)] hover:bg-amber-600 text-white font-bold px-10 py-4 min-h-[52px] rounded-2xl transition-colors uppercase tracking-wider flex items-center justify-center gap-2 active:scale-[0.98]">
+                                <button type="submit" className="w-full md:w-auto bg-[var(--color-primary)] hover:bg-[#d4af6a] text-[#0f172a] font-bold px-10 py-4 min-h-[52px] rounded-2xl transition-colors uppercase tracking-wider flex items-center justify-center gap-2 active:scale-[0.98]">
                                     <i className="fab fa-whatsapp text-lg"></i>
                                     {t('contact.send')}
                                 </button>

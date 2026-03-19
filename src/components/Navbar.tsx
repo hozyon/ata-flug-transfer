@@ -15,42 +15,13 @@ interface NavbarProps {
 
 /* ─── Animated hamburger SVG ─────────────────────────────────── */
 const HamburgerIcon: React.FC<{ isOpen: boolean }> = ({ isOpen }) => (
-  <svg
-    width="20" height="20" viewBox="0 0 20 20"
-    fill="none" aria-hidden="true"
-    style={{ overflow: 'visible' }}
-  >
-    {/* top bar */}
-    <line
-      x1="2" y1="5" x2="18" y2="5"
-      stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"
-      style={{
-        transformOrigin: '10px 5px',
-        transition: 'transform 0.38s cubic-bezier(0.4,0,0.2,1)',
-        transform: isOpen ? 'translateY(5px) rotate(45deg)' : 'none',
-      }}
-    />
-    {/* middle bar */}
-    <line
-      x1="2" y1="10" x2="18" y2="10"
-      stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"
-      style={{
-        transformOrigin: '10px 10px',
-        transition: 'opacity 0.22s ease, transform 0.38s cubic-bezier(0.4,0,0.2,1)',
-        opacity: isOpen ? 0 : 1,
-        transform: isOpen ? 'scaleX(0.3)' : 'none',
-      }}
-    />
-    {/* bottom bar */}
-    <line
-      x1="2" y1="15" x2="18" y2="15"
-      stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"
-      style={{
-        transformOrigin: '10px 15px',
-        transition: 'transform 0.38s cubic-bezier(0.4,0,0.2,1)',
-        transform: isOpen ? 'translateY(-5px) rotate(-45deg)' : 'none',
-      }}
-    />
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" style={{ overflow: 'visible' }}>
+    <line x1="2" y1="5" x2="18" y2="5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"
+      style={{ transformOrigin: '10px 5px', transition: 'transform 0.38s cubic-bezier(0.4,0,0.2,1)', transform: isOpen ? 'translateY(5px) rotate(45deg)' : 'none' }} />
+    <line x1="2" y1="10" x2="18" y2="10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"
+      style={{ transformOrigin: '10px 10px', transition: 'opacity 0.22s ease, transform 0.38s cubic-bezier(0.4,0,0.2,1)', opacity: isOpen ? 0 : 1, transform: isOpen ? 'scaleX(0.3)' : 'none' }} />
+    <line x1="2" y1="15" x2="18" y2="15" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"
+      style={{ transformOrigin: '10px 15px', transition: 'transform 0.38s cubic-bezier(0.4,0,0.2,1)', transform: isOpen ? 'translateY(-5px) rotate(-45deg)' : 'none' }} />
   </svg>
 );
 
@@ -70,39 +41,33 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
   const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
+    const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  /* lock body scroll */
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [isMobileMenuOpen]);
 
-  /* reset state on close */
   useEffect(() => {
     if (!isMobileMenuOpen) {
-      const t = setTimeout(() => { setExpandedItems([]); setSearchQuery(''); }, 400);
-      return () => clearTimeout(t);
+      const timer = setTimeout(() => { setExpandedItems([]); setSearchQuery(''); }, 400);
+      return () => clearTimeout(timer);
     }
   }, [isMobileMenuOpen]);
 
-  /* close on route change — wrapped in microtask to avoid sync setState in effect */
   useEffect(() => {
     const id = setTimeout(() => setIsMobileMenuOpen(false), 0);
     return () => clearTimeout(id);
   }, [location.pathname]);
 
   const toggleSubmenu = (id: string) =>
-    setExpandedItems(prev =>
-      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
-    );
+    setExpandedItems(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
 
   const close = () => setIsMobileMenuOpen(false);
 
-  /* ── nav helpers ──────────────────────────────────────────── */
   const NAV_KEY_MAP: Record<string, string> = {
     '/': 'nav.home', '/hakkimizda': 'nav.about', '/vizyon-misyon': 'nav.vision',
     '/bolgeler': 'nav.regions', '/sss': 'nav.faq', '/blog': 'nav.blog', '/iletisim': 'nav.contact',
@@ -127,202 +92,280 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
   };
 
   const menuItems = siteContent.navbar;
-  const isSolid = scrolled || isAdmin;
 
-  /* ── search results ──────────────────────────────────────── */
   const buildResults = (q: string) => {
     const nq = q.toLowerCase();
-    const pages = menuItems
-      .filter(i => i.label.toLowerCase().includes(nq))
+    const pages = menuItems.filter(i => i.label.toLowerCase().includes(nq))
       .map(i => ({ type: 'SAYFA', label: i.label, url: i.url, icon: 'fa-link' }));
-    const blogs = BLOG_POSTS
-      .filter(p => p.title.toLowerCase().includes(nq) || p.tags.some(tag => tag.includes(nq)))
-      .slice(0, 4)
-      .map(p => ({ type: 'BLOG', label: p.title, url: `/blog/${p.slug}`, icon: 'fa-newspaper' }));
-    const regions = siteContent.regions
-      .filter(r => r.name.toLowerCase().includes(nq))
-      .slice(0, 4)
-      .map(r => ({ type: 'BÖLGE', label: r.name, url: `/bolgeler?q=${encodeURIComponent(r.name)}`, icon: 'fa-location-dot' }));
-    const faqs = siteContent.faq
-      .filter(f => f.q.toLowerCase().includes(nq))
-      .slice(0, 3)
-      .map(f => ({ type: 'SSS', label: f.q, url: '/sss', icon: 'fa-circle-question' }));
+    const blogs = BLOG_POSTS.filter(p => p.title.toLowerCase().includes(nq) || p.tags.some(tag => tag.includes(nq)))
+      .slice(0, 4).map(p => ({ type: 'BLOG', label: p.title, url: `/blog/${p.slug}`, icon: 'fa-newspaper' }));
+    const regions = siteContent.regions.filter(r => r.name.toLowerCase().includes(nq))
+      .slice(0, 4).map(r => ({ type: 'BÖLGE', label: r.name, url: `/bolgeler?q=${encodeURIComponent(r.name)}`, icon: 'fa-location-dot' }));
+    const faqs = siteContent.faq.filter(f => f.q.toLowerCase().includes(nq))
+      .slice(0, 3).map(f => ({ type: 'SSS', label: f.q, url: '/sss', icon: 'fa-circle-question' }));
     return [...pages, ...regions, ...blogs, ...faqs];
   };
 
   const searchResults = searchQuery.length > 1 ? buildResults(searchQuery) : [];
 
-  /* ─────────────────────────────────────────────────────────── */
   return (
     <>
-      {/* ── STYLES ─────────────────────────────────────────── */}
       <style>{`
-        @keyframes logoPop {
-          0%   { transform: scale(0); opacity: 0; }
-          5%,95%{ transform: scale(1); opacity: 1; }
-          100% { transform: scale(0); opacity: 0; }
+        /* ── Navbar enter ── */
+        @keyframes navbarIn {
+          from { opacity: 0; transform: translateY(-8px); }
+          to   { opacity: 1; transform: translateY(0); }
         }
-        @keyframes textReveal {
-          0%   { max-width: 0;     opacity: 0; margin-left: 0; }
-          5%,95%{ max-width: 600px; opacity: 1; margin-left: .75rem; }
-          100% { max-width: 0;     opacity: 0; margin-left: 0; }
+        .navbar-enter { animation: navbarIn 0.5s cubic-bezier(0.22,1,0.36,1) forwards; }
+
+        /* ── Gold accent line ── */
+        .navbar-accent-line {
+          position: absolute;
+          inset: 0 0 auto 0;
+          height: 1px;
+          background: linear-gradient(90deg, transparent 0%, rgba(197,160,89,0.6) 30%, rgba(197,160,89,0.9) 50%, rgba(197,160,89,0.6) 70%, transparent 100%);
+          opacity: 0;
+          transition: opacity 0.4s ease;
         }
-        .animate-logo-pop   { animation: logoPop    20s infinite cubic-bezier(.34,1.56,.64,1); }
-        .animate-text-reveal{
-          overflow: hidden; white-space: nowrap; display: inline-block;
-          animation: textReveal 20s infinite cubic-bezier(.4,0,.2,1);
+        .navbar-accent-line.visible { opacity: 1; }
+
+        /* ── Desktop nav link ── */
+        .nav-link-desktop {
+          position: relative;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 6px 12px;
+          border-radius: 8px;
+          font-size: 12px;
+          font-weight: 700;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          color: rgba(255,255,255,0.65);
+          transition: color 0.2s ease, background 0.2s ease;
+          white-space: nowrap;
         }
-        @media (max-width:1023px){
-          .navbar-logo-wrapper .animate-text-reveal{
-            position:absolute; left:100%; top:50%;
-            transform:translateY(-50%); pointer-events:none;
-          }
+        .nav-link-desktop:hover {
+          color: rgba(255,255,255,0.95);
+          background: rgba(255,255,255,0.05);
         }
+        .nav-link-desktop.active {
+          color: var(--color-primary);
+          background: rgba(197,160,89,0.08);
+        }
+        .nav-link-desktop .underline-bar {
+          position: absolute;
+          bottom: 0; left: 12px; right: 12px;
+          height: 1.5px;
+          background: var(--color-primary);
+          border-radius: 1px;
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 0.25s cubic-bezier(0.22,1,0.36,1);
+        }
+        .nav-link-desktop:hover .underline-bar,
+        .nav-link-desktop.active .underline-bar { transform: scaleX(1); }
 
         /* ── mobile sheet animations ── */
-        @keyframes sheetIn {
-          from { transform: translateY(100%); }
-          to   { transform: translateY(0); }
-        }
-        @keyframes sheetOut {
-          from { transform: translateY(0); }
-          to   { transform: translateY(100%); }
-        }
+        @keyframes sheetIn  { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes sheetOut { from { transform: translateY(0); } to { transform: translateY(100%); } }
         .sheet-enter { animation: sheetIn  .45s cubic-bezier(.32,.72,0,1) forwards; }
         .sheet-exit  { animation: sheetOut .35s cubic-bezier(.4, 0,.6,1) forwards; }
 
-        /* stagger each nav row */
+        /* ── nav row stagger ── */
         .nav-row { opacity: 0; transform: translateY(14px); }
-        .nav-row.visible {
-          animation: navRowIn .38s cubic-bezier(.22,1,.36,1) forwards;
-        }
-        @keyframes navRowIn {
-          to { opacity:1; transform: translateY(0); }
-        }
+        .nav-row.visible { animation: navRowIn .38s cubic-bezier(.22,1,.36,1) forwards; }
+        @keyframes navRowIn { to { opacity:1; transform: translateY(0); } }
 
-        /* quick action pulse */
-        @keyframes qaPulse {
-          0%,100%{ box-shadow: 0 0 0 0 rgba(197,160,89,.25); }
-          50%    { box-shadow: 0 0 0 8px rgba(197,160,89,.0); }
+        /* ── CTA pulse ── */
+        @keyframes ctaPulse {
+          0%,100%{ box-shadow: 0 0 0 0 rgba(197,160,89,.3); }
+          50%    { box-shadow: 0 0 0 6px rgba(197,160,89,.0); }
         }
-        .qa-primary { animation: qaPulse 2.5s ease-in-out infinite; }
+        .cta-pulse { animation: ctaPulse 2.8s ease-in-out infinite; }
 
-        /* WA pulse */
         @keyframes waPulse {
           0%,100%{ box-shadow: 0 0 0 0 rgba(37,211,102,.25); }
           50%    { box-shadow: 0 0 0 8px rgba(37,211,102,.0); }
         }
         .qa-wa { animation: waPulse 2.5s ease-in-out infinite 0.6s; }
 
-        /* search ring */
-        .search-ring:focus-within {
-          box-shadow: 0 0 0 2px rgba(197,160,89,.35);
-        }
+        .search-ring:focus-within { box-shadow: 0 0 0 2px rgba(197,160,89,.35); }
 
-        /* active pill slide */
         .active-pill {
           background: linear-gradient(135deg,rgba(197,160,89,.18) 0%,rgba(197,160,89,.06) 100%);
           border: 1px solid rgba(197,160,89,.22);
         }
+
+        /* ── Phone number shimmer ── */
+        @keyframes phoneShimmer {
+          0%  { opacity: 0.45; }
+          50% { opacity: 0.75; }
+          100%{ opacity: 0.45; }
+        }
+        .phone-shimmer { animation: phoneShimmer 3s ease-in-out infinite; }
       `}</style>
 
       {/* ── TOP HEADER ─────────────────────────────────────── */}
       <header
-        className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 border-b border-white/[0.09]
-          ${isSolid ? 'py-1 h-16 shadow-lg' : 'py-2 h-20 shadow-sm'}`}
+        className={`navbar-enter fixed top-0 left-0 w-full z-[100] transition-all duration-400`}
         style={{
-          background: 'rgba(15,23,42,0.06)',
-          backdropFilter: 'blur(80px)',
-          WebkitBackdropFilter: 'blur(80px)',
-          paddingLeft:  'env(safe-area-inset-left)',
+          height: scrolled ? '60px' : '72px',
+          background: scrolled
+            ? 'rgba(10,12,24,0.92)'
+            : 'rgba(10,12,24,0.18)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          borderBottom: scrolled
+            ? '1px solid rgba(255,255,255,0.07)'
+            : '1px solid rgba(255,255,255,0.04)',
+          boxShadow: scrolled ? '0 8px 32px rgba(0,0,0,0.35)' : 'none',
+          paddingLeft: 'env(safe-area-inset-left)',
           paddingRight: 'env(safe-area-inset-right)',
+          transition: 'height 0.35s cubic-bezier(0.22,1,0.36,1), background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease',
         }}
       >
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full">
-          <div className="flex justify-between items-center h-full">
+        {/* Gold accent line on scroll */}
+        <div className={`navbar-accent-line ${scrolled ? 'visible' : ''}`} />
 
-            {/* Logo */}
-            <Link to="/" className="flex items-center shrink-0 relative navbar-logo-wrapper">
-              <div className="animate-logo-pop z-10 relative">
+        <nav className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8 h-full">
+          <div className="flex items-center justify-between h-full gap-4">
+
+            {/* ── Logo ── */}
+            <Link to="/" className="flex items-center gap-3 shrink-0 group">
+              <div className="relative">
                 <img
-                  src={siteContent.business.logo || '/logo.png'} alt="Logo"
-                  className="h-10 md:h-12 w-auto object-contain"
+                  src={siteContent.business.logo || '/logo.png'}
+                  alt={BUSINESS_INFO.name}
+                  className="h-9 md:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                   onError={e => (e.currentTarget.src = '/logo.png')}
                 />
               </div>
-              <div className="animate-text-reveal">
-                <span className="text-lg md:text-xl font-extrabold uppercase leading-none text-white">
+              <div className="hidden sm:block">
+                <div className="text-[10px] font-bold text-white/30 uppercase tracking-[0.25em] leading-none">
+                  {t('hero.eyebrow') || 'VIP Transfer'}
+                </div>
+                <div className="text-[15px] font-extrabold text-white leading-tight tracking-tight"
+                  style={{ fontFamily: "'Outfit', sans-serif" }}>
                   {BUSINESS_INFO.name}
-                </span>
+                </div>
               </div>
             </Link>
 
-            {/* Desktop nav */}
-            <div className="hidden lg:flex items-center space-x-2 font-bold text-[13px] h-full text-white">
+            {/* ── Desktop nav ── */}
+            <div className="hidden lg:flex items-center gap-1 h-full flex-1 justify-center">
               {menuItems.map(item => {
                 const hasSubMenu = !!(item.subMenus && item.subMenus.length > 0 && item.url !== '/bolgeler');
+                const isActive = location.pathname === item.url || (item.url !== '/' && location.pathname.startsWith(item.url));
                 return (
-                <div
-                  key={item.id}
-                  className="relative h-full flex items-center"
-                  onMouseEnter={() => hasSubMenu && setActiveDropdown(item.id)}
-                  onMouseLeave={() => setActiveDropdown(null)}
-                >
-                  <Link
-                    to={item.url}
-                    className="px-4 py-2 transition-all flex items-center group relative hover:text-[var(--color-primary)]"
+                  <div
+                    key={item.id}
+                    className="relative h-full flex items-center"
+                    onMouseEnter={() => hasSubMenu && setActiveDropdown(item.id)}
+                    onMouseLeave={() => setActiveDropdown(null)}
                   >
-                    <span className="uppercase">{translateNav(item)}</span>
-                    {hasSubMenu && (
-                      <i className="fa-solid fa-chevron-down ml-2 text-[10px] opacity-50 group-hover:rotate-180 transition-transform" />
-                    )}
-                    <span className="absolute bottom-0 left-4 right-4 h-0.5 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 bg-[var(--color-primary)]" />
-                  </Link>
-                  {hasSubMenu && activeDropdown === item.id && (
-                    <div
-                      className="absolute top-[80%] left-0 w-56 shadow-2xl rounded-xl border border-white/[0.12] py-3 animate-in fade-in slide-in-from-top-2 duration-200"
-                      style={{ background: 'rgba(15,23,42,.06)', backdropFilter: 'blur(80px)', WebkitBackdropFilter: 'blur(80px)' }}
+                    <Link
+                      to={item.url}
+                      className={`nav-link-desktop ${isActive ? 'active' : ''}`}
                     >
-                      {item.subMenus.map(sub => (
-                        <Link key={sub.id} to={sub.url}
-                          className="block px-6 py-2.5 hover:bg-white/10 hover:text-[var(--color-primary)] transition-all text-white/70 text-sm font-semibold">
-                          {NAV_KEY_MAP[sub.url] ? t(NAV_KEY_MAP[sub.url]) : sub.label}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );})}
-              <div className="pl-4 ml-4 flex items-center border-l border-white/20 gap-3">
-                <LanguageSwitcher />
-                <button
-                  onClick={onAdminToggle}
-                  className={`w-10 h-10 rounded-full flex items-center justify-center transition-all
-                    ${isAdmin ? 'bg-[var(--color-primary)]/20 text-[var(--color-primary)]' : 'bg-white/10 text-white/60 hover:bg-white/20 hover:text-white'}`}
-                  title="Admin Paneli"
-                >
-                  <i className={`fa-solid ${isAdmin ? 'fa-user-gear' : 'fa-lock'}`} />
-                </button>
-              </div>
+                      {translateNav(item)}
+                      {hasSubMenu && (
+                        <i className={`fa-solid fa-chevron-down text-[9px] opacity-50 transition-transform duration-200 ${activeDropdown === item.id ? 'rotate-180' : ''}`} />
+                      )}
+                      <span className="underline-bar" />
+                    </Link>
+
+                    {/* Dropdown */}
+                    {hasSubMenu && activeDropdown === item.id && (
+                      <div
+                        className="absolute top-[calc(100%-4px)] left-1/2 -translate-x-1/2 w-52 py-2 rounded-2xl border border-white/[0.10] shadow-2xl shadow-black/40 animate-in fade-in slide-in-from-top-1 duration-150"
+                        style={{ background: 'rgba(10,12,24,0.95)', backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)' }}
+                      >
+                        {/* Arrow */}
+                        <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 rounded-sm border-t border-l border-white/[0.10]"
+                          style={{ background: 'rgba(10,12,24,0.95)' }} />
+                        {item.subMenus.map(sub => (
+                          <Link key={sub.id} to={sub.url}
+                            className="flex items-center gap-2.5 px-4 py-2.5 text-[12.5px] font-semibold text-white/55 hover:text-white hover:bg-white/[0.06] transition-all mx-1 rounded-xl">
+                            <span className="w-1 h-1 rounded-full bg-[var(--color-primary)]/50 shrink-0" />
+                            {NAV_KEY_MAP[sub.url] ? t(NAV_KEY_MAP[sub.url]) : sub.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
-            {/* Mobile right controls */}
-            <div className="lg:hidden flex items-center gap-1">
+            {/* ── Desktop right: phone + CTA + lang + admin ── */}
+            <div className="hidden lg:flex items-center gap-2 shrink-0">
+
+              {/* Phone (subtle) */}
+              {siteContent.business.phone && (
+                <a
+                  href={`tel:${siteContent.business.phone}`}
+                  className="phone-shimmer flex items-center gap-1.5 text-white/45 hover:text-[var(--color-primary)] text-[11px] font-semibold tracking-wide transition-colors duration-200 px-2"
+                >
+                  <i className="fa-solid fa-phone text-[9px]" />
+                  <span className="hidden xl:block">{siteContent.business.phone}</span>
+                </a>
+              )}
+
+              <div className="w-px h-5 bg-white/10" />
+
               <LanguageSwitcher />
+
+              {/* Rezervasyon CTA */}
+              <button
+                onClick={() => setBookingFormOpen(true)}
+                className="cta-pulse flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[#d4af6a] text-[#0a0a0e] font-bold text-[12px] uppercase tracking-[0.08em] px-4 py-2.5 rounded-xl transition-all duration-200 active:scale-[0.97]"
+                style={{ fontFamily: "'Outfit', sans-serif" }}
+              >
+                <i className="fa-solid fa-calendar-check text-[11px]" />
+                <span>{t('hero.cta')}</span>
+              </button>
+
+              {/* Admin */}
+              <button
+                onClick={onAdminToggle}
+                className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all text-[13px]
+                  ${isAdmin
+                    ? 'bg-[var(--color-primary)]/15 text-[var(--color-primary)] border border-[var(--color-primary)]/25'
+                    : 'bg-white/[0.06] text-white/30 border border-white/[0.07] hover:bg-white/10 hover:text-white/60'}`}
+                title="Admin Paneli"
+              >
+                <i className={`fa-solid ${isAdmin ? 'fa-user-gear' : 'fa-lock'}`} />
+              </button>
+            </div>
+
+            {/* ── Mobile right controls ── */}
+            <div className="lg:hidden flex items-center gap-1.5">
+              <LanguageSwitcher />
+
+              {/* Mobile quick booking */}
+              <button
+                onClick={() => setBookingFormOpen(true)}
+                className="w-9 h-9 rounded-xl flex items-center justify-center bg-[var(--color-primary)]/15 border border-[var(--color-primary)]/25 text-[var(--color-primary)] transition-all active:scale-90"
+                aria-label="Rezervasyon yap"
+              >
+                <i className="fa-solid fa-calendar-check text-[12px]" />
+              </button>
 
               {/* Hamburger */}
               <button
                 onClick={() => setIsMobileMenuOpen(v => !v)}
                 aria-label={isMobileMenuOpen ? 'Menüyü kapat' : 'Menüyü aç'}
                 aria-expanded={isMobileMenuOpen}
-                className={`relative w-11 h-11 flex items-center justify-center rounded-2xl transition-all duration-300 active:scale-90
+                className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all duration-300 active:scale-90 border
                   ${isMobileMenuOpen
-                    ? 'bg-[var(--color-primary)]/15 text-[var(--color-primary)] border border-[var(--color-primary)]/25'
-                    : 'bg-white/[0.07] text-white/80 border border-white/[0.08] hover:bg-white/[0.12]'}`}
+                    ? 'bg-[var(--color-primary)]/10 text-[var(--color-primary)] border-[var(--color-primary)]/20'
+                    : 'bg-white/[0.06] text-white/70 border-white/[0.07] hover:bg-white/10'}`}
               >
                 <HamburgerIcon isOpen={isMobileMenuOpen} />
               </button>
             </div>
+
           </div>
         </nav>
       </header>
@@ -335,61 +378,68 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
         {/* Backdrop */}
         <div
           className="absolute inset-0 bg-black/55 transition-opacity duration-500"
-          style={{ opacity: isMobileMenuOpen ? 1 : 0, backdropFilter: isMobileMenuOpen ? 'blur(6px)' : 'none', WebkitBackdropFilter: isMobileMenuOpen ? 'blur(6px)' : 'none' }}
+          style={{
+            opacity: isMobileMenuOpen ? 1 : 0,
+            backdropFilter: isMobileMenuOpen ? 'blur(6px)' : 'none',
+            WebkitBackdropFilter: isMobileMenuOpen ? 'blur(6px)' : 'none',
+          }}
           onClick={close}
         />
 
         {/* Bottom sheet panel */}
         <div
-          className={`absolute left-0 right-0 bottom-0 flex flex-col z-[9995] overflow-hidden
-            rounded-t-[2.25rem] border-t border-white/[0.10]
+          className={`absolute left-0 right-0 bottom-0 flex flex-col z-[9995] overflow-hidden rounded-t-[2.25rem] border-t border-white/[0.10]
             ${isMobileMenuOpen ? 'sheet-enter' : 'sheet-exit pointer-events-none'}`}
           style={{
             maxHeight: '94dvh',
-            background: 'rgba(6,9,20,0.88)',
+            background: 'rgba(6,9,20,0.92)',
             backdropFilter: 'blur(64px)',
             WebkitBackdropFilter: 'blur(64px)',
             paddingBottom: 'env(safe-area-inset-bottom)',
           }}
         >
-          {/* ── Drag handle ── */}
+          {/* Gold top accent line */}
+          <div className="h-px w-full" style={{ background: 'linear-gradient(90deg, transparent, rgba(197,160,89,0.5) 30%, rgba(197,160,89,0.8) 50%, rgba(197,160,89,0.5) 70%, transparent)' }} />
+
+          {/* Drag handle */}
           <div className="flex justify-center pt-3 pb-1 shrink-0">
-            <div className="w-10 h-[3.5px] rounded-full bg-white/20" />
+            <div className="w-10 h-[3.5px] rounded-full bg-white/15" />
           </div>
 
-          {/* ── Sheet header ── */}
-          <div className="px-5 pt-3 pb-4 flex items-center justify-between shrink-0">
+          {/* Sheet header */}
+          <div className="px-5 pt-2 pb-4 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl overflow-hidden bg-white/[0.07] flex items-center justify-center shrink-0 border border-white/[0.08]">
-                <img
-                  src={siteContent.business.logo || '/logo.png'} alt="Logo"
+                <img src={siteContent.business.logo || '/logo.png'} alt="Logo"
                   className="w-full h-full object-contain scale-90"
-                  onError={e => (e.currentTarget.src = '/logo.png')}
-                />
+                  onError={e => (e.currentTarget.src = '/logo.png')} />
               </div>
               <div>
-                <p className="text-[11px] font-bold text-white/35 uppercase tracking-[0.2em] leading-none mb-0.5">{siteContent.business?.name || 'ATA FLUG'}</p>
-                <p className="text-[15px] font-extrabold text-white leading-none tracking-tight">TRANSFER</p>
+                <p className="text-[10px] font-bold text-[var(--color-primary)]/50 uppercase tracking-[0.22em] leading-none mb-0.5">
+                  {t('hero.eyebrow') || 'VIP Transfer'}
+                </p>
+                <p className="text-[15px] font-extrabold text-white leading-none tracking-tight"
+                  style={{ fontFamily: "'Outfit', sans-serif" }}>
+                  {siteContent.business?.name || 'ATA FLUG'}
+                </p>
               </div>
             </div>
-            <button
-              onClick={close}
-              className="w-11 h-11 rounded-full flex items-center justify-center bg-white/[0.07] text-white/50 hover:text-white border border-white/[0.08] active:scale-90 transition-all"
-              aria-label="Kapat"
-            >
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                <line x1="1" y1="1" x2="13" y2="13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-                <line x1="13" y1="1" x2="1" y2="13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+            <button onClick={close}
+              className="w-10 h-10 rounded-full flex items-center justify-center bg-white/[0.06] text-white/40 hover:text-white border border-white/[0.07] active:scale-90 transition-all"
+              aria-label="Kapat">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                <line x1="1" y1="1" x2="11" y2="11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+                <line x1="11" y1="1" x2="1" y2="11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
               </svg>
             </button>
           </div>
 
-          {/* ── Quick action CTAs ── */}
-          <div className="px-5 pb-4 grid grid-cols-2 gap-2.5 shrink-0">
+          {/* Quick action CTAs */}
+          <div className="px-5 pb-3.5 grid grid-cols-2 gap-2 shrink-0">
             <button
               onClick={() => { setBookingFormOpen(true); close(); }}
-              className="qa-primary flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-[13px] text-[var(--color-dark)] active:scale-[0.97] transition-transform"
-              style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--color-primary) 70%, white 30%), var(--color-primary))' }}
+              className="cta-pulse flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-[13px] text-[#0a0a0e] active:scale-[0.97] transition-transform"
+              style={{ background: 'linear-gradient(135deg, #dfc380, var(--color-primary))' }}
             >
               <i className="fa-solid fa-calendar-check text-sm" />
               <span className="tracking-wide">{t('hero.cta')}</span>
@@ -398,21 +448,21 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
               href={`https://wa.me/${siteContent.business.whatsapp}`}
               target="_blank" rel="noopener noreferrer"
               onClick={close}
-              className="qa-wa flex items-center justify-center gap-2.5 py-4 rounded-2xl font-bold text-[13px] text-white active:scale-[0.97] transition-transform"
-              style={{ background: 'linear-gradient(135deg,#25d366cc,#1da850cc)', border: '1px solid rgba(37,211,102,.25)' }}
+              className="qa-wa flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-[13px] text-white active:scale-[0.97] transition-transform"
+              style={{ background: 'linear-gradient(135deg,rgba(37,211,102,0.85),rgba(29,168,80,0.85))', border: '1px solid rgba(37,211,102,.2)' }}
             >
               <i className="fa-brands fa-whatsapp text-lg" />
               <span className="tracking-wide">WhatsApp</span>
             </a>
           </div>
 
-          {/* ── Search bar ── */}
+          {/* Search bar */}
           <div className="px-5 pb-3 shrink-0">
             <div
-              className="search-ring flex items-center gap-3 px-4 py-3 rounded-2xl border border-white/[0.09] transition-all"
-              style={{ background: 'rgba(255,255,255,0.05)' }}
+              className="search-ring flex items-center gap-3 px-4 py-3 rounded-2xl border border-white/[0.08] transition-all"
+              style={{ background: 'rgba(255,255,255,0.04)' }}
             >
-              <i className={`fa-solid fa-${searchFocused || searchQuery ? 'magnifying-glass text-[var(--color-primary)]' : 'magnifying-glass text-white/25'} text-sm transition-colors`} />
+              <i className={`fa-solid fa-magnifying-glass text-sm transition-colors ${searchFocused || searchQuery ? 'text-[var(--color-primary)]' : 'text-white/25'}`} />
               <input
                 ref={searchRef}
                 type="search"
@@ -425,7 +475,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
               />
               {searchQuery && (
                 <button onClick={() => setSearchQuery('')} className="text-white/30 hover:text-white/60 transition-colors active:scale-90 p-1">
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
                     <line x1="1" y1="1" x2="9" y2="9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                     <line x1="9" y1="1" x2="1" y2="9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                   </svg>
@@ -434,10 +484,9 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
             </div>
           </div>
 
-          {/* ── Scrollable body ── */}
+          {/* Scrollable body */}
           <div className="flex-1 overflow-y-auto overscroll-contain px-4 pb-3" style={{ WebkitOverflowScrolling: 'touch' }}>
 
-            {/* ---- SEARCH RESULTS ---- */}
             {searchQuery.length > 1 ? (
               <div className="space-y-1 pt-1">
                 {searchResults.length === 0 ? (
@@ -446,10 +495,8 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                     <p className="text-sm font-medium">Sonuç bulunamadı</p>
                   </div>
                 ) : searchResults.map((r, i) => (
-                  <Link
-                    key={i} to={r.url} onClick={close}
-                    className="flex items-center gap-3.5 px-3 py-3.5 rounded-2xl hover:bg-white/[0.06] active:bg-white/[0.09] transition-colors group"
-                  >
+                  <Link key={i} to={r.url} onClick={close}
+                    className="flex items-center gap-3.5 px-3 py-3.5 rounded-2xl hover:bg-white/[0.06] active:bg-white/[0.09] transition-colors group">
                     <div className="w-9 h-9 rounded-xl bg-white/[0.07] text-white/40 group-hover:bg-[var(--color-primary)]/15 group-hover:text-[var(--color-primary)] flex items-center justify-center text-sm shrink-0 transition-colors border border-white/[0.06]">
                       <i className={`fa-solid ${r.icon}`} />
                     </div>
@@ -462,9 +509,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                 ))}
               </div>
             ) : (
-              /* ---- MAIN NAV LIST ---- */
               <>
-                {/* section label */}
                 <p className="text-[9px] font-black text-white/20 uppercase tracking-[0.25em] px-2 pb-2 pt-1">Menü</p>
 
                 <div className="space-y-0.5">
@@ -479,65 +524,51 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                       <div
                         key={item.id}
                         className={`nav-row ${isMobileMenuOpen ? 'visible' : ''}`}
-                        style={{ animationDelay: `${80 + idx * 45}ms` }}
+                        style={{ animationDelay: `${60 + idx * 40}ms` }}
                       >
-                        {/* row */}
                         <div className={`rounded-2xl overflow-hidden transition-colors ${isActive ? 'active-pill' : ''}`}>
                           <div className="flex items-center">
                             <Link
                               to={item.url}
                               onClick={() => !hasSubMenu && close()}
-                              className="flex items-center gap-4 flex-1 px-4 py-[17px] active:bg-white/[0.04] transition-colors"
+                              className="flex items-center gap-4 flex-1 px-4 py-[15px] active:bg-white/[0.04] transition-colors"
                             >
-                              {/* icon container */}
-                              <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-[15px] shrink-0 transition-all
+                              <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-[14px] shrink-0 transition-all
                                 ${isActive
-                                  ? 'bg-gradient-to-br from-[var(--color-primary)] to-[#a8864a] text-white shadow-md shadow-[var(--color-primary)]/25'
-                                  : 'bg-white/[0.06] text-white/35 border border-white/[0.06]'
-                                }`}>
+                                  ? 'bg-gradient-to-br from-[var(--color-primary)] to-[#a8864a] text-[#0a0a0e] shadow-md shadow-[var(--color-primary)]/20'
+                                  : 'bg-white/[0.05] text-white/30 border border-white/[0.06]'}`}>
                                 <i className={`fa-solid ${icon}`} />
                               </div>
-
-                              {/* label */}
-                              <span className={`uppercase font-bold text-[15.5px] tracking-[-0.01em] transition-colors
-                                ${isActive ? 'text-white' : 'text-white/55'}`}>
+                              <span className={`uppercase font-bold text-[14.5px] tracking-[0.02em] transition-colors
+                                ${isActive ? 'text-white' : 'text-white/50'}`}>
                                 {translateNav(item)}
                               </span>
-
-                              {/* active dot */}
                               {isActive && !hasSubMenu && (
                                 <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] mr-1" />
                               )}
                             </Link>
 
-                            {/* submenu toggle */}
                             {hasSubMenu && (
                               <button
                                 onClick={() => toggleSubmenu(item.id)}
-                                className="px-4 py-[17px] flex items-center justify-center text-white/25 hover:text-white/60 active:bg-white/[0.04] transition-colors"
+                                className="px-4 py-[15px] flex items-center justify-center text-white/25 hover:text-white/60 active:bg-white/[0.04] transition-colors"
                                 aria-expanded={isExpanded}
                               >
-                                <i className={`fa-solid fa-chevron-down text-[10px] transition-transform duration-300
-                                  ${isExpanded ? 'rotate-180 text-[var(--color-primary)]' : ''}`} />
+                                <i className={`fa-solid fa-chevron-down text-[10px] transition-transform duration-300 ${isExpanded ? 'rotate-180 text-[var(--color-primary)]' : ''}`} />
                               </button>
                             )}
-                            {/* right arrow for non-submenu */}
                             {!hasSubMenu && !isActive && (
                               <i className="fa-solid fa-chevron-right text-[9px] text-white/[0.12] mr-4" />
                             )}
                           </div>
 
-                          {/* collapsible sub-items */}
-                          <div className={`transition-all duration-300 ease-in-out overflow-hidden
-                            ${isExpanded && hasSubMenu ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}>
-                            <div className="ml-[2.5rem] sm:ml-[3.25rem] mr-3 mb-2 border-l-2 border-white/[0.06] pl-4 space-y-0.5">
+                          <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isExpanded && hasSubMenu ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}>
+                            <div className="ml-[3.25rem] mr-3 mb-2 border-l-2 border-[var(--color-primary)]/10 pl-4 space-y-0.5">
                               {hasSubMenu && item.subMenus?.map(sub => (
-                                <Link
-                                  key={sub.id} to={sub.url} onClick={close}
-                                  className={`flex items-center gap-2 py-3 px-2 text-[13.5px] font-semibold rounded-xl transition-colors active:bg-white/[0.06]
-                                    ${location.pathname === sub.url ? 'text-[var(--color-primary)]' : 'text-white/35 hover:text-white/70'}`}
-                                >
-                                  <span className="w-1.5 h-1.5 rounded-full bg-current opacity-60 shrink-0" />
+                                <Link key={sub.id} to={sub.url} onClick={close}
+                                  className={`flex items-center gap-2 py-2.5 px-2 text-[13px] font-semibold rounded-xl transition-colors active:bg-white/[0.06]
+                                    ${location.pathname === sub.url ? 'text-[var(--color-primary)]' : 'text-white/35 hover:text-white/70'}`}>
+                                  <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 shrink-0" />
                                   {NAV_KEY_MAP[sub.url] ? t(NAV_KEY_MAP[sub.url]) : sub.label}
                                 </Link>
                               ))}
@@ -549,35 +580,30 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                   })}
                 </div>
 
-                {/* ── divider ── */}
-                <div className="my-4 border-t border-white/[0.06]" />
+                <div className="my-4 border-t border-white/[0.05]" />
 
-                {/* ── Contact row ── */}
-                <div className="mt-2 grid grid-cols-2 gap-2">
-                  <a
-                    href={`tel:${siteContent.business.phone}`}
+                {/* Contact row */}
+                <div className="grid grid-cols-2 gap-2">
+                  <a href={`tel:${siteContent.business.phone}`}
                     className="nav-row visible flex items-center gap-2.5 px-3.5 py-3.5 rounded-2xl border border-white/[0.05] active:bg-white/[0.06] transition-colors"
-                    style={{ background: 'rgba(255,255,255,0.03)', animationDelay: `${80 + menuItems.length * 45 + 80}ms` }}
-                  >
+                    style={{ background: 'rgba(255,255,255,0.03)', animationDelay: `${60 + menuItems.length * 40 + 80}ms` }}>
                     <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
                       <i className="fa-solid fa-phone text-emerald-400 text-xs" />
                     </div>
                     <div className="min-w-0">
                       <p className="text-[9px] font-bold text-white/25 uppercase tracking-wider">Ara</p>
-                      <p className="text-[11px] font-bold text-white/60 truncate">{siteContent.business.phone}</p>
+                      <p className="text-[11px] font-bold text-white/55 truncate">{siteContent.business.phone}</p>
                     </div>
                   </a>
-                  <a
-                    href={`mailto:${siteContent.business.email}`}
+                  <a href={`mailto:${siteContent.business.email}`}
                     className="nav-row visible flex items-center gap-2.5 px-3.5 py-3.5 rounded-2xl border border-white/[0.05] active:bg-white/[0.06] transition-colors"
-                    style={{ background: 'rgba(255,255,255,0.03)', animationDelay: `${80 + menuItems.length * 45 + 100}ms` }}
-                  >
+                    style={{ background: 'rgba(255,255,255,0.03)', animationDelay: `${60 + menuItems.length * 40 + 100}ms` }}>
                     <div className="w-8 h-8 rounded-xl bg-[var(--color-primary)]/10 flex items-center justify-center shrink-0">
                       <i className="fa-solid fa-envelope text-[var(--color-primary)] text-xs" />
                     </div>
                     <div className="min-w-0">
                       <p className="text-[9px] font-bold text-white/25 uppercase tracking-wider">E-posta</p>
-                      <p className="text-[11px] font-bold text-white/60 truncate">{siteContent.business.email}</p>
+                      <p className="text-[11px] font-bold text-white/55 truncate">{siteContent.business.email}</p>
                     </div>
                   </a>
                 </div>
@@ -585,24 +611,24 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
             )}
           </div>
 
-          {/* ── Footer: social links + admin ── */}
-          <div className="px-5 pt-3 pb-3 border-t border-white/[0.06] shrink-0 flex items-center justify-between">
-            <div className="flex items-center gap-2">
+          {/* Footer: social + admin */}
+          <div className="px-5 pt-3 pb-2 border-t border-white/[0.05] shrink-0 flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
               {siteContent.business.instagram && (
                 <a href={siteContent.business.instagram} target="_blank" rel="noopener noreferrer" onClick={close}
-                  className="w-10 h-10 rounded-xl bg-white/[0.05] border border-white/[0.07] flex items-center justify-center text-white/30 hover:text-pink-400 hover:bg-pink-500/10 transition-all active:scale-90">
+                  className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-white/25 hover:text-pink-400 hover:bg-pink-500/10 transition-all active:scale-90">
                   <i className="fa-brands fa-instagram text-sm" />
                 </a>
               )}
               {siteContent.business.facebook && (
                 <a href={siteContent.business.facebook} target="_blank" rel="noopener noreferrer" onClick={close}
-                  className="w-10 h-10 rounded-xl bg-white/[0.05] border border-white/[0.07] flex items-center justify-center text-white/30 hover:text-blue-400 hover:bg-blue-500/10 transition-all active:scale-90">
+                  className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-white/25 hover:text-blue-400 hover:bg-blue-500/10 transition-all active:scale-90">
                   <i className="fa-brands fa-facebook-f text-sm" />
                 </a>
               )}
               {siteContent.business.telegram && (
                 <a href={siteContent.business.telegram} target="_blank" rel="noopener noreferrer" onClick={close}
-                  className="w-10 h-10 rounded-xl bg-white/[0.05] border border-white/[0.07] flex items-center justify-center text-white/30 hover:text-sky-400 hover:bg-sky-500/10 transition-all active:scale-90">
+                  className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-white/25 hover:text-sky-400 hover:bg-sky-500/10 transition-all active:scale-90">
                   <i className="fa-brands fa-telegram text-sm" />
                 </a>
               )}
@@ -610,9 +636,9 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
 
             <button
               onClick={() => { onAdminToggle(); close(); }}
-              className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.07] text-white/25 hover:text-[var(--color-primary)]/70 hover:bg-[var(--color-primary)]/[0.07] transition-all active:scale-95 text-[12px] font-bold"
+              className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.06] text-white/25 hover:text-[var(--color-primary)]/70 hover:bg-[var(--color-primary)]/[0.07] transition-all active:scale-95 text-[11px] font-bold"
             >
-              <i className="fa-solid fa-gear text-[11px]" />
+              <i className="fa-solid fa-gear text-[10px]" />
               <span>Yönetici</span>
             </button>
           </div>
