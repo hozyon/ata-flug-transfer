@@ -57,80 +57,27 @@ const Iletisim: React.FC = () => {
             </Helmet>
 
             {/* ── BANNER ─────────────────────────────────────────── */}
-            <section className="page-banner relative pt-28 pb-14 overflow-hidden flex items-center"
-                style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-
-                {/* Background photo — muted */}
-                <div className="absolute inset-0">
+            <section className="page-banner relative pt-28 pb-14 flex items-center justify-center overflow-hidden border-b border-white/5">
+                <div className="absolute inset-0 z-0">
                     <img
                         src="/images/about-custom.jpg"
-                        alt="İletişim"
+                        alt="İletişim Banner"
                         className="w-full h-full object-cover"
-                        style={{ opacity: 0.12 }}
                     />
-                    <div className="absolute inset-0" style={{
-                        background: 'linear-gradient(to bottom, #020617 0%, rgba(2,6,23,0.4) 40%, rgba(2,6,23,0.6) 70%, #020617 100%)',
-                    }} />
+                    <div className="absolute inset-0 bg-slate-900/75" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/40" />
                 </div>
-
-                {/* Giant ghost typography */}
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden select-none">
-                    <span style={{
-                        fontFamily: "'Playfair Display', serif",
-                        fontSize: 'clamp(80px, 18vw, 220px)',
-                        fontWeight: 700,
-                        fontStyle: 'italic',
-                        color: 'rgba(197,160,89,0.04)',
-                        letterSpacing: '-0.03em',
-                        lineHeight: 1,
-                        whiteSpace: 'nowrap',
-                    }}>
-                        İLETİŞİM
-                    </span>
-                </div>
-
-                {/* Corner bracket — top left */}
-                <div className="absolute top-28 left-6 sm:left-10 pointer-events-none">
-                    <div className="w-8 h-px" style={{ background: 'rgba(197,160,89,0.35)' }} />
-                    <div className="w-px h-8 mt-0" style={{ background: 'rgba(197,160,89,0.35)' }} />
-                </div>
-                {/* Corner bracket — top right */}
-                <div className="absolute top-28 right-6 sm:right-10 flex flex-col items-end pointer-events-none">
-                    <div className="w-8 h-px" style={{ background: 'rgba(197,160,89,0.35)' }} />
-                    <div className="w-px h-8" style={{ background: 'rgba(197,160,89,0.35)', marginLeft: 'auto' }} />
-                </div>
-
-                <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6">
-                    <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
-                        {/* Left: heading */}
-                        <div>
-                            <div className="flex items-center gap-3 mb-5">
-                                <div className="w-6 h-px" style={{ background: '#c5a059' }} />
-                                <span className="text-[10px] font-black tracking-[0.3em] uppercase"
-                                    style={{ color: '#c5a059', fontFamily: "'Outfit', sans-serif" }}>
-                                    {t('contact.eyebrow')}
-                                </span>
-                            </div>
-                            <h1 className="text-[clamp(2.5rem,7vw,4.5rem)] font-bold text-white leading-[1.05] tracking-tight"
-                                style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic' }}>
-                                {t('contact.title')}
-                            </h1>
-                        </div>
-
-                        {/* Right: coordinates */}
-                        <div className="text-left sm:text-right shrink-0 pb-1">
-                            <p className="text-[9px] font-black tracking-[0.25em] uppercase mb-1.5"
-                                style={{ color: 'rgba(197,160,89,0.45)', fontFamily: "'Outfit', sans-serif" }}>
-                                Antalya · Türkiye
-                            </p>
-                            <p className="text-[13px] font-mono tracking-widest" style={{ color: 'rgba(255,255,255,0.15)' }}>
-                                36.8969° N · 30.7133° E
-                            </p>
-                            <p className="text-[11px] font-mono tracking-wider mt-1" style={{ color: 'rgba(255,255,255,0.08)' }}>
-                                AYT · IATA Airport Code
-                            </p>
-                        </div>
+                <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border border-white/10 mb-4 shadow-lg animate-in fade-in slide-in-from-bottom-3 duration-700">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse" />
+                        <span>{t('contact.eyebrow')}</span>
                     </div>
+                    <h1 className="text-3xl sm:text-5xl md:text-7xl font-playfair font-medium text-white mb-6 tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 drop-shadow-2xl">
+                        {t('contact.title')}
+                    </h1>
+                    <p className="text-slate-300 text-lg md:text-xl font-light tracking-wide animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+                        {t('contact.subtitle')}
+                    </p>
                 </div>
             </section>
 
