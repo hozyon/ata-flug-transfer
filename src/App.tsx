@@ -37,6 +37,16 @@ const App: React.FC = () => {
 
   useScrollReveal();
 
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isLoginPage = location.pathname === '/login';
+  const isAdminPage = location.pathname.startsWith('/admin');
+  const ADMIN_PUBLIC_PATHS = ['/hakkimizda', '/vizyon-misyon', '/bolgeler', '/sss', '/blog', '/iletisim'];
+  const isPublicBrowse = isAdmin && (
+    ADMIN_PUBLIC_PATHS.includes(location.pathname) ||
+    location.pathname.startsWith('/blog/')
+  );
+
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewFirst, setReviewFirst] = useState('');
   const [reviewLast, setReviewLast] = useState('');
@@ -233,17 +243,6 @@ const App: React.FC = () => {
 
 
 
-
-  const navigate = useNavigate();
-  const location = useLocation();
-  const isLoginPage = location.pathname === '/login';
-  const isAdminPage = location.pathname.startsWith('/admin');
-  // When admin navigates to a public page (not root, not /admin), show public site
-  const ADMIN_PUBLIC_PATHS = ['/hakkimizda', '/vizyon-misyon', '/bolgeler', '/sss', '/blog', '/iletisim'];
-  const isPublicBrowse = isAdmin && (
-    ADMIN_PUBLIC_PATHS.includes(location.pathname) ||
-    location.pathname.startsWith('/blog/')
-  );
 
   // Memoize random blog posts outside of JSX
   const randomBlogPosts = useMemo(() => [...BLOG_POSTS].sort(() => 0.5 - Math.random()).slice(0, 4), []);
