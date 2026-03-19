@@ -1896,6 +1896,66 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               </button>
             </div>
 
+            {/* Bugünün Transferleri */}
+            {(() => {
+              const today = new Date().toISOString().split('T')[0];
+              const todayTransfers = bookings
+                .filter(b => b.date === today && b.status !== 'Deleted' && b.status !== 'Cancelled')
+                .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+              if (todayTransfers.length === 0) return null;
+              return (
+                <div className="rounded-2xl border border-[var(--color-primary)]/20 bg-[var(--color-primary)]/[0.04] overflow-hidden">
+                  <div className="flex items-center justify-between px-5 py-3 border-b border-[var(--color-primary)]/10">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-pulse shadow-[0_0_8px_rgba(197,160,89,0.6)]"></div>
+                      <span className="text-sm font-black text-white tracking-tight">Bugünün Transferleri</span>
+                      <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-[var(--color-primary)] text-[#06080F]">{todayTransfers.length}</span>
+                    </div>
+                    <button onClick={() => setActiveView('bookings')} className="text-[11px] font-semibold text-[var(--color-primary)]/70 hover:text-[var(--color-primary)] transition-colors flex items-center gap-1">
+                      Tümü <i className="fa-solid fa-arrow-right text-[9px]"></i>
+                    </button>
+                  </div>
+                  <div className="px-4 py-3 flex gap-3 overflow-x-auto scrollbar-hide">
+                    {todayTransfers.map(b => {
+                      const statusColor = b.status === 'Confirmed' ? 'text-blue-400 bg-blue-500/10 border-blue-500/20'
+                        : b.status === 'Completed' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+                        : 'text-amber-400 bg-amber-500/10 border-amber-500/20';
+                      const statusLabel = b.status === 'Confirmed' ? 'Onaylı' : b.status === 'Completed' ? 'Tamamlandı' : 'Beklemede';
+                      return (
+                        <div
+                          key={b.id}
+                          onClick={() => setSelectedBookingForView(b)}
+                          className="shrink-0 w-[220px] p-3.5 rounded-xl bg-white/[0.04] border border-white/[0.07] hover:border-[var(--color-primary)]/30 hover:bg-[var(--color-primary)]/[0.06] transition-all cursor-pointer group"
+                        >
+                          <div className="flex items-center justify-between mb-2.5">
+                            <span className="text-[13px] font-black text-white font-mono tabular-nums">{b.time || '--:--'}</span>
+                            <span className={`text-[9px] font-black px-2 py-0.5 rounded-full border ${statusColor}`}>{statusLabel}</span>
+                          </div>
+                          <p className="text-[12px] font-bold text-white truncate mb-1 group-hover:text-[var(--color-primary)] transition-colors">{b.customerName.replace(/[\n\r]+/g, ' ').trim()}</p>
+                          <div className="flex items-center gap-1 text-[10px] text-slate-500">
+                            <i className="fa-solid fa-location-dot text-[8px] text-[var(--color-primary)]/60"></i>
+                            <span className="truncate">{b.pickup.split(',')[0]}</span>
+                            <i className="fa-solid fa-arrow-right text-[7px] shrink-0"></i>
+                            <span className="truncate">{b.destination.split(',')[0]}</span>
+                          </div>
+                          {b.flightNumber && (
+                            <div className="mt-1.5 flex items-center gap-1 text-[10px] text-sky-400">
+                              <i className="fa-solid fa-plane text-[8px]"></i>
+                              <span>{b.flightNumber}</span>
+                            </div>
+                          )}
+                          <div className="mt-2 pt-2 border-t border-white/[0.06] flex items-center justify-between">
+                            <span className="text-[10px] text-slate-500">{b.passengers} kişi</span>
+                            <span className="text-[11px] font-black text-[var(--color-primary)]">{siteContent.currency?.symbol || '€'}{b.totalPrice}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* KPI Cards — Flat, Minimal + Today + Trend — Mobile: horizontal scroll snap carousel */}
             {(() => {
               const kpiItems = [
@@ -1910,7 +1970,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                   {/* Desktop Bento Grid */}
                   <div className="hidden lg:grid grid-cols-4 xl:grid-cols-6 gap-4">
                     {/* Bento Box 1: Revenue (Hero KPI) */}
-                    <div className="col-span-2 row-span-2 p-5 rounded-3xl bg-gradient-to-br from-[var(--color-primary)]/10 via-[var(--color-primary)]/5 to-transparent border border-white/[0.08] hover:border-[var(--color-primary)]/30 hover:shadow-2xl hover:shadow-[var(--color-primary)]/20 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between min-h-[160px]" style={{ boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.05), inset 1px 0 0 0 rgba(255, 255, 255, 0.02)' }}>
+                    <div onClick={() => setActiveView('bookings')} className="col-span-2 row-span-2 p-5 rounded-3xl bg-gradient-to-br from-[var(--color-primary)]/10 via-[var(--color-primary)]/5 to-transparent border border-white/[0.08] hover:border-[var(--color-primary)]/30 hover:shadow-2xl hover:shadow-[var(--color-primary)]/20 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between min-h-[160px] cursor-pointer" style={{ boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.05), inset 1px 0 0 0 rgba(255, 255, 255, 0.02)' }}>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-50 z-0 pointer-events-none"></div>
                       <div className="relative z-10 flex items-start justify-between mb-4">
                         <div>
@@ -1925,7 +1985,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                       {/* Sparkline & Trend */}
                       <div className="relative z-10 flex items-end justify-between mt-auto">
                         <div className="flex-1 max-w-[140px] h-10 opacity-70 group-hover:opacity-100 transition-opacity">
-                          <Sparkline data={[1200, 1500, 1100, 1800, 2400, 1900, stats.totalRevenue || 2500]} color="amber-500" />
+                          <Sparkline data={stats.weeklyData.length > 0 ? stats.weeklyData.map(d => d.v) : [0,0,0,0,0,0,0]} color="amber-500" />
                         </div>
                         {stats.revenueTrend !== 0 && (
                           <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full backdrop-blur-md border shadow-lg ${stats.revenueTrend > 0 ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-red-500/10 border-red-500/20 text-red-400'}`}>
@@ -1940,6 +2000,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                     {kpiItems.slice(1).map((kpi, idx) => (
                       <div
                         key={idx}
+                        onClick={() => setActiveView('bookings')}
                         onPointerEnter={() => haptic.tap()}
                         className="col-span-1 p-4 rounded-3xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.05] hover:border-white/10 hover:shadow-xl hover:shadow-black/50 hover:-translate-y-1 transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col justify-between"
                         style={{ boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.05)' }}
@@ -1965,7 +2026,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                     ))}
 
                     {/* Additional Bento Box: Conversion / Completion Rate */}
-                    <div className="col-span-2 xl:col-span-1 row-span-2 xl:row-span-1 p-4 rounded-3xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] hover:border-white/10 hover:shadow-xl hover:shadow-black/50 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden flex flex-col justify-between" style={{ boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.05)' }}>
+                    <div onClick={() => setActiveView('bookings')} className="col-span-2 xl:col-span-1 row-span-2 xl:row-span-1 p-4 rounded-3xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.04] hover:border-white/10 hover:shadow-xl hover:shadow-black/50 hover:-translate-y-1 transition-all duration-300 group cursor-pointer relative overflow-hidden flex flex-col justify-between" style={{ boxShadow: 'inset 0 1px 0 0 rgba(255, 255, 255, 0.05)' }}>
                       <div className="flex items-start justify-between mb-3">
                         <div className="w-10 h-10 rounded-2xl bg-sky-400/10 flex items-center justify-center shadow-lg transition-transform group-hover:scale-110 group-hover:rotate-3">
                           <i className="fa-solid fa-arrow-trend-up text-sky-400 text-sm"></i>
@@ -2293,6 +2354,47 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 </div>
               </div>
 
+              {/* Haftalık Rezervasyon Grafiği */}
+              <div className="col-span-12 lg:col-span-6 p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-lg bg-[var(--color-primary)]/10 flex items-center justify-center">
+                      <i className="fa-solid fa-chart-bar text-[var(--color-primary)] text-[11px]"></i>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-white leading-none">Haftalık Dağılım</h3>
+                      <p className="text-[10px] text-slate-500 mt-0.5">Son 7 günlük rezervasyon sayısı</p>
+                    </div>
+                  </div>
+                  <div className="text-[10px] font-bold text-slate-500 tabular-nums">
+                    {stats.weeklyData.reduce((s, d) => s + d.v, 0)} rezervasyon
+                  </div>
+                </div>
+                <div className="h-[160px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={stats.weeklyData} barSize={24} barCategoryGap="30%">
+                      <defs>
+                        <linearGradient id="weeklyBarGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="var(--color-primary)" stopOpacity={0.9} />
+                          <stop offset="100%" stopColor="var(--color-primary)" stopOpacity={0.3} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.04)" />
+                      <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10 }} />
+                      <YAxis axisLine={false} tickLine={false} tick={{ fill: '#475569', fontSize: 10 }} width={20} allowDecimals={false} />
+                      <Tooltip
+                        contentStyle={{ background: 'var(--color-dark)', border: '1px solid rgba(197,160,89,0.2)', borderRadius: '10px', fontSize: '11px' }}
+                        formatter={(v: number) => [v, 'Rezervasyon']}
+                        cursor={{ fill: 'rgba(255,255,255,0.03)' }}
+                      />
+                      <Bar dataKey="v" name="Rezervasyon" fill="url(#weeklyBarGrad)" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Araç Bazlı Gelir — now takes 6 cols */}
+
               {/* 30-Day Trend Chart — Full Width */}
               <div className="col-span-12 p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
                 <div className="flex items-center justify-between mb-4">
@@ -2361,7 +2463,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 )}
               </div>
 
-              <div className="col-span-12 lg:col-span-7 p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
+              <div className="col-span-12 lg:col-span-6 p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
                 <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
                   <i className="fa-solid fa-chart-bar text-[var(--color-primary)] text-[10px]"></i>
                   Araç Bazlı Gelir
