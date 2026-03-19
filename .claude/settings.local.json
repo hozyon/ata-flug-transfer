@@ -13,7 +13,8 @@
       "Bash(npx tsc:*)",
       "Bash(sed -i '' 's/pt-28 pb-12 overflow-hidden\"\"/pt-28 pb-14 overflow-hidden\"\"/g' /Users/hozyon/Documents/test/src/pages/Blog.tsx)",
       "Bash(sed -i '' 's/pt-28 pb-12 overflow-hidden border-b border-white\\\\/5\"\"/pt-28 pb-14 overflow-hidden border-b border-white\\\\/5\"\"/g' /Users/hozyon/Documents/test/src/pages/Bolgeler.tsx)",
-      "Bash(sed -i '' 's/pt-28 pb-12 flex items-center justify-center overflow-hidden border-b border-white\\\\/5\"\"/pt-28 pb-14 flex items-center justify-center overflow-hidden border-b border-white\\\\/5\"\"/g' /Users/hozyon/Documents/test/src/pages/VizyonMisyon.tsx /Users/hozyon/Documents/test/src/pages/Hakkimizda.tsx /Users/hozyon/Documents/test/src/pages/SSS.tsx)"
+      "Bash(sed -i '' 's/pt-28 pb-12 flex items-center justify-center overflow-hidden border-b border-white\\\\/5\"\"/pt-28 pb-14 flex items-center justify-center overflow-hidden border-b border-white\\\\/5\"\"/g' /Users/hozyon/Documents/test/src/pages/VizyonMisyon.tsx /Users/hozyon/Documents/test/src/pages/Hakkimizda.tsx /Users/hozyon/Documents/test/src/pages/SSS.tsx)",
+      "Bash(git remote:*)"
     ]
   }
 }

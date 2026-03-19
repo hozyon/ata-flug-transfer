@@ -375,6 +375,15 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                 }} />
               </button>
 
+              {/* Gold ayraç */}
+              <div style={{
+                width: 1,
+                height: 22,
+                background: 'linear-gradient(180deg, transparent 0%, rgba(197,160,89,0.55) 30%, rgba(197,160,89,0.8) 50%, rgba(197,160,89,0.55) 70%, transparent 100%)',
+                margin: '0 4px',
+                flexShrink: 0,
+              }} />
+
               <LanguageSwitcher />
 
             </div>
