@@ -471,12 +471,12 @@ const App: React.FC = () => {
                           <i className="fa-solid fa-headset text-[var(--color-primary)] text-sm"></i>
                           <span>{t('hero.trust.247')}</span>
                         </div>
-                        <div className="w-px h-3 bg-white/10"></div>
+                        <div style={{ width: 1, height: 22, flexShrink: 0, background: 'linear-gradient(180deg, transparent 0%, rgba(197,160,89,0.55) 30%, rgba(197,160,89,0.8) 50%, rgba(197,160,89,0.55) 70%, transparent 100%)' }} />
                         <div className="flex items-center gap-2 text-white/50 text-xs md:text-sm">
                           <i className="fa-solid fa-clock text-[var(--color-primary)] text-sm"></i>
                           <span>{t('hero.trust.tracking')}</span>
                         </div>
-                        <div className="w-px h-3 bg-white/10 hidden sm:block"></div>
+                        <div className="hidden sm:block" style={{ width: 1, height: 22, flexShrink: 0, background: 'linear-gradient(180deg, transparent 0%, rgba(197,160,89,0.55) 30%, rgba(197,160,89,0.8) 50%, rgba(197,160,89,0.55) 70%, transparent 100%)' }} />
                         <div className="hidden sm:flex items-center gap-2 text-white/50 text-xs md:text-sm">
                           <i className="fa-solid fa-car text-[var(--color-primary)] text-sm"></i>
                           <span>{t('hero.trust.vehicle')}</span>
