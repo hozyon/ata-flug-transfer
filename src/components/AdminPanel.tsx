@@ -782,13 +782,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   const [userIp, setUserIp] = useState<string>('');
 
   useEffect(() => {
-    // 1. Weather Fetch
-    fetch('https://wttr.in/Antalya?format=j1')
+    // 1. Weather Fetch — Open-Meteo (free, CORS-friendly, no API key)
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=36.9&longitude=30.71&current=temperature_2m,weather_code&timezone=Europe/Istanbul')
       .then((res) => res.json())
       .then((data) => {
-        const temp = data.current_condition[0].temp_C;
-        const weatherIcon = data.current_condition[0].weatherCode;
-        setWeather({ temp: parseInt(temp), icon: weatherIcon });
+        const temp = Math.round(data.current.temperature_2m);
+        const code = data.current.weather_code;
+        setWeather({ temp, icon: String(code) });
       })
       .catch((err) => console.error('Weather fetch error:', err));
 
@@ -1769,65 +1769,86 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
           <div className="space-y-5">
 
             {/* Live Status Bar */}
-            <div className="rounded-2xl border border-white/[0.07] px-5 py-3 flex flex-wrap items-center justify-between gap-3" style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.01) 100%)' }}>
-              {/* Left: Status */}
-              <div className="flex items-center gap-3 text-[11px]">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse"></span>
-                  <span className="font-bold text-emerald-400 uppercase tracking-wider">Sistem Aktif</span>
-                </div>
-                {/* DB Sync Status */}
-                <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border ${isSupabaseConfigured ? 'bg-blue-400/10 border-blue-400/20' : 'bg-amber-400/10 border-amber-400/20'}`}>
-                  <i className={`fa-solid ${isSupabaseConfigured ? 'fa-database text-blue-400' : 'fa-hard-drive text-amber-400'} text-[9px]`}></i>
-                  <span className={`font-semibold ${isSupabaseConfigured ? 'text-blue-400' : 'text-amber-400'}`}>{isSupabaseConfigured ? 'Supabase' : 'LocalStorage'}</span>
-                  {saveStatus === 'saving' && <i className="fa-solid fa-circle-notch fa-spin text-[9px] text-slate-400"></i>}
-                  {saveStatus === 'saved' && <i className="fa-solid fa-check text-[9px] text-emerald-400"></i>}
-                </div>
-                {stats.pending > 0 && (
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-400/10 border border-amber-400/20">
-                    <i className="fa-solid fa-clock text-amber-400 text-[10px]"></i>
-                    <span className="font-semibold text-amber-400">{stats.pending} bekleyen rezervasyon</span>
+            {(() => {
+              const wCode = parseInt(weather?.icon || '0');
+              const weatherIcon = wCode === 0 ? 'fa-sun text-amber-400'
+                : wCode <= 2 ? 'fa-cloud-sun text-amber-300'
+                : wCode === 3 ? 'fa-cloud text-slate-400'
+                : wCode <= 48 ? 'fa-smog text-slate-500'
+                : wCode <= 67 ? 'fa-cloud-rain text-sky-400'
+                : wCode <= 77 ? 'fa-snowflake text-sky-300'
+                : wCode <= 82 ? 'fa-cloud-showers-heavy text-sky-400'
+                : 'fa-bolt text-yellow-400';
+              return (
+                <div className="rounded-2xl border border-white/[0.07] px-4 py-3 flex flex-col md:flex-row md:items-center justify-between gap-2.5" style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.01) 100%)' }}>
+
+                  {/* Row 1 (mobile) / Left (desktop): Status badges */}
+                  <div className="flex flex-wrap items-center gap-2 text-[11px]">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse shrink-0"></span>
+                      <span className="font-bold text-emerald-400 uppercase tracking-wider">Sistem Aktif</span>
+                    </div>
+                    {/* DB Sync Status */}
+                    <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg border ${isSupabaseConfigured ? 'bg-blue-400/10 border-blue-400/20' : 'bg-amber-400/10 border-amber-400/20'}`}>
+                      <i className={`fa-solid ${isSupabaseConfigured ? 'fa-database text-blue-400' : 'fa-hard-drive text-amber-400'} text-[9px]`}></i>
+                      <span className={`font-semibold ${isSupabaseConfigured ? 'text-blue-400' : 'text-amber-400'}`}>{isSupabaseConfigured ? 'Supabase' : 'Local'}</span>
+                      {saveStatus === 'saving' && <i className="fa-solid fa-circle-notch fa-spin text-[9px] text-slate-400"></i>}
+                      {saveStatus === 'saved' && <i className="fa-solid fa-check text-[9px] text-emerald-400"></i>}
+                    </div>
+                    {stats.pending > 0 && (
+                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-amber-400/10 border border-amber-400/20">
+                        <i className="fa-solid fa-clock text-amber-400 text-[9px]"></i>
+                        <span className="font-semibold text-amber-400">{stats.pending} bekleyen</span>
+                      </div>
+                    )}
+                    {stats.pending === 0 && stats.confirmed + stats.completed > 0 && (
+                      <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-emerald-400/10 border border-emerald-400/20">
+                        <i className="fa-solid fa-check text-emerald-400 text-[9px]"></i>
+                        <span className="font-semibold text-emerald-400">Tümü işlendi</span>
+                      </div>
+                    )}
                   </div>
-                )}
-                {stats.pending === 0 && stats.confirmed + stats.completed > 0 && (
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-400/10 border border-emerald-400/20">
-                    <i className="fa-solid fa-check text-emerald-400 text-[10px]"></i>
-                    <span className="font-semibold text-emerald-400">Tüm rezervasyonlar işlendi</span>
+
+                  {/* Row 2 (mobile) / Right (desktop): Live metrics */}
+                  <div className="flex flex-wrap items-center gap-2 text-[11px]">
+                    {/* Clock */}
+                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.07] text-white font-mono font-bold tabular-nums">
+                      <i className="fa-regular fa-clock text-slate-500 text-[9px]"></i>
+                      {currentTime.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                    </div>
+                    {/* Weather */}
+                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.07]">
+                      <i className={`fa-solid ${weatherIcon} text-[10px]`}></i>
+                      <span className="font-bold text-white">{weather ? `${weather.temp}°C` : '--°C'}</span>
+                      <span className="text-slate-500 hidden sm:inline">Antalya</span>
+                    </div>
+                    {/* Currency */}
+                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.07]">
+                      <span className="text-slate-500 font-medium text-[10px]">$</span>
+                      <span className="font-bold text-white tabular-nums">{rates.usd ? rates.usd.toFixed(1) : '--'}</span>
+                      <span className="text-white/20">·</span>
+                      <span className="text-slate-500 font-medium text-[10px]">€</span>
+                      <span className="font-bold text-white tabular-nums">{rates.eur ? rates.eur.toFixed(1) : '--'}</span>
+                      <span className="text-slate-600 text-[9px]">₺</span>
+                    </div>
+                    {/* IP — md+ only */}
+                    {userIp && (
+                      <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.07]">
+                        <i className="fa-solid fa-shield-halved text-emerald-500 text-[9px]"></i>
+                        <span className="font-mono text-slate-400">{userIp}</span>
+                      </div>
+                    )}
+                    {/* Shortcuts — xl+ only */}
+                    <div className="hidden xl:flex items-center gap-1 text-[10px] ml-1">
+                      {['D','B','R','N'].map(k => (
+                        <kbd key={k} className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/[0.04] font-mono text-slate-500">{k}</kbd>
+                      ))}
+                    </div>
                   </div>
-                )}
-              </div>
-              {/* Right: Live Metrics */}
-              <div className="flex flex-wrap items-center gap-2 text-[11px] shrink-0">
-                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.07] text-white font-mono font-bold tabular-nums">
-                  <i className="fa-regular fa-clock text-slate-500 text-[10px]"></i>
-                  {currentTime.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+
                 </div>
-                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.07]">
-                  <i className={`fa-solid ${weather?.icon === '113' ? 'fa-sun text-amber-400' : 'fa-cloud text-sky-400'} text-[10px]`}></i>
-                  <span className="font-bold text-white">{weather?.temp || '--'}°C</span>
-                  <span className="text-slate-500">Antalya</span>
-                </div>
-                <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.07]">
-                  <span className="text-slate-500 font-medium">USD</span>
-                  <span className="font-bold text-white tabular-nums">{rates.usd ? rates.usd.toFixed(2) : '--'}</span>
-                  <span className="text-white/20">·</span>
-                  <span className="text-slate-500 font-medium">EUR</span>
-                  <span className="font-bold text-white tabular-nums">{rates.eur ? rates.eur.toFixed(2) : '--'}</span>
-                  <span className="text-slate-500 text-[9px]">₺</span>
-                </div>
-                {userIp && (
-                  <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.07]">
-                    <i className="fa-solid fa-shield-halved text-emerald-500 text-[9px]"></i>
-                    <span className="font-mono text-slate-400">{userIp}</span>
-                  </div>
-                )}
-                <div className="hidden xl:flex items-center gap-1 text-[10px] ml-1">
-                  {['D','B','R','N'].map(k => (
-                    <kbd key={k} className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/[0.04] font-mono text-slate-500">{k}</kbd>
-                  ))}
-                </div>
-              </div>
-            </div>
+              );
+            })()}
 
             {/* Quick Actions Bar */}
             <div className="flex flex-wrap items-center gap-2">
