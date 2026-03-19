@@ -635,7 +635,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
   const handleDeleteUser = (id: string, isDeletable: boolean) => {
     if (!isDeletable) {
-      showToast('Sistem yöneticisi (Admin) silinemez!', 'delete');
+      showToast('Sistem yöneticisi (Admin) silinemez!', 'warning');
       return;
     }
     setSystemUsers(systemUsers.filter(u => u.id !== id));
@@ -644,13 +644,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
   const handleSaveUser = () => {
     if (!newUserForm.name || !newUserForm.email) {
-      showToast('Lütfen Ad Soyad ve E-posta alanlarını doldurun', 'delete');
+      showToast('Lütfen Ad Soyad ve E-posta alanlarını doldurun', 'warning');
       return;
     }
 
     // Add password matching validation
     if (newUserForm.password && newUserForm.password !== newUserForm.confirmPassword) {
-      showToast('Şifreler eşleşmiyor', 'delete');
+      showToast('Şifreler eşleşmiyor', 'warning');
       return;
     }
 
@@ -669,7 +669,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     } else {
       // Create new user
       if (!newUserForm.password) {
-        showToast('Lütfen yeni kullanıcı için bir şifre belirleyin', 'delete');
+        showToast('Lütfen yeni kullanıcı için bir şifre belirleyin', 'warning');
         return;
       }
       const newUser = {
@@ -866,19 +866,20 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
         <div className="absolute inset-0 opacity-[0.015] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
       </div>
 
-      {/* Toast Notification - macOS Style */}
+      {/* Toast Notification - Dark SaaS Style */}
       {toast && (
-        <div className="fixed top-safe mt-4 left-4 right-4 sm:left-auto sm:right-6 sm:top-6 sm:mt-0 z-[300] animate-in slide-in-from-top-4 fade-in duration-300">
-          <div className="bg-white/80 backdrop-blur-xl rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-white/50 px-4 py-3 flex items-center gap-3 sm:min-w-[320px] max-w-full">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${['delete', 'error'].includes(toast.type) ? 'bg-red-500' : toast.type === 'success' ? 'bg-emerald-500' : toast.type === 'info' ? 'bg-blue-500' : 'bg-amber-500'
-              }`}>
-              <i className={`fa-solid ${toast.type === 'delete' ? 'fa-trash' : toast.type === 'error' ? 'fa-circle-xmark' : toast.type === 'success' ? 'fa-check' : toast.type === 'info' ? 'fa-circle-info' : 'fa-triangle-exclamation'} text-white`}></i>
+        <div role="alert" aria-live="polite" className="fixed top-safe mt-4 left-4 right-4 sm:left-auto sm:right-6 sm:top-6 sm:mt-0 z-[300] animate-in slide-in-from-top-3 fade-in duration-300">
+          <div className="bg-[#0d1526]/95 backdrop-blur-2xl rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.5)] border border-white/[0.08] px-4 py-3.5 flex items-center gap-3.5 sm:min-w-[340px] max-w-full">
+            {/* Colored left accent bar */}
+            <div className={`absolute left-0 top-3 bottom-3 w-[3px] rounded-r-full ${['delete', 'error'].includes(toast.type) ? 'bg-red-500' : toast.type === 'success' ? 'bg-emerald-400' : toast.type === 'info' ? 'bg-blue-400' : 'bg-amber-400'}`} />
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${['delete', 'error'].includes(toast.type) ? 'bg-red-500/15 text-red-400' : toast.type === 'success' ? 'bg-emerald-500/15 text-emerald-400' : toast.type === 'info' ? 'bg-blue-500/15 text-blue-400' : 'bg-amber-500/15 text-amber-400'}`}>
+              <i className={`fa-solid ${toast.type === 'delete' ? 'fa-trash' : toast.type === 'error' ? 'fa-circle-xmark' : toast.type === 'success' ? 'fa-circle-check' : toast.type === 'info' ? 'fa-circle-info' : 'fa-triangle-exclamation'} text-sm`}></i>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-semibold text-slate-900 text-sm">{toast.type === 'delete' ? 'Öğe Silindi' : toast.type === 'error' ? 'Hata' : toast.type === 'success' ? 'Başarılı' : toast.type === 'info' ? 'Bilgi' : 'Uyarı'}</p>
-              <p className="text-slate-500 text-xs truncate">{toast.message}</p>
+            <div className="flex-1 min-w-0 pl-1">
+              <p className="font-bold text-white text-sm leading-tight">{toast.type === 'delete' ? 'Öğe Silindi' : toast.type === 'error' ? 'Hata' : toast.type === 'success' ? 'Başarılı' : toast.type === 'info' ? 'Bilgi' : 'Uyarı'}</p>
+              <p className="text-slate-400 text-xs mt-0.5 line-clamp-2">{toast.message}</p>
             </div>
-            <button onClick={() => setToast(null)} aria-label="Bildirimi kapat" className="w-7 h-7 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors shrink-0">
+            <button onClick={() => setToast(null)} aria-label="Bildirimi kapat" className="w-7 h-7 rounded-lg hover:bg-white/5 flex items-center justify-center text-slate-500 hover:text-slate-300 transition-colors shrink-0 ml-1">
               <i className="fa-solid fa-xmark text-xs"></i>
             </button>
           </div>
@@ -1774,6 +1775,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 <div className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)] animate-pulse"></span>
                   <span className="font-bold text-emerald-400 uppercase tracking-wider">Sistem Aktif</span>
+                </div>
+                {/* DB Sync Status */}
+                <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border ${isSupabaseConfigured ? 'bg-blue-400/10 border-blue-400/20' : 'bg-amber-400/10 border-amber-400/20'}`}>
+                  <i className={`fa-solid ${isSupabaseConfigured ? 'fa-database text-blue-400' : 'fa-hard-drive text-amber-400'} text-[9px]`}></i>
+                  <span className={`font-semibold ${isSupabaseConfigured ? 'text-blue-400' : 'text-amber-400'}`}>{isSupabaseConfigured ? 'Supabase' : 'LocalStorage'}</span>
+                  {saveStatus === 'saving' && <i className="fa-solid fa-circle-notch fa-spin text-[9px] text-slate-400"></i>}
+                  {saveStatus === 'saved' && <i className="fa-solid fa-check text-[9px] text-emerald-400"></i>}
                 </div>
                 {stats.pending > 0 && (
                   <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-400/10 border border-amber-400/20">
