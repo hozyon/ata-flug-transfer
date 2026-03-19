@@ -181,6 +181,9 @@
   animation: regionIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+/* Dark form input placeholder color */
+.iletisim-input::placeholder { color: rgba(255,255,255,0.2); }
+
 @layer utilities {
   .scrollbar-hide {
     -ms-overflow-style: none;
