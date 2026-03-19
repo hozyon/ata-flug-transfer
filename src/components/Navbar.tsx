@@ -134,12 +134,12 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
           position: relative;
           display: flex;
           align-items: center;
-          gap: 6px;
-          padding: 6px 12px;
+          gap: 4px;
+          padding: 5px 9px;
           border-radius: 8px;
-          font-size: 12px;
+          font-size: 11px;
           font-weight: 700;
-          letter-spacing: 0.06em;
+          letter-spacing: 0.04em;
           text-transform: uppercase;
           color: rgba(255,255,255,0.65);
           transition: color 0.2s ease, background 0.2s ease;
@@ -155,7 +155,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
         }
         .nav-link-desktop .underline-bar {
           position: absolute;
-          bottom: 0; left: 12px; right: 12px;
+          bottom: 0; left: 9px; right: 9px;
           height: 1.5px;
           background: var(--color-primary);
           border-radius: 1px;
@@ -241,11 +241,11 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                   onError={e => (e.currentTarget.src = '/logo.png')}
                 />
               </div>
-              <div className="hidden sm:block">
-                <div className="text-[10px] font-bold text-white/30 uppercase tracking-[0.25em] leading-none">
+              <div className="block">
+                <div className="hidden xs:block text-[10px] font-bold text-white/30 uppercase tracking-[0.25em] leading-none">
                   {t('hero.eyebrow') || 'VIP Transfer'}
                 </div>
-                <div className="text-[15px] font-extrabold text-white leading-tight tracking-tight"
+                <div className="text-[12px] sm:text-[15px] font-extrabold text-white leading-tight tracking-tight"
                   style={{ fontFamily: "'Outfit', sans-serif" }}>
                   {BUSINESS_INFO.name}
                 </div>

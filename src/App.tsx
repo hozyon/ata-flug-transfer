@@ -169,9 +169,9 @@ const App: React.FC = () => {
     return () => clearInterval(interval);
   }, [isAdmin]);
 
-  // Lock body scroll in Admin Mode for App-like feel
+  // Lock body scroll in Admin Mode for App-like feel (not when browsing public pages)
   useEffect(() => {
-    if (isAdmin) {
+    if (isAdmin && !isPublicBrowse) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -179,7 +179,7 @@ const App: React.FC = () => {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [isAdmin]);
+  }, [isAdmin, isPublicBrowse]);
 
   // Apply brand colors as CSS custom properties
   useEffect(() => {
@@ -238,6 +238,12 @@ const App: React.FC = () => {
   const location = useLocation();
   const isLoginPage = location.pathname === '/login';
   const isAdminPage = location.pathname.startsWith('/admin');
+  // When admin navigates to a public page (not root, not /admin), show public site
+  const ADMIN_PUBLIC_PATHS = ['/hakkimizda', '/vizyon-misyon', '/bolgeler', '/sss', '/blog', '/iletisim'];
+  const isPublicBrowse = isAdmin && (
+    ADMIN_PUBLIC_PATHS.includes(location.pathname) ||
+    location.pathname.startsWith('/blog/')
+  );
 
   // Memoize random blog posts outside of JSX
   const randomBlogPosts = useMemo(() => [...BLOG_POSTS].sort(() => 0.5 - Math.random()).slice(0, 4), []);
@@ -251,12 +257,14 @@ const App: React.FC = () => {
 
   return (
     <SiteProvider value={{ siteContent, updateSiteContent: handleUpdateSiteContent }}>
-      <div className={`flex flex-col ${isLoginPage ? 'h-screen overflow-hidden' : 'min-h-screen'} ${isAdmin ? 'bg-slate-900' : isLoginPage ? 'bg-[#030712]' : 'bg-white'}`}>
-        {/* Navbar - Admin modunda ve Login sayfasında gizle */}
-        {!isAdmin && !isLoginPage && !isAdminPage && (
+      <div className={`flex flex-col ${isLoginPage ? 'h-screen overflow-hidden' : 'min-h-screen'} ${isAdmin && !isPublicBrowse ? 'bg-slate-900' : isLoginPage ? 'bg-[#030712]' : 'bg-white'}`}>
+        {/* Navbar - Admin modunda ve Login sayfasında gizle (public browse modunda göster) */}
+        {(!isAdmin || isPublicBrowse) && !isLoginPage && !isAdminPage && (
           <Navbar
             onAdminToggle={() => {
-              if (isAdmin) {
+              if (isPublicBrowse) {
+                navigate('/'); // root → admin panel
+              } else if (isAdmin) {
                 handleExitAdmin();
               } else {
                 navigate('/login');
@@ -267,8 +275,8 @@ const App: React.FC = () => {
           />
         )}
 
-        <main className={`${isLoginPage ? 'flex-1' : 'flex-grow'} ${isAdmin ? 'bg-slate-900' : ''}`}>
-          {isAdmin ? (
+        <main className={`${isLoginPage ? 'flex-1' : 'flex-grow'} ${isAdmin && !isPublicBrowse ? 'bg-slate-900' : ''}`}>
+          {isAdmin && !isPublicBrowse ? (
             <ErrorBoundary>
               <React.Suspense fallback={<div className="flex h-screen w-full items-center justify-center bg-[#0f172a]"><div className="h-10 w-10 animate-spin rounded-full border-4 border-[#c5a059] border-t-transparent" /></div>}>
                 <AdminPanel
@@ -1110,8 +1118,8 @@ const App: React.FC = () => {
           )}
         </main>
 
-        {/* Footer - Admin ve Login modunda gizle */}
-        {!isAdmin && !isLoginPage && !isAdminPage && (
+        {/* Footer - Admin ve Login modunda gizle (public browse modunda göster) */}
+        {(!isAdmin || isPublicBrowse) && !isLoginPage && !isAdminPage && (
           <footer id="contact" className="bg-[var(--color-darker)] text-white py-6 pb-28 lg:pb-6 border-t border-[var(--color-primary)]/20">
             <div className="max-w-7xl mx-auto px-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 text-center md:text-left mb-6">
@@ -1141,14 +1149,29 @@ const App: React.FC = () => {
                 </div>
               </div>
               <p className="text-slate-600 text-[10px] font-bold tracking-[0.3em] uppercase text-center pt-4 border-t border-white/5">
-                © {new Date().getFullYear()} {siteContent.business.name} - ALL RIGHTS RESERVED - DESIGN <a href="https://wa.me/905523890771" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-[var(--color-primary)] transition-colors">HOZYON</a>
+                © {new Date().getFullYear()} {siteContent.business.name} - ALL RIGHTS RESERVED - DESIGN{' '}
+                <a
+                  href="https://wa.me/905523890771"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:opacity-80 transition-opacity"
+                  style={{
+                    fontFamily: "'Orbitron', 'Share Tech Mono', monospace",
+                    color: '#c5a059',
+                    letterSpacing: '0.18em',
+                    textShadow: '0 0 8px rgba(197,160,89,0.7), 0 0 20px rgba(197,160,89,0.4)',
+                    animation: 'hozyonPulse 2.4s ease-in-out infinite',
+                  }}
+                >
+                  HOZYON
+                </a>
               </p>
             </div>
           </footer>
         )}
 
         {/* WhatsApp Floating Button - Bottom Left */}
-        {!isAdmin && !isLoginPage && !isAdminPage && (
+        {(!isAdmin || isPublicBrowse) && !isLoginPage && !isAdminPage && (
           <a
             href={`https://wa.me/${siteContent.business.whatsapp}`}
             target="_blank"

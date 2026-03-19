@@ -83,69 +83,51 @@ const Iletisim: React.FC = () => {
 
             {/* ── CONTACT CHANNELS ───────────────────────────────── */}
             <section className="bg-white border-b border-slate-100">
-                <div className="max-w-6xl mx-auto px-4 sm:px-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-3 stagger-children">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 stagger-children">
 
                         {/* Phone */}
                         <a href={`tel:${business.phone}`}
-                            className="reveal group relative flex items-center gap-5 px-6 py-8 transition-all duration-300 overflow-hidden border-b sm:border-b-0 sm:border-r border-slate-100">
-                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                style={{ background: 'linear-gradient(135deg, rgba(197,160,89,0.05) 0%, transparent 70%)' }} />
-                            <div className="relative shrink-0">
-                                <div className="rounded-2xl flex items-center justify-center"
-                                    style={{ width: 52, height: 52, background: 'rgba(197,160,89,0.1)', border: '1px solid rgba(197,160,89,0.2)' }}>
-                                    <i className="fa-solid fa-phone text-base" style={{ color: '#c5a059' }} />
-                                </div>
-                                <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-black"
-                                    style={{ background: '#c5a059', color: '#0f172a', fontFamily: "'Outfit', sans-serif" }}>01</span>
+                            className="reveal group flex flex-col gap-4 p-6 rounded-2xl border border-slate-100 bg-white transition-all duration-300 hover:border-[#c5a059]/30 hover:shadow-lg hover:shadow-[#c5a059]/5 hover:-translate-y-0.5">
+                            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                                style={{ background: 'rgba(197,160,89,0.08)', border: '1px solid rgba(197,160,89,0.15)' }}>
+                                <i className="fa-solid fa-phone text-sm" style={{ color: '#c5a059' }} />
                             </div>
-                            <div className="relative">
-                                <p className="text-[9px] font-black uppercase tracking-[0.25em] mb-1"
-                                    style={{ color: 'rgba(197,160,89,0.6)', fontFamily: "'Outfit', sans-serif" }}>{t('faq.phone')}</p>
-                                <p className="text-slate-800 font-bold text-[15px]" style={{ fontFamily: "'Outfit', sans-serif" }}>{business.phone}</p>
-                                <p className="text-slate-400 text-[11px] mt-0.5">7/24 {t('hero.trust.247')}</p>
+                            <div>
+                                <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1.5 text-slate-400"
+                                    style={{ fontFamily: "'Outfit', sans-serif" }}>{t('faq.phone')}</p>
+                                <p className="text-slate-800 font-semibold text-[15px] mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>{business.phone}</p>
+                                <p className="text-slate-400 text-[12px]">7/24 {t('hero.trust.247')}</p>
                             </div>
                         </a>
 
                         {/* WhatsApp */}
                         <a href={`https://wa.me/${business.whatsapp}`} target="_blank" rel="noopener noreferrer"
-                            className="reveal group relative flex items-center gap-5 px-6 py-8 transition-all duration-300 overflow-hidden border-b sm:border-b-0 sm:border-r border-slate-100">
-                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                style={{ background: 'linear-gradient(135deg, rgba(37,211,102,0.05) 0%, transparent 70%)' }} />
-                            <div className="relative shrink-0">
-                                <div className="rounded-2xl flex items-center justify-center"
-                                    style={{ width: 52, height: 52, background: 'rgba(37,211,102,0.08)', border: '1px solid rgba(37,211,102,0.2)' }}>
-                                    <i className="fa-brands fa-whatsapp text-xl" style={{ color: '#25D366' }} />
-                                </div>
-                                <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-black"
-                                    style={{ background: '#25D366', color: '#fff', fontFamily: "'Outfit', sans-serif" }}>02</span>
+                            className="reveal group flex flex-col gap-4 p-6 rounded-2xl border border-slate-100 bg-white transition-all duration-300 hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-500/5 hover:-translate-y-0.5">
+                            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                                style={{ background: 'rgba(37,211,102,0.07)', border: '1px solid rgba(37,211,102,0.15)' }}>
+                                <i className="fa-brands fa-whatsapp text-xl" style={{ color: '#25D366' }} />
                             </div>
-                            <div className="relative">
-                                <p className="text-[9px] font-black uppercase tracking-[0.25em] mb-1"
-                                    style={{ color: 'rgba(37,211,102,0.6)', fontFamily: "'Outfit', sans-serif" }}>WhatsApp</p>
-                                <p className="text-slate-800 font-bold text-[15px]" style={{ fontFamily: "'Outfit', sans-serif" }}>{t('hero.whatsapp')}</p>
-                                <p className="text-slate-400 text-[11px] mt-0.5">{t('blogPost.avgResponse')}</p>
+                            <div>
+                                <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1.5 text-slate-400"
+                                    style={{ fontFamily: "'Outfit', sans-serif" }}>WhatsApp</p>
+                                <p className="text-slate-800 font-semibold text-[15px] mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>{t('hero.whatsapp')}</p>
+                                <p className="text-slate-400 text-[12px]">{t('blogPost.avgResponse')}</p>
                             </div>
                         </a>
 
                         {/* Email */}
                         <a href={`mailto:${business.email}`}
-                            className="reveal group relative flex items-center gap-5 px-6 py-8 transition-all duration-300 overflow-hidden">
-                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                style={{ background: 'linear-gradient(135deg, rgba(56,189,248,0.05) 0%, transparent 70%)' }} />
-                            <div className="relative shrink-0">
-                                <div className="rounded-2xl flex items-center justify-center"
-                                    style={{ width: 52, height: 52, background: 'rgba(56,189,248,0.08)', border: '1px solid rgba(56,189,248,0.2)' }}>
-                                    <i className="fa-solid fa-envelope text-base" style={{ color: '#38bdf8' }} />
-                                </div>
-                                <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-black"
-                                    style={{ background: '#38bdf8', color: '#0f172a', fontFamily: "'Outfit', sans-serif" }}>03</span>
+                            className="reveal group flex flex-col gap-4 p-6 rounded-2xl border border-slate-100 bg-white transition-all duration-300 hover:border-sky-200 hover:shadow-lg hover:shadow-sky-500/5 hover:-translate-y-0.5">
+                            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                                style={{ background: 'rgba(56,189,248,0.07)', border: '1px solid rgba(56,189,248,0.15)' }}>
+                                <i className="fa-solid fa-envelope text-sm" style={{ color: '#38bdf8' }} />
                             </div>
-                            <div className="relative">
-                                <p className="text-[9px] font-black uppercase tracking-[0.25em] mb-1"
-                                    style={{ color: 'rgba(56,189,248,0.6)', fontFamily: "'Outfit', sans-serif" }}>{t('faq.email')}</p>
-                                <p className="text-slate-800 font-bold text-[14px] truncate max-w-[200px]" style={{ fontFamily: "'Outfit', sans-serif" }}>{business.email}</p>
-                                <p className="text-slate-400 text-[11px] mt-0.5">{t('form.trustFast')}</p>
+                            <div>
+                                <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1.5 text-slate-400"
+                                    style={{ fontFamily: "'Outfit', sans-serif" }}>{t('faq.email')}</p>
+                                <p className="text-slate-800 font-semibold text-[14px] truncate max-w-[220px] mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>{business.email}</p>
+                                <p className="text-slate-400 text-[12px]">{t('form.trustFast')}</p>
                             </div>
                         </a>
 
@@ -155,10 +137,6 @@ const Iletisim: React.FC = () => {
 
             {/* ── MAIN: LEFT INFO + RIGHT FORM ───────────────────── */}
             <section className="flex-1 py-20 bg-white relative overflow-hidden">
-                {/* Subtle top-left gold corner */}
-                <div className="absolute top-0 left-0 w-40 h-px bg-gradient-to-r from-[var(--color-primary)]/40 to-transparent pointer-events-none" />
-                <div className="absolute top-0 left-0 w-px h-40 bg-gradient-to-b from-[var(--color-primary)]/40 to-transparent pointer-events-none" />
-
                 <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 xl:gap-24">
 
@@ -273,32 +251,26 @@ const Iletisim: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* ── RIGHT: Form card ── */}
+                        {/* ── RIGHT: Form card (clean white minimal) ── */}
                         <div className="reveal">
-                            <div className="rounded-3xl overflow-hidden" style={{
-                                background: 'rgba(255,255,255,0.025)',
-                                border: '1px solid rgba(255,255,255,0.07)',
-                                backdropFilter: 'blur(20px)',
-                                WebkitBackdropFilter: 'blur(20px)',
-                                boxShadow: '0 40px 80px rgba(0,0,0,0.4)',
-                            }}>
+                            <div className="rounded-2xl overflow-hidden border border-slate-100 bg-white shadow-sm">
                                 {/* Gold top accent bar */}
-                                <div className="h-px w-full" style={{
-                                    background: 'linear-gradient(90deg, transparent, rgba(197,160,89,0.7) 40%, rgba(197,160,89,0.9) 60%, transparent)',
+                                <div className="h-0.5 w-full" style={{
+                                    background: 'linear-gradient(90deg, #c5a059 0%, #e0cb8b 50%, rgba(197,160,89,0.2) 100%)',
                                 }} />
 
                                 <div className="p-8 md:p-10">
                                     {/* Form header */}
                                     <div className="mb-8">
                                         <div className="flex items-center gap-2 mb-2">
-                                            <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: '#c5a059' }} />
-                                            <span className="text-[9px] font-black tracking-[0.3em] uppercase"
-                                                style={{ color: 'rgba(197,160,89,0.65)', fontFamily: "'Outfit', sans-serif" }}>
+                                            <div className="w-1 h-1 rounded-full" style={{ background: '#c5a059' }} />
+                                            <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-slate-400"
+                                                style={{ fontFamily: "'Outfit', sans-serif" }}>
                                                 {t('contact.formTitle')}
                                             </span>
                                         </div>
-                                        <p className="text-[13px]"
-                                            style={{ color: 'rgba(255,255,255,0.28)', fontFamily: "'Montserrat', sans-serif" }}>
+                                        <p className="text-slate-500 text-[13px]"
+                                            style={{ fontFamily: "'Montserrat', sans-serif" }}>
                                             {t('blogPost.sidebarDesc')}
                                         </p>
                                     </div>
@@ -306,8 +278,8 @@ const Iletisim: React.FC = () => {
                                     <form onSubmit={handleSubmit} className="space-y-5">
                                         {/* Name */}
                                         <div>
-                                            <label className="block text-[10px] font-black tracking-[0.2em] uppercase mb-2"
-                                                style={{ color: 'rgba(197,160,89,0.55)', fontFamily: "'Outfit', sans-serif" }}>
+                                            <label className="block text-[10px] font-bold tracking-[0.18em] uppercase mb-2 text-slate-500"
+                                                style={{ fontFamily: "'Outfit', sans-serif" }}>
                                                 {t('contact.namePh')}
                                             </label>
                                             <input
@@ -318,19 +290,20 @@ const Iletisim: React.FC = () => {
                                                 onFocus={() => setFocused('name')}
                                                 onBlur={() => setFocused(null)}
                                                 placeholder={t('contact.namePh')}
-                                                className="w-full px-4 py-3.5 rounded-xl text-white outline-none text-[14px] font-medium"
+                                                className="w-full px-4 py-3.5 rounded-xl text-slate-800 outline-none text-[14px] font-medium placeholder-slate-300"
                                                 style={{
-                                                    ...inputStyle('name'),
-                                                    color: 'rgba(255,255,255,0.85)',
-                                                    // placeholder handled via CSS below
+                                                    background: focused === 'name' ? 'rgba(197,160,89,0.04)' : '#f8fafc',
+                                                    border: `1px solid ${focused === 'name' ? 'rgba(197,160,89,0.45)' : '#e2e8f0'}`,
+                                                    transition: 'all 0.2s ease',
+                                                    fontFamily: "'Montserrat', sans-serif",
                                                 }}
                                             />
                                         </div>
 
                                         {/* Email */}
                                         <div>
-                                            <label className="block text-[10px] font-black tracking-[0.2em] uppercase mb-2"
-                                                style={{ color: 'rgba(197,160,89,0.55)', fontFamily: "'Outfit', sans-serif" }}>
+                                            <label className="block text-[10px] font-bold tracking-[0.18em] uppercase mb-2 text-slate-500"
+                                                style={{ fontFamily: "'Outfit', sans-serif" }}>
                                                 {t('contact.emailPh')}
                                             </label>
                                             <input
@@ -341,18 +314,20 @@ const Iletisim: React.FC = () => {
                                                 onFocus={() => setFocused('email')}
                                                 onBlur={() => setFocused(null)}
                                                 placeholder={t('contact.emailPh')}
-                                                className="w-full px-4 py-3.5 rounded-xl outline-none text-[14px] font-medium"
+                                                className="w-full px-4 py-3.5 rounded-xl text-slate-800 outline-none text-[14px] font-medium placeholder-slate-300"
                                                 style={{
-                                                    ...inputStyle('email'),
-                                                    color: 'rgba(255,255,255,0.85)',
+                                                    background: focused === 'email' ? 'rgba(197,160,89,0.04)' : '#f8fafc',
+                                                    border: `1px solid ${focused === 'email' ? 'rgba(197,160,89,0.45)' : '#e2e8f0'}`,
+                                                    transition: 'all 0.2s ease',
+                                                    fontFamily: "'Montserrat', sans-serif",
                                                 }}
                                             />
                                         </div>
 
                                         {/* Message */}
                                         <div>
-                                            <label className="block text-[10px] font-black tracking-[0.2em] uppercase mb-2"
-                                                style={{ color: 'rgba(197,160,89,0.55)', fontFamily: "'Outfit', sans-serif" }}>
+                                            <label className="block text-[10px] font-bold tracking-[0.18em] uppercase mb-2 text-slate-500"
+                                                style={{ fontFamily: "'Outfit', sans-serif" }}>
                                                 {t('contact.msgPh')}
                                             </label>
                                             <textarea
@@ -363,10 +338,12 @@ const Iletisim: React.FC = () => {
                                                 onFocus={() => setFocused('message')}
                                                 onBlur={() => setFocused(null)}
                                                 placeholder={t('contact.msgPh')}
-                                                className="w-full px-4 py-3.5 rounded-xl outline-none text-[14px] font-medium resize-none"
+                                                className="w-full px-4 py-3.5 rounded-xl text-slate-800 outline-none text-[14px] font-medium resize-none placeholder-slate-300"
                                                 style={{
-                                                    ...inputStyle('message'),
-                                                    color: 'rgba(255,255,255,0.85)',
+                                                    background: focused === 'message' ? 'rgba(197,160,89,0.04)' : '#f8fafc',
+                                                    border: `1px solid ${focused === 'message' ? 'rgba(197,160,89,0.45)' : '#e2e8f0'}`,
+                                                    transition: 'all 0.2s ease',
+                                                    fontFamily: "'Montserrat', sans-serif",
                                                 }}
                                             />
                                         </div>
@@ -374,12 +351,12 @@ const Iletisim: React.FC = () => {
                                         {/* Submit */}
                                         <button
                                             type="submit"
-                                            className="w-full flex items-center justify-center gap-3 py-4 rounded-xl font-black text-[13px] uppercase tracking-[0.1em] transition-all duration-300 active:scale-[0.98]"
+                                            className="w-full flex items-center justify-center gap-3 py-4 rounded-xl font-black text-[13px] uppercase tracking-[0.1em] transition-all duration-300 active:scale-[0.98] hover:-translate-y-0.5"
                                             style={{
                                                 background: 'linear-gradient(135deg, #e0cb8b 0%, #c5a059 100%)',
                                                 color: '#0f172a',
                                                 fontFamily: "'Outfit', sans-serif",
-                                                boxShadow: '0 8px 32px rgba(197,160,89,0.25)',
+                                                boxShadow: '0 4px 20px rgba(197,160,89,0.2)',
                                             }}
                                         >
                                             <i className="fa-brands fa-whatsapp text-lg" />
@@ -390,27 +367,26 @@ const Iletisim: React.FC = () => {
                                         {/* Trust pills */}
                                         <div className="flex items-center justify-center gap-5 pt-1">
                                             <div className="flex items-center gap-1.5">
-                                                <i className="fa-solid fa-lock text-emerald-400 text-[9px]" />
-                                                <span className="text-[10px]"
-                                                    style={{ color: 'rgba(255,255,255,0.22)', fontFamily: "'Montserrat', sans-serif" }}>
+                                                <i className="fa-solid fa-lock text-emerald-500 text-[9px]" />
+                                                <span className="text-[10px] text-slate-400"
+                                                    style={{ fontFamily: "'Montserrat', sans-serif" }}>
                                                     {t('form.trustSecure')}
                                                 </span>
                                             </div>
-                                            <div className="w-px h-3" style={{ background: 'rgba(255,255,255,0.08)' }} />
+                                            <div className="w-px h-3 bg-slate-200" />
                                             <div className="flex items-center gap-1.5">
                                                 <i className="fa-solid fa-bolt text-amber-400 text-[9px]" />
-                                                <span className="text-[10px]"
-                                                    style={{ color: 'rgba(255,255,255,0.22)', fontFamily: "'Montserrat', sans-serif" }}>
+                                                <span className="text-[10px] text-slate-400"
+                                                    style={{ fontFamily: "'Montserrat', sans-serif" }}>
                                                     {t('form.trustFast')}
                                                 </span>
                                             </div>
                                         </div>
 
                                         {submitted && (
-                                            <div className="flex items-center gap-3 px-5 py-4 rounded-2xl"
-                                                style={{ background: 'rgba(37,211,102,0.08)', border: '1px solid rgba(37,211,102,0.2)' }}>
-                                                <i className="fa-brands fa-whatsapp text-xl" style={{ color: '#25D366' }} />
-                                                <span className="text-sm font-semibold" style={{ color: '#4ade80' }}>
+                                            <div className="flex items-center gap-3 px-5 py-4 rounded-xl bg-emerald-50 border border-emerald-200">
+                                                <i className="fa-brands fa-whatsapp text-xl text-emerald-500" />
+                                                <span className="text-sm font-semibold text-emerald-700">
                                                     WhatsApp'a yönlendiriliyorsunuz...
                                                 </span>
                                             </div>
@@ -449,14 +425,14 @@ const Iletisim: React.FC = () => {
 
                 {/* Soft left fade */}
                 <div className="absolute inset-0 pointer-events-none"
-                    style={{ background: 'linear-gradient(to right, rgba(255,255,255,0.6) 0%, transparent 45%)' }} />
+                    style={{ background: 'linear-gradient(to right, rgba(255,255,255,0.75) 0%, transparent 45%)' }} />
 
-                {/* Location card */}
+                {/* Location card — clean white */}
                 <div className="absolute left-6 sm:left-10 top-1/2 -translate-y-1/2" style={{ maxWidth: 280 }}>
-                    <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-5 shadow-xl border border-slate-100">
+                    <div className="bg-white rounded-2xl p-5 shadow-lg border border-slate-100">
                         <div className="flex items-start gap-3 mb-4">
                             <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                                style={{ background: 'rgba(197,160,89,0.1)', border: '1px solid rgba(197,160,89,0.2)' }}>
+                                style={{ background: 'rgba(197,160,89,0.08)', border: '1px solid rgba(197,160,89,0.18)' }}>
                                 <i className="fa-solid fa-location-dot text-sm" style={{ color: '#c5a059' }} />
                             </div>
                             <div>
