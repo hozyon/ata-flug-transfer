@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { BUSINESS_INFO, BLOG_POSTS } from '../constants';
 import { useSiteContent } from '../SiteContext';
 import type { NavMenuItem } from '../types';
@@ -31,6 +31,23 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
   const { t } = useLanguage();
   const { setBookingFormOpen } = useAppStore();
   const location = useLocation();
+
+  const navigate = useNavigate();
+  const adminTapCount = useRef(0);
+  const adminTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleAdminTap = () => {
+    if (isAdmin) { onAdminToggle(); close(); return; }
+    adminTapCount.current += 1;
+    if (adminTapTimer.current) clearTimeout(adminTapTimer.current);
+    if (adminTapCount.current >= 5) {
+      adminTapCount.current = 0;
+      close();
+      navigate('/login');
+      return;
+    }
+    adminTapTimer.current = setTimeout(() => { adminTapCount.current = 0; }, 1500);
+  };
 
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
@@ -353,54 +370,6 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                 }} />
               </button>
 
-              {/* Admin — "gizli tetikleyici": müşteri görmez, yönetici bilir */}
-              <button
-                onClick={onAdminToggle}
-                title="v2.4"
-                style={{
-                  width: 18,
-                  height: 18,
-                  borderRadius: '50%',
-                  border: isAdmin
-                    ? '1.5px solid rgba(197,160,89,0.55)'
-                    : '1px solid rgba(255,255,255,0.07)',
-                  background: isAdmin
-                    ? 'rgba(197,160,89,0.12)'
-                    : 'transparent',
-                  boxShadow: isAdmin
-                    ? '0 0 8px rgba(197,160,89,0.3)'
-                    : 'none',
-                  cursor: 'pointer',
-                  transition: 'all 0.3s ease',
-                  flexShrink: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  opacity: isAdmin ? 1 : 0.28,
-                }}
-                onMouseEnter={e => {
-                  if (!isAdmin) {
-                    e.currentTarget.style.opacity = '0.55';
-                    e.currentTarget.style.borderColor = 'rgba(197,160,89,0.3)';
-                  }
-                }}
-                onMouseLeave={e => {
-                  if (!isAdmin) {
-                    e.currentTarget.style.opacity = '0.28';
-                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)';
-                  }
-                }}
-              >
-                <span style={{
-                  width: isAdmin ? 6 : 4,
-                  height: isAdmin ? 6 : 4,
-                  borderRadius: '50%',
-                  background: isAdmin ? '#c5a059' : 'rgba(255,255,255,0.3)',
-                  boxShadow: isAdmin ? '0 0 6px rgba(197,160,89,0.8)' : 'none',
-                  display: 'block',
-                  transition: 'all 0.3s ease',
-                }} />
-              </button>
             </div>
 
             {/* ── Mobile right controls ── */}
@@ -699,10 +668,14 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
             </div>
 
             <button
-              onClick={() => { onAdminToggle(); close(); }}
-              className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/[0.06] text-white/25 hover:text-[var(--color-primary)]/70 hover:bg-[var(--color-primary)]/[0.07] transition-all active:scale-95 text-[11px] font-bold"
+              onClick={handleAdminTap}
+              className={`flex items-center gap-2 px-3 py-2.5 rounded-xl transition-all active:scale-95 text-[11px] font-bold
+                ${isAdmin
+                  ? 'bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 text-[var(--color-primary)]/70'
+                  : 'bg-white/[0.04] border border-white/[0.06] text-white/25 hover:text-white/40'}`}
+              title={isAdmin ? 'Panel' : 'v2.4'}
             >
-              <i className="fa-solid fa-gear text-[10px]" />
+              <i className={`fa-solid ${isAdmin ? 'fa-user-gear' : 'fa-gear'} text-[10px]`} />
               <span>Yönetici</span>
             </button>
           </div>
