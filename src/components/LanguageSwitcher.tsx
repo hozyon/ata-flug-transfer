@@ -21,11 +21,21 @@ const LanguageSwitcher: React.FC = () => {
         <div ref={ref} className="relative" style={{ fontFamily: "'Outfit', sans-serif" }}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-1.5 px-2 py-2 sm:px-3 sm:py-2 rounded-xl sm:rounded-full border border-white/0 sm:border-white/10 bg-white/0 sm:bg-white/5 hover:bg-white/10 backdrop-blur-sm text-white text-xs font-medium transition-all duration-200"
+                className="relative flex items-center gap-1.5 overflow-hidden rounded-xl font-black text-[11.5px] uppercase tracking-[0.09em] transition-all duration-200 active:scale-[0.96] hover:-translate-y-px"
+                style={{
+                    fontFamily: "'Outfit', sans-serif",
+                    background: 'linear-gradient(135deg, rgba(232,212,154,0.28) 0%, rgba(197,160,89,0.38) 55%, rgba(158,123,56,0.28) 100%)',
+                    color: '#e8d49a',
+                    padding: '9px 14px',
+                    border: '1px solid rgba(197,160,89,0.3)',
+                    boxShadow: '0 2px 12px rgba(197,160,89,0.12), inset 0 1px 0 rgba(255,255,255,0.12)',
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)',
+                }}
             >
                 <span className="text-base leading-none">{current.flag}</span>
                 <span className="hidden sm:inline">{current.native}</span>
-                <i className={`fa-solid fa-chevron-down text-[8px] text-white/40 transition-transform duration-200 hidden sm:inline ${isOpen ? 'rotate-180' : ''}`}></i>
+                <i className={`fa-solid fa-chevron-down text-[8px] opacity-60 transition-transform duration-200 hidden sm:inline ${isOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {isOpen && (
