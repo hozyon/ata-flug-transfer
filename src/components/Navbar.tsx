@@ -208,9 +208,9 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
 
       {/* ── TOP HEADER ─────────────────────────────────────── */}
       <header
-        className={`navbar-enter fixed top-0 left-0 w-full z-[100] transition-all duration-400`}
+        className={`navbar-enter fixed top-0 left-0 w-full z-[100]`}
         style={{
-          height: scrolled ? '60px' : '72px',
+          height: '68px',
           background: scrolled
             ? 'rgba(10,12,24,0.92)'
             : 'rgba(10,12,24,0.18)',
@@ -222,7 +222,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
           boxShadow: scrolled ? '0 8px 32px rgba(0,0,0,0.35)' : 'none',
           paddingLeft: 'env(safe-area-inset-left)',
           paddingRight: 'env(safe-area-inset-right)',
-          transition: 'height 0.35s cubic-bezier(0.22,1,0.36,1), background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease',
+          transition: 'background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease',
         }}
       >
         {/* Gold accent line on scroll */}
