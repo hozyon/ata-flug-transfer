@@ -201,7 +201,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
                 </div>
                 <span className={`text-[9px] font-bold uppercase tracking-widest transition-colors duration-300
                   ${i === step ? 'text-[var(--color-primary)]' : i < step ? 'text-white/40' : 'text-white/15'}`}>
-                  {label}
+                  {t(label)}
                 </span>
               </button>
               {i < STEPS.length - 1 && (
