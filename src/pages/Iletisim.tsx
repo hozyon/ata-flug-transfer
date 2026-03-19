@@ -28,15 +28,41 @@ const Iletisim: React.FC = () => {
         setTimeout(() => setSubmitted(false), 4000);
     };
 
-    const inputStyle = (field: string): React.CSSProperties => ({
-        background: focused === field ? 'rgba(197,160,89,0.05)' : 'rgba(255,255,255,0.03)',
-        border: `1px solid ${focused === field ? 'rgba(197,160,89,0.45)' : 'rgba(255,255,255,0.07)'}`,
-        transition: 'all 0.25s ease',
-        fontFamily: "'Montserrat', sans-serif",
-    });
-
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col">
+        <div className="min-h-screen flex flex-col" style={{ background: '#020617' }}>
+            <style>{`
+                @keyframes gridFloat {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-8px); }
+                }
+                @keyframes lineReveal {
+                    from { scaleX: 0; }
+                    to { scaleX: 1; }
+                }
+                @keyframes channelIn {
+                    from { opacity: 0; transform: translateX(-20px); }
+                    to { opacity: 1; transform: translateX(0); }
+                }
+                .contact-channel {
+                    animation: channelIn 0.5s cubic-bezier(0.22,1,0.36,1) both;
+                }
+                .contact-channel:nth-child(1) { animation-delay: 0.1s; }
+                .contact-channel:nth-child(2) { animation-delay: 0.2s; }
+                .contact-channel:nth-child(3) { animation-delay: 0.3s; }
+                .iletisim-input {
+                    background: rgba(255,255,255,0.03) !important;
+                    border: 1px solid rgba(255,255,255,0.07) !important;
+                    color: white !important;
+                    transition: border-color 0.2s ease, background 0.2s ease !important;
+                }
+                .iletisim-input:focus {
+                    background: rgba(197,160,89,0.04) !important;
+                    border-color: rgba(197,160,89,0.4) !important;
+                    outline: none !important;
+                }
+                .iletisim-input::placeholder { color: rgba(255,255,255,0.18); }
+            `}</style>
+
             <Helmet>
                 <title>{pageTitle} | {business.name}</title>
                 <meta name="description" content={pageDesc} />
@@ -81,205 +107,229 @@ const Iletisim: React.FC = () => {
                 </div>
             </section>
 
-            {/* ── CONTACT CHANNELS ───────────────────────────────── */}
-            <section className="bg-white border-b border-slate-100">
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12">
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 stagger-children">
+            {/* ── CHANNEL STRIP ──────────────────────────────────── */}
+            <section style={{ background: 'rgba(197,160,89,0.04)', borderBottom: '1px solid rgba(197,160,89,0.12)' }}>
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 py-0">
+                    <div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x" style={{ divideColor: 'rgba(255,255,255,0.05)' }}>
 
                         {/* Phone */}
                         <a href={`tel:${business.phone}`}
-                            className="reveal group flex flex-col gap-4 p-6 rounded-2xl border border-slate-100 bg-white transition-all duration-300 hover:border-[#c5a059]/30 hover:shadow-lg hover:shadow-[#c5a059]/5 hover:-translate-y-0.5">
-                            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-                                style={{ background: 'rgba(197,160,89,0.08)', border: '1px solid rgba(197,160,89,0.15)' }}>
+                            className="contact-channel flex-1 flex items-center gap-5 px-6 py-6 group transition-colors duration-200"
+                            style={{ borderRight: '1px solid rgba(255,255,255,0.05)' }}
+                            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(197,160,89,0.06)')}
+                            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                        >
+                            <div className="w-11 h-11 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105"
+                                style={{ background: 'rgba(197,160,89,0.1)', border: '1px solid rgba(197,160,89,0.2)' }}>
                                 <i className="fa-solid fa-phone text-sm" style={{ color: '#c5a059' }} />
                             </div>
                             <div>
-                                <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1.5 text-slate-400"
-                                    style={{ fontFamily: "'Outfit', sans-serif" }}>{t('faq.phone')}</p>
-                                <p className="text-slate-800 font-semibold text-[15px] mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>{business.phone}</p>
-                                <p className="text-slate-400 text-[12px]">7/24 {t('hero.trust.247')}</p>
+                                <p className="text-[9px] font-black uppercase tracking-[0.28em] mb-1" style={{ color: 'rgba(197,160,89,0.5)', fontFamily: "'Outfit', sans-serif" }}>{t('faq.phone')}</p>
+                                <p className="text-white font-bold text-[15px]" style={{ fontFamily: "'Outfit', sans-serif" }}>{business.phone}</p>
                             </div>
+                            <i className="fa-solid fa-arrow-right ml-auto text-[10px] opacity-0 group-hover:opacity-60 transition-opacity" style={{ color: '#c5a059' }} />
                         </a>
 
                         {/* WhatsApp */}
                         <a href={`https://wa.me/${business.whatsapp}`} target="_blank" rel="noopener noreferrer"
-                            className="reveal group flex flex-col gap-4 p-6 rounded-2xl border border-slate-100 bg-white transition-all duration-300 hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-500/5 hover:-translate-y-0.5">
-                            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-                                style={{ background: 'rgba(37,211,102,0.07)', border: '1px solid rgba(37,211,102,0.15)' }}>
+                            className="contact-channel flex-1 flex items-center gap-5 px-6 py-6 group transition-colors duration-200"
+                            style={{ borderRight: '1px solid rgba(255,255,255,0.05)' }}
+                            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(37,211,102,0.05)')}
+                            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                        >
+                            <div className="w-11 h-11 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105"
+                                style={{ background: 'rgba(37,211,102,0.08)', border: '1px solid rgba(37,211,102,0.18)' }}>
                                 <i className="fa-brands fa-whatsapp text-xl" style={{ color: '#25D366' }} />
                             </div>
                             <div>
-                                <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1.5 text-slate-400"
-                                    style={{ fontFamily: "'Outfit', sans-serif" }}>WhatsApp</p>
-                                <p className="text-slate-800 font-semibold text-[15px] mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>{t('hero.whatsapp')}</p>
-                                <p className="text-slate-400 text-[12px]">{t('blogPost.avgResponse')}</p>
+                                <p className="text-[9px] font-black uppercase tracking-[0.28em] mb-1" style={{ color: 'rgba(37,211,102,0.5)', fontFamily: "'Outfit', sans-serif" }}>WhatsApp</p>
+                                <p className="text-white font-bold text-[15px]" style={{ fontFamily: "'Outfit', sans-serif" }}>{t('hero.whatsapp')}</p>
                             </div>
+                            <i className="fa-solid fa-arrow-right ml-auto text-[10px] opacity-0 group-hover:opacity-60 transition-opacity" style={{ color: '#25D366' }} />
                         </a>
 
                         {/* Email */}
                         <a href={`mailto:${business.email}`}
-                            className="reveal group flex flex-col gap-4 p-6 rounded-2xl border border-slate-100 bg-white transition-all duration-300 hover:border-sky-200 hover:shadow-lg hover:shadow-sky-500/5 hover:-translate-y-0.5">
-                            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-                                style={{ background: 'rgba(56,189,248,0.07)', border: '1px solid rgba(56,189,248,0.15)' }}>
+                            className="contact-channel flex-1 flex items-center gap-5 px-6 py-6 group transition-colors duration-200"
+                            onMouseEnter={e => (e.currentTarget.style.background = 'rgba(56,189,248,0.05)')}
+                            onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                        >
+                            <div className="w-11 h-11 rounded-lg flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105"
+                                style={{ background: 'rgba(56,189,248,0.08)', border: '1px solid rgba(56,189,248,0.18)' }}>
                                 <i className="fa-solid fa-envelope text-sm" style={{ color: '#38bdf8' }} />
                             </div>
-                            <div>
-                                <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-1.5 text-slate-400"
-                                    style={{ fontFamily: "'Outfit', sans-serif" }}>{t('faq.email')}</p>
-                                <p className="text-slate-800 font-semibold text-[14px] truncate max-w-[220px] mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>{business.email}</p>
-                                <p className="text-slate-400 text-[12px]">{t('form.trustFast')}</p>
+                            <div className="min-w-0">
+                                <p className="text-[9px] font-black uppercase tracking-[0.28em] mb-1" style={{ color: 'rgba(56,189,248,0.5)', fontFamily: "'Outfit', sans-serif" }}>{t('faq.email')}</p>
+                                <p className="text-white font-bold text-[14px] truncate" style={{ fontFamily: "'Outfit', sans-serif" }}>{business.email}</p>
                             </div>
+                            <i className="fa-solid fa-arrow-right ml-auto text-[10px] shrink-0 opacity-0 group-hover:opacity-60 transition-opacity" style={{ color: '#38bdf8' }} />
                         </a>
 
                     </div>
                 </div>
             </section>
 
-            {/* ── MAIN: LEFT INFO + RIGHT FORM ───────────────────── */}
-            <section className="flex-1 py-20 bg-white relative overflow-hidden">
-                <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 xl:gap-24">
+            {/* ── MAIN: EDITORIAL DARK ───────────────────────────── */}
+            <section className="flex-1 relative overflow-hidden">
 
-                        {/* ── LEFT: Editorial info column ── */}
-                        <div className="reveal-left flex flex-col">
-                            {/* Section label */}
-                            <div className="flex items-center gap-3 mb-8">
-                                <div className="w-5 h-px" style={{ background: '#c5a059' }} />
-                                <span className="text-[9px] font-black tracking-[0.35em] uppercase"
-                                    style={{ color: 'rgba(197,160,89,0.6)', fontFamily: "'Outfit', sans-serif" }}>
-                                    {t('contact.eyebrow')}
-                                </span>
+                {/* Background grid texture */}
+                <div style={{
+                    position: 'absolute', inset: 0, pointerEvents: 'none',
+                    backgroundImage: 'linear-gradient(rgba(197,160,89,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(197,160,89,0.03) 1px, transparent 1px)',
+                    backgroundSize: '60px 60px',
+                }} />
+                <div style={{
+                    position: 'absolute', inset: 0, pointerEvents: 'none',
+                    background: 'radial-gradient(ellipse 70% 60% at 70% 50%, rgba(197,160,89,0.05) 0%, transparent 65%)',
+                }} />
+
+                <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-20 lg:py-28">
+                    <div className="grid grid-cols-1 lg:grid-cols-[1fr_480px] gap-16 lg:gap-24">
+
+                        {/* ── LEFT: Info column ── */}
+                        <div className="reveal-left flex flex-col gap-12">
+
+                            {/* Heading block */}
+                            <div>
+                                <div className="flex items-center gap-3 mb-6">
+                                    <div className="h-px w-8" style={{ background: '#c5a059' }} />
+                                    <span className="text-[9px] font-black tracking-[0.4em] uppercase" style={{ color: 'rgba(197,160,89,0.55)', fontFamily: "'Outfit', sans-serif" }}>
+                                        {t('contact.eyebrow')}
+                                    </span>
+                                </div>
+                                <h2 style={{
+                                    fontFamily: "'Playfair Display', serif",
+                                    fontSize: 'clamp(2.2rem, 4.5vw, 3.5rem)',
+                                    fontWeight: 700,
+                                    lineHeight: 1.1,
+                                    color: 'white',
+                                    letterSpacing: '-0.01em',
+                                    marginBottom: '1.25rem',
+                                }}>
+                                    {t('contact.formTitle')}
+                                </h2>
+                                <p style={{ color: 'rgba(255,255,255,0.38)', fontSize: 15, lineHeight: 1.75, fontFamily: "'Montserrat', sans-serif", maxWidth: 400 }}>
+                                    {t('contact.subtitle')}
+                                </p>
                             </div>
 
-                            <h2 className="text-[clamp(2rem,4vw,3rem)] font-bold text-slate-800 leading-tight mb-5"
-                                style={{ fontFamily: "'Playfair Display', serif" }}>
-                                {t('contact.formTitle')}
-                            </h2>
-                            <p className="text-[15px] leading-relaxed mb-10 text-slate-500"
-                                style={{ fontFamily: "'Montserrat', sans-serif" }}>
-                                {t('contact.subtitle')}
-                            </p>
-
-                            {/* Info items */}
-                            <div className="space-y-5">
-                                {business.address && (
-                                    <div className="flex items-start gap-4">
-                                        <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5"
-                                            style={{ background: 'rgba(197,160,89,0.07)', border: '1px solid rgba(197,160,89,0.14)' }}>
-                                            <i className="fa-solid fa-location-dot text-sm" style={{ color: '#c5a059' }} />
+                            {/* Info items — editorial list */}
+                            <div className="space-y-0" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                                {[
+                                    {
+                                        icon: 'fa-location-dot',
+                                        label: t('hero.trust.tracking'),
+                                        value: business.address,
+                                        color: '#c5a059',
+                                    },
+                                    {
+                                        icon: 'fa-clock',
+                                        label: t('faq.workHours'),
+                                        value: `7/24 — ${t('hero.trust.247')}`,
+                                        color: '#c5a059',
+                                    },
+                                    {
+                                        icon: 'fa-plane-departure',
+                                        label: t('hero.trust.airports'),
+                                        value: 'Antalya (AYT) · Gazipaşa (GZP)',
+                                        color: '#c5a059',
+                                    },
+                                ].map((item, i) => (
+                                    <div key={i} className="flex items-start gap-5 py-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                                        <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
+                                            style={{ background: 'rgba(197,160,89,0.08)', border: '1px solid rgba(197,160,89,0.15)' }}>
+                                            <i className={`fa-solid ${item.icon} text-sm`} style={{ color: item.color }} />
                                         </div>
                                         <div>
-                                            <p className="text-[9px] font-black uppercase tracking-[0.25em] mb-1"
-                                                style={{ color: 'rgba(197,160,89,0.45)', fontFamily: "'Outfit', sans-serif" }}>
-                                                {t('hero.trust.tracking')}
+                                            <p className="text-[9px] font-black tracking-[0.22em] uppercase mb-1" style={{ color: 'rgba(197,160,89,0.4)', fontFamily: "'Outfit', sans-serif" }}>
+                                                {item.label}
                                             </p>
-                                            <p className="text-[13px] leading-relaxed text-slate-500">
-                                                {business.address}
+                                            <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 14, fontFamily: "'Montserrat', sans-serif" }}>
+                                                {item.value}
                                             </p>
                                         </div>
                                     </div>
-                                )}
-
-                                <div className="flex items-start gap-4">
-                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                                        style={{ background: 'rgba(197,160,89,0.07)', border: '1px solid rgba(197,160,89,0.14)' }}>
-                                        <i className="fa-solid fa-clock text-sm" style={{ color: '#c5a059' }} />
-                                    </div>
-                                    <div>
-                                        <p className="text-[9px] font-black uppercase tracking-[0.25em] mb-1"
-                                            style={{ color: 'rgba(197,160,89,0.45)', fontFamily: "'Outfit', sans-serif" }}>
-                                            {t('faq.workHours')}
-                                        </p>
-                                        <p className="text-[13px] text-slate-500">
-                                            7/24 — {t('hero.trust.247')}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-start gap-4">
-                                    <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                                        style={{ background: 'rgba(197,160,89,0.07)', border: '1px solid rgba(197,160,89,0.14)' }}>
-                                        <i className="fa-solid fa-plane-departure text-sm" style={{ color: '#c5a059' }} />
-                                    </div>
-                                    <div>
-                                        <p className="text-[9px] font-black uppercase tracking-[0.25em] mb-1"
-                                            style={{ color: 'rgba(197,160,89,0.45)', fontFamily: "'Outfit', sans-serif" }}>
-                                            {t('hero.trust.airports')}
-                                        </p>
-                                        <p className="text-[13px] text-slate-500">
-                                            Antalya (AYT) · Gazipaşa (GZP)
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Divider with gold dot */}
-                            <div className="my-10 flex items-center gap-4">
-                                <div className="h-px flex-1 bg-slate-200" />
-                                <div className="w-1.5 h-1.5 rounded-full" style={{ background: '#c5a059' }} />
-                                <div className="h-px flex-1 bg-slate-200" />
+                                ))}
                             </div>
 
                             {/* Social row */}
-                            <div className="flex items-center gap-2.5">
-                                <span className="text-[9px] font-black tracking-[0.2em] uppercase mr-1 text-slate-300"
-                                    style={{ fontFamily: "'Outfit', sans-serif" }}>
+                            <div className="flex items-center gap-3">
+                                <span className="text-[9px] font-black tracking-[0.22em] uppercase mr-1" style={{ color: 'rgba(255,255,255,0.2)', fontFamily: "'Outfit', sans-serif" }}>
                                     Sosyal
                                 </span>
                                 {business.instagram && (
                                     <a href={business.instagram} target="_blank" rel="noopener noreferrer"
-                                        className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-90 text-slate-400 hover:text-pink-500 hover:bg-pink-50 border border-slate-200">
+                                        className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 active:scale-90"
+                                        style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' }}
+                                        onMouseEnter={e => { e.currentTarget.style.color = '#e1306c'; e.currentTarget.style.background = 'rgba(225,48,108,0.08)'; }}
+                                        onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.3)'; e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
+                                    >
                                         <i className="fa-brands fa-instagram text-sm" />
                                     </a>
                                 )}
                                 {business.facebook && (
                                     <a href={business.facebook} target="_blank" rel="noopener noreferrer"
-                                        className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-90 text-slate-400 hover:text-blue-500 hover:bg-blue-50 border border-slate-200">
+                                        className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 active:scale-90"
+                                        style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' }}
+                                        onMouseEnter={e => { e.currentTarget.style.color = '#1877f2'; e.currentTarget.style.background = 'rgba(24,119,242,0.08)'; }}
+                                        onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.3)'; e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
+                                    >
                                         <i className="fa-brands fa-facebook-f text-sm" />
                                     </a>
                                 )}
                                 {business.telegram && (
                                     <a href={business.telegram} target="_blank" rel="noopener noreferrer"
-                                        className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-90 text-slate-400 hover:text-sky-500 hover:bg-sky-50 border border-slate-200">
+                                        className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 active:scale-90"
+                                        style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' }}
+                                        onMouseEnter={e => { e.currentTarget.style.color = '#0088cc'; e.currentTarget.style.background = 'rgba(0,136,204,0.08)'; }}
+                                        onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.3)'; e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
+                                    >
                                         <i className="fa-brands fa-telegram text-sm" />
                                     </a>
                                 )}
                                 <a href={`https://wa.me/${business.whatsapp}`} target="_blank" rel="noopener noreferrer"
-                                    className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-90 text-slate-400 hover:text-emerald-500 hover:bg-emerald-50 border border-slate-200">
+                                    className="w-9 h-9 rounded-lg flex items-center justify-center transition-all duration-200 active:scale-90"
+                                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.3)' }}
+                                    onMouseEnter={e => { e.currentTarget.style.color = '#25D366'; e.currentTarget.style.background = 'rgba(37,211,102,0.08)'; }}
+                                    onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.3)'; e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; }}
+                                >
                                     <i className="fa-brands fa-whatsapp text-sm" />
                                 </a>
                             </div>
                         </div>
 
-                        {/* ── RIGHT: Form card (clean white minimal) ── */}
+                        {/* ── RIGHT: Form — dark glass ── */}
                         <div className="reveal">
-                            <div className="rounded-2xl overflow-hidden border border-slate-100 bg-white shadow-sm">
-                                {/* Gold top accent bar */}
-                                <div className="h-0.5 w-full" style={{
+                            <div className="relative rounded-2xl overflow-hidden"
+                                style={{
+                                    background: 'rgba(255,255,255,0.03)',
+                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    backdropFilter: 'blur(12px)',
+                                    WebkitBackdropFilter: 'blur(12px)',
+                                }}>
+
+                                {/* Gold top accent */}
+                                <div style={{
+                                    height: 2,
                                     background: 'linear-gradient(90deg, #c5a059 0%, #e0cb8b 50%, rgba(197,160,89,0.2) 100%)',
                                 }} />
 
                                 <div className="p-8 md:p-10">
-                                    {/* Form header */}
-                                    <div className="mb-8">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <div className="w-1 h-1 rounded-full" style={{ background: '#c5a059' }} />
-                                            <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-slate-400"
-                                                style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                    {/* Form label */}
+                                    <div className="flex items-center gap-3 mb-8">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-1.5 h-1.5 rounded-full" style={{ background: '#c5a059', boxShadow: '0 0 8px #c5a059' }} />
+                                            <span className="text-[10px] font-black tracking-[0.28em] uppercase" style={{ color: 'rgba(197,160,89,0.6)', fontFamily: "'Outfit', sans-serif" }}>
                                                 {t('contact.formTitle')}
                                             </span>
                                         </div>
-                                        <p className="text-slate-500 text-[13px]"
-                                            style={{ fontFamily: "'Montserrat', sans-serif" }}>
-                                            {t('blogPost.sidebarDesc')}
-                                        </p>
+                                        <div className="flex-1 h-px" style={{ background: 'rgba(197,160,89,0.12)' }} />
                                     </div>
 
                                     <form onSubmit={handleSubmit} className="space-y-5">
                                         {/* Name */}
                                         <div>
-                                            <label className="block text-[10px] font-bold tracking-[0.18em] uppercase mb-2 text-slate-500"
-                                                style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                            <label className="block text-[10px] font-black tracking-[0.2em] uppercase mb-2.5" style={{ color: 'rgba(255,255,255,0.3)', fontFamily: "'Outfit', sans-serif" }}>
                                                 {t('contact.namePh')}
                                             </label>
                                             <input
@@ -290,20 +340,20 @@ const Iletisim: React.FC = () => {
                                                 onFocus={() => setFocused('name')}
                                                 onBlur={() => setFocused(null)}
                                                 placeholder={t('contact.namePh')}
-                                                className="w-full px-4 py-3.5 rounded-xl text-slate-800 outline-none text-[14px] font-medium placeholder-slate-300"
+                                                className="iletisim-input w-full px-4 py-3.5 rounded-xl text-[14px] font-medium"
                                                 style={{
-                                                    background: focused === 'name' ? 'rgba(197,160,89,0.04)' : '#f8fafc',
-                                                    border: `1px solid ${focused === 'name' ? 'rgba(197,160,89,0.45)' : '#e2e8f0'}`,
-                                                    transition: 'all 0.2s ease',
+                                                    background: focused === 'name' ? 'rgba(197,160,89,0.05)' : 'rgba(255,255,255,0.03)',
+                                                    border: `1px solid ${focused === 'name' ? 'rgba(197,160,89,0.4)' : 'rgba(255,255,255,0.07)'}`,
+                                                    color: 'white',
                                                     fontFamily: "'Montserrat', sans-serif",
+                                                    transition: 'border-color 0.2s ease, background 0.2s ease',
                                                 }}
                                             />
                                         </div>
 
                                         {/* Email */}
                                         <div>
-                                            <label className="block text-[10px] font-bold tracking-[0.18em] uppercase mb-2 text-slate-500"
-                                                style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                            <label className="block text-[10px] font-black tracking-[0.2em] uppercase mb-2.5" style={{ color: 'rgba(255,255,255,0.3)', fontFamily: "'Outfit', sans-serif" }}>
                                                 {t('contact.emailPh')}
                                             </label>
                                             <input
@@ -314,20 +364,21 @@ const Iletisim: React.FC = () => {
                                                 onFocus={() => setFocused('email')}
                                                 onBlur={() => setFocused(null)}
                                                 placeholder={t('contact.emailPh')}
-                                                className="w-full px-4 py-3.5 rounded-xl text-slate-800 outline-none text-[14px] font-medium placeholder-slate-300"
+                                                className="w-full px-4 py-3.5 rounded-xl text-[14px] font-medium"
                                                 style={{
-                                                    background: focused === 'email' ? 'rgba(197,160,89,0.04)' : '#f8fafc',
-                                                    border: `1px solid ${focused === 'email' ? 'rgba(197,160,89,0.45)' : '#e2e8f0'}`,
-                                                    transition: 'all 0.2s ease',
+                                                    background: focused === 'email' ? 'rgba(197,160,89,0.05)' : 'rgba(255,255,255,0.03)',
+                                                    border: `1px solid ${focused === 'email' ? 'rgba(197,160,89,0.4)' : 'rgba(255,255,255,0.07)'}`,
+                                                    color: 'white',
                                                     fontFamily: "'Montserrat', sans-serif",
+                                                    transition: 'border-color 0.2s ease, background 0.2s ease',
+                                                    outline: 'none',
                                                 }}
                                             />
                                         </div>
 
                                         {/* Message */}
                                         <div>
-                                            <label className="block text-[10px] font-bold tracking-[0.18em] uppercase mb-2 text-slate-500"
-                                                style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                            <label className="block text-[10px] font-black tracking-[0.2em] uppercase mb-2.5" style={{ color: 'rgba(255,255,255,0.3)', fontFamily: "'Outfit', sans-serif" }}>
                                                 {t('contact.msgPh')}
                                             </label>
                                             <textarea
@@ -338,12 +389,14 @@ const Iletisim: React.FC = () => {
                                                 onFocus={() => setFocused('message')}
                                                 onBlur={() => setFocused(null)}
                                                 placeholder={t('contact.msgPh')}
-                                                className="w-full px-4 py-3.5 rounded-xl text-slate-800 outline-none text-[14px] font-medium resize-none placeholder-slate-300"
+                                                className="w-full px-4 py-3.5 rounded-xl text-[14px] font-medium resize-none"
                                                 style={{
-                                                    background: focused === 'message' ? 'rgba(197,160,89,0.04)' : '#f8fafc',
-                                                    border: `1px solid ${focused === 'message' ? 'rgba(197,160,89,0.45)' : '#e2e8f0'}`,
-                                                    transition: 'all 0.2s ease',
+                                                    background: focused === 'message' ? 'rgba(197,160,89,0.05)' : 'rgba(255,255,255,0.03)',
+                                                    border: `1px solid ${focused === 'message' ? 'rgba(197,160,89,0.4)' : 'rgba(255,255,255,0.07)'}`,
+                                                    color: 'white',
                                                     fontFamily: "'Montserrat', sans-serif",
+                                                    transition: 'border-color 0.2s ease, background 0.2s ease',
+                                                    outline: 'none',
                                                 }}
                                             />
                                         </div>
@@ -351,42 +404,46 @@ const Iletisim: React.FC = () => {
                                         {/* Submit */}
                                         <button
                                             type="submit"
-                                            className="w-full flex items-center justify-center gap-3 py-4 rounded-xl font-black text-[13px] uppercase tracking-[0.1em] transition-all duration-300 active:scale-[0.98] hover:-translate-y-0.5"
+                                            className="relative w-full flex items-center justify-center gap-3 py-4 rounded-xl font-black text-[12.5px] uppercase tracking-[0.12em] overflow-hidden transition-all duration-200 active:scale-[0.98] hover:-translate-y-px"
                                             style={{
-                                                background: 'linear-gradient(135deg, #e0cb8b 0%, #c5a059 100%)',
-                                                color: '#0f172a',
+                                                background: 'linear-gradient(135deg, #e8d49a 0%, #c5a059 55%, #9e7b38 100%)',
+                                                color: '#0a0c14',
                                                 fontFamily: "'Outfit', sans-serif",
-                                                boxShadow: '0 4px 20px rgba(197,160,89,0.2)',
+                                                boxShadow: '0 4px 24px rgba(197,160,89,0.25)',
                                             }}
                                         >
                                             <i className="fa-brands fa-whatsapp text-lg" />
                                             <span>{t('contact.send')}</span>
-                                            <i className="fa-solid fa-arrow-right text-[10px]" />
+                                            <span style={{
+                                                position: 'absolute', inset: 0,
+                                                background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.2) 50%, transparent 60%)',
+                                                animation: 'shine 3s ease-in-out infinite 2s',
+                                                pointerEvents: 'none',
+                                            }} />
                                         </button>
 
-                                        {/* Trust pills */}
+                                        {/* Trust */}
                                         <div className="flex items-center justify-center gap-5 pt-1">
                                             <div className="flex items-center gap-1.5">
-                                                <i className="fa-solid fa-lock text-emerald-500 text-[9px]" />
-                                                <span className="text-[10px] text-slate-400"
-                                                    style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                                                <i className="fa-solid fa-lock text-[9px]" style={{ color: '#34d399' }} />
+                                                <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.25)', fontFamily: "'Montserrat', sans-serif" }}>
                                                     {t('form.trustSecure')}
                                                 </span>
                                             </div>
-                                            <div className="w-px h-3 bg-slate-200" />
+                                            <div className="w-px h-3" style={{ background: 'rgba(255,255,255,0.08)' }} />
                                             <div className="flex items-center gap-1.5">
-                                                <i className="fa-solid fa-bolt text-amber-400 text-[9px]" />
-                                                <span className="text-[10px] text-slate-400"
-                                                    style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                                                <i className="fa-solid fa-bolt text-[9px]" style={{ color: '#fbbf24' }} />
+                                                <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.25)', fontFamily: "'Montserrat', sans-serif" }}>
                                                     {t('form.trustFast')}
                                                 </span>
                                             </div>
                                         </div>
 
                                         {submitted && (
-                                            <div className="flex items-center gap-3 px-5 py-4 rounded-xl bg-emerald-50 border border-emerald-200">
-                                                <i className="fa-brands fa-whatsapp text-xl text-emerald-500" />
-                                                <span className="text-sm font-semibold text-emerald-700">
+                                            <div className="flex items-center gap-3 px-5 py-4 rounded-xl animate-in fade-in duration-300"
+                                                style={{ background: 'rgba(37,211,102,0.08)', border: '1px solid rgba(37,211,102,0.2)' }}>
+                                                <i className="fa-brands fa-whatsapp text-xl" style={{ color: '#25D366' }} />
+                                                <span className="text-sm font-semibold" style={{ color: '#34d399' }}>
                                                     WhatsApp'a yönlendiriliyorsunuz...
                                                 </span>
                                             </div>
@@ -401,55 +458,60 @@ const Iletisim: React.FC = () => {
             </section>
 
             {/* ── MAP ────────────────────────────────────────────── */}
-            <section className="relative overflow-hidden border-t border-slate-100"
-                style={{ height: 'clamp(320px, 40vw, 460px)' }}>
+            <section className="relative overflow-hidden" style={{ height: 'clamp(300px, 38vw, 440px)', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                 {business.mapEmbedUrl ? (
                     <iframe
                         src={business.mapEmbedUrl}
                         title="Konum"
                         width="100%"
                         height="100%"
-                        style={{ border: 0, position: 'absolute', inset: 0, filter: 'grayscale(20%) contrast(95%)' }}
+                        style={{ border: 0, position: 'absolute', inset: 0, filter: 'invert(92%) hue-rotate(180deg) brightness(0.9) contrast(0.95) saturate(0.5)' }}
                         allowFullScreen
                         loading="lazy"
                         referrerPolicy="no-referrer-when-downgrade"
                     />
                 ) : (
-                    <div className="absolute inset-0 flex items-center justify-center bg-slate-100">
-                        <div className="text-center text-slate-400">
+                    <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(255,255,255,0.03)' }}>
+                        <div className="text-center" style={{ color: 'rgba(255,255,255,0.2)' }}>
                             <i className="fa-solid fa-map-location-dot text-5xl mb-3" />
                             <p className="text-sm font-medium">Harita yükleniyor...</p>
                         </div>
                     </div>
                 )}
 
-                {/* Soft left fade */}
-                <div className="absolute inset-0 pointer-events-none"
-                    style={{ background: 'linear-gradient(to right, rgba(255,255,255,0.75) 0%, transparent 45%)' }} />
+                {/* Right fade */}
+                <div className="absolute inset-0 pointer-events-none" style={{
+                    background: 'linear-gradient(to left, #020617 0%, rgba(2,6,23,0.6) 25%, transparent 50%)',
+                }} />
 
-                {/* Location card — clean white */}
-                <div className="absolute left-6 sm:left-10 top-1/2 -translate-y-1/2" style={{ maxWidth: 280 }}>
-                    <div className="bg-white rounded-2xl p-5 shadow-lg border border-slate-100">
+                {/* Location card — dark glass */}
+                <div className="absolute right-6 sm:right-10 top-1/2 -translate-y-1/2" style={{ maxWidth: 260 }}>
+                    <div className="rounded-2xl p-5 shadow-2xl" style={{
+                        background: 'rgba(8,10,20,0.88)',
+                        border: '1px solid rgba(197,160,89,0.15)',
+                        backdropFilter: 'blur(20px)',
+                        WebkitBackdropFilter: 'blur(20px)',
+                    }}>
                         <div className="flex items-start gap-3 mb-4">
                             <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                                style={{ background: 'rgba(197,160,89,0.08)', border: '1px solid rgba(197,160,89,0.18)' }}>
+                                style={{ background: 'rgba(197,160,89,0.1)', border: '1px solid rgba(197,160,89,0.2)' }}>
                                 <i className="fa-solid fa-location-dot text-sm" style={{ color: '#c5a059' }} />
                             </div>
                             <div>
-                                <p className="font-bold text-slate-800 text-[13px] mb-1 leading-tight"
+                                <p className="font-bold text-white text-[13px] mb-1 leading-tight"
                                     style={{ fontFamily: "'Outfit', sans-serif" }}>
                                     {business.name}
                                 </p>
-                                <p className="text-slate-400 text-[11px] leading-relaxed">{business.address}</p>
+                                <p className="text-[11px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.3)' }}>{business.address}</p>
                             </div>
                         </div>
-                        <div className="flex items-center justify-between pt-3 border-t border-slate-100">
-                            <span className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-600">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        <div className="flex items-center justify-between pt-3" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                            <span className="flex items-center gap-1.5 text-[10px] font-bold" style={{ color: '#34d399' }}>
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                                 7/24 Açık
                             </span>
                             <a href={`tel:${business.phone}`}
-                                className="text-[10px] font-bold hover:underline"
+                                className="text-[10px] font-bold hover:opacity-80 transition-opacity"
                                 style={{ color: '#c5a059', fontFamily: "'Outfit', sans-serif" }}>
                                 {business.phone}
                             </a>
