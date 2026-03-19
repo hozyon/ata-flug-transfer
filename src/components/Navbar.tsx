@@ -343,9 +343,14 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                 </a>
               )}
 
-              <div className="w-px h-5 bg-white/10" />
-
-              <LanguageSwitcher />
+              {/* Gold ayraç */}
+              <div style={{
+                width: 1,
+                height: 22,
+                background: 'linear-gradient(180deg, transparent 0%, rgba(197,160,89,0.55) 30%, rgba(197,160,89,0.8) 50%, rgba(197,160,89,0.55) 70%, transparent 100%)',
+                margin: '0 4px',
+                flexShrink: 0,
+              }} />
 
               {/* Rezervasyon CTA */}
               <button
@@ -369,6 +374,8 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                   pointerEvents: 'none',
                 }} />
               </button>
+
+              <LanguageSwitcher />
 
             </div>
 
