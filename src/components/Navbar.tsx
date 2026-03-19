@@ -208,27 +208,41 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
 
       {/* ── TOP HEADER ─────────────────────────────────────── */}
       <header
-        className={`navbar-enter fixed top-0 left-0 w-full z-[100]`}
+        className="navbar-enter fixed top-0 left-0 w-full z-[100]"
         style={{
           height: '68px',
-          background: scrolled
-            ? 'rgba(10,12,24,0.92)'
-            : 'rgba(10,12,24,0.18)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          borderBottom: scrolled
-            ? '1px solid rgba(255,255,255,0.07)'
-            : '1px solid rgba(255,255,255,0.04)',
-          boxShadow: scrolled ? '0 8px 32px rgba(0,0,0,0.35)' : 'none',
           paddingLeft: 'env(safe-area-inset-left)',
           paddingRight: 'env(safe-area-inset-right)',
-          transition: 'background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease',
+          transform: 'translateZ(0)',
         }}
       >
-        {/* Gold accent line on scroll */}
-        <div className={`navbar-accent-line ${scrolled ? 'visible' : ''}`} />
+        {/* Base layer — always visible, never transitions (no jitter) */}
+        <div style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'rgba(8,10,20,0.22)',
+          backdropFilter: 'blur(22px)',
+          WebkitBackdropFilter: 'blur(22px)',
+          borderBottom: '1px solid rgba(255,255,255,0.04)',
+        }} />
+        {/* Scrolled overlay — opacity-only transition (GPU layer, zero jitter) */}
+        <div style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'rgba(8,10,20,0.90)',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+          opacity: scrolled ? 1 : 0,
+          transition: 'opacity 0.35s ease',
+          willChange: 'opacity',
+        }} />
+        {/* Gold top accent line */}
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0, height: '1px', pointerEvents: 'none',
+          background: 'linear-gradient(90deg, transparent, rgba(197,160,89,0.7) 30%, rgba(197,160,89,0.95) 50%, rgba(197,160,89,0.7) 70%, transparent)',
+          opacity: scrolled ? 1 : 0,
+          transition: 'opacity 0.4s ease',
+        }} />
 
-        <nav className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8 h-full">
+        <nav className="max-w-7xl mx-auto px-4 sm:px-5 lg:px-8 h-full relative">
           <div className="flex items-center justify-between h-full gap-4">
 
             {/* ── Logo ── */}
@@ -319,11 +333,24 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
               {/* Rezervasyon CTA */}
               <button
                 onClick={() => setBookingFormOpen(true)}
-                className="cta-pulse flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[#d4af6a] text-[#0a0a0e] font-bold text-[12px] uppercase tracking-[0.08em] px-4 py-2.5 rounded-xl transition-all duration-200 active:scale-[0.97]"
-                style={{ fontFamily: "'Outfit', sans-serif" }}
+                className="relative flex items-center gap-2 overflow-hidden rounded-xl font-black text-[11.5px] uppercase tracking-[0.09em] transition-all duration-200 active:scale-[0.96] hover:-translate-y-px"
+                style={{
+                  fontFamily: "'Outfit', sans-serif",
+                  background: 'linear-gradient(135deg, #e8d49a 0%, #c5a059 55%, #9e7b38 100%)',
+                  color: '#0a0c14',
+                  padding: '9px 18px',
+                  boxShadow: '0 2px 16px rgba(197,160,89,0.35), inset 0 1px 0 rgba(255,255,255,0.28)',
+                }}
               >
-                <i className="fa-solid fa-calendar-check text-[11px]" />
+                <i className="fa-solid fa-car-side text-[11px] shrink-0" />
                 <span>{t('hero.cta')}</span>
+                {/* Shine sweep */}
+                <span style={{
+                  position: 'absolute', inset: 0,
+                  background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.18) 50%, transparent 60%)',
+                  animation: 'shine 3s ease-in-out infinite 2s',
+                  pointerEvents: 'none',
+                }} />
               </button>
 
               {/* Admin */}

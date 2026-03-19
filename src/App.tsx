@@ -463,68 +463,6 @@ const App: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Universal Overlay Form (Modal) */}
-                    {isBookingFormOpen && (
-                      <div className="fixed inset-0 z-[200] flex items-end justify-center lg:items-center p-0 lg:p-4" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
-                        <div
-                          className="absolute inset-0 bg-black/80 backdrop-blur-lg"
-                          onClick={() => setIsBookingFormOpen(false)}
-                        />
-                        <div className="relative w-full lg:max-w-[480px] max-h-[95vh] lg:max-h-[92vh] animate-in slide-in-from-bottom lg:zoom-in-95 duration-400 ease-out">
-                          <div
-                            className="rounded-t-[2rem] lg:rounded-3xl shadow-2xl shadow-black/60 overflow-hidden relative border-t lg:border border-white/10"
-                            style={{
-                              background: 'rgba(10, 10, 14, 0.85)',
-                              backdropFilter: 'blur(40px)',
-                              WebkitBackdropFilter: 'blur(40px)'
-                            }}
-                          >
-                            {/* Drag handle (mobile) */}
-                            <div className="flex justify-center pt-3 pb-1 lg:hidden">
-                              <div className="w-10 h-1 rounded-full bg-white/15"></div>
-                            </div>
-
-                            {/* Modal Header */}
-                            <div className="px-6 pt-5 pb-4 lg:pt-7 flex items-start justify-between">
-                              <div>
-                                <div className="inline-flex items-center gap-2 mb-2">
-                                  <span className="w-5 h-[2px] bg-[var(--color-primary)]"></span>
-                                  <span className="text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-[0.2em]" style={{ fontFamily: "'Outfit', sans-serif" }}>{t('form.eyebrow')}</span>
-                                </div>
-                                <h3 className="text-white font-bold text-xl" style={{ fontFamily: "'Outfit', sans-serif" }}>{t('form.title')}</h3>
-                              </div>
-                              <button
-                                onClick={() => setIsBookingFormOpen(false)}
-                                className="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/10 flex items-center justify-center text-white/40 hover:text-white transition-colors mt-1"
-                              >
-                                <i className="fa-solid fa-xmark text-sm"></i>
-                              </button>
-                            </div>
-
-                            {/* Form Content */}
-                            <div className="px-2 pb-4 lg:pb-6 max-h-[75vh] lg:max-h-[75vh] overflow-y-auto custom-scrollbar">
-                              <BookingForm onBookingSubmit={(booking) => { handleNewBooking(booking); setIsBookingFormOpen(false); }} vehicles={siteContent.vehicles} />
-                            </div>
-
-                            {/* Trust Footer */}
-                            <div className="px-6 py-3 border-t border-white/[0.06] flex items-center justify-center gap-5" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                              <div className="flex items-center gap-1.5 text-white/30 text-[10px]">
-                                <i className="fa-solid fa-lock text-[8px] text-emerald-400"></i>
-                                <span>{t('form.trustSecure')}</span>
-                              </div>
-                              <div className="flex items-center gap-1.5 text-white/30 text-[10px]">
-                                <i className="fa-solid fa-bolt text-[8px] text-amber-400"></i>
-                                <span>{t('form.trustFast')}</span>
-                              </div>
-                              <div className="flex items-center gap-1.5 text-white/30 text-[10px]">
-                                <i className="fa-brands fa-whatsapp text-[8px] text-[#25D366]"></i>
-                                <span>{t('form.trustWhatsapp')}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
 
                     {/* Trust Bar (Bottom) */}
                     <div className="absolute bottom-0 left-0 right-0 z-30">
@@ -1116,6 +1054,48 @@ const App: React.FC = () => {
             </Routes>
           )}
         </main>
+
+        {/* ── Global Booking Modal — tüm sayfalarda çalışır ── */}
+        {isBookingFormOpen && (
+          <div className="fixed inset-0 z-[500] flex items-end justify-center lg:items-center p-0 lg:p-4" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+            <div className="absolute inset-0 bg-black/80 backdrop-blur-lg" onClick={() => setIsBookingFormOpen(false)} />
+            <div className="relative w-full lg:max-w-[480px] max-h-[95vh] lg:max-h-[92vh] animate-in slide-in-from-bottom lg:zoom-in-95 duration-400 ease-out">
+              <div className="rounded-t-[2rem] lg:rounded-3xl shadow-2xl shadow-black/60 overflow-hidden relative border-t lg:border border-white/10"
+                style={{ background: 'rgba(10,10,14,0.88)', backdropFilter: 'blur(40px)', WebkitBackdropFilter: 'blur(40px)' }}>
+                <div className="flex justify-center pt-3 pb-1 lg:hidden">
+                  <div className="w-10 h-1 rounded-full bg-white/15" />
+                </div>
+                <div className="px-6 pt-5 pb-4 lg:pt-7 flex items-start justify-between">
+                  <div>
+                    <div className="inline-flex items-center gap-2 mb-2">
+                      <span className="w-5 h-[2px] bg-[var(--color-primary)]" />
+                      <span className="text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-[0.2em]" style={{ fontFamily: "'Outfit', sans-serif" }}>{t('form.eyebrow')}</span>
+                    </div>
+                    <h3 className="text-white font-bold text-xl" style={{ fontFamily: "'Outfit', sans-serif" }}>{t('form.title')}</h3>
+                  </div>
+                  <button onClick={() => setIsBookingFormOpen(false)}
+                    className="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/10 flex items-center justify-center text-white/40 hover:text-white transition-colors mt-1">
+                    <i className="fa-solid fa-xmark text-sm" />
+                  </button>
+                </div>
+                <div className="px-2 pb-4 lg:pb-6 max-h-[75vh] overflow-y-auto custom-scrollbar">
+                  <BookingForm onBookingSubmit={(booking) => { handleNewBooking(booking); setIsBookingFormOpen(false); }} vehicles={siteContent.vehicles} />
+                </div>
+                <div className="px-6 py-3 border-t border-white/[0.06] flex items-center justify-center gap-5" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                  <div className="flex items-center gap-1.5 text-white/30 text-[10px]">
+                    <i className="fa-solid fa-lock text-[8px] text-emerald-400" /><span>{t('form.trustSecure')}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-white/30 text-[10px]">
+                    <i className="fa-solid fa-bolt text-[8px] text-amber-400" /><span>{t('form.trustFast')}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-white/30 text-[10px]">
+                    <i className="fa-brands fa-whatsapp text-[8px] text-[#25D366]" /><span>{t('form.trustWhatsapp')}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Footer - Admin ve Login modunda gizle (public browse modunda göster) */}
         {(!isAdmin || isPublicBrowse) && !isLoginPage && !isAdminPage && (

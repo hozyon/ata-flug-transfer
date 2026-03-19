@@ -151,6 +151,28 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                     0% { opacity: 0; transform: translateY(10px); }
                     100% { opacity: 1; transform: translateY(0); }
                 }
+                @keyframes scanBeam {
+                    0% { top: -2px; opacity: 0; }
+                    5% { opacity: 1; }
+                    95% { opacity: 0.6; }
+                    100% { top: 100%; opacity: 0; }
+                }
+                @keyframes radarPulse {
+                    0% { transform: scale(0.6); opacity: 0.7; }
+                    100% { transform: scale(2.2); opacity: 0; }
+                }
+                @keyframes dataBlink {
+                    0%, 100% { opacity: 0.15; }
+                    50% { opacity: 0.6; }
+                }
+                @keyframes cornerGlow {
+                    0%, 100% { opacity: 0.4; }
+                    50% { opacity: 0.9; }
+                }
+                .cyber-scan { animation: scanBeam 5s linear infinite; position: absolute; left: 0; right: 0; height: 1px; }
+                .radar-ring { animation: radarPulse 3s ease-out infinite; position: absolute; border-radius: 50%; border: 1px solid rgba(197,160,89,0.5); }
+                .data-node { animation: dataBlink 2s ease-in-out infinite; position: absolute; width: 3px; height: 3px; border-radius: 50%; background: #c5a059; }
+                .corner-bracket { animation: cornerGlow 3s ease-in-out infinite; position: absolute; width: 20px; height: 20px; }
             `}</style>
 
             {/* ── LEFT: Login Panel ── */}
@@ -293,18 +315,98 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                 </div>
             </div>
 
-            {/* ── RIGHT: Gold Photo Panel ── */}
+            {/* ── RIGHT: Cyber Digital Panel ── */}
             <div className="hidden lg:flex flex-1 relative overflow-hidden items-end justify-start">
-                {/* Photo background */}
-                <img
-                    src="/images/about-custom.jpg"
-                    alt="VIP Transfer"
-                    className="absolute inset-0 w-full h-full object-cover"
-                />
+                {/* ── Cyber background — CSS only, no canvas/WebGL ── */}
+                <div style={{ position: 'absolute', inset: 0, background: '#020617', overflow: 'hidden' }}>
 
-                {/* Dark overlay layers */}
-                <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(2,6,23,0.82) 0%, rgba(15,23,42,0.55) 60%, rgba(2,6,23,0.70) 100%)' }} />
-                <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at bottom left, rgba(197,160,89,0.12) 0%, transparent 60%)' }} />
+                    {/* Fine grid */}
+                    <div style={{
+                        position: 'absolute', inset: 0,
+                        backgroundImage: 'linear-gradient(rgba(197,160,89,0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(197,160,89,0.045) 1px, transparent 1px)',
+                        backgroundSize: '48px 48px',
+                    }} />
+
+                    {/* Coarse grid overlay */}
+                    <div style={{
+                        position: 'absolute', inset: 0,
+                        backgroundImage: 'linear-gradient(rgba(197,160,89,0.09) 1px, transparent 1px), linear-gradient(90deg, rgba(197,160,89,0.09) 1px, transparent 1px)',
+                        backgroundSize: '240px 240px',
+                    }} />
+
+                    {/* Center radial glow */}
+                    <div style={{
+                        position: 'absolute', inset: 0,
+                        background: 'radial-gradient(ellipse 80% 55% at 50% 55%, rgba(197,160,89,0.13) 0%, transparent 70%)',
+                    }} />
+
+                    {/* Bottom-left secondary glow */}
+                    <div style={{
+                        position: 'absolute', inset: 0,
+                        background: 'radial-gradient(ellipse 50% 40% at 15% 85%, rgba(197,160,89,0.08) 0%, transparent 60%)',
+                    }} />
+
+                    {/* Scan beam */}
+                    <div className="cyber-scan" style={{
+                        background: 'linear-gradient(90deg, transparent 0%, rgba(197,160,89,0.0) 20%, rgba(197,160,89,0.55) 50%, rgba(197,160,89,0.0) 80%, transparent 100%)',
+                        animationDelay: '0s',
+                    }} />
+                    <div className="cyber-scan" style={{
+                        background: 'linear-gradient(90deg, transparent 0%, rgba(197,160,89,0.0) 20%, rgba(197,160,89,0.3) 50%, rgba(197,160,89,0.0) 80%, transparent 100%)',
+                        animationDelay: '2.5s',
+                    }} />
+
+                    {/* Radar rings at center */}
+                    {[0, 1, 2].map(i => (
+                        <div key={i} className="radar-ring" style={{
+                            width: '120px', height: '120px',
+                            left: 'calc(50% - 60px)', top: 'calc(52% - 60px)',
+                            animationDelay: `${i * 1}s`,
+                        }} />
+                    ))}
+
+                    {/* Data nodes at grid intersections */}
+                    {[
+                        { x: '20%', y: '18%', d: '0s' }, { x: '72%', y: '12%', d: '0.6s' },
+                        { x: '85%', y: '38%', d: '1.2s' }, { x: '10%', y: '55%', d: '0.3s' },
+                        { x: '60%', y: '75%', d: '0.9s' }, { x: '30%', y: '82%', d: '1.5s' },
+                        { x: '90%', y: '65%', d: '0.4s' }, { x: '45%', y: '30%', d: '1.8s' },
+                        { x: '15%', y: '35%', d: '2.1s' }, { x: '78%', y: '88%', d: '0.7s' },
+                    ].map((n, i) => (
+                        <div key={i} className="data-node" style={{ left: n.x, top: n.y, animationDelay: n.d, boxShadow: '0 0 6px rgba(197,160,89,0.8)' }} />
+                    ))}
+
+                    {/* Horizontal data lines */}
+                    {[22, 44, 66, 78].map((pct, i) => (
+                        <div key={i} style={{
+                            position: 'absolute', left: 0, right: 0,
+                            top: `${pct}%`, height: '1px',
+                            background: `linear-gradient(90deg, transparent 0%, rgba(197,160,89,${0.06 + i * 0.02}) 20%, rgba(197,160,89,${0.12 + i * 0.03}) 50%, rgba(197,160,89,${0.06 + i * 0.02}) 80%, transparent 100%)`,
+                        }} />
+                    ))}
+
+                    {/* Corner brackets */}
+                    <div className="corner-bracket" style={{ top: 24, left: 24, borderTop: '2px solid rgba(197,160,89,0.6)', borderLeft: '2px solid rgba(197,160,89,0.6)' }} />
+                    <div className="corner-bracket" style={{ top: 24, right: 24, borderTop: '2px solid rgba(197,160,89,0.6)', borderRight: '2px solid rgba(197,160,89,0.6)' }} />
+                    <div className="corner-bracket" style={{ bottom: 24, left: 24, borderBottom: '2px solid rgba(197,160,89,0.6)', borderLeft: '2px solid rgba(197,160,89,0.6)' }} />
+                    <div className="corner-bracket" style={{ bottom: 24, right: 24, borderBottom: '2px solid rgba(197,160,89,0.6)', borderRight: '2px solid rgba(197,160,89,0.6)', animationDelay: '1.5s' }} />
+
+                    {/* System status HUD — top */}
+                    <div style={{
+                        position: 'absolute', top: 52, left: 48, right: 48,
+                        display: 'flex', alignItems: 'center', gap: 16,
+                        animation: 'fadeUp 0.8s ease 0.7s both',
+                    }}>
+                        {['SYS', 'SEC', 'NET'].map((label, i) => (
+                            <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#c5a059', boxShadow: '0 0 8px #c5a059', animation: `dataBlink ${1.5 + i * 0.4}s ease-in-out infinite` }} />
+                                <span style={{ fontFamily: "'Outfit', monospace", fontSize: 9, fontWeight: 700, letterSpacing: '0.18em', color: 'rgba(197,160,89,0.45)' }}>{label} OK</span>
+                            </div>
+                        ))}
+                        <div style={{ flex: 1, height: '1px', background: 'rgba(197,160,89,0.12)' }} />
+                        <span style={{ fontFamily: "'Outfit', monospace", fontSize: 9, color: 'rgba(197,160,89,0.3)', letterSpacing: '0.1em' }}>v2.4.1</span>
+                    </div>
+                </div>
 
                 {/* Gold top line accent */}
                 <div className="absolute top-0 left-0 right-0 h-px" style={{ background: 'linear-gradient(90deg, rgba(197,160,89,0.6) 0%, rgba(197,160,89,0.2) 60%, transparent 100%)' }} />
