@@ -353,16 +353,53 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                 }} />
               </button>
 
-              {/* Admin */}
+              {/* Admin — "gizli tetikleyici": müşteri görmez, yönetici bilir */}
               <button
                 onClick={onAdminToggle}
-                className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all text-[13px]
-                  ${isAdmin
-                    ? 'bg-[var(--color-primary)]/15 text-[var(--color-primary)] border border-[var(--color-primary)]/25'
-                    : 'bg-white/[0.06] text-white/30 border border-white/[0.07] hover:bg-white/10 hover:text-white/60'}`}
-                title="Admin Paneli"
+                title="v2.4"
+                style={{
+                  width: 18,
+                  height: 18,
+                  borderRadius: '50%',
+                  border: isAdmin
+                    ? '1.5px solid rgba(197,160,89,0.55)'
+                    : '1px solid rgba(255,255,255,0.07)',
+                  background: isAdmin
+                    ? 'rgba(197,160,89,0.12)'
+                    : 'transparent',
+                  boxShadow: isAdmin
+                    ? '0 0 8px rgba(197,160,89,0.3)'
+                    : 'none',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  flexShrink: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  opacity: isAdmin ? 1 : 0.28,
+                }}
+                onMouseEnter={e => {
+                  if (!isAdmin) {
+                    e.currentTarget.style.opacity = '0.55';
+                    e.currentTarget.style.borderColor = 'rgba(197,160,89,0.3)';
+                  }
+                }}
+                onMouseLeave={e => {
+                  if (!isAdmin) {
+                    e.currentTarget.style.opacity = '0.28';
+                    e.currentTarget.style.borderColor = 'rgba(255,255,255,0.07)';
+                  }
+                }}
               >
-                <i className={`fa-solid ${isAdmin ? 'fa-user-gear' : 'fa-lock'}`} />
+                <span style={{
+                  width: isAdmin ? 6 : 4,
+                  height: isAdmin ? 6 : 4,
+                  borderRadius: '50%',
+                  background: isAdmin ? '#c5a059' : 'rgba(255,255,255,0.3)',
+                  boxShadow: isAdmin ? '0 0 6px rgba(197,160,89,0.8)' : 'none',
+                  display: 'block',
+                  transition: 'all 0.3s ease',
+                }} />
               </button>
             </div>
 
