@@ -36,7 +36,7 @@ const Iletisim: React.FC = () => {
     });
 
     return (
-        <div className="min-h-screen flex flex-col" style={{ background: '#020617' }}>
+        <div className="min-h-screen bg-slate-50 flex flex-col">
             <Helmet>
                 <title>{pageTitle} | {business.name}</title>
                 <meta name="description" content={pageDesc} />
@@ -82,109 +82,70 @@ const Iletisim: React.FC = () => {
             </section>
 
             {/* ── CONTACT CHANNELS ───────────────────────────────── */}
-            <section style={{ background: '#080b16', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+            <section className="bg-white border-b border-slate-100">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6">
                     <div className="grid grid-cols-1 sm:grid-cols-3 stagger-children">
 
                         {/* Phone */}
                         <a href={`tel:${business.phone}`}
-                            className="reveal group relative flex items-center gap-5 px-6 py-8 transition-all duration-300 overflow-hidden"
-                            style={{ borderRight: '1px solid rgba(255,255,255,0.05)' }}>
-                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
-                                style={{ background: 'linear-gradient(135deg, rgba(197,160,89,0.06) 0%, transparent 70%)' }} />
+                            className="reveal group relative flex items-center gap-5 px-6 py-8 transition-all duration-300 overflow-hidden border-b sm:border-b-0 sm:border-r border-slate-100">
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                style={{ background: 'linear-gradient(135deg, rgba(197,160,89,0.05) 0%, transparent 70%)' }} />
                             <div className="relative shrink-0">
-                                <div className="w-13 h-13 rounded-2xl flex items-center justify-center"
-                                    style={{
-                                        width: 52, height: 52,
-                                        background: 'rgba(197,160,89,0.08)',
-                                        border: '1px solid rgba(197,160,89,0.18)',
-                                    }}>
+                                <div className="rounded-2xl flex items-center justify-center"
+                                    style={{ width: 52, height: 52, background: 'rgba(197,160,89,0.1)', border: '1px solid rgba(197,160,89,0.2)' }}>
                                     <i className="fa-solid fa-phone text-base" style={{ color: '#c5a059' }} />
                                 </div>
                                 <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-black"
-                                    style={{ background: '#c5a059', color: '#0f172a', fontFamily: "'Outfit', sans-serif" }}>
-                                    01
-                                </span>
+                                    style={{ background: '#c5a059', color: '#0f172a', fontFamily: "'Outfit', sans-serif" }}>01</span>
                             </div>
                             <div className="relative">
                                 <p className="text-[9px] font-black uppercase tracking-[0.25em] mb-1"
-                                    style={{ color: 'rgba(197,160,89,0.5)', fontFamily: "'Outfit', sans-serif" }}>
-                                    {t('faq.phone')}
-                                </p>
-                                <p className="text-white font-bold text-[15px]" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                    {business.phone}
-                                </p>
-                                <p className="text-[11px] mt-0.5" style={{ color: 'rgba(255,255,255,0.25)' }}>
-                                    7/24 {t('hero.trust.247')}
-                                </p>
+                                    style={{ color: 'rgba(197,160,89,0.6)', fontFamily: "'Outfit', sans-serif" }}>{t('faq.phone')}</p>
+                                <p className="text-slate-800 font-bold text-[15px]" style={{ fontFamily: "'Outfit', sans-serif" }}>{business.phone}</p>
+                                <p className="text-slate-400 text-[11px] mt-0.5">7/24 {t('hero.trust.247')}</p>
                             </div>
                         </a>
 
                         {/* WhatsApp */}
                         <a href={`https://wa.me/${business.whatsapp}`} target="_blank" rel="noopener noreferrer"
-                            className="reveal group relative flex items-center gap-5 px-6 py-8 transition-all duration-300 overflow-hidden"
-                            style={{ borderRight: '1px solid rgba(255,255,255,0.05)' }}>
-                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
-                                style={{ background: 'linear-gradient(135deg, rgba(37,211,102,0.06) 0%, transparent 70%)' }} />
+                            className="reveal group relative flex items-center gap-5 px-6 py-8 transition-all duration-300 overflow-hidden border-b sm:border-b-0 sm:border-r border-slate-100">
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                style={{ background: 'linear-gradient(135deg, rgba(37,211,102,0.05) 0%, transparent 70%)' }} />
                             <div className="relative shrink-0">
-                                <div className="w-13 h-13 rounded-2xl flex items-center justify-center"
-                                    style={{
-                                        width: 52, height: 52,
-                                        background: 'rgba(37,211,102,0.08)',
-                                        border: '1px solid rgba(37,211,102,0.18)',
-                                    }}>
+                                <div className="rounded-2xl flex items-center justify-center"
+                                    style={{ width: 52, height: 52, background: 'rgba(37,211,102,0.08)', border: '1px solid rgba(37,211,102,0.2)' }}>
                                     <i className="fa-brands fa-whatsapp text-xl" style={{ color: '#25D366' }} />
                                 </div>
                                 <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-black"
-                                    style={{ background: '#25D366', color: '#fff', fontFamily: "'Outfit', sans-serif" }}>
-                                    02
-                                </span>
+                                    style={{ background: '#25D366', color: '#fff', fontFamily: "'Outfit', sans-serif" }}>02</span>
                             </div>
                             <div className="relative">
                                 <p className="text-[9px] font-black uppercase tracking-[0.25em] mb-1"
-                                    style={{ color: 'rgba(37,211,102,0.5)', fontFamily: "'Outfit', sans-serif" }}>
-                                    WhatsApp
-                                </p>
-                                <p className="text-white font-bold text-[15px]" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                    {t('hero.whatsapp')}
-                                </p>
-                                <p className="text-[11px] mt-0.5" style={{ color: 'rgba(255,255,255,0.25)' }}>
-                                    {t('blogPost.avgResponse')}
-                                </p>
+                                    style={{ color: 'rgba(37,211,102,0.6)', fontFamily: "'Outfit', sans-serif" }}>WhatsApp</p>
+                                <p className="text-slate-800 font-bold text-[15px]" style={{ fontFamily: "'Outfit', sans-serif" }}>{t('hero.whatsapp')}</p>
+                                <p className="text-slate-400 text-[11px] mt-0.5">{t('blogPost.avgResponse')}</p>
                             </div>
                         </a>
 
                         {/* Email */}
                         <a href={`mailto:${business.email}`}
                             className="reveal group relative flex items-center gap-5 px-6 py-8 transition-all duration-300 overflow-hidden">
-                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400"
-                                style={{ background: 'linear-gradient(135deg, rgba(56,189,248,0.06) 0%, transparent 70%)' }} />
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                style={{ background: 'linear-gradient(135deg, rgba(56,189,248,0.05) 0%, transparent 70%)' }} />
                             <div className="relative shrink-0">
-                                <div className="w-13 h-13 rounded-2xl flex items-center justify-center"
-                                    style={{
-                                        width: 52, height: 52,
-                                        background: 'rgba(56,189,248,0.08)',
-                                        border: '1px solid rgba(56,189,248,0.18)',
-                                    }}>
+                                <div className="rounded-2xl flex items-center justify-center"
+                                    style={{ width: 52, height: 52, background: 'rgba(56,189,248,0.08)', border: '1px solid rgba(56,189,248,0.2)' }}>
                                     <i className="fa-solid fa-envelope text-base" style={{ color: '#38bdf8' }} />
                                 </div>
                                 <span className="absolute -top-2 -right-2 w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-black"
-                                    style={{ background: '#38bdf8', color: '#0f172a', fontFamily: "'Outfit', sans-serif" }}>
-                                    03
-                                </span>
+                                    style={{ background: '#38bdf8', color: '#0f172a', fontFamily: "'Outfit', sans-serif" }}>03</span>
                             </div>
                             <div className="relative">
                                 <p className="text-[9px] font-black uppercase tracking-[0.25em] mb-1"
-                                    style={{ color: 'rgba(56,189,248,0.5)', fontFamily: "'Outfit', sans-serif" }}>
-                                    {t('faq.email')}
-                                </p>
-                                <p className="text-white font-bold text-[14px] truncate max-w-[200px]"
-                                    style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                    {business.email}
-                                </p>
-                                <p className="text-[11px] mt-0.5" style={{ color: 'rgba(255,255,255,0.25)' }}>
-                                    {t('form.trustFast')}
-                                </p>
+                                    style={{ color: 'rgba(56,189,248,0.6)', fontFamily: "'Outfit', sans-serif" }}>{t('faq.email')}</p>
+                                <p className="text-slate-800 font-bold text-[14px] truncate max-w-[200px]" style={{ fontFamily: "'Outfit', sans-serif" }}>{business.email}</p>
+                                <p className="text-slate-400 text-[11px] mt-0.5">{t('form.trustFast')}</p>
                             </div>
                         </a>
 
@@ -193,16 +154,10 @@ const Iletisim: React.FC = () => {
             </section>
 
             {/* ── MAIN: LEFT INFO + RIGHT FORM ───────────────────── */}
-            <section className="flex-1 py-20 relative overflow-hidden">
-                {/* Dot grid */}
-                <div className="absolute inset-0 pointer-events-none" style={{
-                    backgroundImage: 'radial-gradient(circle, rgba(197,160,89,0.07) 1px, transparent 1px)',
-                    backgroundSize: '36px 36px',
-                }} />
-                {/* Subtle gold radial glow top-right */}
-                <div className="absolute top-0 right-0 w-[600px] h-[600px] pointer-events-none" style={{
-                    background: 'radial-gradient(circle at top right, rgba(197,160,89,0.05) 0%, transparent 65%)',
-                }} />
+            <section className="flex-1 py-20 bg-white relative overflow-hidden">
+                {/* Subtle top-left gold corner */}
+                <div className="absolute top-0 left-0 w-40 h-px bg-gradient-to-r from-[var(--color-primary)]/40 to-transparent pointer-events-none" />
+                <div className="absolute top-0 left-0 w-px h-40 bg-gradient-to-b from-[var(--color-primary)]/40 to-transparent pointer-events-none" />
 
                 <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 xl:gap-24">
@@ -218,12 +173,12 @@ const Iletisim: React.FC = () => {
                                 </span>
                             </div>
 
-                            <h2 className="text-[clamp(2rem,4vw,3rem)] font-bold text-white leading-tight mb-5"
+                            <h2 className="text-[clamp(2rem,4vw,3rem)] font-bold text-slate-800 leading-tight mb-5"
                                 style={{ fontFamily: "'Playfair Display', serif" }}>
                                 {t('contact.formTitle')}
                             </h2>
-                            <p className="text-[15px] leading-relaxed mb-10"
-                                style={{ color: 'rgba(255,255,255,0.38)', fontFamily: "'Montserrat', sans-serif" }}>
+                            <p className="text-[15px] leading-relaxed mb-10 text-slate-500"
+                                style={{ fontFamily: "'Montserrat', sans-serif" }}>
                                 {t('contact.subtitle')}
                             </p>
 
@@ -240,7 +195,7 @@ const Iletisim: React.FC = () => {
                                                 style={{ color: 'rgba(197,160,89,0.45)', fontFamily: "'Outfit', sans-serif" }}>
                                                 {t('hero.trust.tracking')}
                                             </p>
-                                            <p className="text-[13px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                                            <p className="text-[13px] leading-relaxed text-slate-500">
                                                 {business.address}
                                             </p>
                                         </div>
@@ -257,7 +212,7 @@ const Iletisim: React.FC = () => {
                                             style={{ color: 'rgba(197,160,89,0.45)', fontFamily: "'Outfit', sans-serif" }}>
                                             {t('faq.workHours')}
                                         </p>
-                                        <p className="text-[13px]" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                                        <p className="text-[13px] text-slate-500">
                                             7/24 — {t('hero.trust.247')}
                                         </p>
                                     </div>
@@ -273,7 +228,7 @@ const Iletisim: React.FC = () => {
                                             style={{ color: 'rgba(197,160,89,0.45)', fontFamily: "'Outfit', sans-serif" }}>
                                             {t('hero.trust.airports')}
                                         </p>
-                                        <p className="text-[13px]" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                                        <p className="text-[13px] text-slate-500">
                                             Antalya (AYT) · Gazipaşa (GZP)
                                         </p>
                                     </div>
@@ -282,41 +237,37 @@ const Iletisim: React.FC = () => {
 
                             {/* Divider with gold dot */}
                             <div className="my-10 flex items-center gap-4">
-                                <div className="h-px flex-1" style={{ background: 'rgba(255,255,255,0.05)' }} />
+                                <div className="h-px flex-1 bg-slate-200" />
                                 <div className="w-1.5 h-1.5 rounded-full" style={{ background: '#c5a059' }} />
-                                <div className="h-px flex-1" style={{ background: 'rgba(255,255,255,0.05)' }} />
+                                <div className="h-px flex-1 bg-slate-200" />
                             </div>
 
                             {/* Social row */}
                             <div className="flex items-center gap-2.5">
-                                <span className="text-[9px] font-black tracking-[0.2em] uppercase mr-1"
-                                    style={{ color: 'rgba(255,255,255,0.2)', fontFamily: "'Outfit', sans-serif" }}>
+                                <span className="text-[9px] font-black tracking-[0.2em] uppercase mr-1 text-slate-300"
+                                    style={{ fontFamily: "'Outfit', sans-serif" }}>
                                     Sosyal
                                 </span>
                                 {business.instagram && (
                                     <a href={business.instagram} target="_blank" rel="noopener noreferrer"
-                                        className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-90 hover:text-pink-400"
-                                        style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.25)' }}>
+                                        className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-90 text-slate-400 hover:text-pink-500 hover:bg-pink-50 border border-slate-200">
                                         <i className="fa-brands fa-instagram text-sm" />
                                     </a>
                                 )}
                                 {business.facebook && (
                                     <a href={business.facebook} target="_blank" rel="noopener noreferrer"
-                                        className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-90 hover:text-blue-400"
-                                        style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.25)' }}>
+                                        className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-90 text-slate-400 hover:text-blue-500 hover:bg-blue-50 border border-slate-200">
                                         <i className="fa-brands fa-facebook-f text-sm" />
                                     </a>
                                 )}
                                 {business.telegram && (
                                     <a href={business.telegram} target="_blank" rel="noopener noreferrer"
-                                        className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-90 hover:text-sky-400"
-                                        style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.25)' }}>
+                                        className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-90 text-slate-400 hover:text-sky-500 hover:bg-sky-50 border border-slate-200">
                                         <i className="fa-brands fa-telegram text-sm" />
                                     </a>
                                 )}
                                 <a href={`https://wa.me/${business.whatsapp}`} target="_blank" rel="noopener noreferrer"
-                                    className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-90 hover:text-emerald-400"
-                                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.25)' }}>
+                                    className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-90 text-slate-400 hover:text-emerald-500 hover:bg-emerald-50 border border-slate-200">
                                     <i className="fa-brands fa-whatsapp text-sm" />
                                 </a>
                             </div>
@@ -474,80 +425,55 @@ const Iletisim: React.FC = () => {
             </section>
 
             {/* ── MAP ────────────────────────────────────────────── */}
-            <section className="relative overflow-hidden" style={{
-                height: 'clamp(320px, 40vw, 460px)',
-                borderTop: '1px solid rgba(255,255,255,0.05)',
-            }}>
+            <section className="relative overflow-hidden border-t border-slate-100"
+                style={{ height: 'clamp(320px, 40vw, 460px)' }}>
                 {business.mapEmbedUrl ? (
                     <iframe
                         src={business.mapEmbedUrl}
                         title="Konum"
                         width="100%"
                         height="100%"
-                        style={{
-                            border: 0,
-                            position: 'absolute',
-                            inset: 0,
-                            filter: 'grayscale(75%) brightness(0.55) contrast(1.15) sepia(15%)',
-                        }}
+                        style={{ border: 0, position: 'absolute', inset: 0, filter: 'grayscale(20%) contrast(95%)' }}
                         allowFullScreen
                         loading="lazy"
                         referrerPolicy="no-referrer-when-downgrade"
                     />
                 ) : (
-                    <div className="absolute inset-0 flex items-center justify-center"
-                        style={{ background: '#080b16' }}>
-                        <div className="text-center" style={{ color: 'rgba(255,255,255,0.15)' }}>
+                    <div className="absolute inset-0 flex items-center justify-center bg-slate-100">
+                        <div className="text-center text-slate-400">
                             <i className="fa-solid fa-map-location-dot text-5xl mb-3" />
                             <p className="text-sm font-medium">Harita yükleniyor...</p>
                         </div>
                     </div>
                 )}
 
-                {/* Gradient overlay — heavier on left */}
-                <div className="absolute inset-0 pointer-events-none" style={{
-                    background: 'linear-gradient(to right, rgba(2,6,23,0.80) 0%, rgba(2,6,23,0.30) 50%, rgba(2,6,23,0.15) 100%)',
-                }} />
-                <div className="absolute inset-0 pointer-events-none" style={{
-                    background: 'linear-gradient(to bottom, rgba(2,6,23,0.4) 0%, transparent 30%, transparent 70%, rgba(2,6,23,0.6) 100%)',
-                }} />
+                {/* Soft left fade */}
+                <div className="absolute inset-0 pointer-events-none"
+                    style={{ background: 'linear-gradient(to right, rgba(255,255,255,0.6) 0%, transparent 45%)' }} />
 
                 {/* Location card */}
-                <div className="absolute left-6 sm:left-10 top-1/2 -translate-y-1/2" style={{ maxWidth: 300 }}>
-                    <div className="rounded-2xl p-5" style={{
-                        background: 'rgba(2,6,23,0.88)',
-                        backdropFilter: 'blur(32px)',
-                        WebkitBackdropFilter: 'blur(32px)',
-                        border: '1px solid rgba(197,160,89,0.18)',
-                        boxShadow: '0 32px 80px rgba(0,0,0,0.55)',
-                    }}>
-                        {/* Gold top rule */}
-                        <div className="h-px w-full mb-4" style={{
-                            background: 'linear-gradient(90deg, #c5a059, rgba(197,160,89,0.2))',
-                        }} />
+                <div className="absolute left-6 sm:left-10 top-1/2 -translate-y-1/2" style={{ maxWidth: 280 }}>
+                    <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-5 shadow-xl border border-slate-100">
                         <div className="flex items-start gap-3 mb-4">
                             <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
                                 style={{ background: 'rgba(197,160,89,0.1)', border: '1px solid rgba(197,160,89,0.2)' }}>
                                 <i className="fa-solid fa-location-dot text-sm" style={{ color: '#c5a059' }} />
                             </div>
                             <div>
-                                <p className="font-bold text-[13px] text-white mb-1 leading-tight"
+                                <p className="font-bold text-slate-800 text-[13px] mb-1 leading-tight"
                                     style={{ fontFamily: "'Outfit', sans-serif" }}>
                                     {business.name}
                                 </p>
-                                <p className="text-[11px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.38)' }}>
-                                    {business.address}
-                                </p>
+                                <p className="text-slate-400 text-[11px] leading-relaxed">{business.address}</p>
                             </div>
                         </div>
-                        <div className="flex items-center justify-between pt-3"
-                            style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                            <span className="flex items-center gap-1.5 text-[10px] font-bold" style={{ color: '#4ade80' }}>
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                            <span className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-600">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                 7/24 Açık
                             </span>
                             <a href={`tel:${business.phone}`}
-                                className="text-[10px] font-bold hover:underline transition-opacity hover:opacity-80"
+                                className="text-[10px] font-bold hover:underline"
                                 style={{ color: '#c5a059', fontFamily: "'Outfit', sans-serif" }}>
                                 {business.phone}
                             </a>
@@ -557,46 +483,37 @@ const Iletisim: React.FC = () => {
             </section>
 
             {/* ── BOTTOM STRIP ───────────────────────────────────── */}
-            <section style={{ background: '#080b16', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 py-7">
+            <section className="bg-slate-50 border-t border-slate-100">
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-
                         <div className="flex flex-wrap items-center gap-6 sm:gap-10 stagger-children">
                             <div className="reveal flex items-center gap-3">
                                 <i className="fa-solid fa-clock text-sm" style={{ color: '#c5a059' }} />
-                                <span className="text-[12px]"
-                                    style={{ color: 'rgba(255,255,255,0.35)', fontFamily: "'Montserrat', sans-serif" }}>
-                                    <span className="text-white font-bold">7/24</span> {t('faq.workHours')}
+                                <span className="text-slate-500 text-[12px]" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                                    <span className="text-slate-700 font-bold">7/24</span> {t('faq.workHours')}
                                 </span>
                             </div>
                             <div className="reveal flex items-center gap-3">
                                 <i className="fa-solid fa-headset text-sm" style={{ color: '#c5a059' }} />
-                                <span className="text-[12px]"
-                                    style={{ color: 'rgba(255,255,255,0.35)', fontFamily: "'Montserrat', sans-serif" }}>
-                                    <span className="text-white font-bold">{t('hero.trust.247')}</span> {t('services.card4.title')}
+                                <span className="text-slate-500 text-[12px]" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                                    <span className="text-slate-700 font-bold">{t('hero.trust.247')}</span> {t('services.card4.title')}
                                 </span>
                             </div>
                             <div className="reveal flex items-center gap-3">
                                 <i className="fa-solid fa-plane-arrival text-sm" style={{ color: '#c5a059' }} />
-                                <span className="text-[12px]"
-                                    style={{ color: 'rgba(255,255,255,0.35)', fontFamily: "'Montserrat', sans-serif" }}>
-                                    <span className="text-white font-bold">{t('hero.trust.tracking')}</span>
+                                <span className="text-slate-700 font-bold text-[12px]" style={{ fontFamily: "'Montserrat', sans-serif" }}>
+                                    {t('hero.trust.tracking')}
                                 </span>
                             </div>
                         </div>
-
-                        {/* VIP tag */}
-                        <div className="flex items-center gap-2 px-4 py-2 rounded-full" style={{
-                            background: 'rgba(197,160,89,0.06)',
-                            border: '1px solid rgba(197,160,89,0.14)',
-                        }}>
+                        <div className="flex items-center gap-2 px-4 py-2 rounded-full"
+                            style={{ background: 'rgba(197,160,89,0.08)', border: '1px solid rgba(197,160,89,0.2)' }}>
                             <div className="w-1.5 h-1.5 rounded-full" style={{ background: '#c5a059' }} />
                             <span className="text-[10px] font-black tracking-[0.2em] uppercase"
                                 style={{ color: '#c5a059', fontFamily: "'Outfit', sans-serif" }}>
                                 VIP Transfer · Antalya
                             </span>
                         </div>
-
                     </div>
                 </div>
             </section>
