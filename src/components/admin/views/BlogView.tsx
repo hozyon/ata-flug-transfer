@@ -663,16 +663,24 @@ export const BlogView: React.FC<BlogViewProps> = ({
             <div className="flex items-center gap-1 px-5 py-2 border-b border-white/[0.06] shrink-0">
               {[
                 { id: 'content' as const, label: 'İçerik', icon: 'fa-file-lines' },
-                { id: 'ai' as const, label: 'AI Asistan', icon: 'fa-robot', badge: aiGenerated ? '✓' : undefined },
+                { id: 'ai' as const, label: 'AI Asistan', icon: 'fa-robot' },
                 { id: 'seo' as const, label: 'SEO', icon: 'fa-magnifying-glass' },
                 { id: 'settings' as const, label: 'Ayarlar', icon: 'fa-sliders' },
               ].map(t => (
                 <button key={t.id} onClick={() => setActiveTab(t.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all relative ${activeTab === t.id ? 'bg-white/10 text-white' : 'text-slate-500 hover:text-white'} ${t.id === 'ai' ? 'text-violet-400' : ''}`}>
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all relative ${activeTab === t.id ? 'bg-white/10 text-white' : 'text-slate-500 hover:text-white'} ${t.id === 'ai' ? (activeTab === 'ai' ? 'text-white' : 'text-violet-400 hover:text-violet-300') : ''}`}>
                   <i className={`fa-solid ${t.icon} text-[9px]`}></i>
                   {t.label}
-                  {t.id === 'ai' && <span className="ml-1 text-[8px] font-black text-violet-400 bg-violet-500/20 px-1 py-0.5 rounded">NEW</span>}
-                  {t.badge && <span className="ml-1 text-[8px] font-black text-emerald-400">{t.badge}</span>}
+                  {/* Pulsing dot when AI has no key — subtle teaser */}
+                  {t.id === 'ai' && !aiApiKey && (
+                    <span className="relative flex h-1.5 w-1.5 ml-0.5 shrink-0">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-60"></span>
+                      <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-violet-500"></span>
+                    </span>
+                  )}
+                  {t.id === 'ai' && aiApiKey && aiGenerated && (
+                    <span className="ml-0.5 text-[8px] font-black text-emerald-400">✓</span>
+                  )}
                 </button>
               ))}
             </div>
@@ -767,23 +775,54 @@ export const BlogView: React.FC<BlogViewProps> = ({
 
               {/* ── AI ASSISTANT TAB ── */}
               {activeTab === 'ai' && (
-                <div className="h-full overflow-y-auto p-5 space-y-4">
+                <div className="h-full overflow-y-auto">
 
-                  {/* API Key Status Banner */}
+                  {/* ── LOCKED STATE (no API key) ── */}
                   {!aiApiKey ? (
-                    <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-amber-500/20 flex items-center justify-center shrink-0">
-                        <i className="fa-solid fa-triangle-exclamation text-amber-400 text-sm"></i>
+                    <div className="h-full flex flex-col items-center justify-center px-8 py-12 text-center">
+                      {/* Pulsing robot icon */}
+                      <div className="relative mb-7">
+                        <span className="absolute inset-0 rounded-full bg-violet-500/20 animate-ping" style={{ width: 72, height: 72, borderRadius: '50%', animationDuration: '2.4s' }}></span>
+                        <span className="absolute inset-0 rounded-full bg-violet-500/10" style={{ width: 72, height: 72, borderRadius: '50%', margin: '-4px', padding: '4px' }}></span>
+                        <div className="relative w-[72px] h-[72px] rounded-full bg-violet-500/10 border border-violet-500/20 flex items-center justify-center shadow-lg shadow-violet-500/10">
+                          <i className="fa-solid fa-robot text-[28px] text-violet-400"></i>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-sm font-bold text-amber-300">API Anahtarı Eksik</p>
-                        <p className="text-[11px] text-amber-400/70 mt-0.5 leading-relaxed">
-                          AI Asistan kullanmak için Anthropic API anahtarınızı ekleyin.
-                          Admin Paneli → <strong className="text-amber-300">Hesap Ayarları → AI Entegrasyonu</strong> bölümünden girebilirsiniz.
-                        </p>
+                      <h4 className="text-white font-bold text-[15px] mb-1.5 font-outfit">AI Asistan Hazır</h4>
+                      <p className="text-slate-500 text-[12px] leading-relaxed mb-7 max-w-[260px]">
+                        SEO, AEO ve GEO uyumlu blog içeriği üretmek için Anthropic API anahtarınızı ekleyin.
+                      </p>
+                      {/* Steps */}
+                      <div className="w-full max-w-[280px] rounded-2xl bg-violet-500/[0.06] border border-violet-500/[0.12] p-4 text-left space-y-2.5 mb-8">
+                        {[
+                          { step: '1', text: 'Admin Paneli → Hesap Ayarları' },
+                          { step: '2', text: 'AI Entegrasyonu bölümünü aç' },
+                          { step: '3', text: 'Anthropic API anahtarını yapıştır' },
+                        ].map(s => (
+                          <div key={s.step} className="flex items-center gap-3">
+                            <span className="w-5 h-5 rounded-full bg-violet-500/20 text-violet-400 text-[9px] font-black flex items-center justify-center shrink-0">{s.step}</span>
+                            <span className="text-[11px] text-slate-400">{s.text}</span>
+                          </div>
+                        ))}
+                      </div>
+                      {/* Ghost preview of controls */}
+                      <div className="w-full max-w-sm space-y-2.5 opacity-[0.12] pointer-events-none select-none">
+                        <div className="grid grid-cols-2 gap-2">
+                          {AI_MODES.map(mode => (
+                            <div key={mode.id} className="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center gap-2.5">
+                              <i className={`fa-solid ${mode.icon} text-slate-600 text-[10px]`}></i>
+                              <span className="text-[11px] text-slate-600 font-bold">{mode.label}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="w-full py-4 rounded-2xl border border-violet-500/10 bg-violet-500/5 flex items-center justify-center gap-2">
+                          <i className="fa-solid fa-wand-magic-sparkles text-slate-700 text-sm"></i>
+                          <span className="text-sm font-bold text-slate-700">İçerik Oluştur</span>
+                        </div>
                       </div>
                     </div>
                   ) : (
+                    <div className="p-5 space-y-4">
                     <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></div>
                       <p className="text-[11px] text-emerald-400 font-medium">Claude AI bağlı — üretmeye hazır</p>
@@ -793,7 +832,6 @@ export const BlogView: React.FC<BlogViewProps> = ({
                         <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400">GEO</span>
                       </div>
                     </div>
-                  )}
 
                   {/* Mode Selector */}
                   <div className="space-y-2">
@@ -953,6 +991,8 @@ export const BlogView: React.FC<BlogViewProps> = ({
                           <span className="text-[10px] text-slate-500">{step}</span>
                         </div>
                       ))}
+                    </div>
+                  )}
                     </div>
                   )}
                 </div>
