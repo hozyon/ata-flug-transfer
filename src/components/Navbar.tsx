@@ -386,6 +386,33 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
 
               <LanguageSwitcher />
 
+              {/* Admin — version badge camouflage */}
+              <button
+                onClick={onAdminToggle}
+                title="ATA Flug Transfer"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: '5px 5px',
+                  cursor: 'default',
+                  opacity: isAdmin ? 0.45 : 0.07,
+                  transition: 'opacity 0.5s ease',
+                  fontFamily: "'Outfit', monospace",
+                  fontSize: '8.5px',
+                  fontWeight: 800,
+                  letterSpacing: '0.08em',
+                  color: isAdmin ? 'var(--color-primary)' : 'rgba(255,255,255,0.7)',
+                  lineHeight: 1,
+                  userSelect: 'none',
+                  WebkitUserSelect: 'none',
+                  flexShrink: 0,
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = isAdmin ? '0.65' : '0.18'; (e.currentTarget as HTMLButtonElement).style.cursor = 'pointer'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = isAdmin ? '0.45' : '0.07'; (e.currentTarget as HTMLButtonElement).style.cursor = 'default'; }}
+              >
+                v2
+              </button>
+
             </div>
 
             {/* ── Mobile right controls ── */}

@@ -68,8 +68,8 @@ function saveContentToLS(content: SiteContent) {
 function loadBlogFromLS(): BlogPost[] {
     try {
         const saved = localStorage.getItem(LS_BLOG);
-        return saved ? JSON.parse(saved) : BLOG_POSTS;
-    } catch { return BLOG_POSTS; }
+        return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
 }
 
 function saveBlogToLS(posts: BlogPost[]) {
@@ -120,6 +120,7 @@ function blogPostToRow(p: BlogPost) {
         tags: p.tags || [],
         author: p.author || 'Ata Flug Transfer',
         published_at: p.publishedAt || new Date().toISOString(),
+        updated_at: p.updatedAt || new Date().toISOString(),
         seo_title: p.seoTitle || null,
         seo_description: p.seoDescription || null,
         is_published: p.isPublished || false,
