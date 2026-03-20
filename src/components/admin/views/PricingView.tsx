@@ -108,7 +108,11 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent }) => {
                                         </div>
                                     </div>
                                     <div className="text-right shrink-0">
-                                        <p className="text-xl font-black text-[var(--color-primary)]">{editContent.currency?.symbol || '€'}{region.price}</p>
+                                        {region.price ? (
+                                            <p className="text-xl font-black text-[var(--color-primary)]">{editContent.currency?.symbol || '€'}{region.price}</p>
+                                        ) : (
+                                            <p className="text-sm font-bold text-amber-400 flex items-center gap-1"><i className="fa-solid fa-triangle-exclamation text-[10px]" />Fiyat yok</p>
+                                        )}
                                         <p className="text-[9px] text-slate-600">tek yön</p>
                                     </div>
                                 </div>
@@ -175,7 +179,11 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent }) => {
                                                 {isMax && <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20">MAX</span>}
                                                 {isAvg && <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20">ORT</span>}
                                                 <div>
-                                                    <p className={`text-lg font-black ${priceColor}`}>{editContent.currency?.symbol || '€'}{region.price}</p>
+                                                    {region.price ? (
+                                                        <p className={`text-lg font-black ${priceColor}`}>{editContent.currency?.symbol || '€'}{region.price}</p>
+                                                    ) : (
+                                                        <p className="text-sm font-bold text-amber-400 flex items-center gap-1"><i className="fa-solid fa-triangle-exclamation text-[10px]" />Fiyat yok</p>
+                                                    )}
                                                     <p className="text-[9px] text-slate-600">tek yön</p>
                                                 </div>
                                             </div>

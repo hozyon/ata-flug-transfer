@@ -772,9 +772,11 @@ const App: React.FC = () => {
                             <img src={region.image} alt={region.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
                             <div className="absolute inset-0 rounded-lg border border-white/[0.08] group-hover:border-[var(--color-primary)]/40 transition-colors duration-300"></div>
-                            <div className="absolute top-3 right-3 z-10">
-                              <span className="bg-black/40 text-white px-2.5 py-1 rounded text-[11px] font-bold">{siteContent.currency?.symbol || '€'}{region.price}</span>
-                            </div>
+                            {region.price ? (
+                              <div className="absolute top-3 right-3 z-10">
+                                <span className="bg-black/40 text-white px-2.5 py-1 rounded text-[11px] font-bold">{siteContent.currency?.symbol || '€'}{region.price}</span>
+                              </div>
+                            ) : null}
                             <div className="absolute bottom-0 left-0 w-full p-3 md:p-4 z-10">
                               <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider block">{t('regions.airportLabel')}</span>
                               <svg width="14" height="22" viewBox="0 0 14 22" className="my-1 block" fill="none">
@@ -799,9 +801,11 @@ const App: React.FC = () => {
                             <img src={region.image} alt={region.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
                             <div className="absolute inset-0 rounded-lg border border-white/[0.08] group-hover:border-[var(--color-primary)]/40 transition-colors duration-300"></div>
-                            <div className="absolute top-3 right-3 z-10">
-                              <span className="bg-black/40 text-white px-2.5 py-1 rounded text-[11px] font-bold">{siteContent.currency?.symbol || '€'}{region.price}</span>
-                            </div>
+                            {region.price ? (
+                              <div className="absolute top-3 right-3 z-10">
+                                <span className="bg-black/40 text-white px-2.5 py-1 rounded text-[11px] font-bold">{siteContent.currency?.symbol || '€'}{region.price}</span>
+                              </div>
+                            ) : null}
                             <div className="absolute bottom-0 left-0 w-full p-3 md:p-4 z-10">
                               <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider block">Antalya Airport</span>
                               <svg width="14" height="22" viewBox="0 0 14 22" className="my-1 block" fill="none">

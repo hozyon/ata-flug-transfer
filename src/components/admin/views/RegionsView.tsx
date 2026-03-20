@@ -207,7 +207,11 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                                             <div className="flex-1 min-w-0">
                                                 <div className="flex items-center justify-between">
                                                     <p className="font-bold text-white text-sm truncate">{region.name}</p>
-                                                    <span className="text-lg font-black text-[var(--color-primary)] shrink-0 ml-2">{editContent.currency?.symbol || '€'}{region.price}</span>
+                                                    {region.price ? (
+                                                        <span className="text-lg font-black text-[var(--color-primary)] shrink-0 ml-2">{editContent.currency?.symbol || '€'}{region.price}</span>
+                                                    ) : (
+                                                        <span className="text-[10px] font-bold text-amber-400 shrink-0 ml-2 flex items-center gap-1"><i className="fa-solid fa-triangle-exclamation text-[8px]" />Fiyat yok</span>
+                                                    )}
                                                 </div>
                                                 <p className="text-[10px] text-slate-500 mt-0.5 truncate">{region.desc || 'Açıklama yok'}</p>
                                                 <div className="flex items-center gap-2 mt-2">
@@ -290,20 +294,26 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                                             </td>
                                             <td className="px-3 py-3.5 text-right">
                                                 <div className="inline-flex items-center gap-1">
-                                                    <span className="text-[var(--color-primary)] font-bold text-sm">{editContent.currency?.symbol || '€'}</span>
+                                                    {!region.price && editingPriceId !== region.id && (
+                                                        <i className="fa-solid fa-triangle-exclamation text-amber-400 text-[9px] mr-1" title="Fiyat girilmemiş" />
+                                                    )}
+                                                    {(region.price || editingPriceId === region.id) && (
+                                                        <span className="text-[var(--color-primary)] font-bold text-sm">{editContent.currency?.symbol || '€'}</span>
+                                                    )}
                                                     <input
                                                         type="number"
-                                                        value={editingPriceId === region.id ? editingPriceValue : (region.price || 0)}
-                                                        onFocus={() => { setEditingPriceId(region.id); setEditingPriceValue(String(region.price || 0)); }}
+                                                        placeholder="—"
+                                                        value={editingPriceId === region.id ? editingPriceValue : (region.price || '')}
+                                                        onFocus={() => { setEditingPriceId(region.id); setEditingPriceValue(region.price ? String(region.price) : ''); }}
                                                         onChange={e => setEditingPriceValue(e.target.value)}
                                                         onBlur={() => {
-                                                            const parsed = parseInt(editingPriceValue) || 0;
+                                                            const parsed = editingPriceValue.trim() !== '' ? parseInt(editingPriceValue) : undefined;
                                                             const n = [...regions];
                                                             n[realIndex] = { ...n[realIndex], price: parsed };
                                                             setEditContent({ ...editContent, regions: n });
                                                             setEditingPriceId(null);
                                                         }}
-                                                        className="w-14 bg-transparent text-right text-sm font-black text-white outline-none focus:text-[var(--color-primary)] transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                                                        className="w-14 bg-transparent text-right text-sm font-black text-white outline-none focus:text-[var(--color-primary)] transition-colors placeholder-slate-600 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                                                 </div>
                                             </td>
                                             <td className="px-3 py-3.5 text-center hidden md:table-cell">
