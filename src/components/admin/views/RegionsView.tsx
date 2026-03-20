@@ -31,7 +31,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
     const [newRegion, setNewRegion] = useState<Region>({
         id: '', name: '', desc: '',
         image: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800',
-        icon: 'fa-location-dot', price: 50
+        icon: 'fa-location-dot', price: undefined
     });
 
     const { viewMode, toggleViewMode } = useViewMode();
@@ -68,7 +68,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                 name: regionName,
                 desc: scraped?.desc || '',
                 image: scraped?.image || 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=600',
-                icon: 'fa-location-dot', price: 50
+                icon: 'fa-location-dot', price: undefined
             };
             setEditContent({ ...editContent, regions: [...regions, newR] });
             showToast(`${regionName} eklendi`, 'success');
@@ -174,7 +174,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                         </div>
                         <MobileViewToggle viewMode={viewMode} onToggle={toggleViewMode} />
                         {/* Add Custom */}
-                        <button onClick={() => { setNewRegion({ id: '', name: '', desc: '', image: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800', icon: 'fa-location-dot', price: 50 }); setEditingRegion(null); setIsAddRegionModalOpen(true); }}
+                        <button onClick={() => { setNewRegion({ id: '', name: '', desc: '', image: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800', icon: 'fa-location-dot', price: undefined }); setEditingRegion(null); setIsAddRegionModalOpen(true); }}
                             className="px-4 py-2.5 bg-[var(--color-primary)] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 shrink-0">
                             <i className="fa-solid fa-plus text-[10px]"></i> Yeni Bölge
                         </button>
@@ -413,7 +413,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                                     <div className="relative">
                                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg font-bold text-[var(--color-primary)]">{editContent.currency?.symbol || '€'}</span>
                                         <input type="number" className="w-full bg-white/5 border border-white/[0.06] rounded-xl pl-9 pr-4 py-3 text-sm font-bold text-white focus:border-[var(--color-primary)]/50 outline-none transition-all"
-                                            value={newRegion.price} onChange={e => setNewRegion({ ...newRegion, price: parseInt(e.target.value) || 0 })} placeholder="50" />
+                                            value={newRegion.price ?? ''} onChange={e => setNewRegion({ ...newRegion, price: e.target.value !== '' ? parseInt(e.target.value) : undefined })} placeholder="Fiyat girin..." />
                                     </div>
                                 </div>
                                 <div className="space-y-2">
