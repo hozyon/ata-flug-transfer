@@ -605,19 +605,22 @@ const App: React.FC = () => {
                                       href={buildWaUrl(region.name, region.price)}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="reveal group flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl border border-slate-200 bg-white hover:border-[var(--color-primary)]/40 hover:bg-amber-50/50 hover:shadow-sm transition-all duration-200 cursor-pointer"
+                                      className="reveal group flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl transition-all duration-200 cursor-pointer"
+                                      style={{ background: '#0d1020', border: '1px solid rgba(197,160,89,0.15)' }}
+                                      onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = 'rgba(197,160,89,0.45)'; el.style.background = '#111525'; }}
+                                      onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = 'rgba(197,160,89,0.15)'; el.style.background = '#0d1020'; }}
                                     >
                                       <div className="flex items-center gap-2 min-w-0">
-                                        <i className="fa-solid fa-location-dot text-slate-300 group-hover:text-[var(--color-primary)] text-[10px] shrink-0 transition-colors duration-200"></i>
-                                        <span className="text-slate-600 text-[11.5px] font-medium truncate group-hover:text-slate-900 transition-colors duration-200" style={{ fontFamily: "'Montserrat', sans-serif" }}>{region.name}</span>
+                                        <i className="fa-solid fa-location-dot text-[10px] shrink-0" style={{ color: 'rgba(197,160,89,0.5)' }}></i>
+                                        <span className="text-[11.5px] font-medium truncate" style={{ fontFamily: "'Montserrat', sans-serif", color: 'rgba(255,255,255,0.82)' }}>{region.name}</span>
                                       </div>
                                       <div className="flex items-center gap-1.5 shrink-0">
                                         {region.price ? (
-                                          <span className="text-[var(--color-primary)] font-black text-[13px] leading-none">{sym}{region.price}</span>
+                                          <span className="font-black text-[13px] leading-none" style={{ color: '#c5a059', fontFamily: "'Outfit', sans-serif" }}>{sym}{region.price}</span>
                                         ) : (
-                                          <span className="text-slate-300 font-medium text-[11px] leading-none">—</span>
+                                          <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: 11 }}>—</span>
                                         )}
-                                        <i className="fa-brands fa-whatsapp text-[#25D366] text-[11px] opacity-0 group-hover:opacity-100 transition-opacity duration-200"></i>
+                                        <i className="fa-brands fa-whatsapp text-[11px] opacity-0 group-hover:opacity-100 transition-opacity duration-200" style={{ color: '#25D366' }}></i>
                                       </div>
                                     </a>
                                   ))}
