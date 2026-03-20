@@ -584,6 +584,19 @@ const REGION_DETAILS: Record<string, { title: string; about: string; places: str
   }
 };
 
+// Generates a realistic 2026 date spread from Jan 5 to Mar 19
+function blogDate(index: number): string {
+  const total = SCRAPED_REGIONS.length;
+  const startDay = 5;  // Jan 5, 2026
+  const endDay = 78;   // Mar 19, 2026
+  const variance = [0, 1, -1, 2, 0, -1, 1, 0, 2, -1][index % 10];
+  const day = Math.min(endDay, Math.max(startDay,
+    Math.round(startDay + (index / Math.max(total - 1, 1)) * (endDay - startDay)) + variance
+  ));
+  const d = new Date(2026, 0, day);
+  return d.toISOString().split('T')[0];
+}
+
 export const BLOG_POSTS: BlogPost[] = SCRAPED_REGIONS.map((region, index) => {
   const slug = region.name.toLowerCase()
     .replace(/ /g, '-')
@@ -661,9 +674,9 @@ Aşağıdaki butona tıklayarak WhatsApp üzerinden saniyeler içinde fiyat alab
     category: 'Gezi ve Transfer Rehberi',
     tags: ['antalya transfer', region.name.toLowerCase(), 'vip transfer', 'gezi rehberi', ...details.places.slice(0, 2)],
     author: 'Ata Flug Editör',
-    publishedAt: `2024-${String((Math.floor(index / 4) % 12) + 1).padStart(2, '0')}-${String((index % 27) + 1).padStart(2, '0')}`,
-    updatedAt: `2024-${String((Math.floor(index / 4) % 12) + 1).padStart(2, '0')}-${String((index % 27) + 1).padStart(2, '0')}`,
-    seoTitle: `${region.name} Transfer ve Gezi Rehberi 2024 | ${region.name} Ulaşım`,
+    publishedAt: blogDate(index),
+    updatedAt: blogDate(index),
+    seoTitle: `${region.name} Transfer ve Gezi Rehberi 2026 | ${region.name} Ulaşım`,
     seoDescription: `${region.name} ulaşım rehberi ve gezilecek yerler. Antalya Havalimanı'ndan ${region.name} VIP transfer, restoran önerileri ve aktiviteler.`,
     isPublished: true,
     viewCount: 0

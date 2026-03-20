@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+
+const AI_LS_KEY = 'ata_ai_api_key';
 
 interface AccountViewProps {
     accountForm: any;
@@ -25,6 +27,21 @@ export const AccountView: React.FC<AccountViewProps> = ({
     ADMIN_AVATARS, showToast, onExitAdmin, onSaveAccount, onUpdatePassword,
 }) => {
     const [showAvatarPicker, setShowAvatarPicker] = useState(false);
+    const [aiApiKey, setAiApiKey] = useState(() => localStorage.getItem(AI_LS_KEY) || '');
+    const [showAiKey, setShowAiKey] = useState(false);
+    const [aiKeySaved, setAiKeySaved] = useState(false);
+    const aiSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const handleAiKeyChange = useCallback((val: string) => {
+        setAiApiKey(val);
+        setAiKeySaved(false);
+        if (aiSaveTimer.current) clearTimeout(aiSaveTimer.current);
+        aiSaveTimer.current = setTimeout(() => {
+            localStorage.setItem(AI_LS_KEY, val);
+            setAiKeySaved(true);
+            setTimeout(() => setAiKeySaved(false), 2000);
+        }, 800);
+    }, []);
     const [showPwFields, setShowPwFields] = useState(false);
     const [showCurrentPw, setShowCurrentPw] = useState(false);
     const [showNewPw, setShowNewPw] = useState(false);
@@ -311,6 +328,86 @@ export const AccountView: React.FC<AccountViewProps> = ({
                                 </button>
                             </div>
                         )}
+                    </div>
+                    {/* AI Integration */}
+                    <div className="rounded-2xl border border-violet-500/20 bg-violet-500/[0.04] overflow-hidden">
+                        <div className="px-5 py-3.5 border-b border-violet-500/10 flex items-center gap-3">
+                            <div className="w-7 h-7 rounded-lg bg-violet-500/15 flex items-center justify-center">
+                                <i className="fa-solid fa-robot text-violet-400 text-[11px]"></i>
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="text-sm font-black text-white tracking-wide">AI ENTEGRASYONU</h3>
+                                <p className="text-[10px] text-violet-400/70">Claude API · SEO / AEO / GEO</p>
+                            </div>
+                            {aiApiKey && (
+                                <span className="flex items-center gap-1.5 text-[9px] font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-full">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>
+                                    AKTİF
+                                </span>
+                            )}
+                        </div>
+                        <div className="p-5 space-y-4">
+                            {/* Why needed */}
+                            <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.05] space-y-2">
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                                    <i className="fa-solid fa-circle-info text-violet-400 text-[9px]"></i>
+                                    Neden Gerekli?
+                                </p>
+                                <ul className="space-y-1.5">
+                                    {[
+                                        { icon: 'fa-magnifying-glass', color: 'text-blue-400', text: 'Blog\'da AI Asistan ile SEO uyumlu makaleler otomatik oluşturmak için' },
+                                        { icon: 'fa-microphone', color: 'text-emerald-400', text: 'AEO (sesli arama) uyumlu SSS bölümleri üretmek için' },
+                                        { icon: 'fa-location-dot', color: 'text-amber-400', text: 'GEO (yapay zeka motorları) için coğrafi içerik optimize etmek için' },
+                                        { icon: 'fa-wand-magic-sparkles', color: 'text-violet-400', text: 'Mevcut yazıları tek tıkla profesyonel düzeyde geliştirmek için' },
+                                    ].map((item, i) => (
+                                        <li key={i} className="flex items-start gap-2">
+                                            <i className={`fa-solid ${item.icon} ${item.color} text-[9px] mt-[3px] shrink-0`}></i>
+                                            <span className="text-[11px] text-slate-400 leading-relaxed">{item.text}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                                <p className="text-[10px] text-slate-600 leading-relaxed border-t border-white/[0.04] pt-2 mt-1">
+                                    API anahtarı yalnızca tarayıcınızda saklanır, sunucuya gönderilmez.
+                                    <span className="text-violet-400"> console.anthropic.com</span> adresinden edinebilirsiniz.
+                                </p>
+                            </div>
+
+                            {/* API Key input */}
+                            <div className="space-y-2">
+                                <label className={LABEL + ' flex items-center justify-between'}>
+                                    <span>Anthropic API Anahtarı</span>
+                                    {aiKeySaved && <span className="text-emerald-400 normal-case font-semibold tracking-normal flex items-center gap-1"><i className="fa-solid fa-check text-[9px]"></i> Kaydedildi</span>}
+                                </label>
+                                <div className="relative">
+                                    <i className="fa-solid fa-key absolute left-4 top-1/2 -translate-y-1/2 text-violet-400/50 text-xs"></i>
+                                    <input
+                                        type={showAiKey ? 'text' : 'password'}
+                                        value={aiApiKey}
+                                        onChange={e => handleAiKeyChange(e.target.value)}
+                                        placeholder="sk-ant-api03-..."
+                                        className={`${INPUT} pl-10 pr-20 font-mono text-[12px] border-violet-500/20 focus:border-violet-500/50`}
+                                    />
+                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                                        <button type="button" onClick={() => setShowAiKey(!showAiKey)}
+                                            className="text-slate-500 hover:text-white text-xs transition-colors p-1">
+                                            <i className={`fa-solid ${showAiKey ? 'fa-eye-slash' : 'fa-eye'} text-[10px]`}></i>
+                                        </button>
+                                        {aiApiKey && (
+                                            <button type="button" onClick={() => { handleAiKeyChange(''); }}
+                                                className="text-slate-600 hover:text-red-400 text-xs transition-colors p-1">
+                                                <i className="fa-solid fa-xmark text-[10px]"></i>
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                                {aiApiKey && (
+                                    <div className="flex items-center gap-2 text-[10px] text-emerald-400">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></div>
+                                        AI Asistan hazır — Blog &gt; AI Asistan sekmesinden kullanın
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
 

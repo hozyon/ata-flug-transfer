@@ -107,6 +107,12 @@ function calcSeoScore(post: BlogPost): { score: number; checks: { label: string;
 const AI_LS_KEY = 'ata_ai_api_key';
 
 const TONES = ['Profesyonel', 'Samimi', 'Bilgilendirici', 'Heyecanlı', 'Güven verici'];
+const AI_MODES = [
+  { id: 'full', label: 'Tam Makale', icon: 'fa-wand-magic-sparkles', desc: 'Sıfırdan 800+ kelime üret' },
+  { id: 'improve', label: 'İçeriği İyileştir', icon: 'fa-arrow-up-right-dots', desc: 'Mevcut içeriği geliştir' },
+  { id: 'faq', label: 'Sadece SSS', icon: 'fa-circle-question', desc: 'AEO için SSS bölümü ekle' },
+  { id: 'meta', label: 'Meta Etiketler', icon: 'fa-tags', desc: 'SEO başlık + açıklama üret' },
+];
 const ARTICLE_TYPES = [
   { id: 'destination', label: 'Destinasyon Rehberi', icon: 'fa-map-location-dot' },
   { id: 'transfer', label: 'Transfer Rehberi', icon: 'fa-car-side' },
@@ -114,6 +120,57 @@ const ARTICLE_TYPES = [
   { id: 'comparison', label: 'Karşılaştırma', icon: 'fa-scale-balanced' },
   { id: 'faq', label: 'S.S.S Makalesi', icon: 'fa-circle-question' },
 ];
+
+function buildImprovePrompt(content: string, title: string): string {
+  return `Sen SEO, AEO ve GEO konusunda uzman bir Türkçe içerik editörüsün. "Ata Flug Transfer" şirketi için aşağıdaki blog yazısını profesyonel düzeyde geliştir.
+
+MEVCUT BAŞLIK: ${title}
+
+MEVCUT İÇERİK:
+${content}
+
+Yapılacaklar:
+- Genel akıcılığı ve okunabilirliği artır
+- Anahtar kelime yoğunluğunu iyileştir
+- Eksik H2/H3 başlıklar ekle
+- Eğer yoksa SSS bölümü ekle (AEO)
+- Daha spesifik coğrafi bilgiler ekle (GEO)
+- Antalya Havalimanı, Ata Flug Transfer gibi entiteleri doğal kullan
+- İçeriği minimum 800 kelimeye tamamla
+
+Çıktıyı **yalnızca** JSON formatında döndür:
+{"content": "geliştirilmiş markdown içerik"}`;
+}
+
+function buildFaqPrompt(title: string, region: string): string {
+  return `Sen AEO (Answer Engine Optimization) uzmanısın. "Ata Flug Transfer" şirketi için "${title}" konusunda, ${region || 'Antalya'} bölgesine yönelik sesli arama ve AI motorlarına uyumlu bir SSS bölümü oluştur.
+
+Kurallar:
+- Tam olarak 7 soru-cevap çifti yaz
+- Her soru gerçek kullanıcı dilinde, doğal ifadeyle
+- Her cevap 2-4 cümle, direkt ve net
+- Fiyat, süre, hizmet kalitesi, güvenlik, rezervasyon konularını kapsasın
+- Ata Flug Transfer markasını doğal kullan
+
+Çıktı formatı (sadece JSON):
+{"faq": "## Sıkça Sorulan Sorular\\n\\n**Soru 1?**\\nCevap...\\n\\n**Soru 2?**\\nCevap..."}`;
+}
+
+function buildMetaPrompt(title: string, content: string, keyword: string): string {
+  return `SEO uzmanı olarak, aşağıdaki Türkçe blog yazısı için optimal meta etiketler oluştur.
+
+BAŞLIK: ${title}
+ANA ANAHTAR KELİME: ${keyword || title}
+İÇERİK ÖZETİ: ${content.substring(0, 500)}...
+
+Kurallar:
+- SEO başlığı: kesinlikle max 60 karakter, anahtar kelime içermeli
+- Meta description: 120-155 karakter arası, call-to-action içermeli
+- 6-8 SEO etiketi öner
+
+Çıktı (sadece JSON):
+{"seoTitle": "...", "seoDescription": "...", "tags": ["tag1", "tag2"]}`;
+}
 
 async function callClaudeAPI(apiKey: string, prompt: string): Promise<string> {
   const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -201,7 +258,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
 
   // AI state
   const [aiApiKey, setAiApiKey] = useState(() => localStorage.getItem(AI_LS_KEY) || '');
-  const [aiShowKey, setAiShowKey] = useState(false);
+  const [aiMode, setAiMode] = useState<'full' | 'improve' | 'faq' | 'meta'>('full');
   const [aiTopic, setAiTopic] = useState('');
   const [aiKeyword, setAiKeyword] = useState('');
   const [aiRegion, setAiRegion] = useState('Antalya');
@@ -210,6 +267,12 @@ export const BlogView: React.FC<BlogViewProps> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [aiError, setAiError] = useState('');
   const [aiGenerated, setAiGenerated] = useState(false);
+
+  // Sync API key from localStorage (in case it was updated in AccountView)
+  useEffect(() => {
+    const stored = localStorage.getItem(AI_LS_KEY) || '';
+    setAiApiKey(stored);
+  }, [activeTab]);
 
   const wordCount = newBlogPost.content.trim() ? newBlogPost.content.trim().split(/\s+/).length : 0;
   const charCount = newBlogPost.content.length;
@@ -286,38 +349,74 @@ export const BlogView: React.FC<BlogViewProps> = ({
 
   // AI Generate
   const handleGenerate = async () => {
-    if (!aiApiKey.trim()) { setAiError('Anthropic API anahtarı gerekli.'); return; }
-    if (!aiTopic.trim()) { setAiError('Konu alanı boş olamaz.'); return; }
+    const key = localStorage.getItem(AI_LS_KEY) || '';
+    if (!key.trim()) {
+      setAiError('API anahtarı bulunamadı. Lütfen Hesap Ayarları > AI Entegrasyonu bölümünden anahtarınızı ekleyin.');
+      return;
+    }
+    if (aiMode === 'full' && !aiTopic.trim()) { setAiError('Konu alanı boş olamaz.'); return; }
+    if (aiMode === 'improve' && !newBlogPost.content.trim()) { setAiError('İyileştirmek için önce İçerik sekmesine yazı girin.'); return; }
+    if (aiMode === 'faq' && !newBlogPost.title.trim()) { setAiError('SSS oluşturmak için önce Ayarlar > Başlık alanını doldurun.'); return; }
+    if (aiMode === 'meta' && !newBlogPost.title.trim()) { setAiError('Meta etiket oluşturmak için önce Ayarlar > Başlık alanını doldurun.'); return; }
+
     setAiError('');
     setIsGenerating(true);
+
     try {
-      const typeLabel = ARTICLE_TYPES.find(t => t.id === aiArticleType)?.label || aiArticleType;
-      const prompt = buildPrompt(aiTopic, aiKeyword, aiRegion, aiTone, typeLabel);
-      const raw = await callClaudeAPI(aiApiKey, prompt);
-      // Extract JSON from response
+      let prompt = '';
+      if (aiMode === 'full') {
+        const typeLabel = ARTICLE_TYPES.find(t => t.id === aiArticleType)?.label || aiArticleType;
+        prompt = buildPrompt(aiTopic, aiKeyword, aiRegion, aiTone, typeLabel);
+      } else if (aiMode === 'improve') {
+        prompt = buildImprovePrompt(newBlogPost.content, newBlogPost.title);
+      } else if (aiMode === 'faq') {
+        prompt = buildFaqPrompt(newBlogPost.title, aiRegion);
+      } else if (aiMode === 'meta') {
+        prompt = buildMetaPrompt(newBlogPost.title, newBlogPost.content, aiKeyword);
+      }
+
+      const raw = await callClaudeAPI(key, prompt);
       const jsonMatch = raw.match(/\{[\s\S]*\}/);
       if (!jsonMatch) throw new Error('Yanıt JSON formatında değil. Tekrar deneyin.');
       const parsed = JSON.parse(jsonMatch[0]) as {
-        title: string; seoTitle: string; seoDescription: string;
-        excerpt: string; tags: string[]; content: string;
+        title?: string; seoTitle?: string; seoDescription?: string;
+        excerpt?: string; tags?: string[]; content?: string; faq?: string;
       };
-      const autoSlug = (parsed.title || aiTopic).toLowerCase()
-        .replace(/[ğ]/g, 'g').replace(/[ü]/g, 'u').replace(/[ş]/g, 's')
-        .replace(/[ı]/g, 'i').replace(/[ö]/g, 'o').replace(/[ç]/g, 'c')
-        .replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-').replace(/-+/g, '-');
-      setNewBlogPost(p => ({
-        ...p,
-        title: parsed.title || p.title,
-        slug: slugManuallyEdited ? p.slug : autoSlug,
-        excerpt: parsed.excerpt || p.excerpt,
-        content: parsed.content || p.content,
-        seoTitle: parsed.seoTitle || p.seoTitle,
-        seoDescription: parsed.seoDescription || p.seoDescription,
-        tags: parsed.tags || p.tags,
-      }));
+
+      if (aiMode === 'full') {
+        const autoSlug = (parsed.title || aiTopic).toLowerCase()
+          .replace(/[ğ]/g, 'g').replace(/[ü]/g, 'u').replace(/[ş]/g, 's')
+          .replace(/[ı]/g, 'i').replace(/[ö]/g, 'o').replace(/[ç]/g, 'c')
+          .replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-').replace(/-+/g, '-');
+        setNewBlogPost(p => ({
+          ...p,
+          title: parsed.title || p.title,
+          slug: slugManuallyEdited ? p.slug : autoSlug,
+          excerpt: parsed.excerpt || p.excerpt,
+          content: parsed.content || p.content,
+          seoTitle: parsed.seoTitle || p.seoTitle,
+          seoDescription: parsed.seoDescription || p.seoDescription,
+          tags: parsed.tags || p.tags,
+        }));
+        showToast('Tam makale oluşturuldu!', 'success');
+      } else if (aiMode === 'improve') {
+        setNewBlogPost(p => ({ ...p, content: parsed.content || p.content }));
+        showToast('İçerik iyileştirildi!', 'success');
+      } else if (aiMode === 'faq') {
+        setNewBlogPost(p => ({ ...p, content: p.content + '\n\n' + (parsed.faq || '') }));
+        showToast('SSS bölümü eklendi!', 'success');
+      } else if (aiMode === 'meta') {
+        setNewBlogPost(p => ({
+          ...p,
+          seoTitle: parsed.seoTitle || p.seoTitle,
+          seoDescription: parsed.seoDescription || p.seoDescription,
+          tags: parsed.tags || p.tags,
+        }));
+        showToast('Meta etiketler güncellendi! SEO sekmesini kontrol edin.', 'success');
+      }
+
       setAiGenerated(true);
-      showToast('İçerik oluşturuldu! İçerik sekmesini kontrol edin.', 'success');
-      setActiveTab('content');
+      setActiveTab(aiMode === 'meta' ? 'seo' : 'content');
     } catch (err) {
       setAiError(err instanceof Error ? err.message : 'Bilinmeyen hata');
     } finally {
@@ -541,8 +640,10 @@ export const BlogView: React.FC<BlogViewProps> = ({
                   <div className={`w-2 h-2 rounded-full ${scoreBg}`}></div>
                   <span className={`text-[10px] font-bold ${scoreColor}`}>SEO {seoScore}%</span>
                 </div>
-                <button onClick={() => setSplitView(!splitView)}
-                  className={`hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${splitView ? 'bg-violet-500/20 text-violet-400 border border-violet-500/30' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}>
+                <button onClick={() => activeTab !== 'ai' && setSplitView(!splitView)}
+                  disabled={activeTab === 'ai'}
+                  title={activeTab === 'ai' ? 'AI Asistan açıkken bölünmüş görünüm kullanılamaz' : ''}
+                  className={`hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'ai' ? 'opacity-30 cursor-not-allowed bg-white/5 text-slate-600' : splitView ? 'bg-violet-500/20 text-violet-400 border border-violet-500/30' : 'bg-white/5 text-slate-400 hover:bg-white/10'}`}>
                   <i className="fa-solid fa-columns text-[10px]"></i> Bölünmüş
                 </button>
                 <button onClick={() => { setShowPreview(!showPreview); setSplitView(false); }}
@@ -665,109 +766,97 @@ export const BlogView: React.FC<BlogViewProps> = ({
 
               {/* ── AI ASSISTANT TAB ── */}
               {activeTab === 'ai' && (
-                <div className="h-full overflow-y-auto p-5 space-y-5">
-                  {/* Header */}
-                  <div className="p-4 rounded-2xl bg-gradient-to-br from-violet-500/10 to-indigo-600/5 border border-violet-500/20">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-9 h-9 rounded-xl bg-violet-600 flex items-center justify-center">
-                        <i className="fa-solid fa-robot text-white text-sm"></i>
+                <div className="h-full overflow-y-auto p-5 space-y-4">
+
+                  {/* API Key Status Banner */}
+                  {!aiApiKey ? (
+                    <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/25 flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-amber-500/20 flex items-center justify-center shrink-0">
+                        <i className="fa-solid fa-triangle-exclamation text-amber-400 text-sm"></i>
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-white">AI Blog Yazarı</p>
-                        <p className="text-[10px] text-slate-400">SEO · AEO · GEO uyumlu makale üretimi</p>
-                      </div>
-                      <div className="ml-auto flex gap-1.5">
-                        <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">SEO</span>
-                        <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">AEO</span>
-                        <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">GEO</span>
+                        <p className="text-sm font-bold text-amber-300">API Anahtarı Eksik</p>
+                        <p className="text-[11px] text-amber-400/70 mt-0.5 leading-relaxed">
+                          AI Asistan kullanmak için Anthropic API anahtarınızı ekleyin.
+                          Admin Paneli → <strong className="text-amber-300">Hesap Ayarları → AI Entegrasyonu</strong> bölümünden girebilirsiniz.
+                        </p>
                       </div>
                     </div>
-                    <p className="text-[11px] text-slate-400 leading-relaxed">
-                      Konu ve anahtar kelimeyi girin, Claude AI sizin için SEO, AEO ve GEO uyumlu, 800+ kelimelik Türkçe blog yazısı oluştursun. Başlık, meta açıklama, etiketler ve SSS bölümü otomatik eklenir.
-                    </p>
-                  </div>
-
-                  {/* API Key */}
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                      <i className="fa-solid fa-key text-[8px] text-violet-400"></i>
-                      Anthropic API Anahtarı
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={aiShowKey ? 'text' : 'password'}
-                        value={aiApiKey}
-                        onChange={e => { setAiApiKey(e.target.value); localStorage.setItem(AI_LS_KEY, e.target.value); }}
-                        placeholder="sk-ant-api03-..."
-                        className="w-full bg-white/5 border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white font-mono focus:border-violet-500/50 outline-none transition-all pr-20"
-                      />
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
-                        <button type="button" onClick={() => setAiShowKey(!aiShowKey)}
-                          className="text-slate-500 hover:text-white text-xs transition-colors">
-                          <i className={`fa-solid ${aiShowKey ? 'fa-eye-slash' : 'fa-eye'} text-[10px]`}></i>
-                        </button>
-                        {aiApiKey && (
-                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-400"></div>
-                        )}
+                  ) : (
+                    <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></div>
+                      <p className="text-[11px] text-emerald-400 font-medium">Claude AI bağlı — üretmeye hazır</p>
+                      <div className="ml-auto flex gap-1">
+                        <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400">SEO</span>
+                        <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400">AEO</span>
+                        <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400">GEO</span>
                       </div>
                     </div>
-                    <p className="text-[10px] text-slate-600">
-                      Anahtarınız tarayıcınızda şifreli saklanır. <span className="text-violet-400">console.anthropic.com</span> adresinden edinebilirsiniz.
-                    </p>
-                  </div>
+                  )}
 
-                  {/* Article Type */}
+                  {/* Mode Selector */}
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Makale Türü</label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                      {ARTICLE_TYPES.map(type => (
-                        <button key={type.id} type="button" onClick={() => setAiArticleType(type.id)}
-                          className={`flex items-center gap-2 p-3 rounded-xl text-left text-xs font-bold transition-all border ${aiArticleType === type.id ? 'bg-violet-500/20 border-violet-500/40 text-violet-300' : 'bg-white/[0.03] border-white/[0.06] text-slate-400 hover:border-white/15 hover:text-white'}`}>
-                          <i className={`fa-solid ${type.icon} text-[10px]`}></i>
-                          {type.label}
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">İşlem Modu</label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {AI_MODES.map(mode => (
+                        <button key={mode.id} type="button" onClick={() => setAiMode(mode.id as typeof aiMode)}
+                          className={`flex items-start gap-2.5 p-3 rounded-xl text-left transition-all border ${aiMode === mode.id ? 'bg-violet-500/20 border-violet-500/40' : 'bg-white/[0.03] border-white/[0.06] hover:border-white/15'}`}>
+                          <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${aiMode === mode.id ? 'bg-violet-500/30' : 'bg-white/5'}`}>
+                            <i className={`fa-solid ${mode.icon} text-[10px] ${aiMode === mode.id ? 'text-violet-300' : 'text-slate-400'}`}></i>
+                          </div>
+                          <div>
+                            <p className={`text-[11px] font-bold ${aiMode === mode.id ? 'text-violet-300' : 'text-slate-300'}`}>{mode.label}</p>
+                            <p className="text-[9px] text-slate-600 mt-0.5">{mode.desc}</p>
+                          </div>
                         </button>
                       ))}
                     </div>
                   </div>
 
-                  {/* Topic + Keyword */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                        Konu / Başlık Fikri <span className="text-red-400">*</span>
-                      </label>
-                      <input
-                        value={aiTopic}
-                        onChange={e => setAiTopic(e.target.value)}
-                        placeholder="Antalya Havalimanı'ndan Side Transfer Rehberi"
-                        className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:border-violet-500/50 outline-none transition-all"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                        Ana Anahtar Kelime
-                      </label>
-                      <input
-                        value={aiKeyword}
-                        onChange={e => setAiKeyword(e.target.value)}
-                        placeholder="antalya havalimanı side transfer"
-                        className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:border-violet-500/50 outline-none transition-all"
-                      />
-                    </div>
-                  </div>
+                  {/* Fields — only show when relevant */}
+                  {(aiMode === 'full') && (
+                    <>
+                      {/* Article Type */}
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Makale Türü</label>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          {ARTICLE_TYPES.map(type => (
+                            <button key={type.id} type="button" onClick={() => setAiArticleType(type.id)}
+                              className={`flex items-center gap-2 p-2.5 rounded-xl text-left text-[11px] font-bold transition-all border ${aiArticleType === type.id ? 'bg-violet-500/20 border-violet-500/40 text-violet-300' : 'bg-white/[0.03] border-white/[0.06] text-slate-400 hover:text-white'}`}>
+                              <i className={`fa-solid ${type.icon} text-[10px]`}></i>
+                              {type.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Konu / Başlık Fikri <span className="text-red-400">*</span></label>
+                          <input value={aiTopic} onChange={e => setAiTopic(e.target.value)}
+                            placeholder="Antalya Havalimanı'ndan Side Transfer Rehberi"
+                            className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-3 py-2.5 text-sm text-white focus:border-violet-500/50 outline-none transition-all" />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Ana Anahtar Kelime</label>
+                          <input value={aiKeyword} onChange={e => setAiKeyword(e.target.value)}
+                            placeholder="antalya havalimanı side transfer"
+                            className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-3 py-2.5 text-sm text-white focus:border-violet-500/50 outline-none transition-all" />
+                        </div>
+                      </div>
+                    </>
+                  )}
 
-                  {/* Region + Tone */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
+                  {(aiMode === 'full' || aiMode === 'faq') && (
+                    <div className="space-y-1.5">
                       <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Hedef Bölge/Lokasyon</label>
-                      <input
-                        value={aiRegion}
-                        onChange={e => setAiRegion(e.target.value)}
+                      <input value={aiRegion} onChange={e => setAiRegion(e.target.value)}
                         placeholder="Side, Antalya"
-                        className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:border-violet-500/50 outline-none transition-all"
-                      />
+                        className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-3 py-2.5 text-sm text-white focus:border-violet-500/50 outline-none transition-all" />
                     </div>
-                    <div className="space-y-2">
+                  )}
+
+                  {(aiMode === 'full' || aiMode === 'improve') && (
+                    <div className="space-y-1.5">
                       <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Üslup / Ton</label>
                       <div className="flex flex-wrap gap-1.5">
                         {TONES.map(tone => (
@@ -778,21 +867,30 @@ export const BlogView: React.FC<BlogViewProps> = ({
                         ))}
                       </div>
                     </div>
-                  </div>
+                  )}
 
-                  {/* Optimization badges info */}
-                  <div className="grid grid-cols-3 gap-3">
+                  {(aiMode === 'meta') && (
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Ana Anahtar Kelime</label>
+                      <input value={aiKeyword} onChange={e => setAiKeyword(e.target.value)}
+                        placeholder="antalya vip transfer"
+                        className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-3 py-2.5 text-sm text-white focus:border-violet-500/50 outline-none transition-all" />
+                    </div>
+                  )}
+
+                  {/* Mode info box */}
+                  <div className="grid grid-cols-3 gap-2">
                     {[
-                      { badge: 'SEO', color: 'blue', icon: 'fa-magnifying-glass', desc: 'H1-H3 başlıklar, anahtar kelime yoğunluğu, meta etiketler, iç linkler' },
-                      { badge: 'AEO', color: 'emerald', icon: 'fa-microphone', desc: 'Yapılandırılmış SSS, direkt cevaplar, sesli arama uyumluluğu' },
-                      { badge: 'GEO', color: 'amber', icon: 'fa-location-dot', desc: 'Coğrafi entiteler, doğrulanabilir veriler, AI motorları için yapısal içerik' },
+                      { label: 'SEO', icon: 'fa-magnifying-glass', color: 'blue', desc: 'Başlıklar, keyword, iç linkler' },
+                      { label: 'AEO', icon: 'fa-microphone', color: 'emerald', desc: 'SSS, sesli arama uyumu' },
+                      { label: 'GEO', icon: 'fa-location-dot', color: 'amber', desc: 'Coğrafi entite, AI motorları' },
                     ].map(item => (
-                      <div key={item.badge} className={`p-3 rounded-xl bg-${item.color}-500/10 border border-${item.color}-500/20`}>
+                      <div key={item.label} className={`p-2.5 rounded-xl bg-${item.color}-500/[0.08] border border-${item.color}-500/20`}>
                         <div className="flex items-center gap-1.5 mb-1">
-                          <i className={`fa-solid ${item.icon} text-${item.color}-400 text-[10px]`}></i>
-                          <span className={`text-[10px] font-black text-${item.color}-400`}>{item.badge}</span>
+                          <i className={`fa-solid ${item.icon} text-${item.color}-400 text-[9px]`}></i>
+                          <span className={`text-[9px] font-black text-${item.color}-400`}>{item.label}</span>
                         </div>
-                        <p className="text-[9px] text-slate-500 leading-relaxed">{item.desc}</p>
+                        <p className="text-[9px] text-slate-600">{item.desc}</p>
                       </div>
                     ))}
                   </div>
@@ -806,44 +904,51 @@ export const BlogView: React.FC<BlogViewProps> = ({
                   )}
 
                   {/* Success */}
-                  {aiGenerated && !aiError && (
+                  {aiGenerated && !aiError && !isGenerating && (
                     <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-2">
                       <i className="fa-solid fa-circle-check text-emerald-400 text-xs shrink-0"></i>
-                      <p className="text-[11px] text-emerald-400">İçerik oluşturuldu! İçerik sekmesinde düzenleyebilirsiniz.</p>
+                      <p className="text-[11px] text-emerald-400 font-medium">Başarılı! İçerik ve SEO sekmeleri güncellendi.</p>
                     </div>
                   )}
 
                   {/* Generate Button */}
                   <button
                     onClick={handleGenerate}
-                    disabled={isGenerating || !aiTopic.trim() || !aiApiKey.trim()}
+                    disabled={isGenerating || !aiApiKey}
                     className="w-full py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{
                       background: isGenerating ? 'rgba(139,92,246,0.15)' : 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
                       border: '1px solid rgba(139,92,246,0.4)',
                       color: 'white',
-                      boxShadow: isGenerating ? 'none' : '0 4px 24px rgba(139,92,246,0.3)',
+                      boxShadow: isGenerating ? 'none' : '0 4px 24px rgba(139,92,246,0.25)',
                     }}
                   >
                     {isGenerating ? (
                       <>
                         <div className="w-4 h-4 border-2 border-violet-400 border-t-transparent rounded-full animate-spin"></div>
-                        <span>Makale oluşturuluyor...</span>
-                        <span className="text-[10px] text-violet-300 ml-1">(30–60 sn)</span>
+                        <span>İşleniyor...</span>
+                        <span className="text-[10px] text-violet-300">(30–60 sn)</span>
                       </>
                     ) : (
                       <>
-                        <i className="fa-solid fa-wand-magic-sparkles text-sm"></i>
-                        <span>AI ile Makale Oluştur</span>
+                        <i className={`fa-solid ${AI_MODES.find(m => m.id === aiMode)?.icon || 'fa-wand-magic-sparkles'} text-sm`}></i>
+                        <span>{AI_MODES.find(m => m.id === aiMode)?.label || 'Oluştur'}</span>
                       </>
                     )}
                   </button>
 
                   {isGenerating && (
-                    <div className="space-y-2">
-                      {['SEO analizi yapılıyor...', 'AEO yapısı hazırlanıyor...', 'GEO verileri ekleniyor...', 'İçerik yazılıyor...'].map((step, i) => (
+                    <div className="space-y-1.5">
+                      {(aiMode === 'full'
+                        ? ['SEO yapısı analiz ediliyor...', 'AEO SSS bölümü hazırlanıyor...', 'GEO verileri entegre ediliyor...', 'Makale yazılıyor (800+ kelime)...']
+                        : aiMode === 'improve'
+                        ? ['Mevcut içerik okunuyor...', 'İyileştirme noktaları tespit ediliyor...', 'Geliştirilmiş içerik yazılıyor...']
+                        : aiMode === 'faq'
+                        ? ['Soru kalıpları oluşturuluyor...', 'Cevaplar yazılıyor...']
+                        : ['Başlık optimize ediliyor...', 'Meta açıklama yazılıyor...']
+                      ).map((step, i) => (
                         <div key={i} className="flex items-center gap-2">
-                          <div className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" style={{ animationDelay: `${i * 0.2}s` }}></div>
+                          <div className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" style={{ animationDelay: `${i * 0.25}s` }}></div>
                           <span className="text-[10px] text-slate-500">{step}</span>
                         </div>
                       ))}
