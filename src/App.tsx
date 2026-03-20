@@ -536,99 +536,88 @@ const App: React.FC = () => {
                     void sym2;
 
                     return (
-                      <section className="relative overflow-hidden py-16 md:py-20" style={{ background: 'linear-gradient(180deg, #080a12 0%, #0c0f1a 50%, #080a12 100%)' }}>
-                        {/* subtle grid texture */}
-                        <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: 'linear-gradient(rgba(197,160,89,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(197,160,89,0.5) 1px, transparent 1px)', backgroundSize: '48px 48px' }} />
-                        {/* gold radial glow */}
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] opacity-[0.06]" style={{ background: 'radial-gradient(ellipse, #c5a059 0%, transparent 70%)' }} />
+                      <section className="relative overflow-hidden bg-slate-50 py-12 md:py-16">
+                        <TextureBackground />
 
-                        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 pt-10 pb-0">
 
                           {/* ── Header ── */}
-                          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10">
+                          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
                             <div className="reveal">
-                              <div className="flex items-center gap-2.5 mb-3">
-                                <div className="w-5 h-px" style={{ background: 'linear-gradient(90deg, #c5a059, transparent)' }} />
-                                <span className="text-[9px] font-black tracking-[0.4em] uppercase" style={{ color: 'rgba(197,160,89,0.7)' }}>{t('pricing.eyebrow')}</span>
+                              <div className="flex items-center gap-2.5 mb-2.5">
+                                <i className="fa-solid fa-plane-departure text-[var(--color-primary)] text-[10px]"></i>
+                                <span className="text-[9px] font-black tracking-[0.35em] text-slate-400 uppercase">{t('pricing.eyebrow')}</span>
                               </div>
-                              <h2 className="text-[28px] md:text-[34px] font-black tracking-tight leading-none text-white" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                {t('pricing.title')}&nbsp;<span style={{ color: '#c5a059' }}>{t('pricing.titleAccent')}</span>
+                              <h2 className="text-[26px] md:text-[32px] font-black text-slate-900 tracking-tight leading-none" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                {t('pricing.title')}&nbsp;<span className="text-[var(--color-primary)]">{t('pricing.titleAccent')}</span>
                               </h2>
-                              <p className="text-[12px] mt-2" style={{ color: 'rgba(255,255,255,0.35)' }}>{t('pricing.subtitle')}</p>
+                              <p className="text-slate-400 text-[12px] mt-1.5">{t('pricing.subtitle')}</p>
                             </div>
                             {/* Search + Legend */}
-                            <div className="flex flex-col items-start sm:items-end gap-3">
-                              <div className="relative">
-                                <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-[10px] pointer-events-none" style={{ color: 'rgba(197,160,89,0.4)' }}></i>
-                                <input
-                                  type="text"
-                                  value={priceSearch}
-                                  onChange={e => setPriceSearch(e.target.value)}
-                                  placeholder={t('pricing.search') || 'Bölge ara...'}
-                                  className="pl-8 pr-3 py-2 text-[12px] rounded-xl outline-none transition-all w-52"
-                                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.7)' }}
-                                  onFocus={e => (e.target.style.borderColor = 'rgba(197,160,89,0.4)')}
-                                  onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.08)')}
-                                />
-                                {priceSearch && (
-                                  <button onClick={() => setPriceSearch('')} className="absolute right-2.5 top-1/2 -translate-y-1/2" style={{ color: 'rgba(255,255,255,0.3)' }}>
-                                    <i className="fa-solid fa-xmark text-[10px]"></i>
-                                  </button>
-                                )}
-                              </div>
-                              <div className="flex items-center gap-4">
-                                {([
-                                  { cls: 'bg-emerald-500', lk: 'pricing.legendNear' },
-                                  { cls: 'bg-amber-500',   lk: 'pricing.legendMid' },
-                                  { cls: 'bg-rose-500',    lk: 'pricing.legendFar' },
-                                ] as const).map(item => (
-                                  <div key={item.lk} className="flex items-center gap-1.5">
-                                    <span className={`w-1.5 h-1.5 rounded-full ${item.cls} shrink-0`}></span>
-                                    <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.35)' }}>{t(item.lk)}</span>
-                                  </div>
-                                ))}
-                              </div>
+                            <div className="flex flex-col items-end gap-3 pb-0.5">
+                            {/* Search box */}
+                            <div className="relative">
+                              <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[11px] pointer-events-none"></i>
+                              <input
+                                type="text"
+                                value={priceSearch}
+                                onChange={e => setPriceSearch(e.target.value)}
+                                placeholder={t('pricing.search') || 'Bölge adı veya fiyat ara...'}
+                                className="pl-8 pr-3 py-2 text-[12px] rounded-xl border border-slate-200 bg-white text-slate-700 placeholder-slate-400 focus:outline-none focus:border-[var(--color-primary)] transition-colors w-52"
+                              />
+                              {priceSearch && (
+                                <button onClick={() => setPriceSearch('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                  <i className="fa-solid fa-xmark text-[10px]"></i>
+                                </button>
+                              )}
+                            </div>
+                            {/* Legend */}
+                            <div className="flex items-center gap-4">
+                              {([
+                                { cls: 'bg-emerald-500', lk: 'pricing.legendNear' },
+                                { cls: 'bg-amber-500',   lk: 'pricing.legendMid' },
+                                { cls: 'bg-rose-500',    lk: 'pricing.legendFar' },
+                              ] as const).map(item => (
+                                <div key={item.lk} className="flex items-center gap-1.5">
+                                  <span className={`w-1.5 h-1.5 rounded-full ${item.cls} shrink-0`}></span>
+                                  <span className="text-[10px] text-slate-400">{t(item.lk)}</span>
+                                </div>
+                              ))}
+                            </div>
                             </div>
                           </div>
 
                           {/* ── Groups ── */}
-                          <div className="space-y-8">
+                          <div className="space-y-7">
                             {(priceSearch.trim() ? filteredGroups : groups).map(group => (
                               <div key={group.labelKey}>
                                 {/* Group label */}
-                                <div className="flex items-center gap-3 mb-3">
+                                <div className="flex items-center gap-3 mb-3.5">
                                   <span className={`w-1.5 h-1.5 rounded-full ${group.dotCls} shrink-0`}></span>
-                                  <span className="text-[8px] font-black uppercase tracking-[0.4em]" style={{ color: 'rgba(255,255,255,0.25)' }}>{t(group.labelKey)}</span>
-                                  <span className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }}></span>
+                                  <span className="text-[8.5px] font-black uppercase tracking-[0.35em] text-slate-400">{t(group.labelKey)}</span>
+                                  <span className="flex-1 h-px bg-slate-200"></span>
                                 </div>
-                                {/* Rows */}
-                                <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.06)' }}>
-                                  {group.regions.map((region, ri) => (
+                                {/* Cards */}
+                                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 stagger-children">
+                                  {group.regions.map(region => (
                                     <a
                                       key={region.id}
                                       href={buildWaUrl(region.name, region.price)}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="group flex items-center justify-between gap-3 px-4 py-3 transition-all duration-150"
-                                      style={{
-                                        borderBottom: ri < group.regions.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
-                                        background: 'transparent',
-                                      }}
-                                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(197,160,89,0.05)'; }}
-                                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                                      className="reveal group flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl border border-slate-200 bg-white hover:border-[var(--color-primary)]/40 hover:bg-amber-50/50 hover:shadow-sm transition-all duration-200 cursor-pointer"
                                     >
-                                      <div className="flex items-center gap-3 min-w-0">
-                                        <span className="text-[10px] font-mono w-5 text-right shrink-0" style={{ color: 'rgba(255,255,255,0.15)' }}>{ri + 1}</span>
-                                        <i className="fa-solid fa-location-dot text-[9px] shrink-0 transition-colors duration-150" style={{ color: 'rgba(197,160,89,0.35)' }}></i>
-                                        <span className="text-[12.5px] font-medium truncate transition-colors duration-150" style={{ fontFamily: "'Montserrat', sans-serif", color: 'rgba(255,255,255,0.65)' }}>{region.name}</span>
+                                      <div className="flex items-center gap-2 min-w-0">
+                                        <i className="fa-solid fa-location-dot text-slate-300 group-hover:text-[var(--color-primary)] text-[10px] shrink-0 transition-colors duration-200"></i>
+                                        <span className="text-slate-600 text-[11.5px] font-medium truncate group-hover:text-slate-900 transition-colors duration-200" style={{ fontFamily: "'Montserrat', sans-serif" }}>{region.name}</span>
                                       </div>
-                                      <div className="flex items-center gap-3 shrink-0">
+                                      <div className="flex items-center gap-1.5 shrink-0">
                                         {region.price ? (
-                                          <span className="text-[13px] font-black" style={{ color: '#c5a059', fontFamily: "'Outfit', sans-serif" }}>{sym}{region.price}</span>
+                                          <span className="text-[var(--color-primary)] font-black text-[13px] leading-none">{sym}{region.price}</span>
                                         ) : (
-                                          <span className="text-[12px]" style={{ color: 'rgba(255,255,255,0.15)' }}>—</span>
+                                          <span className="text-slate-300 font-medium text-[11px] leading-none">—</span>
                                         )}
-                                        <i className="fa-brands fa-whatsapp text-[11px] opacity-0 group-hover:opacity-100 transition-opacity duration-150" style={{ color: '#25D366' }}></i>
+                                        <i className="fa-brands fa-whatsapp text-[#25D366] text-[11px] opacity-0 group-hover:opacity-100 transition-opacity duration-200"></i>
                                       </div>
                                     </a>
                                   ))}
@@ -638,17 +627,14 @@ const App: React.FC = () => {
                           </div>
 
                           {/* ── Footer ── */}
-                          <div className="mt-10 pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-2" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                          <div className="mt-8 pt-5 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-10">
                             <div className="flex items-start gap-2">
-                              <i className="fa-solid fa-circle-info text-[9px] mt-[3px] shrink-0" style={{ color: 'rgba(197,160,89,0.4)' }}></i>
-                              <p className="text-[10.5px] leading-relaxed max-w-lg" style={{ color: 'rgba(255,255,255,0.3)' }}>{t('pricing.note')}</p>
+                              <i className="fa-solid fa-circle-info text-slate-300 text-[9px] mt-[3px] shrink-0"></i>
+                              <p className="text-slate-400 text-[10.5px] leading-relaxed max-w-lg">{t('pricing.note')}</p>
                             </div>
                             <a
                               href="/bolgeler"
-                              className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg text-[10px] font-black tracking-[0.15em] uppercase transition-all duration-200"
-                              style={{ border: '1px solid rgba(197,160,89,0.2)', color: 'rgba(197,160,89,0.6)' }}
-                              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(197,160,89,0.5)'; (e.currentTarget as HTMLElement).style.color = '#c5a059'; }}
-                              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(197,160,89,0.2)'; (e.currentTarget as HTMLElement).style.color = 'rgba(197,160,89,0.6)'; }}
+                              className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 text-slate-500 hover:border-[var(--color-primary)]/40 hover:text-[var(--color-primary)] text-[10px] font-black tracking-[0.15em] uppercase transition-all duration-200"
                             >
                               {t('pricing.allRegions')}
                               <i className="fa-solid fa-arrow-right text-[8px]"></i>
