@@ -68,8 +68,8 @@ function saveContentToLS(content: SiteContent) {
 function loadBlogFromLS(): BlogPost[] {
     try {
         const saved = localStorage.getItem(LS_BLOG);
-        return saved ? JSON.parse(saved) : [];
-    } catch { return []; }
+        return saved ? JSON.parse(saved) : BLOG_POSTS;
+    } catch { return BLOG_POSTS; }
 }
 
 function saveBlogToLS(posts: BlogPost[]) {
