@@ -595,7 +595,7 @@ const App: React.FC = () => {
                                 <div className="flex items-center gap-3 mb-3.5">
                                   <span className={`w-1.5 h-1.5 rounded-full ${group.dotCls} shrink-0`}></span>
                                   <span className="text-[8.5px] font-black uppercase tracking-[0.35em] text-slate-400">{t(group.labelKey)}</span>
-                                  <span className="flex-1 h-px bg-slate-200"></span>
+                                  <span className="flex-1 h-px bg-slate-900/20"></span>
                                 </div>
                                 {/* Cards */}
                                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 stagger-children">
@@ -605,19 +605,26 @@ const App: React.FC = () => {
                                       href={buildWaUrl(region.name, region.price)}
                                       target="_blank"
                                       rel="noopener noreferrer"
-                                      className="reveal group flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl border border-slate-200 bg-white hover:border-[var(--color-primary)]/40 hover:bg-amber-50/50 hover:shadow-sm transition-all duration-200 cursor-pointer"
+                                      className="reveal group flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl transition-all duration-200 cursor-pointer"
+                                      style={{
+                                        background: 'rgba(8,10,20,0.88)',
+                                        border: '1px solid rgba(255,255,255,0.07)',
+                                        boxShadow: '0 2px 12px rgba(0,0,0,0.22)',
+                                      }}
+                                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.border = '1px solid rgba(197,160,89,0.35)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px rgba(197,160,89,0.1)'; }}
+                                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.border = '1px solid rgba(255,255,255,0.07)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 12px rgba(0,0,0,0.22)'; }}
                                     >
                                       <div className="flex items-center gap-2 min-w-0">
-                                        <i className="fa-solid fa-location-dot text-slate-300 group-hover:text-[var(--color-primary)] text-[10px] shrink-0 transition-colors duration-200"></i>
-                                        <span className="text-slate-600 text-[11.5px] font-medium truncate group-hover:text-slate-900 transition-colors duration-200" style={{ fontFamily: "'Montserrat', sans-serif" }}>{region.name}</span>
+                                        <i className="fa-solid fa-location-dot text-[var(--color-primary)]/40 group-hover:text-[var(--color-primary)] text-[9px] shrink-0 transition-colors duration-200"></i>
+                                        <span className="text-white/60 text-[11px] font-medium truncate group-hover:text-white/90 transition-colors duration-200" style={{ fontFamily: "'Montserrat', sans-serif" }}>{region.name}</span>
                                       </div>
                                       <div className="flex items-center gap-1.5 shrink-0">
                                         {region.price ? (
-                                          <span className="text-[var(--color-primary)] font-black text-[13px] leading-none">{sym}{region.price}</span>
+                                          <span className="text-[11px] font-black leading-none px-2 py-0.5 rounded-md" style={{ background: 'linear-gradient(135deg, rgba(232,212,154,0.12) 0%, rgba(197,160,89,0.18) 100%)', color: '#e8d49a', border: '1px solid rgba(197,160,89,0.25)', fontFamily: "'Outfit', sans-serif" }}>{sym}{region.price}</span>
                                         ) : (
-                                          <span className="text-slate-300 font-medium text-[11px] leading-none">—</span>
+                                          <span className="text-white/20 font-medium text-[11px] leading-none">—</span>
                                         )}
-                                        <i className="fa-brands fa-whatsapp text-[#25D366] text-[11px] opacity-0 group-hover:opacity-100 transition-opacity duration-200"></i>
+                                        <i className="fa-brands fa-whatsapp text-[#25D366] text-[10px] opacity-0 group-hover:opacity-100 transition-opacity duration-200"></i>
                                       </div>
                                     </a>
                                   ))}
@@ -627,7 +634,7 @@ const App: React.FC = () => {
                           </div>
 
                           {/* ── Footer ── */}
-                          <div className="mt-8 pt-5 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-10">
+                          <div className="mt-8 pt-5 border-t border-slate-900/15 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-10">
                             <div className="flex items-start gap-2">
                               <i className="fa-solid fa-circle-info text-slate-300 text-[9px] mt-[3px] shrink-0"></i>
                               <p className="text-slate-400 text-[10.5px] leading-relaxed max-w-lg">{t('pricing.note')}</p>
