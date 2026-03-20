@@ -26,6 +26,8 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
     const [isAddRegionModalOpen, setIsAddRegionModalOpen] = useState(false);
     const [editingRegion, setEditingRegion] = useState<Region | null>(null);
     const [showQuickAdd, setShowQuickAdd] = useState(false);
+    const [editingPriceId, setEditingPriceId] = useState<string | null>(null);
+    const [editingPriceValue, setEditingPriceValue] = useState<string>('');
     const [newRegion, setNewRegion] = useState<Region>({
         id: '', name: '', desc: '',
         image: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800',
@@ -289,8 +291,18 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                                             <td className="px-3 py-3.5 text-right">
                                                 <div className="inline-flex items-center gap-1">
                                                     <span className="text-[var(--color-primary)] font-bold text-sm">{editContent.currency?.symbol || '€'}</span>
-                                                    <input type="number" value={region.price}
-                                                        onChange={e => { const n = [...regions]; n[realIndex] = { ...n[realIndex], price: parseInt(e.target.value) || 0 }; setEditContent({ ...editContent, regions: n }); }}
+                                                    <input
+                                                        type="number"
+                                                        value={editingPriceId === region.id ? editingPriceValue : (region.price || 0)}
+                                                        onFocus={() => { setEditingPriceId(region.id); setEditingPriceValue(String(region.price || 0)); }}
+                                                        onChange={e => setEditingPriceValue(e.target.value)}
+                                                        onBlur={() => {
+                                                            const parsed = parseInt(editingPriceValue) || 0;
+                                                            const n = [...regions];
+                                                            n[realIndex] = { ...n[realIndex], price: parsed };
+                                                            setEditContent({ ...editContent, regions: n });
+                                                            setEditingPriceId(null);
+                                                        }}
                                                         className="w-14 bg-transparent text-right text-sm font-black text-white outline-none focus:text-[var(--color-primary)] transition-colors [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                                                 </div>
                                             </td>
