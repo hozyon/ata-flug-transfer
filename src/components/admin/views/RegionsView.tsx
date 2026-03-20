@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { RichTextEditor } from '../RichTextEditor';
 import { SiteContent, Region } from '../../../types';
 import { SCRAPED_REGIONS } from '../../../constants';
 import { useAppStore } from '../../../store/useAppStore';
@@ -91,8 +92,8 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                     <div key={i} className={`p-4 rounded-2xl bg-gradient-to-br ${s.gradient} border ${s.border}`}>
                         <div className="flex items-start justify-between">
                             <div>
-                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{s.label}</p>
-                                <p className="text-2xl font-black text-white mt-1">{s.value}</p>
+                                <p className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">{s.label}</p>
+                                <p className="text-2xl font-black font-outfit text-white mt-1">{s.value}</p>
                             </div>
                             <div className={`w-10 h-10 rounded-xl ${s.iconBg} flex items-center justify-center shadow-lg`}>
                                 <i className={`fa-solid ${s.icon} text-white text-sm`}></i>
@@ -111,7 +112,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                             <i className="fa-solid fa-globe text-white text-sm"></i>
                         </div>
                         <div className="text-left">
-                            <h3 className="text-sm font-bold text-white">Hazır Bölge Havuzu</h3>
+                            <h3 className="text-sm font-bold font-outfit text-white">Hazır Bölge Havuzu</h3>
                             <p className="text-[10px] text-slate-500">{SCRAPED_REGIONS.length} bölge mevcut · Tıklayarak ekle/kaldır</p>
                         </div>
                     </div>
@@ -161,7 +162,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-4 py-4">
                     <div className="flex items-center gap-2">
                         <i className="fa-solid fa-check-double text-emerald-400 text-sm"></i>
-                        <span className="text-sm font-bold text-white">Aktif Bölgeler</span>
+                        <span className="text-sm font-bold font-outfit text-white">Aktif Bölgeler</span>
                         <span className="text-[9px] font-black min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-white/5 text-slate-400">{regions.length}</span>
                     </div>
                     <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full sm:w-auto">
@@ -255,10 +256,10 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                             <thead>
                                 <tr className="border-t border-b border-white/[0.04] bg-white/[0.02]">
                                     <th className="w-10 px-2 py-3"></th>
-                                    <th className="text-left px-4 py-3 w-12"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">#</span></th>
-                                    <th className="text-left px-3 py-3"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Bölge</span></th>
-                                    <th className="text-right px-3 py-3 w-28"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Fiyat</span></th>
-                                    <th className="text-center px-3 py-3 w-20 hidden md:table-cell"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Durum</span></th>
+                                    <th className="text-left px-4 py-3 w-12"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">#</span></th>
+                                    <th className="text-left px-3 py-3"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Bölge</span></th>
+                                    <th className="text-right px-3 py-3 w-28"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Fiyat</span></th>
+                                    <th className="text-center px-3 py-3 w-20 hidden md:table-cell"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Durum</span></th>
                                     <th className="w-32 px-3 py-3"></th>
                                 </tr>
                             </thead>
@@ -363,7 +364,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                                     <i className={`fa-solid ${editingRegion ? 'fa-pen' : 'fa-map-location-dot'} text-sm`}></i>
                                 </div>
                                 <div>
-                                    <h3 className="text-lg font-bold text-white">{editingRegion ? 'Bölgeyi Düzenle' : 'Yeni Bölge Ekle'}</h3>
+                                    <h3 className="text-lg font-bold font-outfit text-white">{editingRegion ? 'Bölgeyi Düzenle' : 'Yeni Bölge Ekle'}</h3>
                                     <p className="text-[10px] text-slate-500">{editingRegion ? 'Bilgileri güncelleyin' : 'Transfer bölgesi ekleyin'}</p>
                                 </div>
                             </div>
@@ -426,13 +427,14 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                             </div>
 
                             {/* Description */}
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                                    <i className="fa-solid fa-align-left text-[8px] text-violet-400"></i> Açıklama
-                                </label>
-                                <textarea className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-slate-300 focus:border-violet-500/50 outline-none resize-none transition-all" rows={3}
-                                    value={newRegion.desc} onChange={e => setNewRegion({ ...newRegion, desc: e.target.value })} placeholder="Bölge hakkında kısa açıklama..." />
-                            </div>
+                            <RichTextEditor
+                                label={<><i className="fa-solid fa-align-left text-[8px] text-violet-400"></i> Açıklama</>}
+                                value={newRegion.desc}
+                                onChange={v => setNewRegion({ ...newRegion, desc: v })}
+                                placeholder="Bölge hakkında kısa açıklama..."
+                                minRows={4}
+                                compact
+                            />
 
                             {/* Quick Images */}
                             <div className="space-y-2">

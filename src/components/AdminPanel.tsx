@@ -1246,8 +1246,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
           </div>
           {isSidebarOpen && (
             <div className="flex-1 min-w-0 animate-in fade-in slide-in-from-left-2 duration-300">
-              <p className="text-[13px] font-black text-white tracking-widest leading-none">ATA FLUG</p>
-              <p className="text-[9px] font-medium text-[var(--color-primary)]/60 tracking-[0.3em] uppercase mt-0.5">Transfer</p>
+              <p className="font-outfit text-[13.5px] font-[800] text-white tracking-[0.12em] leading-none">ATA FLUG</p>
+              <p className="font-outfit text-[8.5px] font-[600] text-[var(--color-primary)]/70 tracking-[0.32em] uppercase mt-0.5">Transfer</p>
             </div>
           )}
           {isSidebarOpen && (
@@ -1291,7 +1291,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                       {icon}
                     </div>
                     {isSidebarOpen && (
-                      <span className={`text-[12px] font-semibold whitespace-nowrap truncate tracking-wide transition-colors ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`}>
+                      <span className={`font-outfit text-[12.5px] font-[560] whitespace-nowrap truncate tracking-[0.01em] transition-colors ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`}>
                         {label}
                       </span>
                     )}
@@ -1319,11 +1319,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
             // Group label renderer
             const GroupLabel = ({ label }: { label: string }) => isSidebarOpen ? (
-              <div className="flex items-center gap-3 px-4 pt-3 pb-1.5">
-                <span className="text-[9px] font-black text-slate-600 uppercase tracking-[0.28em] whitespace-nowrap">{label}</span>
+              <div className="flex items-center gap-2.5 px-3.5 pt-3 pb-1.5">
+                <span className="font-outfit text-[9px] font-[750] text-slate-600 uppercase tracking-[0.25em] whitespace-nowrap">{label}</span>
                 <div className="flex-1 h-px bg-gradient-to-r from-white/[0.07] to-transparent" />
               </div>
-            ) : <div className="pt-2" />;
+            ) : <div className="pt-2.5" />;
 
             return (
               <>
@@ -1419,7 +1419,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                   <img src={accountForm.avatar} alt="Avatar" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[12px] font-bold text-white truncate leading-tight group-hover:text-[var(--color-primary)] transition-colors">{accountForm.fullName || 'Admin'}</p>
+                  <p className="font-outfit text-[12.5px] font-[650] text-white truncate leading-tight group-hover:text-[var(--color-primary)] transition-colors">{accountForm.fullName || 'Admin'}</p>
                   <p className="text-[10px] text-slate-600 truncate">{accountForm.email || ''}</p>
                 </div>
                 <i className="fa-solid fa-chevron-right text-[9px] text-slate-700 group-hover:text-[var(--color-primary)] transition-colors shrink-0"></i>
@@ -1628,14 +1628,14 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
             {activeView === 'overview' && (
               <p className="text-slate-400 font-bold text-[10px] mb-1 uppercase tracking-wider">{currentTime.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long' })}</p>
             )}
-            <h1 className={`text-3xl font-black tracking-tight ${isDarkTheme ? 'text-white' : 'text-slate-900'} leading-tight`}>
+            <h1 className={`font-outfit text-[1.875rem] font-[800] tracking-[-0.02em] ${isDarkTheme ? 'text-white' : 'text-slate-900'} leading-[1.15]`}>
               {activeView === 'overview' ? (
                 <>Dashboard</>
               ) : (
                 VIEW_LABELS[activeView]?.label || activeView.replace('-', ' ')
               )}
             </h1>
-            <p className={`text-sm mt-1 ${isDarkTheme ? 'text-slate-400' : 'text-slate-500'} max-w-lg`}>
+            <p className={`text-[0.8125rem] mt-1.5 ${isDarkTheme ? 'text-slate-400' : 'text-slate-500'} max-w-lg leading-relaxed`}>
               {activeView === 'overview'
                 ? <>{greeting.emoji} {greeting.text}, <span className="font-semibold text-[var(--color-primary)]">Admin</span> — Tüm operasyonları buradan yönetebilirsiniz.</>
                 : (VIEW_LABELS[activeView]?.description || 'Operasyonel veriler ve site kontrol merkezi.')}
@@ -1725,13 +1725,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
         {/* Skeleton Loading */}
         {isPageTransitioning && (
-          <div className="animate-pulse space-y-4 mb-8">
+          <div className="space-y-4 mb-8">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[1, 2, 3, 4].map(i => <div key={i} className="h-20 rounded-2xl bg-white/5" />)}
+              {[1, 2, 3, 4].map(i => <div key={i} className="h-24 rounded-2xl admin-skeleton" />)}
             </div>
-            <div className="h-14 rounded-2xl bg-white/5" />
+            <div className="h-12 rounded-2xl admin-skeleton" />
             <div className="space-y-3">
-              {[1, 2, 3].map(i => <div key={i} className="h-16 rounded-2xl bg-white/5" />)}
+              {[1, 2, 3].map(i => <div key={i} className="h-16 rounded-2xl admin-skeleton" />)}
             </div>
           </div>
         )}
@@ -1962,8 +1962,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-50 z-0 pointer-events-none"></div>
                       <div className="relative z-10 flex items-start justify-between mb-4">
                         <div>
-                          <p className="text-[12px] font-bold text-[var(--color-primary)] uppercase tracking-wider mb-1 opacity-80">Toplam Ciro</p>
-                          <p className="text-4xl font-black text-white tracking-tight flex items-baseline gap-1">{siteContent.currency?.symbol || '€'}<span className="tabular-nums"><AnimatedNumber value={stats.totalRevenue} /></span></p>
+                          <p className="font-outfit text-[11px] font-[700] text-[var(--color-primary)] uppercase tracking-[0.12em] mb-1.5 opacity-80">Toplam Ciro</p>
+                          <p className="font-outfit text-[2.35rem] font-[800] text-white tracking-[-0.025em] flex items-baseline gap-1">{siteContent.currency?.symbol || '€'}<span className="tabular-nums"><AnimatedNumber value={stats.totalRevenue} /></span></p>
                         </div>
                         <div className="w-12 h-12 rounded-2xl bg-[var(--color-primary)]/20 flex items-center justify-center backdrop-blur-md border border-[var(--color-primary)]/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.2)]">
                           <i className="fa-solid fa-coins text-[var(--color-primary)] text-xl"></i>
@@ -2005,10 +2005,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                           )}
                         </div>
                         <div className="relative z-10">
-                          <p className="text-2xl font-black text-white tracking-tight tabular-nums mb-0.5">
+                          <p className="font-outfit text-[1.65rem] font-[800] text-white tracking-[-0.02em] tabular-nums mb-0.5">
                             {typeof kpi.val === 'number' ? <AnimatedNumber value={kpi.val} /> : kpi.val}
                           </p>
-                          <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">{kpi.label}</p>
+                          <p className="font-outfit text-[10px] font-[700] text-slate-500 uppercase tracking-[0.08em]">{kpi.label}</p>
                         </div>
                       </div>
                     ))}
@@ -2021,12 +2021,12 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                         </div>
                       </div>
                       <div>
-                        <p className="text-2xl font-black text-white tracking-tight tabular-nums mb-0.5">
+                        <p className="font-outfit text-[1.65rem] font-[800] text-white tracking-[-0.02em] tabular-nums mb-0.5">
                           {stats.completed + stats.confirmed > 0
                             ? `%${Math.round((stats.completed / Math.max(stats.completed + stats.confirmed + stats.pending, 1)) * 100)}`
                             : '%0'}
                         </p>
-                        <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Tamamlanma</p>
+                        <p className="font-outfit text-[10px] font-[700] text-slate-500 uppercase tracking-[0.08em]">Tamamlanma</p>
                         <p className="text-[10px] text-slate-600 mt-1">{stats.completed} / {stats.completed + stats.confirmed + stats.pending} transfer</p>
                       </div>
                     </div>
@@ -2048,8 +2048,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                       <i className="fa-solid fa-calendar-lines text-[var(--color-primary)] text-[11px]"></i>
                     </div>
                     <div>
-                      <h3 className="text-sm font-bold text-white leading-none">Son Rezervasyonlar</h3>
-                      <p className="text-[10px] text-slate-500 mt-0.5">{bookings.filter(b => b.status !== 'Deleted').length} toplam rezervasyon</p>
+                      <h3 className="font-outfit text-[13.5px] font-[700] text-white leading-none tracking-[0.005em]">Son Rezervasyonlar</h3>
+                      <p className="text-[10.5px] text-slate-500 mt-0.5">{bookings.filter(b => b.status !== 'Deleted').length} toplam rezervasyon</p>
                     </div>
                     {stats.todayBookings > 0 && (
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/15 text-rose-400 border border-rose-500/20 ml-1">
@@ -2065,13 +2065,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 <div className="hidden sm:block overflow-x-auto scrollbar-hide">
                   <table className="w-full text-left">
                     <thead>
-                      <tr className="text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-white/[0.04]">
-                        <th className="px-5 py-3">Müşteri</th>
-                        <th className="px-3 py-3 hidden sm:table-cell">Güzergah</th>
-                        <th className="px-3 py-3 hidden md:table-cell">Tarih</th>
-                        <th className="px-3 py-3">Tutar</th>
-                        <th className="px-3 py-3">Durum</th>
-                        <th className="px-3 py-3 hidden lg:table-cell">İşlem</th>
+                      <tr className="font-outfit text-[9.5px] font-[750] text-slate-500 uppercase tracking-[0.12em] border-b border-white/[0.04]">
+                        <th className="px-5 py-3 text-left">Müşteri</th>
+                        <th className="px-3 py-3 text-left hidden sm:table-cell">Güzergah</th>
+                        <th className="px-3 py-3 text-left hidden md:table-cell">Tarih</th>
+                        <th className="px-3 py-3 text-left">Tutar</th>
+                        <th className="px-3 py-3 text-left">Durum</th>
+                        <th className="px-3 py-3 text-left hidden lg:table-cell">İşlem</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -2210,7 +2210,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 {/* Activity Log — Timeline */}
                 <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                    <h3 className="font-outfit text-[11px] font-[700] text-slate-300 uppercase tracking-[0.1em] flex items-center gap-2">
                       <i className="fa-solid fa-clock-rotate-left text-[var(--color-primary)] text-[10px]"></i>
                       Son Aktiviteler
                     </h3>
@@ -2254,7 +2254,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
                 {/* Ülke Dağılımı */}
                 <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
-                  <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <h3 className="font-outfit text-[11px] font-[700] text-slate-300 uppercase tracking-[0.1em] mb-4 flex items-center gap-2">
                     <i className="fa-solid fa-globe text-[var(--color-primary)] text-[10px]"></i>
                     Müşteri Ülkeleri
                   </h3>
@@ -2289,7 +2289,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
                 {/* Aylık Karşılaştırma + Dönüş Oranı */}
                 <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
-                  <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <h3 className="font-outfit text-[11px] font-[700] text-slate-300 uppercase tracking-[0.1em] mb-4 flex items-center gap-2">
                     <i className="fa-solid fa-chart-simple text-[var(--color-primary)] text-[10px]"></i>
                     Performans
                   </h3>

@@ -50,8 +50,8 @@ export const FleetView: React.FC<FleetViewProps> = ({
                     <div key={i} className={`p-4 rounded-2xl bg-gradient-to-br ${s.gradient} border ${s.border}`}>
                         <div className="flex items-start justify-between">
                             <div>
-                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{s.label}</p>
-                                <p className="text-2xl font-black text-white mt-1">{s.value}</p>
+                                <p className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">{s.label}</p>
+                                <p className="text-2xl font-black font-outfit text-white mt-1">{s.value}</p>
                             </div>
                             <div className={`w-10 h-10 rounded-xl ${s.iconBg} flex items-center justify-center shadow-lg`}>
                                 <i className={`fa-solid ${s.icon} text-white text-sm`}></i>
@@ -167,12 +167,12 @@ export const FleetView: React.FC<FleetViewProps> = ({
                             <thead>
                                 <tr className="border-t border-b border-white/[0.04] bg-white/[0.02]">
                                     <th className="w-10 px-2 py-3"></th>
-                                    <th className="text-left px-4 py-3 w-12"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">#</span></th>
-                                    <th className="text-left px-3 py-3"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Araç</span></th>
-                                    <th className="text-left px-3 py-3 hidden md:table-cell"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Kategori</span></th>
-                                    <th className="text-center px-3 py-3 hidden sm:table-cell"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Kapasite</span></th>
-                                    <th className="text-center px-3 py-3 hidden sm:table-cell"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Bagaj</span></th>
-                                    <th className="text-left px-3 py-3 hidden lg:table-cell"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Donanımlar</span></th>
+                                    <th className="text-left px-4 py-3 w-12"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">#</span></th>
+                                    <th className="text-left px-3 py-3"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Araç</span></th>
+                                    <th className="text-left px-3 py-3 hidden md:table-cell"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Kategori</span></th>
+                                    <th className="text-center px-3 py-3 hidden sm:table-cell"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Kapasite</span></th>
+                                    <th className="text-center px-3 py-3 hidden sm:table-cell"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Bagaj</span></th>
+                                    <th className="text-left px-3 py-3 hidden lg:table-cell"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Donanımlar</span></th>
                                     <th className="w-32 px-3 py-3"></th>
                                 </tr>
                             </thead>

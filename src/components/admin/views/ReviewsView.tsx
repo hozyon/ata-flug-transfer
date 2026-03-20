@@ -113,8 +113,8 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
                     <div key={i} className={`p-4 rounded-2xl bg-gradient-to-br ${s.gradient} border ${s.border}`}>
                         <div className="flex items-start justify-between">
                             <div>
-                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{s.label}</p>
-                                <p className="text-2xl font-black text-white mt-1">{s.value}</p>
+                                <p className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">{s.label}</p>
+                                <p className="text-2xl font-black font-outfit text-white mt-1">{s.value}</p>
                                 {'alert' in s && s.alert && <p className="text-[10px] text-amber-400 font-medium mt-1"><i className="fa-solid fa-circle-exclamation mr-1"></i>İnceleme bekliyor</p>}
                             </div>
                             <div className={`w-10 h-10 rounded-xl ${s.iconBg} flex items-center justify-center shadow-lg`}>
@@ -307,11 +307,11 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
                                         <input type="checkbox" checked={allSelected} onChange={toggleAll}
                                             className="w-3.5 h-3.5 rounded border-white/20 bg-white/5 accent-[#c5a059] cursor-pointer" />
                                     </th>
-                                    <th className="text-left px-3 py-3"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Müşteri</span></th>
-                                    <th className="text-left px-3 py-3 hidden md:table-cell"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Yorum</span></th>
-                                    <th className="text-center px-3 py-3 w-28"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Puan</span></th>
-                                    <th className="text-left px-3 py-3 hidden lg:table-cell w-28"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Tarih</span></th>
-                                    <th className="text-left px-3 py-3 w-20"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Kaynak</span></th>
+                                    <th className="text-left px-3 py-3"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Müşteri</span></th>
+                                    <th className="text-left px-3 py-3 hidden md:table-cell"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Yorum</span></th>
+                                    <th className="text-center px-3 py-3 w-28"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Puan</span></th>
+                                    <th className="text-left px-3 py-3 hidden lg:table-cell w-28"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Tarih</span></th>
+                                    <th className="text-left px-3 py-3 w-20"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Kaynak</span></th>
                                     <th className="w-40 px-3 py-3"></th>
                                 </tr>
                             </thead>

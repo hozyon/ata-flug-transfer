@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
+import { RichTextEditor } from '../RichTextEditor';
 import { SiteContent } from '../../../types';
 import { useDragAndDrop } from '../../../hooks/useDragAndDrop';
 import { useViewMode } from '../../../hooks/useViewMode';
@@ -68,8 +69,8 @@ export const FAQView: React.FC<FAQViewProps> = ({
                     <div key={i} className={`p-4 rounded-2xl bg-gradient-to-br ${s.gradient} border ${s.border}`}>
                         <div className="flex items-start justify-between">
                             <div>
-                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{s.label}</p>
-                                <p className="text-2xl font-black text-white mt-1">{s.value}</p>
+                                <p className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">{s.label}</p>
+                                <p className="text-2xl font-black font-outfit text-white mt-1">{s.value}</p>
                                 {'alert' in s && s.alert && <p className="text-[10px] text-amber-400 font-medium mt-1"><i className="fa-solid fa-circle-exclamation mr-1"></i>Cevap bekliyor</p>}
                             </div>
                             <div className={`w-10 h-10 rounded-xl ${s.iconBg} flex items-center justify-center shadow-lg`}>
@@ -170,14 +171,19 @@ export const FAQView: React.FC<FAQViewProps> = ({
                                         {isExpanded && (
                                             <div className="mt-3 pt-3 border-t border-white/[0.04] space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
                                                 <div>
-                                                    <label className="text-[10px] font-black text-[var(--color-primary)] uppercase tracking-widest mb-1 block">Soru</label>
+                                                    <label className="text-[10px] font-black font-outfit text-[var(--color-primary)] uppercase tracking-widest mb-1 block">Soru</label>
                                                     <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-3 py-2.5 text-sm text-white focus:border-[var(--color-primary)]/50 outline-none"
                                                         value={item.q} onChange={e => { const n = [...allFaq]; n[globalIndex] = { ...n[globalIndex], q: e.target.value }; setEditContent({ ...editContent, faq: n }); }} onClick={e => e.stopPropagation()} />
                                                 </div>
-                                                <div>
-                                                    <label className="text-[10px] font-black text-[var(--color-primary)] uppercase tracking-widest mb-1 block">Cevap</label>
-                                                    <textarea className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-3 py-2.5 text-sm text-slate-300 focus:border-[var(--color-primary)]/50 outline-none resize-none" rows={3}
-                                                        value={item.a || ''} onChange={e => { const n = [...allFaq]; n[globalIndex] = { ...n[globalIndex], a: e.target.value }; setEditContent({ ...editContent, faq: n }); }} onClick={e => e.stopPropagation()} />
+                                                <div onClick={e => e.stopPropagation()}>
+                                                    <RichTextEditor
+                                                        label={<span className="font-black font-outfit text-[var(--color-primary)] uppercase tracking-widest">Cevap</span>}
+                                                        value={item.a || ''}
+                                                        onChange={v => { const n = [...allFaq]; n[globalIndex] = { ...n[globalIndex], a: v }; setEditContent({ ...editContent, faq: n }); }}
+                                                        placeholder="Sorunun cevabını yazın..."
+                                                        minRows={4}
+                                                        compact
+                                                    />
                                                 </div>
                                             </div>
                                         )}
@@ -194,10 +200,10 @@ export const FAQView: React.FC<FAQViewProps> = ({
                             <thead>
                                 <tr className="border-t border-b border-white/[0.04] bg-white/[0.02]">
                                     <th className="w-10 px-2 py-3"></th>
-                                    <th className="text-left px-4 py-3 w-12"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">#</span></th>
-                                    <th className="text-left px-3 py-3"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Soru</span></th>
-                                    <th className="text-center px-3 py-3 w-20"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Cevap</span></th>
-                                    <th className="text-center px-3 py-3 w-20"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Görünürlük</span></th>
+                                    <th className="text-left px-4 py-3 w-12"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">#</span></th>
+                                    <th className="text-left px-3 py-3"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Soru</span></th>
+                                    <th className="text-center px-3 py-3 w-20"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Cevap</span></th>
+                                    <th className="text-center px-3 py-3 w-20"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Görünürlük</span></th>
                                     <th className="w-32 px-3 py-3"></th>
                                 </tr>
                             </thead>
@@ -273,19 +279,20 @@ export const FAQView: React.FC<FAQViewProps> = ({
                                                     <td colSpan={5} className="px-6 py-5">
                                                         <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300 max-w-3xl">
                                                             <div>
-                                                                <label className="flex items-center gap-2 text-[10px] font-black text-[var(--color-primary)] uppercase tracking-widest mb-2">
+                                                                <label className="flex items-center gap-2 text-[10px] font-black font-outfit text-[var(--color-primary)] uppercase tracking-widest mb-2">
                                                                     <i className="fa-solid fa-q text-[8px]"></i> Soru
                                                                 </label>
                                                                 <textarea className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white font-medium text-sm outline-none focus:border-[var(--color-primary)] transition-all resize-none" rows={2} value={item.q}
                                                                     onChange={e => { const n = [...allFaq]; n[globalIndex].q = e.target.value; setEditContent({ ...editContent, faq: n }); }} />
                                                             </div>
-                                                            <div>
-                                                                <label className="flex items-center gap-2 text-[10px] font-black text-emerald-400 uppercase tracking-widest mb-2">
-                                                                    <i className="fa-solid fa-a text-[8px]"></i> Cevap
-                                                                </label>
-                                                                <textarea className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-slate-300 text-sm outline-none focus:border-emerald-500 transition-all resize-none" rows={4} value={item.a}
-                                                                    onChange={e => { const n = [...allFaq]; n[globalIndex].a = e.target.value; setEditContent({ ...editContent, faq: n }); }} />
-                                                            </div>
+                                                            <RichTextEditor
+                                                                label={<><i className="fa-solid fa-a text-[8px] text-emerald-400"></i> <span className="text-emerald-400">Cevap</span></>}
+                                                                value={item.a || ''}
+                                                                onChange={v => { const n = [...allFaq]; n[globalIndex].a = v; setEditContent({ ...editContent, faq: n }); }}
+                                                                placeholder="Sorunun cevabını yazın..."
+                                                                minRows={5}
+                                                                compact
+                                                            />
                                                         </div>
                                                     </td>
                                                 </tr>

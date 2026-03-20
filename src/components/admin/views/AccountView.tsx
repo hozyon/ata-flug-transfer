@@ -20,7 +20,7 @@ interface AccountViewProps {
 }
 
 const INPUT = "w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-[var(--color-primary)]/50 focus:ring-1 focus:ring-[var(--color-primary)]/20 transition-all";
-const LABEL = "text-[10px] font-black text-slate-500 uppercase tracking-widest";
+const LABEL = "text-[10px] font-black font-outfit text-slate-500 uppercase tracking-widest";
 
 export const AccountView: React.FC<AccountViewProps> = ({
     accountForm, setAccountForm,
@@ -103,7 +103,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
-                        <h2 className="text-lg font-black text-white tracking-tight truncate">{accountForm.fullName || 'Admin'}</h2>
+                        <h2 className="text-lg font-black font-outfit text-white tracking-tight truncate">{accountForm.fullName || 'Admin'}</h2>
                         <p className="text-[var(--color-primary)] text-xs font-semibold truncate">{accountForm.email}</p>
                         <span className="inline-flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded-full bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 text-[var(--color-primary)] text-[9px] font-black">
                             <i className="fa-solid fa-crown text-[7px]"></i> SİSTEM YÖNETİCİSİ
@@ -157,7 +157,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                             <div className="w-7 h-7 rounded-lg bg-[var(--color-primary)]/10 flex items-center justify-center">
                                 <i className="fa-solid fa-id-card text-[var(--color-primary)] text-[11px]"></i>
                             </div>
-                            <h3 className="text-sm font-black text-white tracking-wide">PROFİL BİLGİLERİ</h3>
+                            <h3 className="text-sm font-black font-outfit text-white tracking-wide">PROFİL BİLGİLERİ</h3>
                             <div className="ml-auto">
                                 {profileSaveStatus === 'saving' && (
                                     <span className="flex items-center gap-1.5 text-[10px] text-slate-500">
@@ -222,7 +222,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                                 <i className="fa-solid fa-key text-amber-400 text-[11px]"></i>
                             </div>
                             <div className="flex-1 text-left">
-                                <p className="text-sm font-black text-white">Şifre Değiştir</p>
+                                <p className="text-sm font-black font-outfit text-white">Şifre Değiştir</p>
                                 <p className="text-[10px] text-slate-500">Hesap giriş şifrenizi güncelleyin</p>
                             </div>
                             <i className={`fa-solid fa-chevron-down text-slate-500 text-xs transition-transform duration-300 ${showPwFields ? 'rotate-180' : ''}`}></i>
@@ -336,7 +336,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                                 <i className="fa-solid fa-robot text-violet-400 text-[11px]"></i>
                             </div>
                             <div className="flex-1">
-                                <h3 className="text-sm font-black text-white tracking-wide">AI ENTEGRASYONU</h3>
+                                <h3 className="text-sm font-black font-outfit text-white tracking-wide">AI ENTEGRASYONU</h3>
                                 <p className="text-[10px] text-violet-400/70">Claude API · SEO / AEO / GEO</p>
                             </div>
                             {aiApiKey && (
@@ -420,7 +420,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                             <div className="w-7 h-7 rounded-lg bg-blue-500/10 flex items-center justify-center">
                                 <i className="fa-solid fa-bell text-blue-400 text-[11px]"></i>
                             </div>
-                            <h3 className="text-sm font-black text-white tracking-wide">BİLDİRİMLER</h3>
+                            <h3 className="text-sm font-black font-outfit text-white tracking-wide">BİLDİRİMLER</h3>
                         </div>
                         <div className="p-4 space-y-1">
                             {[
@@ -460,7 +460,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                             <div className="w-7 h-7 rounded-lg bg-slate-500/10 flex items-center justify-center">
                                 <i className="fa-solid fa-sliders text-slate-400 text-[11px]"></i>
                             </div>
-                            <h3 className="text-sm font-black text-white tracking-wide">İŞLEMLER</h3>
+                            <h3 className="text-sm font-black font-outfit text-white tracking-wide">İŞLEMLER</h3>
                         </div>
                         <div className="p-4 space-y-2">
                             <button

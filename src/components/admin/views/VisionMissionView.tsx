@@ -1,4 +1,5 @@
 import React from 'react';
+import { RichTextEditor } from '../RichTextEditor';
 
 interface VisionMissionViewProps {
     editContent: any;
@@ -100,11 +101,14 @@ export const VisionMissionView: React.FC<VisionMissionViewProps> = ({ editConten
                             <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500/50 outline-none transition-all"
                                 value={vm.vision?.title || ''} onChange={e => update('vision.title', e.target.value)} />
                         </div>
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i className="fa-solid fa-align-left text-[8px] text-blue-400"></i> Açıklama</label>
-                            <textarea className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-slate-300 focus:border-blue-500/50 outline-none transition-all resize-none" rows={3}
-                                value={vm.vision?.desc || ''} onChange={e => update('vision.desc', e.target.value)} />
-                        </div>
+                        <RichTextEditor
+                            label={<><i className="fa-solid fa-align-left text-[8px] text-blue-400"></i> Açıklama</>}
+                            value={vm.vision?.desc || ''}
+                            onChange={v => update('vision.desc', v)}
+                            placeholder="Vizyon açıklaması..."
+                            minRows={4}
+                            compact
+                        />
                         <div className="space-y-2">
                             <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i className="fa-solid fa-list text-[8px] text-blue-400"></i> Maddeler</label>
                             <div className="space-y-2">
@@ -132,11 +136,14 @@ export const VisionMissionView: React.FC<VisionMissionViewProps> = ({ editConten
                             <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:border-violet-500/50 outline-none transition-all"
                                 value={vm.mission?.title || ''} onChange={e => update('mission.title', e.target.value)} />
                         </div>
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i className="fa-solid fa-align-left text-[8px] text-violet-400"></i> Açıklama</label>
-                            <textarea className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-slate-300 focus:border-violet-500/50 outline-none transition-all resize-none" rows={3}
-                                value={vm.mission?.desc || ''} onChange={e => update('mission.desc', e.target.value)} />
-                        </div>
+                        <RichTextEditor
+                            label={<><i className="fa-solid fa-align-left text-[8px] text-violet-400"></i> Açıklama</>}
+                            value={vm.mission?.desc || ''}
+                            onChange={v => update('mission.desc', v)}
+                            placeholder="Misyon açıklaması..."
+                            minRows={4}
+                            compact
+                        />
                         <div className="space-y-2">
                             <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i className="fa-solid fa-list text-[8px] text-violet-400"></i> Maddeler</label>
                             <div className="space-y-2">

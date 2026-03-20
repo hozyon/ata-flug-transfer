@@ -166,7 +166,7 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                             <i className="fa-solid fa-calendar-check text-white text-base"></i>
                         </div>
                         <div>
-                            <h1 className="text-2xl font-black text-white tracking-tight">Rezervasyonlar</h1>
+                            <h1 className="font-outfit text-[1.6rem] font-[800] text-white tracking-[-0.02em]">Rezervasyonlar</h1>
                             <div className="flex items-center gap-3 mt-0.5 flex-wrap">
                                 <span className="text-xs text-slate-500">{counts.All} toplam rezervasyon</span>
                                 {counts.Pending > 0 && (
@@ -222,8 +222,8 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                             </div>
                         </div>
                         <div className="min-w-0">
-                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest truncate">{s.label}</p>
-                            <p className="text-xl font-black text-white tabular-nums leading-tight mt-0.5">{s.value}</p>
+                            <p className="font-outfit text-[9.5px] font-[750] text-slate-500 uppercase tracking-[0.12em] truncate">{s.label}</p>
+                            <p className="font-outfit text-[1.35rem] font-[800] text-white tabular-nums leading-tight mt-0.5">{s.value}</p>
                             <p className={`text-[10px] mt-0.5 ${s.color} opacity-70`}>{s.sub}</p>
                         </div>
                     </div>
@@ -246,7 +246,7 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                         const active = bookingFilter === tab.id;
                         return (
                             <button key={tab.id} onClick={() => setBookingFilter(tab.id as any)}
-                                className={`relative flex items-center gap-2 px-4 py-3.5 text-[11px] font-bold whitespace-nowrap transition-all shrink-0
+                                className={`relative flex items-center gap-2 px-4 py-3.5 font-outfit text-[11px] font-[650] whitespace-nowrap transition-all shrink-0
                                     ${active ? 'text-[var(--color-primary)]' : 'text-slate-600 hover:text-slate-300'}`}>
                                 <i className={`fa-solid ${tab.icon} text-[10px]`}></i>
                                 {tab.label}
@@ -486,12 +486,12 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                                             onChange={toggleAll} className="w-3.5 h-3.5 rounded border-white/20 bg-white/5 accent-[#c5a059] cursor-pointer" />
                                     </th>
                                     <th className="text-left px-3 py-3.5">
-                                        <button onClick={() => toggleSort('name')} className="flex items-center gap-1.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-white transition-colors">
+                                        <button onClick={() => toggleSort('name')} className="flex items-center gap-1.5 font-outfit text-[9.5px] font-[750] text-slate-500 uppercase tracking-[0.12em] hover:text-white transition-colors">
                                             Müşteri <SortIcon col="name" />
                                         </button>
                                     </th>
                                     <th className="text-left px-3 py-3.5 hidden md:table-cell">
-                                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Güzergah</span>
+                                        <span className="font-outfit text-[9.5px] font-[750] text-slate-500 uppercase tracking-[0.12em]">Güzergah</span>
                                     </th>
                                     <th className="text-left px-3 py-3.5">
                                         <button onClick={() => toggleSort('date')} className="flex items-center gap-1.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-white transition-colors">
@@ -499,7 +499,7 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                                         </button>
                                     </th>
                                     <th className="text-left px-3 py-3.5 hidden lg:table-cell">
-                                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Araç</span>
+                                        <span className="font-outfit text-[9.5px] font-[750] text-slate-500 uppercase tracking-[0.12em]">Araç</span>
                                     </th>
                                     <th className="text-right px-3 py-3.5">
                                         <button onClick={() => toggleSort('price')} className="flex items-center gap-1.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-white transition-colors ml-auto">
@@ -507,7 +507,7 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                                         </button>
                                     </th>
                                     <th className="text-left px-3 py-3.5">
-                                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Durum</span>
+                                        <span className="font-outfit text-[9.5px] font-[750] text-slate-500 uppercase tracking-[0.12em]">Durum</span>
                                     </th>
                                     <th className="w-28 px-3 py-3.5"></th>
                                 </tr>

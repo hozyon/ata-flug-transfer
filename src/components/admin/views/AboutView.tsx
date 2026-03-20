@@ -1,4 +1,5 @@
 import React from 'react';
+import { RichTextEditor } from '../RichTextEditor';
 
 interface AboutViewProps {
     editContent: any;
@@ -64,14 +65,13 @@ export const AboutView: React.FC<AboutViewProps> = ({ editContent, setEditConten
                     </div>
 
                     {/* Content */}
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                            <i className="fa-solid fa-align-left text-[8px] text-blue-400"></i> Ana İçerik Metni
-                        </label>
-                        <textarea className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-slate-300 focus:border-[var(--color-primary)]/50 outline-none transition-all resize-none" rows={6}
-                            value={editContent.about.content || ''} onChange={e => setEditContent({ ...editContent, about: { ...editContent.about, content: e.target.value } })} />
-                        <p className="text-[10px] text-slate-600 text-right">{(editContent.about.content || '').length} karakter</p>
-                    </div>
+                    <RichTextEditor
+                        label={<><i className="fa-solid fa-align-left text-[8px] text-blue-400"></i> Ana İçerik Metni</>}
+                        value={editContent.about.content || ''}
+                        onChange={v => setEditContent({ ...editContent, about: { ...editContent.about, content: v } })}
+                        placeholder="Şirket hakkında bilgi yazın..."
+                        minRows={8}
+                    />
 
                     {/* Image Section */}
                     <div className="bg-white/[0.02] border border-white/[0.04] rounded-xl p-5">

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, Dispatch, SetStateAction } from 'react';
+import DOMPurify from 'dompurify';
 import { EmptyState } from '../EmptyState';
 
 interface BlogPost {
@@ -472,8 +473,8 @@ export const BlogView: React.FC<BlogViewProps> = ({
           <div key={i} className={`p-4 rounded-2xl bg-gradient-to-br ${s.gradient} border ${s.border}`}>
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{s.label}</p>
-                <p className="text-2xl font-black text-white mt-1">{s.value}</p>
+                <p className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">{s.label}</p>
+                <p className="text-2xl font-black font-outfit text-white mt-1">{s.value}</p>
               </div>
               <div className={`w-10 h-10 rounded-xl ${s.iconBg} flex items-center justify-center shadow-lg`}>
                 <i className={`fa-solid ${s.icon} text-white text-sm`}></i>
@@ -542,10 +543,10 @@ export const BlogView: React.FC<BlogViewProps> = ({
                     <input type="checkbox" checked={allSelected} onChange={() => { if (allSelected) setSelectedBlogs(selectedBlogs.filter(id => !filteredIds.includes(id))); else setSelectedBlogs([...new Set([...selectedBlogs, ...filteredIds])]); }}
                       className="w-3.5 h-3.5 rounded border-white/20 bg-white/5 accent-[#c5a059] cursor-pointer" />
                   </th>
-                  <th className="text-left px-3 py-3"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Yazı</span></th>
-                  <th className="text-left px-3 py-3 hidden md:table-cell"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Kategori</span></th>
-                  <th className="text-left px-3 py-3 hidden lg:table-cell"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Tarih</span></th>
-                  <th className="text-center px-3 py-3 w-20"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Durum</span></th>
+                  <th className="text-left px-3 py-3"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Yazı</span></th>
+                  <th className="text-left px-3 py-3 hidden md:table-cell"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Kategori</span></th>
+                  <th className="text-left px-3 py-3 hidden lg:table-cell"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Tarih</span></th>
+                  <th className="text-center px-3 py-3 w-20"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Durum</span></th>
                   <th className="w-28 px-3 py-3"></th>
                 </tr>
               </thead>
@@ -758,7 +759,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
                       <h1 className="text-xl font-black mt-2 text-white leading-tight">{newBlogPost.title || <span className="text-slate-600">Başlık girilmedi...</span>}</h1>
                       <p className="mt-2 text-sm text-slate-400 leading-relaxed">{newBlogPost.excerpt || <span className="text-slate-700">Özet girilmedi...</span>}</p>
                       <hr className="my-4 border-white/[0.06]" />
-                      <div className="prose-custom text-sm" dangerouslySetInnerHTML={{ __html: renderMarkdown(newBlogPost.content) || '<p class="text-slate-700">İçerik girilmedi...</p>' }} />
+                      <div className="prose-custom text-sm" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(renderMarkdown(newBlogPost.content) || '<p class="text-slate-700">İçerik girilmedi...</p>') }} />
                     </div>
                   )}
                 </div>
@@ -964,7 +965,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
                   <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
                     <div className="flex items-center justify-between mb-3">
                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">SEO Skoru</p>
-                      <span className={`text-2xl font-black ${scoreColor}`}>{seoScore}<span className="text-sm text-slate-500">/100</span></span>
+                      <span className={`text-2xl font-black font-outfit ${scoreColor}`}>{seoScore}<span className="text-sm text-slate-500">/100</span></span>
                     </div>
                     <div className="w-full h-2 bg-white/[0.05] rounded-full overflow-hidden mb-4">
                       <div className={`h-full ${scoreBg} rounded-full transition-all duration-500`} style={{ width: `${seoScore}%` }}></div>
@@ -985,7 +986,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">SEO Başlığı</label>
+                    <label className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">SEO Başlığı</label>
                     <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:border-[var(--color-primary)]/50 outline-none transition-all"
                       value={newBlogPost.seoTitle || ''} onChange={e => setNewBlogPost(p => ({ ...p, seoTitle: e.target.value }))} placeholder="Arama motoru başlığı (60 karakter)..." />
                     <div className="flex justify-between">
@@ -994,7 +995,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Meta Açıklama</label>
+                    <label className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Meta Açıklama</label>
                     <textarea className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-slate-300 focus:border-[var(--color-primary)]/50 outline-none resize-none transition-all" rows={3}
                       value={newBlogPost.seoDescription || ''} onChange={e => setNewBlogPost(p => ({ ...p, seoDescription: e.target.value }))} placeholder="Arama motorlarında görünen açıklama (160 karakter)..." />
                     <div className="flex justify-between">
@@ -1003,7 +1004,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Etiketler (virgülle ayırın)</label>
+                    <label className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Etiketler (virgülle ayırın)</label>
                     <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:border-[var(--color-primary)]/50 outline-none transition-all"
                       value={(newBlogPost.tags || []).join(', ')} onChange={e => setNewBlogPost(p => ({ ...p, tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean) }))} placeholder="antalya transfer, vip, havalimanı..." />
                     <div className="flex flex-wrap gap-1 mt-1">
@@ -1040,7 +1041,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Başlık *</label>
+                      <label className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Başlık *</label>
                       <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm font-bold text-white focus:border-[var(--color-primary)]/50 outline-none transition-all"
                         value={newBlogPost.title} onChange={e => {
                           const v = e.target.value;
@@ -1049,7 +1050,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
                         }} placeholder="Yazı başlığı..." />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Kategori</label>
+                      <label className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Kategori</label>
                       <select className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:border-[var(--color-primary)]/50 outline-none transition-all"
                         value={newBlogPost.category} onChange={e => setNewBlogPost(p => ({ ...p, category: e.target.value }))}>
                         {blogCategories.map(cat => <option key={cat} value={cat} className="bg-slate-900">{cat}</option>)}
@@ -1064,18 +1065,18 @@ export const BlogView: React.FC<BlogViewProps> = ({
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">URL (Slug) *</label>
+                      <label className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">URL (Slug) *</label>
                       <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:border-[var(--color-primary)]/50 outline-none font-mono transition-all"
                         value={newBlogPost.slug} onChange={e => { setSlugManuallyEdited(true); setNewBlogPost(p => ({ ...p, slug: e.target.value })); }} placeholder="yazi-url-adresi" />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Yazar</label>
+                      <label className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Yazar</label>
                       <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:border-[var(--color-primary)]/50 outline-none transition-all"
                         value={newBlogPost.author || ''} onChange={e => setNewBlogPost(p => ({ ...p, author: e.target.value }))} placeholder="Yazar adı..." />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Özet</label>
+                    <label className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Özet</label>
                     <textarea className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-slate-300 focus:border-[var(--color-primary)]/50 outline-none resize-none transition-all" rows={3}
                       value={newBlogPost.excerpt} onChange={e => setNewBlogPost(p => ({ ...p, excerpt: e.target.value }))} placeholder="Kısa özet metni..." />
                   </div>

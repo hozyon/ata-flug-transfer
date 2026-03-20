@@ -38,8 +38,8 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
                     <div key={i} className={`p-4 rounded-2xl bg-gradient-to-br ${s.gradient} border ${s.border}`}>
                         <div className="flex items-start justify-between">
                             <div>
-                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{s.label}</p>
-                                <p className="text-2xl font-black text-white mt-1">{s.value}</p>
+                                <p className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">{s.label}</p>
+                                <p className="text-2xl font-black font-outfit text-white mt-1">{s.value}</p>
                             </div>
                             <div className={`w-10 h-10 rounded-xl ${s.iconBg} flex items-center justify-center shadow-lg`}>
                                 <i className={`fa-solid ${s.icon} text-white text-sm`}></i>
@@ -52,7 +52,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
             {/* Completion Bar */}
             <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl px-5 py-3.5">
                 <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Profil Tamamlanma</span>
+                    <span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Profil Tamamlanma</span>
                     <span className={`text-xs font-black ${percent === 100 ? 'text-emerald-400' : percent >= 70 ? 'text-amber-400' : 'text-red-400'}`}>{percent}%</span>
                 </div>
                 <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
@@ -68,7 +68,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
                         <i className="fa-solid fa-image text-white text-sm"></i>
                     </div>
                     <div>
-                        <h3 className="text-sm font-bold text-white">Site Logosu</h3>
+                        <h3 className="text-sm font-bold font-outfit text-white">Site Logosu</h3>
                         <p className="text-[10px] text-slate-500">Şeffaf PNG önerilir</p>
                     </div>
                     <div className={`ml-auto w-2 h-2 rounded-full ${editContent.business.logo?.trim() ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]' : 'bg-red-500'}`} />
@@ -94,15 +94,15 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
             <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
                 <div className="px-6 py-4 border-b border-white/[0.04] flex items-center gap-3">
                     <div className="w-9 h-9 rounded-xl bg-[var(--color-primary)] flex items-center justify-center shadow-lg"><i className="fa-solid fa-building text-white text-sm"></i></div>
-                    <h3 className="text-sm font-bold text-white">Ana Bilgiler</h3>
+                    <h3 className="text-sm font-bold font-outfit text-white">Ana Bilgiler</h3>
                 </div>
                 <div className="overflow-x-auto scrollbar-hide">
                     <table className="w-full">
                         <thead>
                             <tr className="border-b border-white/[0.04] bg-white/[0.02]">
-                                <th className="text-left px-5 py-3 w-40"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Alan</span></th>
-                                <th className="text-left px-3 py-3"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Değer</span></th>
-                                <th className="w-16 px-3 py-3"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Durum</span></th>
+                                <th className="text-left px-5 py-3 w-40"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Alan</span></th>
+                                <th className="text-left px-3 py-3"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Değer</span></th>
+                                <th className="w-16 px-3 py-3"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Durum</span></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -142,7 +142,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
             <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
                 <div className="px-6 py-4 border-b border-white/[0.04] flex items-center gap-3">
                     <div className="w-9 h-9 rounded-xl bg-violet-500 flex items-center justify-center shadow-lg"><i className="fa-solid fa-share-nodes text-white text-sm"></i></div>
-                    <h3 className="text-sm font-bold text-white">Sosyal Medya</h3>
+                    <h3 className="text-sm font-bold font-outfit text-white">Sosyal Medya</h3>
                     <div className="ml-auto flex items-center gap-1">
                         {[editContent.business.whatsapp, editContent.business.telegram, editContent.business.instagram, editContent.business.facebook].map((v, i) => (
                             <div key={i} className={`w-1.5 h-1.5 rounded-full ${v?.trim() ? 'bg-emerald-400' : 'bg-red-500/50'}`} />
@@ -153,9 +153,9 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
                     <table className="w-full">
                         <thead>
                             <tr className="border-b border-white/[0.04] bg-white/[0.02]">
-                                <th className="text-left px-5 py-3 w-40"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Platform</span></th>
-                                <th className="text-left px-3 py-3"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Bağlantı</span></th>
-                                <th className="w-16 px-3 py-3"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Durum</span></th>
+                                <th className="text-left px-5 py-3 w-40"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Platform</span></th>
+                                <th className="text-left px-3 py-3"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Bağlantı</span></th>
+                                <th className="w-16 px-3 py-3"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Durum</span></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -193,7 +193,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
                         <i className="fa-solid fa-star text-white text-sm"></i>
                     </div>
                     <div>
-                        <h3 className="text-sm font-bold text-white">Favicon</h3>
+                        <h3 className="text-sm font-bold font-outfit text-white">Favicon</h3>
                         <p className="text-[10px] text-slate-500">Tarayıcı sekmesinde görünür (ICO, PNG, SVG)</p>
                     </div>
                     <div className={`ml-auto w-2 h-2 rounded-full ${editContent.branding?.favicon?.trim() ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.8)]' : 'bg-red-500'}`} />
@@ -226,14 +226,14 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
                         <i className="fa-solid fa-palette text-white text-sm"></i>
                     </div>
                     <div>
-                        <h3 className="text-sm font-bold text-white">Marka Renkleri</h3>
+                        <h3 className="text-sm font-bold font-outfit text-white">Marka Renkleri</h3>
                         <p className="text-[10px] text-slate-500">Tek tıkla hazır renk paketi uygulayın</p>
                     </div>
                 </div>
                 <div className="p-5 space-y-5">
                     {/* Palette grid */}
                     <div>
-                        <p className="text-[9px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3">Hazır Paketler</p>
+                        <p className="text-[9px] font-black font-outfit uppercase tracking-[0.25em] text-slate-500 mb-3">Hazır Paketler</p>
                         <div className="grid grid-cols-5 gap-2">
                             {PALETTES.map((palette, i) => {
                                 const isActive =
@@ -325,10 +325,10 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
                         <i className="fa-solid fa-coins text-white text-sm"></i>
                     </div>
                     <div>
-                        <h3 className="text-sm font-bold text-white">Para Birimi</h3>
+                        <h3 className="text-sm font-bold font-outfit text-white">Para Birimi</h3>
                         <p className="text-[10px] text-slate-500">Fiyatlarda kullanılacak para birimi</p>
                     </div>
-                    <div className="ml-auto text-2xl font-black text-white">{editContent.currency?.symbol || '€'}</div>
+                    <div className="ml-auto text-2xl font-black font-outfit text-white">{editContent.currency?.symbol || '€'}</div>
                 </div>
                 <div className="p-6">
                     <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
@@ -357,7 +357,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
             <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
                 <div className="px-6 py-4 border-b border-white/[0.04] flex items-center gap-3">
                     <div className="w-9 h-9 rounded-xl bg-cyan-500 flex items-center justify-center shadow-lg"><i className="fa-solid fa-map-location-dot text-white text-sm"></i></div>
-                    <h3 className="text-sm font-bold text-white">Harita</h3>
+                    <h3 className="text-sm font-bold font-outfit text-white">Harita</h3>
                     <div className={`ml-auto inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border ${editContent.business.mapEmbedUrl?.trim() ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-red-500/10 border-red-500/20'}`}>
                         <div className={`w-1.5 h-1.5 rounded-full ${editContent.business.mapEmbedUrl?.trim() ? 'bg-emerald-400' : 'bg-red-400'}`} />
                         <span className={`text-[10px] font-bold ${editContent.business.mapEmbedUrl?.trim() ? 'text-emerald-400' : 'text-red-400'}`}>{editContent.business.mapEmbedUrl?.trim() ? 'Aktif' : 'Pasif'}</span>

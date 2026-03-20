@@ -141,8 +141,8 @@ export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent })
                         { label: 'Schema', value: seo.structuredData.businessType ? '✓' : '✗', ok: !!seo.structuredData.businessType, sub: seo.structuredData.businessType },
                     ].map((s, i) => (
                         <div key={i} className={`rounded-2xl p-4 border ${s.ok ? 'bg-emerald-500/5 border-emerald-500/15' : 'bg-red-500/5 border-red-500/15'}`}>
-                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{s.label}</p>
-                            <p className={`text-2xl font-black mt-1 ${s.ok ? 'text-emerald-400' : 'text-red-400'}`}>{s.value}</p>
+                            <p className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">{s.label}</p>
+                            <p className={`text-2xl font-black font-outfit mt-1 ${s.ok ? 'text-emerald-400' : 'text-red-400'}`}>{s.value}</p>
                             <p className="text-[10px] text-slate-500 mt-0.5 truncate">{s.sub}</p>
                         </div>
                     ))}
@@ -153,7 +153,7 @@ export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent })
             <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
                 <div className="px-5 py-4 border-b border-white/[0.06] flex items-center gap-2">
                     <i className="fa-solid fa-globe text-[var(--color-primary)] text-sm" />
-                    <span className="text-sm font-bold text-white">Global SEO Ayarları</span>
+                    <span className="text-sm font-bold font-outfit text-white">Global SEO Ayarları</span>
                 </div>
                 <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-5">
                     {/* Site Title */}
@@ -230,7 +230,7 @@ export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent })
             <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
                 <div className="px-5 py-4 border-b border-white/[0.06] flex items-center gap-2">
                     <i className="fa-brands fa-facebook text-[var(--color-primary)] text-sm" />
-                    <span className="text-sm font-bold text-white">Open Graph & Sosyal Medya Paylaşımı</span>
+                    <span className="text-sm font-bold font-outfit text-white">Open Graph & Sosyal Medya Paylaşımı</span>
                 </div>
                 <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div className="md:col-span-2">
@@ -261,7 +261,7 @@ export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent })
             <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
                 <div className="px-5 py-4 border-b border-white/[0.06] flex items-center gap-2">
                     <i className="fa-brands fa-google text-[var(--color-primary)] text-sm" />
-                    <span className="text-sm font-bold text-white">Arama Motoru Doğrulama</span>
+                    <span className="text-sm font-bold font-outfit text-white">Arama Motoru Doğrulama</span>
                 </div>
                 <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
@@ -288,7 +288,7 @@ export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent })
             <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
                 <div className="px-5 py-4 border-b border-white/[0.06] flex items-center gap-2">
                     <i className="fa-solid fa-code text-[var(--color-primary)] text-sm" />
-                    <span className="text-sm font-bold text-white">Yapısal Veri (JSON-LD / Schema.org)</span>
+                    <span className="text-sm font-bold font-outfit text-white">Yapısal Veri (JSON-LD / Schema.org)</span>
                     <span className="ml-auto text-[9px] font-bold bg-emerald-500/15 text-emerald-400 px-2 py-1 rounded-full border border-emerald-500/20">Rich Results</span>
                 </div>
                 <div className="p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -356,7 +356,7 @@ export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent })
             <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
                 <div className="px-5 py-4 border-b border-white/[0.06] flex items-center gap-2">
                     <i className="fa-solid fa-file-lines text-[var(--color-primary)] text-sm" />
-                    <span className="text-sm font-bold text-white">Sayfa Bazlı SEO</span>
+                    <span className="text-sm font-bold font-outfit text-white">Sayfa Bazlı SEO</span>
                 </div>
 
                 {/* Page Tabs */}
@@ -446,7 +446,7 @@ export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent })
             <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
                 <div className="px-5 py-4 border-b border-white/[0.06] flex items-center gap-2">
                     <i className="fa-solid fa-list-check text-[var(--color-primary)] text-sm" />
-                    <span className="text-sm font-bold text-white">SEO Kontrol Listesi</span>
+                    <span className="text-sm font-bold font-outfit text-white">SEO Kontrol Listesi</span>
                 </div>
                 <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {checks.map((c, i) => (
