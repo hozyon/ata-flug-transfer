@@ -579,6 +579,12 @@
   outline-offset: 2px;
 }
 
+/* ── Apple-style toast progress bar ── */
+@keyframes toast-progress {
+  from { width: 100%; }
+  to   { width: 0%; }
+}
+
 /* ── Responsive admin content ── */
 @media (max-width: 640px) {
   .admin-stat-card {

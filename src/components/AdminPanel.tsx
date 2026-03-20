@@ -866,22 +866,43 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
         <div className="absolute inset-0 opacity-[0.015] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
       </div>
 
-      {/* Toast Notification - Dark SaaS Style */}
+      {/* Toast — Apple top-center notification */}
       {toast && (
-        <div role="alert" aria-live="polite" className="fixed top-safe mt-4 left-4 right-4 sm:left-auto sm:right-6 sm:top-6 sm:mt-0 z-[300] animate-in slide-in-from-top-3 fade-in duration-300">
-          <div className="bg-[#0d1526]/95 backdrop-blur-2xl rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.5)] border border-white/[0.08] px-4 py-3.5 flex items-center gap-3.5 sm:min-w-[340px] max-w-full">
-            {/* Colored left accent bar */}
-            <div className={`absolute left-0 top-3 bottom-3 w-[3px] rounded-r-full ${['delete', 'error'].includes(toast.type) ? 'bg-red-500' : toast.type === 'success' ? 'bg-emerald-400' : toast.type === 'info' ? 'bg-blue-400' : 'bg-amber-400'}`} />
-            <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${['delete', 'error'].includes(toast.type) ? 'bg-red-500/15 text-red-400' : toast.type === 'success' ? 'bg-emerald-500/15 text-emerald-400' : toast.type === 'info' ? 'bg-blue-500/15 text-blue-400' : 'bg-amber-500/15 text-amber-400'}`}>
-              <i className={`fa-solid ${toast.type === 'delete' ? 'fa-trash' : toast.type === 'error' ? 'fa-circle-xmark' : toast.type === 'success' ? 'fa-circle-check' : toast.type === 'info' ? 'fa-circle-info' : 'fa-triangle-exclamation'} text-sm`}></i>
+        <div role="alert" aria-live="polite" className="fixed top-0 inset-x-0 z-[300] flex justify-center pointer-events-none">
+          <div
+            className="pointer-events-auto animate-in slide-in-from-top-full fade-in duration-500 w-full sm:w-auto sm:min-w-[320px] sm:max-w-[460px]"
+            style={{ animationTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }}
+          >
+            <div className={`relative flex items-center gap-3 px-4 py-3.5 backdrop-blur-3xl overflow-hidden rounded-b-2xl border-x border-b shadow-[0_16px_48px_rgba(0,0,0,0.55)] ${
+              ['delete', 'error'].includes(toast.type)
+                ? 'bg-[#120a0a]/97 border-red-500/15'
+                : toast.type === 'success'
+                ? 'bg-[#080f0d]/97 border-emerald-500/15'
+                : toast.type === 'info'
+                ? 'bg-[#080d14]/97 border-blue-500/15'
+                : 'bg-[#100d06]/97 border-amber-500/15'
+            }`}>
+              {/* Icon */}
+              <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${
+                ['delete', 'error'].includes(toast.type) ? 'bg-red-500/15 text-red-400'
+                : toast.type === 'success' ? 'bg-emerald-500/15 text-emerald-400'
+                : toast.type === 'info' ? 'bg-blue-500/15 text-blue-400'
+                : 'bg-amber-500/15 text-amber-400'
+              }`}>
+                <i className={`fa-solid ${toast.type === 'delete' ? 'fa-trash' : toast.type === 'error' ? 'fa-circle-xmark' : toast.type === 'success' ? 'fa-circle-check' : toast.type === 'info' ? 'fa-circle-info' : 'fa-triangle-exclamation'} text-xs`}></i>
+              </div>
+              {/* Message */}
+              <p className="flex-1 text-[13px] font-semibold text-white leading-tight">{toast.message}</p>
+              {/* Close */}
+              <button onClick={() => setToast(null)} className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-600 hover:text-slate-300 transition-colors shrink-0">
+                <i className="fa-solid fa-xmark text-[10px]"></i>
+              </button>
+              {/* Progress bar */}
+              <div className="absolute bottom-0 left-0 right-0 h-[2px]">
+                <div className={`h-full ${['delete','error'].includes(toast.type) ? 'bg-red-500/40' : toast.type === 'success' ? 'bg-emerald-500/40' : toast.type === 'info' ? 'bg-blue-500/40' : 'bg-amber-500/40'}`}
+                  style={{ animation: 'toast-progress 3s linear forwards' }} />
+              </div>
             </div>
-            <div className="flex-1 min-w-0 pl-1">
-              <p className="font-bold text-white text-sm leading-tight">{toast.type === 'delete' ? 'Öğe Silindi' : toast.type === 'error' ? 'Hata' : toast.type === 'success' ? 'Başarılı' : toast.type === 'info' ? 'Bilgi' : 'Uyarı'}</p>
-              <p className="text-slate-400 text-xs mt-0.5 line-clamp-2">{toast.message}</p>
-            </div>
-            <button onClick={() => setToast(null)} aria-label="Bildirimi kapat" className="w-7 h-7 rounded-lg hover:bg-white/5 flex items-center justify-center text-slate-500 hover:text-slate-300 transition-colors shrink-0 ml-1">
-              <i className="fa-solid fa-xmark text-xs"></i>
-            </button>
           </div>
         </div>
       )}
@@ -1278,7 +1299,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 <div className="relative group">
                   <button
                     onClick={() => setActiveView(id as DashboardView)}
-                    className={`w-full rounded-xl flex items-center transition-all duration-200 relative ${
+                    className={`w-full rounded-xl flex items-center transition-colors duration-150 relative ${
                       isSidebarOpen
                         ? `px-3 py-2.5 gap-3 ${isActive ? 'bg-gradient-to-r from-[var(--color-primary)]/[0.13] via-[var(--color-primary)]/[0.04] to-transparent' : 'hover:bg-white/[0.04]'}`
                         : `justify-center p-2.5 ${isActive ? 'bg-[var(--color-primary)]/[0.15] rounded-xl' : 'hover:bg-white/[0.05]'}`
@@ -1287,7 +1308,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                     {isActive && isSidebarOpen && (
                       <div className="absolute left-0 top-[18%] bottom-[18%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-amber-500 rounded-r-full shadow-[0_0_14px_rgba(197,160,89,0.65)]" />
                     )}
-                    <div className={`shrink-0 transition-all duration-200 ${isActive ? 'text-[var(--color-primary)] drop-shadow-[0_0_8px_rgba(197,160,89,0.5)]' : 'text-slate-500 group-hover:text-slate-300'}`}>
+                    <div className={`shrink-0 transition-colors duration-150 ${isActive ? 'text-[var(--color-primary)] drop-shadow-[0_0_8px_rgba(197,160,89,0.5)]' : 'text-slate-500 group-hover:text-slate-300'}`}>
                       {icon}
                     </div>
                     {isSidebarOpen && (
@@ -1628,14 +1649,12 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
             {activeView === 'overview' && (
               <p className="text-slate-400 font-bold text-[10px] mb-1 uppercase tracking-wider">{currentTime.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long' })}</p>
             )}
-            <h1 className={`font-outfit text-[1.875rem] font-[800] tracking-[-0.02em] ${isDarkTheme ? 'text-white' : 'text-slate-900'} leading-[1.15]`}>
-              {activeView === 'overview' ? (
-                <>Dashboard</>
-              ) : (
-                VIEW_LABELS[activeView]?.label || activeView.replace('-', ' ')
-              )}
-            </h1>
-            <p className={`text-[0.8125rem] mt-1.5 ${isDarkTheme ? 'text-slate-400' : 'text-slate-500'} max-w-lg leading-relaxed`}>
+            {activeView === 'overview' && (
+              <h1 className={`font-outfit text-[1.875rem] font-[800] tracking-[-0.02em] ${isDarkTheme ? 'text-white' : 'text-slate-900'} leading-[1.15]`}>
+                Dashboard
+              </h1>
+            )}
+            <p className={`text-[0.8125rem] ${activeView === 'overview' ? 'mt-1.5' : ''} ${isDarkTheme ? 'text-slate-400' : 'text-slate-500'} max-w-lg leading-relaxed`}>
               {activeView === 'overview'
                 ? <>{greeting.emoji} {greeting.text}, <span className="font-semibold text-[var(--color-primary)]">Admin</span> — Tüm operasyonları buradan yönetebilirsiniz.</>
                 : (VIEW_LABELS[activeView]?.description || 'Operasyonel veriler ve site kontrol merkezi.')}

@@ -253,6 +253,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
     seoTitle: '', seoDescription: '', viewCount: 0,
   });
   const [newCategoryName, setNewCategoryName] = useState('');
+  const [showCategoryManager, setShowCategoryManager] = useState(false);
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
   const [activeTab, setActiveTab] = useState<'content' | 'seo' | 'ai' | 'settings'>('content');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -484,6 +485,99 @@ export const BlogView: React.FC<BlogViewProps> = ({
         ))}
       </div>
 
+      {/* Category Manager */}
+      <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
+        <button
+          onClick={() => setShowCategoryManager(v => !v)}
+          className="w-full flex items-center justify-between px-4 py-3.5 hover:bg-white/[0.03] transition-colors group"
+        >
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-violet-500/15 flex items-center justify-center">
+              <i className="fa-solid fa-folder-open text-violet-400 text-[11px]"></i>
+            </div>
+            <span className="text-[13px] font-bold text-white">Kategori Yönetimi</span>
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-400 border border-violet-500/15">
+              {blogCategories.length} kategori
+            </span>
+          </div>
+          <i className={`fa-solid fa-chevron-down text-slate-500 text-[10px] transition-transform duration-200 ${showCategoryManager ? 'rotate-180' : ''}`}></i>
+        </button>
+
+        {showCategoryManager && (
+          <div className="border-t border-white/[0.05] px-4 pb-4 pt-3 animate-in slide-in-from-top-2 duration-200">
+            {/* Add new category */}
+            <div className="flex gap-2 mb-4">
+              <input
+                type="text"
+                value={newCategoryName}
+                onChange={e => setNewCategoryName(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const trimmed = newCategoryName.trim();
+                    if (!trimmed) return;
+                    if (blogCategories.includes(trimmed)) { showToast('Bu kategori zaten mevcut', 'error'); return; }
+                    setBlogCategories([...blogCategories, trimmed]);
+                    setNewCategoryName('');
+                    showToast('Kategori eklendi', 'success');
+                  }
+                }}
+                placeholder="Yeni kategori adı..."
+                className="flex-1 px-3 py-2 bg-white/5 border border-white/[0.08] rounded-xl text-sm text-white placeholder-slate-600 focus:border-violet-500/50 outline-none transition-all"
+              />
+              <button
+                onClick={() => {
+                  const trimmed = newCategoryName.trim();
+                  if (!trimmed) return;
+                  if (blogCategories.includes(trimmed)) { showToast('Bu kategori zaten mevcut', 'error'); return; }
+                  setBlogCategories([...blogCategories, trimmed]);
+                  setNewCategoryName('');
+                  showToast('Kategori eklendi', 'success');
+                }}
+                className="px-4 py-2 bg-violet-500/20 hover:bg-violet-500/30 text-violet-300 border border-violet-500/20 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
+              >
+                <i className="fa-solid fa-plus text-[10px]"></i> Ekle
+              </button>
+            </div>
+
+            {/* Category list */}
+            {blogCategories.length === 0 ? (
+              <p className="text-center text-slate-600 text-xs py-4">Henüz kategori yok</p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+                {blogCategories.map(cat => {
+                  const postCount = blogPosts.filter(p => p.category === cat).length;
+                  return (
+                    <div key={cat} className="group flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.05] hover:border-white/[0.10] transition-all">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-1.5 h-1.5 rounded-full bg-violet-400 shrink-0"></div>
+                        <span className="text-[12px] font-semibold text-slate-200 truncate">{cat}</span>
+                        {postCount > 0 && (
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-white/5 text-slate-500 shrink-0">{postCount}</span>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => {
+                          if (postCount > 0) { showToast(`Bu kategoride ${postCount} yazı var, önce yazıları taşıyın`, 'error'); return; }
+                          if (confirm(`"${cat}" kategorisini silmek istediğinize emin misiniz?`)) {
+                            setBlogCategories(blogCategories.filter(c => c !== cat));
+                            showToast('Kategori silindi', 'delete');
+                          }
+                        }}
+                        className={`w-6 h-6 rounded-lg flex items-center justify-center text-[10px] transition-all opacity-0 group-hover:opacity-100 ${postCount > 0 ? 'text-slate-600 cursor-not-allowed' : 'text-slate-500 hover:bg-red-500/20 hover:text-red-400'}`}
+                        title={postCount > 0 ? `${postCount} yazı bu kategoride, silinemez` : 'Sil'}
+                      >
+                        <i className="fa-solid fa-trash"></i>
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
       {/* Main Container */}
       <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
         {/* Toolbar */}
@@ -663,9 +757,9 @@ export const BlogView: React.FC<BlogViewProps> = ({
             <div className="flex items-center gap-1 px-5 py-2 border-b border-white/[0.06] shrink-0">
               {[
                 { id: 'content' as const, label: 'İçerik', icon: 'fa-file-lines' },
-                { id: 'ai' as const, label: 'AI Asistan', icon: 'fa-robot' },
                 { id: 'seo' as const, label: 'SEO', icon: 'fa-magnifying-glass' },
                 { id: 'settings' as const, label: 'Ayarlar', icon: 'fa-sliders' },
+                { id: 'ai' as const, label: 'AI Asistan', icon: 'fa-robot' },
               ].map(t => (
                 <button key={t.id} onClick={() => setActiveTab(t.id)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all relative ${activeTab === t.id ? 'bg-white/10 text-white' : 'text-slate-500 hover:text-white'} ${t.id === 'ai' ? (activeTab === 'ai' ? 'text-white' : 'text-violet-400 hover:text-violet-300') : ''}`}>
