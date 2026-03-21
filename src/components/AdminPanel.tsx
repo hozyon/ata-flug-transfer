@@ -575,7 +575,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
   const handleSaveAccount = (form = accountForm) => {
     const { currentPassword, newPassword, confirmPassword, ...toSave } = form;
-    onUpdateSiteContent({ ...siteContent, adminAccount: toSave });
+    onUpdateSiteContent({ ...editContent, adminAccount: toSave });
   };
 
   const hashPassword = async (password: string): Promise<string> => {
@@ -604,8 +604,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     // Update password history (keep last 3 hashes)
     const updatedHistory = [...history, newHash].slice(-3);
     await onUpdateSiteContent({
-      ...siteContent,
-      adminAccount: { ...siteContent.adminAccount!, passwordHistory: updatedHistory },
+      ...editContent,
+      adminAccount: { ...editContent.adminAccount!, passwordHistory: updatedHistory },
     });
 
     return { error: null };
