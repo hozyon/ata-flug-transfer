@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { SiteContent } from '../../../types';
 import { useDragAndDrop } from '../../../hooks/useDragAndDrop';
 
@@ -13,6 +13,56 @@ export const SiteSettingsView: React.FC<SiteSettingsViewProps> = ({
     editContent, setEditContent, handleMoveMenu, moveItem
 }) => {
     const [expandedMenu, setExpandedMenu] = useState<number | null>(null);
+    const [restoreStatus, setRestoreStatus] = useState<'idle' | 'success' | 'error'>('idle');
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const BACKUP_KEYS = [
+        'ata_bookings_v6',
+        'ata_site_content_v10',
+        'ata_blog_posts_v1',
+        'ata_user_reviews_v1',
+        'ata_coupons_v1',
+        'ata_drivers_v1',
+        'ata_pricing_rules_v1',
+    ];
+
+    const exportBackup = () => {
+        const backup: Record<string, unknown> = {};
+        BACKUP_KEYS.forEach(k => {
+            const v = localStorage.getItem(k);
+            if (v) {
+                try { backup[k] = JSON.parse(v); } catch { backup[k] = v; }
+            }
+        });
+        const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `ata-backup-${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
+    const importBackup = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+            try {
+                const data = JSON.parse(reader.result as string) as Record<string, unknown>;
+                Object.entries(data).forEach(([k, v]) => {
+                    localStorage.setItem(k, JSON.stringify(v));
+                });
+                setRestoreStatus('success');
+                setTimeout(() => window.location.reload(), 1200);
+            } catch {
+                setRestoreStatus('error');
+                setTimeout(() => setRestoreStatus('idle'), 3000);
+            }
+        };
+        reader.readAsText(file);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+    };
 
     const { getDragProps, getRowClassName } = useDragAndDrop(
         editContent.navbar,
@@ -174,6 +224,69 @@ export const SiteSettingsView: React.FC<SiteSettingsViewProps> = ({
                         </table>
                     </div>
                 )}
+            </div>
+
+            {/* ── Yedekleme & Geri Yükleme ── */}
+            <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
+                <div className="flex items-center gap-2 px-4 py-4 border-b border-white/[0.04]">
+                    <i className="fa-solid fa-floppy-disk text-[var(--color-primary)] text-sm"></i>
+                    <span className="text-sm font-bold text-white">Yedekleme &amp; Geri Yükleme</span>
+                </div>
+
+                {/* Warning banner */}
+                <div className="mx-4 mt-4 flex items-start gap-2.5 px-3.5 py-3 rounded-xl bg-amber-500/[0.08] border border-amber-500/20">
+                    <i className="fa-solid fa-triangle-exclamation text-amber-400 text-sm shrink-0 mt-0.5"></i>
+                    <p className="text-xs text-amber-300 leading-relaxed">
+                        Geri yükleme mevcut verilerin üzerine yazacaktır. İşlem tamamlandıktan sonra sayfa otomatik yenilenecektir.
+                    </p>
+                </div>
+
+                <div className="px-4 py-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                    {/* Export */}
+                    <button
+                        onClick={exportBackup}
+                        className="flex items-center gap-2 px-5 py-2.5 bg-[var(--color-primary)] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all"
+                    >
+                        <i className="fa-solid fa-download text-[10px]"></i>
+                        JSON İndir
+                    </button>
+
+                    {/* Import */}
+                    <button
+                        onClick={() => fileInputRef.current?.click()}
+                        className="flex items-center gap-2 px-5 py-2.5 bg-white/5 border border-white/[0.08] hover:bg-white/10 text-slate-300 rounded-xl font-bold text-xs transition-all"
+                    >
+                        <i className="fa-solid fa-upload text-[10px]"></i>
+                        JSON Yükle
+                    </button>
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".json"
+                        onChange={importBackup}
+                        className="hidden"
+                    />
+
+                    {/* Status feedback */}
+                    {restoreStatus === 'success' && (
+                        <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 animate-in fade-in duration-200">
+                            <i className="fa-solid fa-circle-check text-emerald-400 text-xs"></i>
+                            <span className="text-xs font-bold text-emerald-400">Geri yüklendi, sayfa yenileniyor...</span>
+                        </div>
+                    )}
+                    {restoreStatus === 'error' && (
+                        <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-red-500/10 border border-red-500/20 animate-in fade-in duration-200">
+                            <i className="fa-solid fa-circle-xmark text-red-400 text-xs"></i>
+                            <span className="text-xs font-bold text-red-400">Geçersiz JSON dosyası</span>
+                        </div>
+                    )}
+                </div>
+
+                <div className="px-4 pb-4">
+                    <p className="text-[10px] text-slate-600">
+                        Yedeklenen anahtarlar: {BACKUP_KEYS.join(', ')}
+                    </p>
+                </div>
             </div>
         </div>
     );

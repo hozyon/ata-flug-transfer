@@ -18,7 +18,11 @@ interface BlogPost {
   seoTitle?: string;
   seoDescription?: string;
   viewCount?: number;
+  scheduledAt?: string;
 }
+
+const BLOG_DRAFT_KEY = 'ata_blog_draft_v1';
+const BLOG_PER_PAGE = 10;
 
 interface BlogViewProps {
   blogPosts: BlogPost[];
@@ -258,6 +262,14 @@ export const BlogView: React.FC<BlogViewProps> = ({
   const [activeTab, setActiveTab] = useState<'content' | 'seo' | 'ai' | 'settings'>('content');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // Auto-save state
+  const [autoSavedAt, setAutoSavedAt] = useState<string | null>(null);
+  const [showDraftBanner, setShowDraftBanner] = useState(false);
+  const [pendingDraft, setPendingDraft] = useState<{ postId: string | 'new'; data: BlogPost; savedAt: string } | null>(null);
+
+  // Pagination
+  const [blogPage, setBlogPage] = useState(1);
+
   // AI state
   const [aiApiKey, setAiApiKey] = useState(() => localStorage.getItem(AI_LS_KEY) || '');
   const [aiMode, setAiMode] = useState<'full' | 'improve' | 'faq' | 'meta'>('full');
@@ -276,11 +288,39 @@ export const BlogView: React.FC<BlogViewProps> = ({
     setAiApiKey(stored);
   }, [activeTab]);
 
+  // Auto-publish scheduled posts on mount
+  useEffect(() => {
+    const now = new Date();
+    const toPublish = blogPosts.filter(p => !p.isPublished && p.scheduledAt && new Date(p.scheduledAt) <= now);
+    if (toPublish.length > 0) {
+      const ids = new Set(toPublish.map(p => p.id));
+      setBlogPosts(prev => prev.map(p => ids.has(p.id) ? { ...p, isPublished: true, publishedAt: new Date().toISOString() } : p));
+      showToast(`${toPublish.length} yazı otomatik yayınlandı`, 'success');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Auto-save draft every 30 seconds when drawer is open
+  useEffect(() => {
+    if (!isDrawerOpen) return;
+    const interval = setInterval(() => {
+      const draft = {
+        postId: (editingBlogPost?.id || 'new') as string | 'new',
+        data: newBlogPost,
+        savedAt: new Date().toISOString(),
+      };
+      localStorage.setItem(BLOG_DRAFT_KEY, JSON.stringify(draft));
+      const hhmm = new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+      setAutoSavedAt(hhmm);
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [isDrawerOpen, newBlogPost, editingBlogPost]);
+
   const wordCount = newBlogPost.content.trim() ? newBlogPost.content.trim().split(/\s+/).length : 0;
   const charCount = newBlogPost.content.length;
   const { score: seoScore, checks: seoChecks } = calcSeoScore(newBlogPost);
 
-  const currentPosts = blogPosts
+  const filteredPosts = blogPosts
     .filter(p => blogTab === 'published' ? p.isPublished : !p.isPublished)
     .filter(p => !blogSearchTerm ||
       p.title.toLowerCase().includes(blogSearchTerm.toLowerCase()) ||
@@ -288,17 +328,24 @@ export const BlogView: React.FC<BlogViewProps> = ({
       p.category.toLowerCase().includes(blogSearchTerm.toLowerCase())
     );
 
+  const totalBlogPages = Math.ceil(filteredPosts.length / BLOG_PER_PAGE);
+  const currentPosts = filteredPosts.slice((blogPage - 1) * BLOG_PER_PAGE, blogPage * BLOG_PER_PAGE);
+
   const filteredIds = currentPosts.map(p => p.id);
   const allSelected = currentPosts.length > 0 && currentPosts.every(p => selectedBlogs.includes(p.id));
 
+  // Reset page when search term or tab changes
+  useEffect(() => { setBlogPage(1); }, [blogSearchTerm, blogTab]);
+
   const openNew = () => {
-    setNewBlogPost({
+    const defaultPost: BlogPost = {
       id: '', title: '', slug: '', excerpt: '', content: '',
       category: blogCategories[0] || 'Destinasyon',
       featuredImage: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800',
       isPublished: false, tags: [], author: 'Ata Flug Transfer',
       seoTitle: '', seoDescription: '', viewCount: 0,
-    });
+    };
+    setNewBlogPost(defaultPost);
     setEditingBlogPost(null);
     setSlugManuallyEdited(false);
     setActiveTab('content');
@@ -306,6 +353,20 @@ export const BlogView: React.FC<BlogViewProps> = ({
     setSplitView(false);
     setAiGenerated(false);
     setAiError('');
+    setAutoSavedAt(null);
+    setShowDraftBanner(false);
+    setPendingDraft(null);
+    // Check for a "new" draft
+    try {
+      const stored = localStorage.getItem(BLOG_DRAFT_KEY);
+      if (stored) {
+        const draft = JSON.parse(stored) as { postId: string | 'new'; data: BlogPost; savedAt: string };
+        if (draft.postId === 'new') {
+          setPendingDraft(draft);
+          setShowDraftBanner(true);
+        }
+      }
+    } catch { /* ignore */ }
     setIsDrawerOpen(true);
   };
 
@@ -318,6 +379,20 @@ export const BlogView: React.FC<BlogViewProps> = ({
     setSplitView(false);
     setAiGenerated(false);
     setAiError('');
+    setAutoSavedAt(null);
+    setShowDraftBanner(false);
+    setPendingDraft(null);
+    // Check for a draft for this post
+    try {
+      const stored = localStorage.getItem(BLOG_DRAFT_KEY);
+      if (stored) {
+        const draft = JSON.parse(stored) as { postId: string | 'new'; data: BlogPost; savedAt: string };
+        if (draft.postId === post.id && new Date(draft.savedAt) > new Date(post.updatedAt || post.publishedAt || 0)) {
+          setPendingDraft(draft);
+          setShowDraftBanner(true);
+        }
+      }
+    } catch { /* ignore */ }
     setIsDrawerOpen(true);
   };
 
@@ -344,6 +419,11 @@ export const BlogView: React.FC<BlogViewProps> = ({
       setBlogPosts([...blogPosts, created]);
       showToast('Blog yazısı oluşturuldu', 'success');
     }
+    // Clear draft on manual save
+    localStorage.removeItem(BLOG_DRAFT_KEY);
+    setAutoSavedAt(null);
+    setShowDraftBanner(false);
+    setPendingDraft(null);
     setIsDrawerOpen(false);
   };
 
@@ -717,7 +797,8 @@ export const BlogView: React.FC<BlogViewProps> = ({
             action={blogSearchTerm ? { label: 'Aramayı Temizle', onClick: () => setBlogSearchTerm('') } : undefined}
           />
         ) : (
-          <div className="overflow-x-auto scrollbar-hide">
+          <>
+          <div className="overflow-x-auto scrollbar-hide" id="blog-table-container">
             <table className="w-full">
               <thead>
                 <tr className="border-t border-b border-white/[0.04] bg-white/[0.02]">
@@ -763,10 +844,17 @@ export const BlogView: React.FC<BlogViewProps> = ({
                         </span>
                       </td>
                       <td className="px-3 py-3.5 text-center">
-                        <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border ${post.isPublished ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-slate-500/10 border-slate-500/20'}`}>
-                          <div className={`w-1.5 h-1.5 rounded-full ${post.isPublished ? 'bg-emerald-400' : 'bg-slate-400'}`}></div>
-                          <span className={`text-[10px] font-bold ${post.isPublished ? 'text-emerald-400' : 'text-slate-400'}`}>{post.isPublished ? 'Yayında' : 'Taslak'}</span>
-                        </div>
+                        {!post.isPublished && post.scheduledAt && new Date(post.scheduledAt) > new Date() ? (
+                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border bg-amber-500/10 border-amber-500/20">
+                            <i className="fa-solid fa-clock text-amber-400 text-[8px]"></i>
+                            <span className="text-[10px] font-bold text-amber-400">Planlandı</span>
+                          </div>
+                        ) : (
+                          <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border ${post.isPublished ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-slate-500/10 border-slate-500/20'}`}>
+                            <div className={`w-1.5 h-1.5 rounded-full ${post.isPublished ? 'bg-emerald-400' : 'bg-slate-400'}`}></div>
+                            <span className={`text-[10px] font-bold ${post.isPublished ? 'text-emerald-400' : 'text-slate-400'}`}>{post.isPublished ? 'Yayında' : 'Taslak'}</span>
+                          </div>
+                        )}
                       </td>
                       <td className="px-3 py-3.5" onClick={e => e.stopPropagation()}>
                         <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity justify-end">
@@ -797,6 +885,55 @@ export const BlogView: React.FC<BlogViewProps> = ({
               </tbody>
             </table>
           </div>
+
+          {/* Pagination */}
+          {totalBlogPages > 1 && (
+            <div className="bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3 flex flex-col sm:flex-row items-center gap-3 m-4 mt-0">
+              <span className="text-[11px] text-slate-500">
+                {filteredPosts.length} yazıdan {(blogPage - 1) * BLOG_PER_PAGE + 1}–{Math.min(blogPage * BLOG_PER_PAGE, filteredPosts.length)} gösteriliyor
+              </span>
+              <div className="flex items-center gap-1 sm:ml-auto flex-wrap justify-center">
+                <button
+                  disabled={blogPage === 1}
+                  onClick={() => setBlogPage(p => p - 1)}
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                >
+                  <i className="fa-solid fa-chevron-left text-[9px] mr-1"></i>Önceki
+                </button>
+                {(() => {
+                  const pages: (number | 'ellipsis')[] = [];
+                  const maxVisible = 5;
+                  if (totalBlogPages <= maxVisible) {
+                    for (let i = 1; i <= totalBlogPages; i++) pages.push(i);
+                  } else {
+                    const half = Math.floor(maxVisible / 2);
+                    let start = Math.max(1, blogPage - half);
+                    let end = Math.min(totalBlogPages, start + maxVisible - 1);
+                    if (end - start < maxVisible - 1) start = Math.max(1, end - maxVisible + 1);
+                    if (start > 1) { pages.push(1); if (start > 2) pages.push('ellipsis'); }
+                    for (let i = start; i <= end; i++) pages.push(i);
+                    if (end < totalBlogPages) { if (end < totalBlogPages - 1) pages.push('ellipsis'); pages.push(totalBlogPages); }
+                  }
+                  return pages.map((p, i) => p === 'ellipsis' ? (
+                    <span key={`e${i}`} className="px-2 text-slate-600 text-xs">…</span>
+                  ) : (
+                    <button key={p} onClick={() => setBlogPage(p as number)}
+                      className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${blogPage === p ? 'bg-[var(--color-primary)] text-white shadow-lg shadow-amber-500/20' : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white'}`}>
+                      {p}
+                    </button>
+                  ));
+                })()}
+                <button
+                  disabled={blogPage === totalBlogPages}
+                  onClick={() => setBlogPage(p => p + 1)}
+                  className="px-3 py-1.5 rounded-lg text-xs font-bold bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                >
+                  Sonraki<i className="fa-solid fa-chevron-right text-[9px] ml-1"></i>
+                </button>
+              </div>
+            </div>
+          )}
+          </>
         )}
       </div>
 
@@ -818,6 +955,13 @@ export const BlogView: React.FC<BlogViewProps> = ({
                 </div>
               </div>
               <div className="flex items-center gap-2">
+                {/* Auto-save badge */}
+                {autoSavedAt && (
+                  <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-500/10 border border-slate-500/20">
+                    <i className="fa-solid fa-cloud-arrow-up text-slate-400 text-[9px]"></i>
+                    <span className="text-[10px] text-slate-400">Otomatik kaydedildi {autoSavedAt}</span>
+                  </div>
+                )}
                 {/* SEO Score pill */}
                 <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.06]">
                   <div className={`w-2 h-2 rounded-full ${scoreBg}`}></div>
@@ -866,6 +1010,29 @@ export const BlogView: React.FC<BlogViewProps> = ({
                 </button>
               ))}
             </div>
+
+            {/* Draft banner */}
+            {showDraftBanner && pendingDraft && (
+              <div className="flex items-center gap-3 px-5 py-2.5 bg-amber-500/10 border-b border-amber-500/20 shrink-0 animate-in slide-in-from-top-2 duration-200">
+                <i className="fa-solid fa-triangle-exclamation text-amber-400 text-xs shrink-0"></i>
+                <span className="text-[11px] text-amber-300 flex-1">
+                  Kaydedilmemiş taslak bulundu ({new Date(pendingDraft.savedAt).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })})
+                </span>
+                <button
+                  onClick={() => { setNewBlogPost(pendingDraft.data); setShowDraftBanner(false); showToast('Taslak geri yüklendi', 'success'); }}
+                  className="text-[11px] font-bold text-amber-400 hover:text-amber-300 underline transition-colors shrink-0"
+                >
+                  Geri Yükle
+                </button>
+                <span className="text-amber-600 text-[10px]">|</span>
+                <button
+                  onClick={() => { setShowDraftBanner(false); localStorage.removeItem(BLOG_DRAFT_KEY); }}
+                  className="text-[11px] font-bold text-slate-500 hover:text-slate-300 underline transition-colors shrink-0"
+                >
+                  Yoksay
+                </button>
+              </div>
+            )}
 
             {/* Body */}
             <div className="flex-1 overflow-hidden">
@@ -1307,6 +1474,27 @@ export const BlogView: React.FC<BlogViewProps> = ({
                     <label htmlFor="publish-check" className="font-bold text-white text-sm flex-1 cursor-pointer">Hemen Yayınla</label>
                     {newBlogPost.isPublished && <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/20 px-2 py-1 rounded-lg">YAYINDA</span>}
                   </div>
+                  {!newBlogPost.isPublished && (
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                        <i className="fa-solid fa-clock text-[8px] text-amber-400"></i> Yayın Tarihi (Planlanmış)
+                      </label>
+                      <input
+                        type="datetime-local"
+                        value={newBlogPost.scheduledAt ? newBlogPost.scheduledAt.slice(0, 16) : ''}
+                        onChange={e => setNewBlogPost(p => ({ ...p, scheduledAt: e.target.value ? new Date(e.target.value).toISOString() : undefined }))}
+                        className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:border-amber-500/50 outline-none transition-all [color-scheme:dark]"
+                      />
+                      {newBlogPost.scheduledAt && new Date(newBlogPost.scheduledAt) > new Date() && (
+                        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
+                          <i className="fa-solid fa-clock text-amber-400 text-xs shrink-0"></i>
+                          <span className="text-[11px] text-amber-300">
+                            {new Date(newBlogPost.scheduledAt).toLocaleString('tr-TR')} tarihinde otomatik yayınlanacak
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

@@ -31,6 +31,10 @@ const BlogView = lazy(() => import('./admin/views/BlogView').then(m => ({ defaul
 const ReviewsView = lazy(() => import('./admin/views/ReviewsView').then(m => ({ default: m.ReviewsView })));
 const HeroImagesView = lazy(() => import('./admin/views/HeroImagesView').then(m => ({ default: m.HeroImagesView })));
 const SEOView = lazy(() => import('./admin/views/SEOView').then(m => ({ default: m.SEOView })));
+const MediaLibraryView = lazy(() => import('./admin/views/MediaLibraryView').then(m => ({ default: m.MediaLibraryView })));
+const ActivityLogView = lazy(() => import('./admin/views/ActivityLogView').then(m => ({ default: m.ActivityLogView })));
+const CouponsView = lazy(() => import('./admin/views/CouponsView').then(m => ({ default: m.CouponsView })));
+const DriversView = lazy(() => import('./admin/views/DriversView').then(m => ({ default: m.DriversView })));
 import { DESTINATIONS, BLOG_POSTS, REVIEWS, SCRAPED_REGIONS, INITIAL_SITE_CONTENT } from '../constants';
 
 interface AdminPanelProps {
@@ -50,7 +54,7 @@ interface AdminPanelProps {
   onDeleteReview: (id: string) => Promise<void>;
 }
 
-type DashboardView = 'overview' | 'bookings' | 'site-settings' | 'hero-images' | 'regions' | 'fleet' | 'blog' | 'reviews' | 'faq' | 'business' | 'pricing' | 'about' | 'visionMission' | 'account' | 'seo';
+type DashboardView = 'overview' | 'bookings' | 'site-settings' | 'hero-images' | 'regions' | 'fleet' | 'blog' | 'reviews' | 'faq' | 'business' | 'pricing' | 'about' | 'visionMission' | 'account' | 'seo' | 'media' | 'coupons' | 'drivers' | 'activity';
 
 const COUNTRY_NAMES: Record<string, string> = {
   '🇩🇪': 'Almanya', '🇹🇷': 'Türkiye', '🇬🇧': 'İngiltere', '🇺🇸': 'ABD', '🇷🇺': 'Rusya',
@@ -499,6 +503,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     'visionMission': { label: 'VİZYON & MİSYON', icon: 'fa-bullseye', description: 'Vizyon ve misyon sayfası' },
     'account': { label: 'HESAP AYARLARI', icon: 'fa-user', description: 'Profil ve güvenlik tercihlerinizi merkezden yönetin.' },
     'seo': { label: 'SEO YÖNETİMİ', icon: 'fa-magnifying-glass-chart', description: 'Arama motoru optimizasyonu ayarları' },
+    'media': { label: 'MEDYA KÜTÜPHANESİ', icon: 'fa-photo-film', description: 'Tüm görseller' },
+    'coupons': { label: 'KUPONLAR', icon: 'fa-ticket', description: 'İndirim ve promosyon kodları' },
+    'drivers': { label: 'SÜRÜCÜLER', icon: 'fa-id-card', description: 'Sürücü yönetimi' },
+    'activity': { label: 'AKTİVİTE GÜNLÜĞÜ', icon: 'fa-clock-rotate-left', description: 'Son işlemler ve değişiklikler' },
   };
 
   const commandItems = useMemo(() => {
@@ -1366,6 +1374,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                   <NavItem id="regions" label="Bölgeler" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>} />
                   <NavItem id="pricing" label="Fiyatlar" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42l-8.704-8.704z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>} />
                   <NavItem id="fleet" label="Araçlar" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>} />
+                  <NavItem id="drivers" label="Sürücüler" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="14" x="3" y="5" rx="2"/><path d="M21 8H3"/><circle cx="12" cy="14" r="2"/><path d="M12 12v-1"/></svg>} />
+                  <NavItem id="coupons" label="Kuponlar" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>} />
                 </div>
 
                 <div className={`${isSidebarOpen ? 'mx-4' : 'mx-3'} my-2.5 h-px bg-white/[0.05]`} />
@@ -1423,6 +1433,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                     )}
                   </div>
 
+                  <NavItem id="media" label="Medya Kütüphanesi" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>} />
+                  <NavItem id="activity" label="Aktivite Günlüğü" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>} />
                   <div className={`${isSidebarOpen ? 'mx-2' : 'mx-1'} my-2 h-px bg-white/[0.05]`} />
                   <NavItem id="account" label="Hesap Ayarları" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>} />
                 </div>
@@ -2736,6 +2748,37 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               <SEOView
                 editContent={editContent}
                 setEditContent={updateContent}
+              />
+            )
+          }
+          {
+            activeView === 'media' && (
+              <MediaLibraryView
+                siteContent={editContent}
+                blogPosts={blogPosts}
+                showToast={showToast}
+              />
+            )
+          }
+          {
+            activeView === 'activity' && (
+              <ActivityLogView
+                showToast={showToast}
+              />
+            )
+          }
+          {
+            activeView === 'coupons' && (
+              <CouponsView
+                showToast={showToast}
+              />
+            )
+          }
+          {
+            activeView === 'drivers' && (
+              <DriversView
+                vehicles={editContent.vehicles}
+                showToast={showToast}
               />
             )
           }

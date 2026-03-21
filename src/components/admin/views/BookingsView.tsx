@@ -153,6 +153,47 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
         return Array.from(names).sort();
     }, [bookings]);
 
+    // Revenue Dashboard calculations
+    const revenueDashboard = useMemo(() => {
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const currentMonth = now.getMonth();
+        const todayStr = now.toISOString().split('T')[0];
+
+        const monthBookings = bookings.filter(b => {
+            const d = new Date(b.date);
+            return d.getFullYear() === currentYear && d.getMonth() === currentMonth && b.status !== 'Deleted' && b.status !== 'Cancelled' && b.status !== 'Rejected';
+        });
+
+        const revenueThisMonth = monthBookings.reduce((s, b) => s + b.totalPrice, 0);
+        const revenueToday = bookings
+            .filter(b => b.date === todayStr && b.status !== 'Deleted' && b.status !== 'Cancelled' && b.status !== 'Rejected')
+            .reduce((s, b) => s + b.totalPrice, 0);
+        const bookingsThisMonth = monthBookings.length;
+
+        // Last 7 days bar chart data
+        const last7: { label: string; revenue: number }[] = [];
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date(now);
+            d.setDate(d.getDate() - i);
+            const dateStr = d.toISOString().split('T')[0];
+            const dayLabel = d.toLocaleDateString('tr-TR', { weekday: 'short' });
+            const revenue = bookings
+                .filter(b => b.date === dateStr && b.status !== 'Deleted' && b.status !== 'Cancelled' && b.status !== 'Rejected')
+                .reduce((s, b) => s + b.totalPrice, 0);
+            last7.push({ label: dayLabel, revenue });
+        }
+
+        return { revenueThisMonth, revenueToday, bookingsThisMonth, last7 };
+    }, [bookings]);
+
+    const sendWhatsApp = (b: Booking) => {
+        const message = `Merhaba ${b.customerName}, Ata Flug Transfer rezervasyonunuz onaylandı! 📋 Tarih: ${b.date} 🚗 Güzergah: ${b.pickup} → ${b.destination} 💰 Ücret: ${b.totalPrice}₺ Sorularınız için: 7/24 hizmetinizdeyiz.`;
+        const phone = b.phone.replace(/\D/g, '');
+        const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+    };
+
     return (
         <div className="animate-in slide-in-from-right-8 duration-500 space-y-4">
 
@@ -182,6 +223,67 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                         <i className="fa-solid fa-file-arrow-down text-[11px]"></i>
                         CSV İndir
                     </button>
+                </div>
+            </div>
+
+            {/* ── Revenue Dashboard ── */}
+            <div className="rounded-2xl border border-white/[0.06] bg-[#0b1120] p-4 space-y-4">
+                <div className="flex items-center justify-between">
+                    <h2 className="font-outfit text-[11px] font-[750] text-slate-500 uppercase tracking-[0.12em] flex items-center gap-2">
+                        <i className="fa-solid fa-chart-bar text-[var(--color-primary)] text-[10px]"></i>
+                        Gelir Dashboard'u
+                    </h2>
+                    <span className="text-[10px] text-slate-600">Bu ay &amp; bugün</span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {/* Revenue This Month */}
+                    <div className="p-3 rounded-xl bg-[var(--color-primary)]/5 border border-[var(--color-primary)]/15 flex flex-col gap-1">
+                        <p className="text-[9.5px] font-[750] text-slate-500 uppercase tracking-[0.1em]">Bu Ay Gelir</p>
+                        <p className="font-outfit text-[1.25rem] font-[800] text-[var(--color-primary)] tabular-nums leading-tight">
+                            ₺{revenueDashboard.revenueThisMonth.toLocaleString('tr-TR')}
+                        </p>
+                        <p className="text-[10px] text-slate-600">{revenueDashboard.bookingsThisMonth} rezervasyon</p>
+                    </div>
+                    {/* Revenue Today */}
+                    <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/15 flex flex-col gap-1">
+                        <p className="text-[9.5px] font-[750] text-slate-500 uppercase tracking-[0.1em]">Bugün Gelir</p>
+                        <p className="font-outfit text-[1.25rem] font-[800] text-emerald-400 tabular-nums leading-tight">
+                            ₺{revenueDashboard.revenueToday.toLocaleString('tr-TR')}
+                        </p>
+                        <p className="text-[10px] text-slate-600">günlük toplam</p>
+                    </div>
+                    {/* Bookings This Month */}
+                    <div className="p-3 rounded-xl bg-blue-500/5 border border-blue-500/15 flex flex-col gap-1">
+                        <p className="text-[9.5px] font-[750] text-slate-500 uppercase tracking-[0.1em]">Bu Ay Rezervasyon</p>
+                        <p className="font-outfit text-[1.25rem] font-[800] text-blue-400 tabular-nums leading-tight">
+                            {revenueDashboard.bookingsThisMonth}
+                        </p>
+                        <p className="text-[10px] text-slate-600">aktif rezervasyon</p>
+                    </div>
+                    {/* 7-day bar chart */}
+                    <div className="p-3 rounded-xl bg-white/[0.02] border border-white/[0.06] flex flex-col gap-2">
+                        <p className="text-[9.5px] font-[750] text-slate-500 uppercase tracking-[0.1em]">Son 7 Gün</p>
+                        <div className="flex items-end gap-1 h-10 flex-1">
+                            {(() => {
+                                const maxRev = Math.max(...revenueDashboard.last7.map(d => d.revenue), 1);
+                                return revenueDashboard.last7.map((d, i) => {
+                                    const heightPct = Math.max((d.revenue / maxRev) * 100, d.revenue > 0 ? 8 : 2);
+                                    const isToday = i === 6;
+                                    return (
+                                        <div key={i} className="flex-1 flex flex-col items-center gap-0.5" title={`${d.label}: ₺${d.revenue.toLocaleString('tr-TR')}`}>
+                                            <svg width="100%" height="40" viewBox="0 0 10 40" preserveAspectRatio="none">
+                                                <rect
+                                                    x="1" y={40 - (heightPct * 40 / 100)} width="8" height={heightPct * 40 / 100}
+                                                    rx="2" fill={isToday ? 'var(--color-primary)' : d.revenue > 0 ? 'rgb(100 116 139 / 0.6)' : 'rgb(255 255 255 / 0.04)'}
+                                                />
+                                            </svg>
+                                            <span className={`text-[7px] ${isToday ? 'text-[var(--color-primary)]' : 'text-slate-700'} truncate w-full text-center`}>{d.label}</span>
+                                        </div>
+                                    );
+                                });
+                            })()}
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -464,6 +566,12 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                                             )}
                                             <button onClick={e => {
                                                 e.stopPropagation();
+                                                sendWhatsApp(b);
+                                            }} className="py-2 px-3 rounded-xl bg-green-500/20 text-green-400 text-xs font-bold flex items-center justify-center gap-1.5 active:bg-green-500/30 hover:bg-green-500 hover:text-white transition-all">
+                                                <i className="fa-brands fa-whatsapp text-[12px]"></i>
+                                            </button>
+                                            <button onClick={e => {
+                                                e.stopPropagation();
                                                 if (b.status === 'Deleted') { if (confirm('KALICI olarak silinecek!')) onDeleteBooking(b.id); }
                                                 else { if (confirm('Silmek istediğinize emin misiniz?')) { haptic.error(); onUpdateStatus(b.id, 'Deleted'); } }
                                             }} className="py-2 px-3 rounded-xl bg-white/5 text-slate-500 text-xs font-bold flex items-center justify-center gap-1.5 active:bg-red-500/10 active:text-red-400 transition-all">
@@ -664,6 +772,10 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                                                             <span className="hidden xl:inline">Tamamla</span>
                                                         </button>
                                                     )}
+                                                    <button onClick={() => sendWhatsApp(b)} title="WhatsApp Gönder"
+                                                        className="w-7 h-7 rounded-lg bg-green-500/20 border border-green-500/20 text-green-400 hover:bg-green-500 hover:text-white hover:border-transparent flex items-center justify-center transition-all">
+                                                        <i className="fa-brands fa-whatsapp text-[11px]"></i>
+                                                    </button>
                                                     <button onClick={() => {
                                                         if (b.status === 'Deleted') { if (confirm('KALICI olarak silinecek!')) onDeleteBooking(b.id); }
                                                         else { if (confirm('Silmek istediğinize emin misiniz?')) onUpdateStatus(b.id, 'Deleted'); }

@@ -47,7 +47,21 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
 }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [expandedId, setExpandedId] = useState<string | null>(null);
+    const [sortBy, setSortBy] = useState<string>('date');
+    const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
     const { viewMode, toggleViewMode } = useViewMode();
+
+    const handleSort = (col: string) => {
+        if (sortBy === col) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+        else { setSortBy(col); setSortDir('desc'); }
+    };
+
+    const sortIcon = (col: string) => {
+        if (sortBy !== col) return <i className="fa-solid fa-sort text-slate-700 text-[9px] ml-1"></i>;
+        return sortDir === 'asc'
+            ? <i className="fa-solid fa-sort-up text-[var(--color-primary)] text-[9px] ml-1"></i>
+            : <i className="fa-solid fa-sort-down text-[var(--color-primary)] text-[9px] ml-1"></i>;
+    };
 
     const getCountryName = (code: string) => {
         try { return new Intl.DisplayNames(['tr'], { type: 'region' }).of(code) || code; }
@@ -78,8 +92,18 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
             const q = searchTerm.toLowerCase();
             list = list.filter(r => r.name.toLowerCase().includes(q) || r.text.toLowerCase().includes(q));
         }
+
+        list = [...list].sort((a, b) => {
+            let cmp = 0;
+            if (sortBy === 'name') cmp = a.name.localeCompare(b.name, 'tr');
+            else if (sortBy === 'date') cmp = (a.createdAt || '').localeCompare(b.createdAt || '');
+            else if (sortBy === 'rating') cmp = a.rating - b.rating;
+            else if (sortBy === 'status') cmp = a.status.localeCompare(b.status);
+            return sortDir === 'asc' ? cmp : -cmp;
+        });
+
         return list;
-    }, [userReviews, siteReviews, editableReviewsTab, searchTerm]);
+    }, [userReviews, siteReviews, editableReviewsTab, searchTerm, sortBy, sortDir]);
 
     const allSelected = currentReviews.length > 0 && currentReviews.every(r => selectedReviews.includes(r.id));
 
@@ -307,11 +331,11 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
                                         <input type="checkbox" checked={allSelected} onChange={toggleAll}
                                             className="w-3.5 h-3.5 rounded border-white/20 bg-white/5 accent-[#c5a059] cursor-pointer" />
                                     </th>
-                                    <th className="text-left px-3 py-3"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Müşteri</span></th>
+                                    <th className="text-left px-3 py-3 cursor-pointer select-none" onClick={() => handleSort('name')}><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Müşteri{sortIcon('name')}</span></th>
                                     <th className="text-left px-3 py-3 hidden md:table-cell"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Yorum</span></th>
-                                    <th className="text-center px-3 py-3 w-28"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Puan</span></th>
-                                    <th className="text-left px-3 py-3 hidden lg:table-cell w-28"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Tarih</span></th>
-                                    <th className="text-left px-3 py-3 w-20"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Kaynak</span></th>
+                                    <th className="text-center px-3 py-3 w-28 cursor-pointer select-none" onClick={() => handleSort('rating')}><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Puan{sortIcon('rating')}</span></th>
+                                    <th className="text-left px-3 py-3 hidden lg:table-cell w-28 cursor-pointer select-none" onClick={() => handleSort('date')}><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Tarih{sortIcon('date')}</span></th>
+                                    <th className="text-left px-3 py-3 w-20 cursor-pointer select-none" onClick={() => handleSort('status')}><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Kaynak{sortIcon('status')}</span></th>
                                     <th className="w-28 sm:w-40 px-3 py-3"></th>
                                 </tr>
                             </thead>
