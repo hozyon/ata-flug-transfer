@@ -110,7 +110,7 @@ const Iletisim: React.FC = () => {
             {/* ── CHANNEL STRIP ──────────────────────────────────── */}
             <section style={{ background: 'rgba(197,160,89,0.04)', borderBottom: '1px solid rgba(197,160,89,0.12)' }}>
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 py-0">
-                    <div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x" style={{ divideColor: 'rgba(255,255,255,0.05)' }}>
+                    <div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x" style={{ '--tw-divide-opacity': '0.05' } as React.CSSProperties}>
 
                         {/* Phone */}
                         <a href={`tel:${business.phone}`}

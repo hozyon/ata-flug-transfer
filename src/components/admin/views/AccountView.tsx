@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 const AI_LS_KEY = 'ata_ai_api_key';
 
 // ── Avatar System ─────────────────────────────────────────────────────────────
-type AvatarCategory = 'Tatil' | 'Sürücü' | 'Gece' | 'Günlük' | 'Profesyonel' | 'Yaratıcı' | 'Aktif' | 'Dijital';
+type AvatarCategory = 'Tatil' | 'Sürücü' | 'Gece' | 'Günlük' | 'Profesyonel' | 'Yaratıcı' | 'Aktif' | 'Dijital' | 'Karakter' | 'Marka';
 interface AvatarItem { url: string; label: string; category: AvatarCategory; }
 
 const AVATARS: AvatarItem[] = [
@@ -71,6 +71,8 @@ const CATEGORY_ICONS: Record<AvatarCategory, string> = {
   'Yaratıcı': 'fa-palette',
   'Aktif': 'fa-person-running',
   'Dijital': 'fa-gamepad',
+  'Karakter': 'fa-user',
+  'Marka': 'fa-car',
 };
 // ─────────────────────────────────────────────────────────────────────────────
 
