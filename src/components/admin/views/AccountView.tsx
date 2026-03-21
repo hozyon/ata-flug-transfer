@@ -3,44 +3,74 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 const AI_LS_KEY = 'ata_ai_api_key';
 
 // ── Avatar System ─────────────────────────────────────────────────────────────
-type AvatarCategory = 'Karakter' | 'Portre' | 'Geometrik' | 'Robot' | 'Emoji';
+type AvatarCategory = 'Tatil' | 'Sürücü' | 'Gece' | 'Günlük' | 'Profesyonel' | 'Yaratıcı' | 'Aktif' | 'Dijital';
 interface AvatarItem { url: string; label: string; category: AvatarCategory; }
 
 const AVATARS: AvatarItem[] = [
-  // Karakter — adventurer style, warm illustrated portraits
-  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Nour&backgroundColor=1e3a5f', label: 'Nour', category: 'Karakter' },
-  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Leyla&backgroundColor=2d1b4e', label: 'Leyla', category: 'Karakter' },
-  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Kemal&backgroundColor=1a3a2a', label: 'Kemal', category: 'Karakter' },
-  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Zeynep&backgroundColor=3d1515', label: 'Zeynep', category: 'Karakter' },
-  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Tarık&backgroundColor=2a1a0e', label: 'Tarık', category: 'Karakter' },
-  // Portre — lorelei style, minimal line illustrations
-  { url: 'https://api.dicebear.com/7.x/lorelei/svg?seed=Aria&backgroundColor=0f172a', label: 'Aria', category: 'Portre' },
-  { url: 'https://api.dicebear.com/7.x/lorelei/svg?seed=Selin&backgroundColor=1a0f2e', label: 'Selin', category: 'Portre' },
-  { url: 'https://api.dicebear.com/7.x/lorelei/svg?seed=Caner&backgroundColor=0f2e1a', label: 'Caner', category: 'Portre' },
-  { url: 'https://api.dicebear.com/7.x/lorelei/svg?seed=Defne&backgroundColor=2e1a0f', label: 'Defne', category: 'Portre' },
-  { url: 'https://api.dicebear.com/7.x/lorelei/svg?seed=Bora&backgroundColor=1e2040', label: 'Bora', category: 'Portre' },
-  // Geometrik — shapes style, abstract generative art
-  { url: 'https://api.dicebear.com/7.x/shapes/svg?seed=Alpha&backgroundColor=0f172a', label: 'Alpha', category: 'Geometrik' },
-  { url: 'https://api.dicebear.com/7.x/shapes/svg?seed=Sigma&backgroundColor=172012', label: 'Sigma', category: 'Geometrik' },
-  { url: 'https://api.dicebear.com/7.x/shapes/svg?seed=Delta&backgroundColor=1f0f17', label: 'Delta', category: 'Geometrik' },
-  { url: 'https://api.dicebear.com/7.x/shapes/svg?seed=Omega&backgroundColor=1a1200', label: 'Omega', category: 'Geometrik' },
-  // Robot — bottts-neutral style, mechanical faces
-  { url: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Atlas&backgroundColor=0f172a', label: 'Atlas', category: 'Robot' },
-  { url: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nova&backgroundColor=172012', label: 'Nova', category: 'Robot' },
-  { url: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Orion&backgroundColor=1f0f17', label: 'Orion', category: 'Robot' },
-  { url: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Zeta&backgroundColor=171a2e', label: 'Zeta', category: 'Robot' },
-  // Emoji — fun-emoji style, expressive characters
-  { url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Neşe&backgroundColor=1e1e2e', label: 'Neşeli', category: 'Emoji' },
-  { url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Cool&backgroundColor=2e1a0f', label: 'Havalı', category: 'Emoji' },
+  // 🏖️ TATİL — beach/vacation vibes, ocean & sand backgrounds
+  { url: 'https://api.dicebear.com/7.x/open-peeps/svg?seed=BeachBoy&backgroundColor=0369a1&clothingColor=fbbf24', label: 'Plaj', category: 'Tatil' },
+  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Sunny&backgroundColor=b45309', label: 'Güneş', category: 'Tatil' },
+  { url: 'https://api.dicebear.com/7.x/personas/svg?seed=Resort&backgroundColor=0c4a6e', label: 'Resort', category: 'Tatil' },
+  { url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=HolidayGirl&backgroundColor=0ea5e9', label: 'Tatilci', category: 'Tatil' },
+  { url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Tropical&backgroundColor=065f46', label: 'Tropikal', category: 'Tatil' },
+
+  // 🚗 SÜRÜCÜ — driver/road trip aesthetic, dark moody backgrounds
+  { url: 'https://api.dicebear.com/7.x/notionists-neutral/svg?seed=Throttle&backgroundColor=1c1917', label: 'Gaz', category: 'Sürücü' },
+  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Racer&backgroundColor=1c0a02', label: 'Yarışçı', category: 'Sürücü' },
+  { url: 'https://api.dicebear.com/7.x/lorelei-neutral/svg?seed=Cruiser&backgroundColor=292524', label: 'Yolcu', category: 'Sürücü' },
+  { url: 'https://api.dicebear.com/7.x/micah/svg?seed=Trucker&backgroundColor=1e1b4b', label: 'Sürücü', category: 'Sürücü' },
+  { url: 'https://api.dicebear.com/7.x/croodles-neutral/svg?seed=RoadTrip&backgroundColor=0c1a0c', label: 'Yol', category: 'Sürücü' },
+
+  // 🌙 GECE — nightlife, urban nights, deep dark palettes
+  { url: 'https://api.dicebear.com/7.x/notionists/svg?seed=NightOwl&backgroundColor=0f0728', label: 'Gece Kuşu', category: 'Gece' },
+  { url: 'https://api.dicebear.com/7.x/croodles/svg?seed=ClubKid&backgroundColor=13082a', label: 'Kulüp', category: 'Gece' },
+  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Midnight&backgroundColor=1a0a2e', label: 'Gece Yarısı', category: 'Gece' },
+  { url: 'https://api.dicebear.com/7.x/big-smile/svg?seed=Party&backgroundColor=160a26', label: 'Parti', category: 'Gece' },
+  { url: 'https://api.dicebear.com/7.x/personas/svg?seed=BarHopper&backgroundColor=0a0a1a', label: 'Bar', category: 'Gece' },
+
+  // ☕ GÜNLÜK — casual everyday life, café, home, street
+  { url: 'https://api.dicebear.com/7.x/open-peeps/svg?seed=CoffeeMorning&backgroundColor=292524&clothingColor=6b7280', label: 'Kahve', category: 'Günlük' },
+  { url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=CasualFriday&backgroundColor=1c1917', label: 'Günlük', category: 'Günlük' },
+  { url: 'https://api.dicebear.com/7.x/lorelei/svg?seed=Homebody&backgroundColor=27130c', label: 'Ev', category: 'Günlük' },
+  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Chill&backgroundColor=1a200f', label: 'Rahat', category: 'Günlük' },
+  { url: 'https://api.dicebear.com/7.x/dylan/svg?seed=Streetwear&backgroundColor=1e1e1e', label: 'Sokak', category: 'Günlük' },
+
+  // 💼 PROFESYONEL — business, formal, executive
+  { url: 'https://api.dicebear.com/7.x/notionists-neutral/svg?seed=CEO&backgroundColor=0f172a', label: 'CEO', category: 'Profesyonel' },
+  { url: 'https://api.dicebear.com/7.x/personas/svg?seed=Executive&backgroundColor=172030', label: 'Yönetici', category: 'Profesyonel' },
+  { url: 'https://api.dicebear.com/7.x/lorelei-neutral/svg?seed=Director&backgroundColor=1e293b', label: 'Direktör', category: 'Profesyonel' },
+  { url: 'https://api.dicebear.com/7.x/micah/svg?seed=SuitGuy&backgroundColor=0f1c2e', label: 'Takım Elbise', category: 'Profesyonel' },
+
+  // 🎨 YARATICI — artists, freelancers, makers
+  { url: 'https://api.dicebear.com/7.x/croodles/svg?seed=StreetArtist&backgroundColor=1a0a2e', label: 'Ressam', category: 'Yaratıcı' },
+  { url: 'https://api.dicebear.com/7.x/notionists/svg?seed=WriterSoul&backgroundColor=0f1a0a', label: 'Yazar', category: 'Yaratıcı' },
+  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Poet&backgroundColor=1a0a1a', label: 'Şair', category: 'Yaratıcı' },
+  { url: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Pixelator&backgroundColor=0a0a1a', label: 'Piksel', category: 'Yaratıcı' },
+  { url: 'https://api.dicebear.com/7.x/open-peeps/svg?seed=Musician&backgroundColor=1a1000&clothingColor=374151', label: 'Müzisyen', category: 'Yaratıcı' },
+
+  // 🏃 AKTİF — sports, gym, outdoor, energetic
+  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Sprinter&backgroundColor=1a2e0a', label: 'Koşucu', category: 'Aktif' },
+  { url: 'https://api.dicebear.com/7.x/open-peeps/svg?seed=GymRat&backgroundColor=0a2e1a&clothingColor=1d4ed8', label: 'Spor', category: 'Aktif' },
+  { url: 'https://api.dicebear.com/7.x/personas/svg?seed=Climber&backgroundColor=2e1a0a', label: 'Dağcı', category: 'Aktif' },
+  { url: 'https://api.dicebear.com/7.x/micah/svg?seed=Swimmer&backgroundColor=0a1a2e', label: 'Yüzücü', category: 'Aktif' },
+
+  // 🎮 DİJİTAL — gamer, coder, tech geek
+  { url: 'https://api.dicebear.com/7.x/bottts/svg?seed=GamerBot&backgroundColor=0a0a1e', label: 'Oyuncu', category: 'Dijital' },
+  { url: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=HackerPixel&backgroundColor=0a1a0a', label: 'Kodcu', category: 'Dijital' },
+  { url: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=AI-Dev&backgroundColor=0e0a1a', label: 'Dev', category: 'Dijital' },
+  { url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=NerdAlert&backgroundColor=0a0e1a', label: 'Geek', category: 'Dijital' },
 ];
 
-const AVATAR_CATEGORIES: AvatarCategory[] = ['Karakter', 'Portre', 'Geometrik', 'Robot', 'Emoji'];
+const AVATAR_CATEGORIES: AvatarCategory[] = ['Tatil', 'Sürücü', 'Gece', 'Günlük', 'Profesyonel', 'Yaratıcı', 'Aktif', 'Dijital'];
 const CATEGORY_ICONS: Record<AvatarCategory, string> = {
-  'Karakter': 'fa-user-astronaut',
-  'Portre': 'fa-user-tie',
-  'Geometrik': 'fa-shapes',
-  'Robot': 'fa-robot',
-  'Emoji': 'fa-face-smile',
+  'Tatil': 'fa-umbrella-beach',
+  'Sürücü': 'fa-car',
+  'Gece': 'fa-moon',
+  'Günlük': 'fa-mug-hot',
+  'Profesyonel': 'fa-briefcase',
+  'Yaratıcı': 'fa-palette',
+  'Aktif': 'fa-person-running',
+  'Dijital': 'fa-gamepad',
 };
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -527,7 +557,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
 
                 {/* Modal card */}
                 <div
-                    className="relative z-10 w-full max-w-2xl bg-[#0d1117] border border-white/[0.08] rounded-3xl shadow-2xl shadow-black/60 animate-in zoom-in-95 fade-in duration-200 overflow-hidden"
+                    className="relative z-10 w-full max-w-3xl bg-[#0d1117] border border-white/[0.08] rounded-3xl shadow-2xl shadow-black/60 animate-in zoom-in-95 fade-in duration-200 overflow-hidden"
                     onClick={e => e.stopPropagation()}
                 >
                     {/* Header */}
@@ -538,7 +568,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                             </div>
                             <div>
                                 <h3 className="text-[14px] font-black font-outfit text-white tracking-wide">Avatar Seç</h3>
-                                <p className="text-[10px] text-slate-500">20 avatar · 5 farklı stil</p>
+                                <p className="text-[10px] text-slate-500">34 avatar · 8 yaşam tarzı · 10 farklı stil</p>
                             </div>
                         </div>
                         <button
@@ -574,7 +604,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                     <div className="flex gap-0 p-6 pt-3">
                         {/* Avatar grid */}
                         <div className="flex-1">
-                            <div className="grid grid-cols-5 gap-3">
+                            <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
                                 {AVATARS.filter(a => a.category === avatarCategory).map(av => {
                                     const isCurrent = accountForm.avatar === av.url;
                                     const isPending = pendingAvatar === av.url;
