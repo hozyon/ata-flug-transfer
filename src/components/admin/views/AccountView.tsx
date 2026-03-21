@@ -2,12 +2,54 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 const AI_LS_KEY = 'ata_ai_api_key';
 
+// ── Avatar System ─────────────────────────────────────────────────────────────
+type AvatarCategory = 'Karakter' | 'Portre' | 'Geometrik' | 'Robot' | 'Emoji';
+interface AvatarItem { url: string; label: string; category: AvatarCategory; }
+
+const AVATARS: AvatarItem[] = [
+  // Karakter — adventurer style, warm illustrated portraits
+  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Nour&backgroundColor=1e3a5f', label: 'Nour', category: 'Karakter' },
+  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Leyla&backgroundColor=2d1b4e', label: 'Leyla', category: 'Karakter' },
+  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Kemal&backgroundColor=1a3a2a', label: 'Kemal', category: 'Karakter' },
+  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Zeynep&backgroundColor=3d1515', label: 'Zeynep', category: 'Karakter' },
+  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Tarık&backgroundColor=2a1a0e', label: 'Tarık', category: 'Karakter' },
+  // Portre — lorelei style, minimal line illustrations
+  { url: 'https://api.dicebear.com/7.x/lorelei/svg?seed=Aria&backgroundColor=0f172a', label: 'Aria', category: 'Portre' },
+  { url: 'https://api.dicebear.com/7.x/lorelei/svg?seed=Selin&backgroundColor=1a0f2e', label: 'Selin', category: 'Portre' },
+  { url: 'https://api.dicebear.com/7.x/lorelei/svg?seed=Caner&backgroundColor=0f2e1a', label: 'Caner', category: 'Portre' },
+  { url: 'https://api.dicebear.com/7.x/lorelei/svg?seed=Defne&backgroundColor=2e1a0f', label: 'Defne', category: 'Portre' },
+  { url: 'https://api.dicebear.com/7.x/lorelei/svg?seed=Bora&backgroundColor=1e2040', label: 'Bora', category: 'Portre' },
+  // Geometrik — shapes style, abstract generative art
+  { url: 'https://api.dicebear.com/7.x/shapes/svg?seed=Alpha&backgroundColor=0f172a', label: 'Alpha', category: 'Geometrik' },
+  { url: 'https://api.dicebear.com/7.x/shapes/svg?seed=Sigma&backgroundColor=172012', label: 'Sigma', category: 'Geometrik' },
+  { url: 'https://api.dicebear.com/7.x/shapes/svg?seed=Delta&backgroundColor=1f0f17', label: 'Delta', category: 'Geometrik' },
+  { url: 'https://api.dicebear.com/7.x/shapes/svg?seed=Omega&backgroundColor=1a1200', label: 'Omega', category: 'Geometrik' },
+  // Robot — bottts-neutral style, mechanical faces
+  { url: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Atlas&backgroundColor=0f172a', label: 'Atlas', category: 'Robot' },
+  { url: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Nova&backgroundColor=172012', label: 'Nova', category: 'Robot' },
+  { url: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Orion&backgroundColor=1f0f17', label: 'Orion', category: 'Robot' },
+  { url: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=Zeta&backgroundColor=171a2e', label: 'Zeta', category: 'Robot' },
+  // Emoji — fun-emoji style, expressive characters
+  { url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Neşe&backgroundColor=1e1e2e', label: 'Neşeli', category: 'Emoji' },
+  { url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Cool&backgroundColor=2e1a0f', label: 'Havalı', category: 'Emoji' },
+];
+
+const AVATAR_CATEGORIES: AvatarCategory[] = ['Karakter', 'Portre', 'Geometrik', 'Robot', 'Emoji'];
+const CATEGORY_ICONS: Record<AvatarCategory, string> = {
+  'Karakter': 'fa-user-astronaut',
+  'Portre': 'fa-user-tie',
+  'Geometrik': 'fa-shapes',
+  'Robot': 'fa-robot',
+  'Emoji': 'fa-face-smile',
+};
+// ─────────────────────────────────────────────────────────────────────────────
+
 interface AccountViewProps {
     accountForm: any;
     setAccountForm: (form: any) => void;
     accountTab: 'profile' | 'users';
     setAccountTab: (tab: 'profile' | 'users') => void;
-    ADMIN_AVATARS: string[];
+    ADMIN_AVATARS?: string[]; // kept for backwards-compat, no longer used
     showToast: (message: string, type: 'success' | 'error' | 'info' | 'delete' | 'warning') => void;
     onExitAdmin: () => void;
     onSaveAccount: (form?: any) => void;
@@ -24,9 +66,12 @@ const LABEL = "text-[10px] font-black font-outfit text-slate-500 uppercase track
 
 export const AccountView: React.FC<AccountViewProps> = ({
     accountForm, setAccountForm,
-    ADMIN_AVATARS, showToast, onExitAdmin, onSaveAccount, onUpdatePassword,
+    showToast, onExitAdmin, onSaveAccount, onUpdatePassword,
 }) => {
     const [showAvatarPicker, setShowAvatarPicker] = useState(false);
+    const [avatarCategory, setAvatarCategory] = useState<AvatarCategory>('Karakter');
+    const [hoverAvatar, setHoverAvatar] = useState<string | null>(null);
+    const [pendingAvatar, setPendingAvatar] = useState<string | null>(null);
     const [aiApiKey, setAiApiKey] = useState(() => localStorage.getItem(AI_LS_KEY) || '');
     const [showAiKey, setShowAiKey] = useState(false);
     const [aiKeySaved, setAiKeySaved] = useState(false);
@@ -77,6 +122,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
     const strengthColors = ['', 'bg-red-500', 'bg-amber-500', 'bg-yellow-400', 'bg-emerald-500'];
 
     return (
+        <>
         <div className="animate-in slide-in-from-right-8 duration-500 max-w-3xl mx-auto space-y-4">
 
             {/* ── Profile Card ── */}
@@ -120,29 +166,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                     </button>
                 </div>
 
-                {/* Avatar picker (inline, togglable) */}
-                {showAvatarPicker && (
-                    <div className="border-t border-white/[0.06] px-5 py-4 animate-in fade-in slide-in-from-top-2 duration-200">
-                        <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest mb-3">Avatar Seç</p>
-                        <div className="flex flex-wrap gap-2">
-                            {ADMIN_AVATARS.map((av, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() => {
-                                        const updated = { ...accountForm, avatar: av };
-                                        setAccountForm(updated);
-                                        onSaveAccount(updated);
-                                        setShowAvatarPicker(false);
-                                        showToast('Avatar güncellendi', 'success');
-                                    }}
-                                    className={`w-12 h-12 rounded-xl overflow-hidden border-2 transition-all hover:scale-105 ${accountForm.avatar === av ? 'border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]/30' : 'border-white/10 hover:border-white/30'}`}
-                                >
-                                    <img src={av} alt="" className="w-full h-full object-cover" />
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                )}
+                {/* no inline picker — modal below */}
             </div>
 
             {/* ── Main Grid ── */}
@@ -491,6 +515,163 @@ export const AccountView: React.FC<AccountViewProps> = ({
                 </div>
             </div>
         </div>
+
+        {/* ── Avatar Picker Modal ────────────────────────────────────────── */}
+        {showAvatarPicker && (
+            <div
+                className="fixed inset-0 z-[300] flex items-center justify-center p-4"
+                onClick={() => { setShowAvatarPicker(false); setPendingAvatar(null); setHoverAvatar(null); }}
+            >
+                {/* Backdrop */}
+                <div className="absolute inset-0 bg-black/75 backdrop-blur-md" />
+
+                {/* Modal card */}
+                <div
+                    className="relative z-10 w-full max-w-2xl bg-[#0d1117] border border-white/[0.08] rounded-3xl shadow-2xl shadow-black/60 animate-in zoom-in-95 fade-in duration-200 overflow-hidden"
+                    onClick={e => e.stopPropagation()}
+                >
+                    {/* Header */}
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-xl bg-[var(--color-primary)]/15 flex items-center justify-center">
+                                <i className="fa-solid fa-user-pen text-[var(--color-primary)] text-[12px]"></i>
+                            </div>
+                            <div>
+                                <h3 className="text-[14px] font-black font-outfit text-white tracking-wide">Avatar Seç</h3>
+                                <p className="text-[10px] text-slate-500">20 avatar · 5 farklı stil</p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={() => { setShowAvatarPicker(false); setPendingAvatar(null); setHoverAvatar(null); }}
+                            className="w-8 h-8 rounded-xl bg-white/5 hover:bg-red-500/20 text-slate-400 hover:text-red-400 flex items-center justify-center transition-colors"
+                        >
+                            <i className="fa-solid fa-xmark text-sm"></i>
+                        </button>
+                    </div>
+
+                    {/* Category tabs */}
+                    <div className="flex items-center gap-1.5 px-6 pt-4 pb-2 overflow-x-auto scrollbar-hide">
+                        {AVATAR_CATEGORIES.map(cat => (
+                            <button
+                                key={cat}
+                                onClick={() => setAvatarCategory(cat)}
+                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all shrink-0 ${
+                                    avatarCategory === cat
+                                        ? 'bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/20'
+                                        : 'bg-white/[0.04] text-slate-400 hover:bg-white/[0.08] hover:text-white border border-white/[0.06]'
+                                }`}
+                            >
+                                <i className={`fa-solid ${CATEGORY_ICONS[cat]} text-[9px]`}></i>
+                                {cat}
+                                <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${avatarCategory === cat ? 'bg-white/20' : 'bg-white/[0.05]'}`}>
+                                    {AVATARS.filter(a => a.category === cat).length}
+                                </span>
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Body: grid + preview */}
+                    <div className="flex gap-0 p-6 pt-3">
+                        {/* Avatar grid */}
+                        <div className="flex-1">
+                            <div className="grid grid-cols-5 gap-3">
+                                {AVATARS.filter(a => a.category === avatarCategory).map(av => {
+                                    const isCurrent = accountForm.avatar === av.url;
+                                    const isPending = pendingAvatar === av.url;
+                                    const isSelected = isPending || (!pendingAvatar && isCurrent);
+                                    return (
+                                        <button
+                                            key={av.url}
+                                            onClick={() => setPendingAvatar(av.url)}
+                                            onMouseEnter={() => setHoverAvatar(av.url)}
+                                            onMouseLeave={() => setHoverAvatar(null)}
+                                            className="group flex flex-col items-center gap-1.5"
+                                        >
+                                            <div className={`relative w-full aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-200 ${
+                                                isSelected
+                                                    ? 'border-[var(--color-primary)] shadow-lg shadow-[var(--color-primary)]/30 scale-105'
+                                                    : 'border-white/10 group-hover:border-white/30 group-hover:scale-105'
+                                            }`}>
+                                                <img src={av.url} alt={av.label} className="w-full h-full object-cover" loading="lazy" />
+                                                {/* Selected checkmark */}
+                                                {isSelected && (
+                                                    <div className="absolute bottom-1 right-1 w-5 h-5 bg-[var(--color-primary)] rounded-full flex items-center justify-center shadow-md">
+                                                        <i className="fa-solid fa-check text-white text-[8px]"></i>
+                                                    </div>
+                                                )}
+                                                {/* Hover overlay */}
+                                                {!isSelected && (
+                                                    <div className="absolute inset-0 bg-[var(--color-primary)]/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                )}
+                                            </div>
+                                            <span className={`text-[9px] font-semibold transition-colors ${isSelected ? 'text-[var(--color-primary)]' : 'text-slate-600 group-hover:text-slate-300'}`}>
+                                                {av.label}
+                                            </span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        {/* Preview panel (desktop) */}
+                        <div className="hidden sm:flex w-32 shrink-0 flex-col items-center gap-3 pl-5 border-l border-white/[0.06] ml-5">
+                            <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest self-start">Önizleme</p>
+                            <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-[var(--color-primary)]/40 shadow-xl shadow-[var(--color-primary)]/10 bg-slate-900">
+                                <img
+                                    src={hoverAvatar || pendingAvatar || accountForm.avatar}
+                                    alt="Önizleme"
+                                    className="w-full h-full object-cover transition-all duration-200"
+                                />
+                            </div>
+                            <div className="text-center">
+                                <p className="text-[10px] font-bold text-white">
+                                    {AVATARS.find(a => a.url === (hoverAvatar || pendingAvatar || accountForm.avatar))?.label || 'Mevcut'}
+                                </p>
+                                <p className="text-[9px] text-slate-600 mt-0.5">
+                                    {AVATARS.find(a => a.url === (hoverAvatar || pendingAvatar || accountForm.avatar))?.category || ''}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="flex items-center justify-between px-6 py-4 border-t border-white/[0.06] bg-white/[0.01]">
+                        <p className="text-[10px] text-slate-600">
+                            {pendingAvatar
+                                ? <span className="text-[var(--color-primary)] font-semibold">Seçim yapıldı — kaydetmek için "Uygula" butonuna tıklayın</span>
+                                : 'Bir avatar seçin'
+                            }
+                        </p>
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => { setShowAvatarPicker(false); setPendingAvatar(null); setHoverAvatar(null); }}
+                                className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 text-xs font-bold transition-colors"
+                            >
+                                İptal
+                            </button>
+                            <button
+                                disabled={!pendingAvatar}
+                                onClick={() => {
+                                    if (!pendingAvatar) return;
+                                    const updated = { ...accountForm, avatar: pendingAvatar };
+                                    setAccountForm(updated);
+                                    onSaveAccount(updated);
+                                    setShowAvatarPicker(false);
+                                    setPendingAvatar(null);
+                                    setHoverAvatar(null);
+                                    showToast('Avatar güncellendi', 'success');
+                                }}
+                                className="px-5 py-2 rounded-xl bg-[var(--color-primary)] hover:bg-amber-600 disabled:opacity-30 disabled:cursor-not-allowed text-white text-xs font-black transition-all shadow-lg shadow-[var(--color-primary)]/20"
+                            >
+                                <i className="fa-solid fa-check mr-1.5 text-[10px]"></i>
+                                Uygula
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )}
+        </>
     );
 };
 
