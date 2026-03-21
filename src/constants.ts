@@ -241,7 +241,17 @@ export const REVIEWS: { id: number; name: string; country: string; lang: string;
 import { BlogPost } from './types';
 
 
-const REGION_DETAILS: Record<string, { title: string; about: string; places: string[]; dining: string[]; activities: string[] }> = {
+const REGION_DETAILS: Record<string, {
+  title: string;
+  about: string;
+  places: string[];
+  dining: string[];
+  activities: string[];
+  hotels?: string[];
+  distance?: string;
+  duration?: string;
+  tips?: string[];
+}> = {
   // --- Antalya Merkez ve Yakın Çevre ---
   "Antalya Havalimanı (AYT)": {
     title: "Antalya'nın Dünyaya Açılan Kapısı: Havalimanı Rehberi",
@@ -262,14 +272,32 @@ const REGION_DETAILS: Record<string, { title: string; about: string; places: str
     about: "Kundu, temalı otelleri ve uçsuz bucaksız kumsalları ile ünlüdür. 'Türk Rivierası'nın Las Vegas'ı' olarak anılan bu bölge, lüks tatil arayanların bir numaralı tercihidir.",
     places: ["Lara Plajı", "Ters Ev (Aksiyon Parkı)", "Sandland (Kum Heykel Müzesi)", "Perge Antik Kenti (Yakın)"],
     dining: ["Kundu Otel Restoranları", "Lara Balık Evi", "Günaydın Kebap"],
-    activities: ["Plaj keyfi", "Su sporları", "Alışveriş merkezleri turu", "Kum heykel festivali"]
+    activities: ["Plaj keyfi", "Su sporları", "Alışveriş merkezleri turu", "Kum heykel festivali"],
+    hotels: ["Titanic Beach Lara", "Ela Quality Resort", "Paloma Oceana Resort", "Crystal Sunset Luxury Resort", "Kamelya Collection Hotel", "Starlight Resort Hotel"],
+    distance: "Antalya Havalimanı'na yaklaşık 15 km",
+    duration: "Yaklaşık 20 – 30 dakika",
+    tips: [
+      "Kundu bölgesindeki mega otellerin farklı giriş kapıları vardır; şoförümüz doğru kapıdan giriş yapacak şekilde yönlendirilir.",
+      "Sandland Kum Heykel Müzesi ve Perge Antik Kenti için günlük tur transferi de düzenleyebiliriz.",
+      "Ters Ev gibi aktivite merkezlerine gidiş-dönüş için minibüslerimiz hazır.",
+      "Aynı güzergahta birden fazla otel varsa grup transferinizi tek araçla organize edebiliriz."
+    ]
   },
   "Lara": {
     title: "Lüksün ve Eğlencenin Adresi: Lara",
     about: "Antalya'nın en popüler turizm merkezlerinden biri olan Lara, hem şehir merkezine yakınlığı hem de muhteşem plajlarıyla dikkat çeker. Düden Şelalesi'nin denize döküldüğü nokta buradadır.",
     places: ["Düden Şelalesi", "Lara Plajı (Altınkum)", "TerraCity AVM"],
     dining: ["Kalamar Balık", "BigChefs", "Lara Çorbacısı"],
-    activities: ["Düden parkında yürüyüş", "AVM gezisi", "Deniz keyfi", "Gece hayatı"]
+    activities: ["Düden parkında yürüyüş", "AVM gezisi", "Deniz keyfi", "Gece hayatı"],
+    hotels: ["Titanic Mardan Palace", "Akra Hotel Antalya", "Susesi Luxury Resort", "Rixos Downtown Antalya", "Barut Lara", "Sheraton Grand Doha (Lara aynı kuşak)", "Delphin Imperial Hotel"],
+    distance: "Antalya Havalimanı'na yaklaşık 13 km",
+    duration: "Yaklaşık 15 – 25 dakika",
+    tips: [
+      "Lara, havalimanına en yakın bölgelerden biridir; kısa mesafe için de sabit fiyat uyguluyoruz.",
+      "Titanic Mardan Palace ve Akra Hotel gibi büyük rezidanslar için özel karşılama hizmetimiz mevcuttur.",
+      "Düden Şelalesi'nin denize döküldüğü noktayı görmek için akşam üstü ideal; transferinizi buna göre planlayın.",
+      "Lara bölgesindeki otellerin bazıları kapalı sahaya sahiptir; giriş kodunu şoförümüz önceden edinir."
+    ]
   },
   "Konyaaltı": {
     title: "Mavi Bayraklı Sahil Şeridi: Konyaaltı Rehberi",
@@ -285,7 +313,16 @@ const REGION_DETAILS: Record<string, { title: string; about: string; places: str
     about: "Çam ormanlarının denizle kucaklaştığı Belek, dünya standartlarında golf sahaları ve ultra lüks tesisleriyle tanınır. Sessiz, sakin ve kaliteli bir tatil arayanlar için mükemmeldir.",
     places: ["The Land of Legends", "Aspendos Tiyatrosu", "Perge Antik Kenti", "Belek Halk Plajı", "Dinler Bahçesi"],
     dining: ["Nemo Restaurant", "Piazzetta Italiana", "Belek Çarşı Restoranları"],
-    activities: ["Golf oynamak", "Theme park eğlencesi", "Spa & Wellness", "Konser etkinlikleri"]
+    activities: ["Golf oynamak", "Theme park eğlencesi", "Spa & Wellness", "Konser etkinlikleri"],
+    hotels: ["Regnum Carya Golf & Spa Resort", "Cornelia Diamond Golf Resort & Spa", "Antalya Belek (ex. Gloria Golf Resort)", "Sueno Hotels Golf Belek", "Calista Luxury Resort", "Adam & Eve Hotel", "Rixos Premium Belek"],
+    distance: "Antalya Havalimanı'na yaklaşık 35 km",
+    duration: "Yaklaşık 30 – 40 dakika",
+    tips: [
+      "Golf ekipmanınız varsa önceden belirtin; araçlarımız fazla bagaja uygun şekilde hazırlanır.",
+      "Belek otellerinin büyük çoğunluğu kapalı site içindedir; şoförümüz doğru kapıdan giriş yapacak şekilde yönlendirilir.",
+      "The Land of Legends ziyareti için sabah erken saatlerde transfer tercih edin.",
+      "Aspendos Antik Tiyatrosu'na transfer de hizmetlerimiz arasında yer almaktadır."
+    ]
   },
   "Boğazkent": {
     title: "Kuş Cenneti ve Huzur: Boğazkent",
@@ -308,14 +345,32 @@ const REGION_DETAILS: Record<string, { title: string; about: string; places: str
     about: "Tarihin içinde bir tatile ne dersiniz? Side, antik tiyatrosu, Apollon Tapınağı ve çarşısı ile yaşayan bir tarihtir. Gün batımını tapınakların yanında izlemek paha biçilemez.",
     places: ["Apollon Tapınağı", "Side Antik Tiyatrosu", "Side Müzesi", "Manavgat Şelalesi"],
     dining: ["Orfoz Restaurant", "Karma Restaurant", "Liman Restoranları"],
-    activities: ["Antik kent gezisi", "Gün batımı izleme", "Tekne turu", "Çarşı alışverişi"]
+    activities: ["Antik kent gezisi", "Gün batımı izleme", "Tekne turu", "Çarşı alışverişi"],
+    hotels: ["Barut Acanthus & Cennet", "Asteria Sorgun Hotel", "Sentido Zeynep Golf & Spa", "IC Hotels Residence", "Wow Side Hotel", "Silence Beach Resort", "Aska Just In Beach"],
+    distance: "Antalya Havalimanı'na yaklaşık 65 km",
+    duration: "Yaklaşık 55 dakika – 1 saat 10 dakika",
+    tips: [
+      "Side antik çarşısı özellikle akşam saatlerinde büyüleyici bir atmosfer sunar; bölgeye gece geç varışlar için transferinizi planlayın.",
+      "Manavgat Şelalesi ve Side'yi aynı günde görmek isteyenler için şehir içi tur transferi de ayarlayabiliriz.",
+      "Bazı Side otelleri plaj ve ana binadan ayrı konumdadır; kapınıza kadar teslim güvencemiz geçerlidir.",
+      "Sezon yoğunluğunda (Temmuz-Ağustos) havalimanı taksilerinde uzun bekleme süreleri yaşanabilir; önceden rezervasyon yaptırın."
+    ]
   },
   "Manavgat": {
     title: "Şelalelerin ve Doğanın Kenti: Manavgat",
     about: "Ünlü şelalesi ve ırmağıyla Manavgat, doğa severler için kaçırılmayacak bir rotadır. Irmak kenarında kahvaltı yapmak veya tekne turuna çıkmak buranın klasiğidir.",
     places: ["Manavgat Şelalesi", "Manavgat Irmağı", "Külliye Camii", "Seleukeia Antik Kenti"],
     dining: ["Irmak Kenarı Balık Restoranları", "Sultan Sofrası"],
-    activities: ["Irmak tekne turu", "Şelale ziyareti", "Pazar alışverişi (Büyük Pazar)"]
+    activities: ["Irmak tekne turu", "Şelale ziyareti", "Pazar alışverişi (Büyük Pazar)"],
+    hotels: ["Selectum Colours Side", "Ali Bey Club Manavgat", "Ring Beach Hotel", "Aska Baran Resort"],
+    distance: "Antalya Havalimanı'na yaklaşık 72 km",
+    duration: "Yaklaşık 1 saat – 1 saat 15 dakika",
+    tips: [
+      "Manavgat haftalık pazarı genellikle Perşembe günleri kurulur; alışveriş için sabah saatlerinde planlayın.",
+      "Manavgat Şelalesi ve Side'yi aynı gün görmek isteyenler için kombinasyon tur transferi düzenliyoruz.",
+      "Irmak kenarındaki restoranlar için akşam üstü transfer tercih edin; gün batımında manzara muhteşemdir.",
+      "Side-Manavgat bölgesinde birden fazla nokta arasında sizi taşıyabiliriz; şoförünüz bekleyebilir."
+    ]
   },
   "Kumköy": {
     title: "Eğlence ve Deniz: Kumköy Tatil Rehberi",
@@ -380,7 +435,16 @@ const REGION_DETAILS: Record<string, { title: string; about: string; places: str
     about: "Selçuklu'nun kışlık başkenti, korsanların eski limanı... Alanya, kalesi, mağaraları ve bitmek bilmeyen gece hayatıyla tam bir tatil kompleksidir.",
     places: ["Alanya Kalesi", "Kleopatra Plajı", "Damlataş Mağarası", "Dim Çayı", "Kızılkule"],
     dining: ["Mezza Natural", "Dim Çayı Restoranları", "Yöresel Alanya Bohçası"],
-    activities: ["Teleferik turu", "Tekne turu", "Gece kulüpleri", "Mağara gezisi"]
+    activities: ["Teleferik turu", "Tekne turu", "Gece kulüpleri", "Mağara gezisi"],
+    hotels: ["Rixos Premium Tekirova", "Kirman Leodikya Resort", "Granada Luxury Alanya", "Kirman Hotels Belazur", "Delphin BE Grand Resort", "Utopia World Hotel"],
+    distance: "Antalya Havalimanı'na yaklaşık 125 km",
+    duration: "Yaklaşık 1 saat 30 dakika – 1 saat 45 dakika",
+    tips: [
+      "Uçuşunuzdan önce WhatsApp üzerinden rezervasyon yapın; havalimanında araç kuyruğu beklemenize gerek kalmaz.",
+      "Gece geç saatlerde inen uçuşlar için 7/24 hizmetimizden faydalanabilirsiniz.",
+      "Kleopatra Plajı'na en yakın oteller için önceden konum paylaşın, kapınıza kadar geliyoruz.",
+      "Alanya Kalesi'ni görmek isteyenler için sabah erken saatlerde başlamak kalabalığı önler."
+    ]
   },
   "Konaklı": {
     title: "Eğlence ve Konfor: Konaklı",
@@ -445,7 +509,16 @@ const REGION_DETAILS: Record<string, { title: string; about: string; places: str
     about: "Dağların denize dik indiği, her ton mavinin yeşille buluştuğu Kemer; gece hayatı, marinası ve plajlarıyla eşsizdir.",
     places: ["Ayışığı Parkı", "Yörük Parkı", "Kemer Marina", "Idyros Antik Kenti"],
     dining: ["Qualista Restaurant", "Liman Caddesi Mekanları"],
-    activities: ["Tekne turu", "Gece kulüpleri (Aura, Inferno)", "Jeep safari"]
+    activities: ["Tekne turu", "Gece kulüpleri (Aura, Inferno)", "Jeep safari"],
+    hotels: ["Rixos Premium Tekirova", "Club Hotel Phaselis Rose", "Amara Prestige Hotel", "Paloma Renaissance Antalya Beach Resort", "TUI MAGIC LIFE Waterworld Belek", "Club Med Palmiye", "Barut Hemera"],
+    distance: "Antalya Havalimanı'na yaklaşık 45 km",
+    duration: "Yaklaşık 45 dakika – 1 saat",
+    tips: [
+      "Kemer'e gidiş rotası dağlık ve kıvrımlı; çocuklar ve deniz tutanlar için özel konfor araçlarımızı tercih edin.",
+      "Tahtalı Dağı teleferik istasyonuna transfer için ayrı rezervasyon açabilirsiniz.",
+      "Marina bölgesindeki oteller için liman girişini şoförümüz bilmektedir; endişelenmeyin.",
+      "Gece kulüplerine gidiş-dönüş transfer için saatlik kiralama seçeneğimiz de mevcuttur."
+    ]
   },
   "Göynük": {
     title: "Kanyonların Arasında: Göynük",
@@ -510,14 +583,32 @@ const REGION_DETAILS: Record<string, { title: string; about: string; places: str
     about: "Her sokağı denize çıkan, begonvillerle süslü, kendine has ruhu olan kasaba. Dalış, yamaç paraşütü ve gün batımı burada bir başkadır.",
     places: ["Kaputaş Plajı", "Antiphellos Tiyatrosu", "Uzun Çarşı", "Hidayet Koyu"],
     dining: ["Zaika Ocakbaşı", "Bi Lokma", "L'Apéro"],
-    activities: ["Dalış (Scuba)", "Meis Adası turu", "Yamaç paraşütü", "Caz dinletileri"]
+    activities: ["Dalış (Scuba)", "Meis Adası turu", "Yamaç paraşütü", "Caz dinletileri"],
+    hotels: ["Hillside Beach Club (yakın bölge)", "Villa Mahal Kaş", "Kaş Arkin Club Hotel", "Olive Garden Hotel Kaş", "Aquapark Hotel Kaş"],
+    distance: "Antalya Havalimanı'na yaklaşık 185 km",
+    duration: "Yaklaşık 2 saat 30 dakika – 3 saat",
+    tips: [
+      "Kaş uzak bir mesafede olduğundan çocuklu aileler için konforlu minibüs transferi tercih edilmelidir.",
+      "Kaputaş Plajı yol kenarındadır; transferiniz sırasında bir mola verebilirsiniz, şoförünüze bildirin.",
+      "Meis Adası feribot saatlerine göre transfer saatinizi planlayın; biz de size yardımcı olabiliriz.",
+      "Uzun yol için araçlarımızda Wi-Fi ve şarj imkanı mevcuttur."
+    ]
   },
   "Kalkan": {
     title: "Romantizm ve Lüks: Kalkan",
     about: "Beyaz badanalı evleri, dar sokakları ve sonsuzluk havuzlu villalarıyla Türkiye'nin en sofistike tatil beldelerinden biridir.",
     places: ["Kaputaş Plajı", "Patara Plajı", "Kalkan Marina"],
     dining: ["Salonika 1881", "Aubergine", "Teras restoranlar"],
-    activities: ["Villa keyfi", "Beach club", "Romantik akşam yemekleri"]
+    activities: ["Villa keyfi", "Beach club", "Romantik akşam yemekleri"],
+    hotels: ["Patara Prince Hotel & Resort", "Club Patara Kelebek Hotel", "Villa Kalkan", "Harbour View Hotel Kalkan", "Pirat Hotel Kalkan"],
+    distance: "Antalya Havalimanı'na yaklaşık 200 km",
+    duration: "Yaklaşık 2 saat 45 dakika – 3 saat 15 dakika",
+    tips: [
+      "Kalkan'ın dar ve yokuşlu sokakları için küçük araç yerine standart sedan veya Vito tercih edin.",
+      "Patara Plajı, Kalkan'dan yaklaşık 20 dakika uzaklıktadır; günlük transfer ayarlayabiliriz.",
+      "Gece geç saatlerde bölgeye ulaşıyorsanız şoförünüz yol bilgisi açısından önceden bilgilendirilir.",
+      "Kaş ve Kalkan arasındaki transferleri de sağlıyoruz; iki bölge arası gezi planı yapabilirsiniz."
+    ]
   },
   "Finike": {
     title: "Portakalın Başkenti: Finike",
@@ -616,68 +707,160 @@ export const BLOG_POSTS: BlogPost[] = SCRAPED_REGIONS.map((region, index) => {
     activities: ["Deniz ve güneş keyfi", "Doğa yürüyüşü", "Dinlenme"]
   };
 
+  const regionSlugLower = region.name.toLowerCase();
+  const hasHotels = details.hotels && details.hotels.length > 0;
+  const hasTips = details.tips && details.tips.length > 0;
+  const distanceInfo = details.distance || `Antalya Havalimanı'ndan ${region.name} bölgesine mesafe trafiğe bağlı olarak değişmektedir`;
+  const durationInfo = details.duration || 'Yaklaşık süre trafiğe ve güzergâha göre değişmektedir';
+
   return {
     id: `blog-${index + 1}`,
     slug: `${slug}-transfer-rehberi`,
-    title: details.title,
-    excerpt: `Antalya Havalimanı'ndan ${region.name} bölgesine VIP transfer ve gezi rehberi. ${region.name} gezilecek yerler, en iyi restoranlar ve aktiviteler hakkında detaylı bilgiler.`,
-    content: `# ${details.title}
+    title: `${region.name} Transfer | Antalya Havalimanı (AYT) → ${region.name} VIP Ulaşım 2026`,
+    excerpt: `Antalya Havalimanı'ndan (AYT) ${region.name}'ye özel VIP transfer. Sabit fiyat, karşılama, ücretsiz bebek koltuğu dahil. 7/24 WhatsApp rezervasyon. ${region.name} gezilecek yerler ve seyahat rehberi.`,
+    content: `# ${region.name} Transfer | Antalya Havalimanı (AYT) → ${region.name} VIP Ulaşım 2026
 
 ${details.about}
 
-**Ata Flug Transfer** olarak, Antalya Havalimanı'ndan (AYT) **${region.name}** bölgesine konforlu, güvenli ve VIP araçlarımızla ulaşımınızı sağlıyoruz. Tatiliniz yolda başlasın!
+**Ata Flug Transfer** olarak, **Antalya Havalimanı (AYT)**'ndan **${region.name}**'ye özel VIP transfer hizmeti sunuyoruz. Mercedes Vito ve Sprinter araç filomuz, profesyonel şoförlerimiz ve 7/24 WhatsApp desteğimizle tatiliniz havalimanından itibaren başlasın. **En ucuz fiyat garantisi** ve **sabit fiyat** politikamızla sürpriz ücretler tarih oldu.
 
-## Antalya Havalimanı - ${region.name} Ulaşım Seçenekleri
+---
 
-Tatil planınızı yaptınız, peki otelinize nasıl gideceksiniz? İşte seçenekleriniz:
+## Antalya Havalimanı'ndan ${region.name}'ye Ulaşım: Mesafe ve Süre
 
-### Özel VIP Transfer (En Konforlu)
-Havalimanında sıra beklemeden, size özel tahsis edilmiş Mercedes Vito veya Sprinter araçlarla doğrudan otelinize ulaşın.
-- **Karşılama:** Çıkış kapısında isminizle karşılama.
-- **Konfor:** Geniş deri koltuklar, klima, Wi-Fi.
-- **Gizlilik:** Sadece size ve ailenize özel araç.
+- **Mesafe:** ${distanceInfo}
+- **Tahmini Süre:** ${durationInfo}
+- **Güzergâh:** D400 karayolu üzerinden en hızlı güzergah kullanılır; yoğun sezonlarda alternatif rotalar tercih edilir.
 
-### Taksi
-Havalimanı taksileri mevcuttur ancak sezon yoğunluğunda sıra olabilir ve fiyatlar belirsizdir.
+> Şoförümüz uçuşunuzu canlı olarak takip eder. Rötarınız olsa bile sizi bekler — ek ücret talep etmeden.
+
+---
+
+## Özel Transfer mi, Paylaşımlı Transfer mi? Fark Nedir?
+
+Türkiye'de havalimanı transferi için iki temel seçenek bulunur. Doğru kararı verebilmek için aralarındaki farkları bilmek önemlidir:
+
+| Özellik | **Özel Transfer (Ata Flug)** | Paylaşımlı Transfer |
+|---|---|---|
+| Araç | Yalnızca size özel | Birden fazla yolcu |
+| Bekleme | Yok, direkt hareket | Diğer yolcular toplanır |
+| Fiyat | Sabit, önceden bilinen | Değişken veya kişi başı |
+| Bagaj | Sınırsız (araç kapasitesi kadar) | Kısıtlı |
+| Bebek Koltuğu | Ücretsiz dahil | Çoğunlukla ücretli / yok |
+| Karşılama | İsim tabelası ile terminal çıkışında | Belirli bir buluşma noktası |
+| 7/24 Hizmet | Evet | Genellikle sınırlı saatler |
+
+**Özel transfer**, aile tatillerinde, yorucu uzun uçuş sonrasında ve lüks konaklama yapan misafirler için açık ara daha konforlu ve hesaplı bir seçenektir.
+
+---
+
+## Neden Ata Flug Transfer?
+
+${region.name}'ye giden yüzlerce misafir Ata Flug Transfer'i tercih ediyor. İşte 5 temel neden:
+
+- **Sabit ve Şeffaf Fiyat:** Rezervasyon anında öğrendiğiniz fiyat, ödediğiniz fiyattır. Taksi tezgahları, gece tarifeleri veya bagaj ücretleri yoktur.
+- **Ücretsiz Bebek ve Çocuk Koltuğu:** Tüm transferlerimizde bebek koltuğu ve çocuk oturağı ücretsiz sağlanır; rezervasyonda belirtmeniz yeterli.
+- **Uçuş Takibi & Ücretsiz Bekleme:** Uçuşunuz rötarlı olsa bile şoförümüz sizi bekler. Ek ücret talep edilmez.
+- **Meet & Greet Karşılama:** Terminal çıkışında isminizin yazılı olduğu tabela ve WhatsApp konum paylaşımı ile şoförünüzü kolayca bulursunuz.
+- **7/24 Hizmet, Gece Ücreti Yok:** Gece 02:00 veya 04:00'te inen uçuşlar için bile ek ücret uygulanmaz.
+
+---
 
 ## ${region.name} Bölgesinde Gezilecek Yerler
 
 ${region.name} ve çevresinde görmeniz gereken başlıca noktalar:
 
-${details.places.map(place => `- **${place}**: Bölgenin en popüler noktalarından biri. Mutlaka listenize ekleyin.`).join('\n')}
+${details.places.map(place => `- **${place}**: Bölgenin en popüler noktalarından biri. Ziyaret listenize mutlaka ekleyin.`).join('\n')}
+
+${hasHotels ? `---
+
+## ${region.name} Bölgesindeki Popüler Oteller
+
+Bölgede konaklayan misafirlerimizin sıklıkla tercih ettiği oteller:
+
+${details.hotels!.map(hotel => `- **${hotel}**`).join('\n')}
+
+> Bu otellerin tamamına kapıdan kapıya transfer hizmeti sunuyoruz. Otel isminizi rezervasyon formuna ekleyin; şoförümüz doğru girişe yönlendirilir.` : ''}
+
+---
 
 ## ${region.name} Yeme & İçme Rehberi
 
 "Nerede ne yenir?" diyorsanız, işte önerilerimiz:
 
-${details.dining.map(food => `- **${food}**: Lezzet durakları arasında öne çıkan bir seçenek.`).join('\n')}
+${details.dining.map(food => `- **${food}**: Bölge mutfağını yansıtan, yerel ve turistlerin favorisi mekanlardan biri.`).join('\n')}
 
-## Yapılabilecek Aktiviteler
+---
+
+## ${region.name}'de Yapılabilecek Aktiviteler
 
 Tatilinizi renklendirecek aktivite önerileri:
 
-${details.activities.map(act => `- ${act}`).join('\n')}
+${details.activities.map(act => `- **${act}**: ${region.name}'nin sunduğu en keyifli deneyimlerden biri.`).join('\n')}
 
-## Sıkça Sorulan Sorular
+---
 
-**Transfer ne kadar sürüyor?**
-Antalya Havalimanı'ndan ${region.name} bölgesine ulaşım süresi, trafiğe bağlı olarak değişmekle birlikte deneyimli şoförlerimizle en kısa sürede sağlanır.
+${hasTips ? `## ${region.name} Transfer İpuçları
 
-**Araçta bebek koltuğu var mı?**
-Evet, **ücretsiz** olarak bebek koltuğu sağlıyoruz. Lütfen rezervasyon sırasında belirtiniz.
+${details.tips!.map(tip => `- ${tip}`).join('\n')}
 
-**Nasıl rezervasyon yapabilirim?**
-Aşağıdaki butona tıklayarak WhatsApp üzerinden saniyeler içinde fiyat alabilir ve rezervasyon yapabilirsiniz.
+---
 
-**[WhatsApp ile Hızlı Fiyat Al & Rezervasyon Yap](https://wa.me/905052281596)**`,
+` : ''}## Sıkça Sorulan Sorular (SSS) — ${region.name} Transfer
+
+### Antalya Havalimanı'ndan ${region.name}'ye transfer ne kadar sürer?
+${durationInfo}. Hava durumu ve yol koşullarına bağlı olarak hafif değişim olabilir. Şoförümüz en hızlı güzergahı kullanır.
+
+### ${region.name} transferi için fiyat nasıl öğrenilir?
+WhatsApp üzerinden bize mesaj atmanız yeterlidir: **[+90 505 228 15 96](https://wa.me/905052281596)**. Gideceğiniz otel veya adresin adını yazın, birkaç dakika içinde sabit fiyat teklifi alırsınız.
+
+### Araçta bebek koltuğu var mı?
+Evet. Tüm transferlerimizde bebek koltuğu ve çocuk oturağı **ücretsiz** olarak sağlanır. Rezervasyon sırasında çocuk yaşını belirtmeniz yeterlidir.
+
+### Uçuşum rötar yaparsa ne olur?
+Uçuşunuzu anlık takip ediyoruz. Rötarınız olsa bile şoförünüz sizi bekler; herhangi bir ek ücret talep edilmez.
+
+### Gece geç saatlerde transfer yapıyor musunuz?
+Evet, **7/24** hizmet sunuyoruz. Gece 01:00, 02:00 veya 04:00'te inen uçuşlar için ek gece ücreti uygulanmaz.
+
+### Nasıl ödeme yapabilirim?
+Nakit (TL, EUR, USD, GBP) veya kredi kartı ile araç içinde ödeme yapabilirsiniz. Ödeme genellikle transfer sonrasında alınır.
+
+### Büyük grup transferi mümkün mü?
+Evet. 16 kişiye kadar gruplar için Mercedes Sprinter araçlarımız mevcuttur. Daha büyük gruplar için birden fazla araç organize edebiliriz.
+
+### Havalimanında şoförümü nasıl bulurum?
+Şoförünüz çıkış kapısında isminizin yazılı olduğu tabela ile sizi karşılar. Ayrıca WhatsApp üzerinden anlık konum paylaşımı yapılır.
+
+---
+
+## ${region.name} Transfer Rezervasyonu — Hemen Fiyat Alın
+
+Antalya Havalimanı (AYT) çıkışında sizi bekleyen, konforlu ve güvenilir özel transfer için şimdi rezervasyon yapın:
+
+**[WhatsApp ile Anlık Fiyat Al & Rezervasyon Yap →](https://wa.me/905052281596)**
+
+Diğer bölgeler ve transfer güzergahları için [tüm bölgeler sayfamızı](/bolgeler) ve [blog rehberlerimizi](/blog) inceleyebilirsiniz.`,
     featuredImage: region.image,
     category: 'Gezi ve Transfer Rehberi',
-    tags: ['antalya transfer', region.name.toLowerCase(), 'vip transfer', 'gezi rehberi', ...details.places.slice(0, 2)],
+    tags: [
+      'antalya transfer',
+      'antalya airport transfer',
+      'antalya havalimanı transfer',
+      'antalya vip transfer',
+      regionSlugLower,
+      `${regionSlugLower} transfer`,
+      `${regionSlugLower} hotel transfer`,
+      `${regionSlugLower} vip transfer`,
+      'özel transfer antalya',
+      'gezi rehberi',
+      ...details.places.slice(0, 2)
+    ],
     author: 'Ata Flug Editör',
     publishedAt: blogDate(index),
     updatedAt: blogDate(index),
-    seoTitle: `${region.name} Transfer ve Gezi Rehberi 2026 | ${region.name} Ulaşım`,
-    seoDescription: `${region.name} ulaşım rehberi ve gezilecek yerler. Antalya Havalimanı'ndan ${region.name} VIP transfer, restoran önerileri ve aktiviteler.`,
+    seoTitle: `${region.name} Transfer | Antalya Havalimanı → ${region.name} VIP Ulaşım 2026`,
+    seoDescription: `Antalya Havalimanı'ndan ${region.name}'ye özel VIP transfer. Sabit fiyat, karşılama, bebek koltuğu dahil. Hemen fiyat alın: 7/24 WhatsApp.`,
     isPublished: true,
     viewCount: 0
   };

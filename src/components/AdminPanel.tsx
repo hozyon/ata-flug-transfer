@@ -197,12 +197,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
   useEffect(() => { setSelectedReviews([]); }, [editableReviewsTab]);
 
-  // Vehicle Modal State
+  // Vehicle Drawer State
   const VEHICLE_FEATURES = ['Ücretsiz Wifi', 'Klima', 'Deri Koltuk', 'Buzdolabı', 'TV Ünitesi', 'Araç İçi İkram', 'USB Şarj', 'Özel Şoför', 'TÜRSAB Sigorta'];
   const [isVehicleModalOpen, setIsVehicleModalOpen] = useState(false);
   const [vehicleForm, setVehicleForm] = useState<Partial<Vehicle>>({
     id: '', name: '', category: 'VIP', capacity: 4, luggage: 4, image: '', features: []
   });
+  const [vehicleTab, setVehicleTab] = useState<'info' | 'features' | 'media'>('info');
 
   const [highlightedFaqId, setHighlightedFaqId] = useState<string | null>(null);
   const [faqFilter, setFaqFilter] = useState<'all' | 'answered' | 'unanswered'>('all');
@@ -1382,7 +1383,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                   <div className="relative group">
                     <button
                       onClick={() => { if (!isSidebarOpen) setIsSidebarOpen(true); setIsCorporateOpen(!isCorporateOpen); if (!isCorporateOpen) setActiveView('about'); }}
-                      className={`w-full rounded-xl flex items-center transition-all duration-200 relative ${
+                      className={`w-full rounded-xl flex items-center transition-colors duration-150 relative ${
                         isSidebarOpen
                           ? `px-3 py-2.5 gap-3 ${(activeView === 'about' || activeView === 'visionMission') ? 'bg-gradient-to-r from-[var(--color-primary)]/[0.13] via-[var(--color-primary)]/[0.04] to-transparent' : 'hover:bg-white/[0.04]'}`
                           : `justify-center p-2.5 ${(activeView === 'about' || activeView === 'visionMission') ? 'bg-[var(--color-primary)]/[0.15]' : 'hover:bg-white/[0.05]'}`
@@ -1391,7 +1392,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                       {(activeView === 'about' || activeView === 'visionMission') && isSidebarOpen && (
                         <div className="absolute left-0 top-[18%] bottom-[18%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-amber-500 rounded-r-full shadow-[0_0_14px_rgba(197,160,89,0.65)]" />
                       )}
-                      <div className={`shrink-0 transition-all duration-200 ${(activeView === 'about' || activeView === 'visionMission') ? 'text-[var(--color-primary)] drop-shadow-[0_0_8px_rgba(197,160,89,0.5)]' : 'text-slate-500 group-hover:text-slate-300'}`}>
+                      <div className={`shrink-0 transition-colors duration-150 ${(activeView === 'about' || activeView === 'visionMission') ? 'text-[var(--color-primary)] drop-shadow-[0_0_8px_rgba(197,160,89,0.5)]' : 'text-slate-500 group-hover:text-slate-300'}`}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>
                       </div>
                       {isSidebarOpen && (
@@ -1404,7 +1405,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                     {isSidebarOpen && isCorporateOpen && (
                       <div className="mt-0.5 space-y-0.5 pl-9 pr-1 animate-in fade-in slide-in-from-top-1 duration-200">
                         {[{ id: 'about', label: 'Hakkımızda' }, { id: 'visionMission', label: 'Vizyon & Misyon' }].map(s => (
-                          <button key={s.id} onClick={() => setActiveView(s.id as DashboardView)} className={`w-full text-left py-2 px-3 rounded-lg text-[11px] font-medium tracking-wide transition-all flex items-center gap-2 ${activeView === s.id ? 'text-[var(--color-primary)] bg-[var(--color-primary)]/[0.08]' : 'text-slate-500 hover:text-slate-300 hover:bg-white/[0.03]'}`}>
+                          <button key={s.id} onClick={() => setActiveView(s.id as DashboardView)} className={`w-full text-left py-2 px-3 rounded-lg text-[11px] font-medium tracking-wide transition-colors duration-150 flex items-center gap-2 ${activeView === s.id ? 'text-[var(--color-primary)] bg-[var(--color-primary)]/[0.08]' : 'text-slate-500 hover:text-slate-300 hover:bg-white/[0.03]'}`}>
                             <span className={`w-1 h-1 rounded-full shrink-0 ${activeView === s.id ? 'bg-[var(--color-primary)] shadow-[0_0_5px_rgba(197,160,89,0.8)]' : 'bg-slate-700'}`}></span>
                             {s.label}
                           </button>
@@ -2615,7 +2616,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               <FleetView
                 editContent={editContent}
                 setEditContent={setEditContent}
-                setVehicleForm={setVehicleForm}
+                setVehicleForm={(f) => { setVehicleForm(f); setVehicleTab('info'); }}
                 setIsVehicleModalOpen={setIsVehicleModalOpen}
                 moveItem={moveItem}
               />
@@ -2741,114 +2742,280 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
         </Suspense>
       </main >
 
-      {/* Vehicle Modal (Global) - Features & Edit */}
-      {
-        isVehicleModalOpen && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-[100] flex items-center justify-center p-4 overflow-hidden">
-            <div className="w-full max-w-4xl max-h-[90vh] rounded-[32px] bg-[var(--color-dark)] shadow-2xl flex flex-col overflow-hidden border border-white/10 animate-in zoom-in-95 duration-300">
-              {/* Modal Header */}
-              <div className="p-8 border-b border-white/5 flex items-center justify-between shrink-0 bg-white/5">
+      {/* Vehicle Drawer */}
+      {isVehicleModalOpen && (
+        <div className="fixed inset-0 z-[200]">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setIsVehicleModalOpen(false)} />
+          <div className="absolute right-0 top-0 h-full w-full max-w-2xl bg-[#0d1117] shadow-2xl animate-in slide-in-from-right duration-300 border-l border-white/[0.08] flex flex-col">
+
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-white/[0.08] bg-white/[0.02] shrink-0">
+              <div className="flex items-center gap-3">
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-lg ${vehicleForm.id ? 'bg-blue-600' : 'bg-emerald-600'}`}>
+                  <i className={`fa-solid ${vehicleForm.id ? 'fa-pen' : 'fa-plus'} text-sm`}></i>
+                </div>
                 <div>
-                  <h3 className="text-2xl font-black text-white">
-                    {vehicleForm.id ? 'Aracı Düzenle' : 'Yeni Araç Ekle'}
-                  </h3>
-                  <p className="text-slate-400 text-sm mt-1">Araç detaylarını ve özelliklerini belirleyin.</p>
-                </div>
-                <button onClick={() => setIsVehicleModalOpen(false)} className="w-10 h-10 rounded-full hover:bg-white/10 text-white transition-colors">
-                  <i className="fa-solid fa-xmark text-xl"></i>
-                </button>
-              </div>
-              {/* Modal Content */}
-              <div className="p-8 overflow-y-auto scrollbar-thin scrollbar-thumb-white/10">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-                  {/* Image Upload */}
-                  <div className="md:col-span-1">
-                    <label className="text-xs font-bold uppercase text-slate-400 block mb-3">Araç Görseli</label>
-                    <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-800 border border-white/5 group">
-                      <img src={vehicleForm.image} className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer">
-                        <input type="file" className="hidden" onChange={(e) => handleImageUpload(e, (b) => setVehicleForm({ ...vehicleForm, image: b }))} />
-                        <i className="fa-solid fa-camera text-2xl text-white mb-2"></i>
-                        <span className="text-xs font-bold text-white">Görseli Değiştir</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Main Inputs */}
-                  <div className="md:col-span-2 space-y-5">
-                    <div>
-                      <label className="text-xs font-bold uppercase text-slate-400 block mb-2">Araç Adı (Model)</label>
-                      <input className="w-full bg-slate-800 border border-white/5 rounded-xl p-4 text-white font-bold focus:ring-2 focus:ring-[var(--color-primary)] transition-all" value={vehicleForm.name} onChange={e => setVehicleForm({ ...vehicleForm, name: e.target.value })} placeholder="Örn: Mercedes Vito VIP" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-5">
-                      <div>
-                        <label className="text-xs font-bold uppercase text-slate-400 block mb-2">Kategori</label>
-                        <select className="w-full bg-slate-800 border border-white/5 rounded-xl p-4 text-white font-bold" value={vehicleForm.category} onChange={e => setVehicleForm({ ...vehicleForm, category: e.target.value as any })}>
-                          <option value="VIP">VIP Transfer</option>
-                          <option value="Business">Business Class</option>
-                          <option value="Large Group">Büyük Grup</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label className="text-xs font-bold uppercase text-slate-400 block mb-2">Kapasite</label>
-                        <div className="flex items-center gap-2">
-                          <i className="fa-solid fa-user text-slate-500"></i>
-                          <input type="number" className="w-full bg-slate-800 border border-white/5 rounded-xl p-4 text-white font-bold" value={vehicleForm.capacity} onChange={e => setVehicleForm({ ...vehicleForm, capacity: parseInt(e.target.value) })} />
-                        </div>
-                      </div>
-                    </div>
-                    <div>
-                      <label className="text-xs font-bold uppercase text-slate-400 block mb-2">Bagaj Kapasitesi</label>
-                      <div className="flex items-center gap-2">
-                        <i className="fa-solid fa-suitcase text-slate-500"></i>
-                        <input type="number" className="w-full bg-slate-800 border border-white/5 rounded-xl p-4 text-white font-bold" value={vehicleForm.luggage} onChange={e => setVehicleForm({ ...vehicleForm, luggage: parseInt(e.target.value) })} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Features */}
-                <div className="p-6 rounded-3xl bg-slate-800/50 border border-white/5">
-                  <h4 className="text-sm font-black text-white uppercase tracking-widest mb-6 border-b border-white/5 pb-4">
-                    <i className="fa-solid fa-star text-[var(--color-primary)] mr-2"></i>Araç Donanımları
-                  </h4>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {VEHICLE_FEATURES.map(f => (
-                      <label key={f} className={`flex items-center gap-3 p-4 rounded-xl border cursor-pointer transition-all ${vehicleForm.features?.includes(f) ? 'bg-[var(--color-primary)]/10 border-[var(--color-primary)] shadow-lg shadow-[var(--color-primary)]/10' : 'bg-slate-800 border-white/5 hover:bg-slate-700'}`}>
-                        <div className={`w-6 h-6 rounded-lg flex items-center justify-center border ${vehicleForm.features?.includes(f) ? 'bg-[var(--color-primary)] border-[var(--color-primary)]' : 'border-slate-500'}`}>
-                          {vehicleForm.features?.includes(f) && <i className="fa-solid fa-check text-white text-xs"></i>}
-                        </div>
-                        <input type="checkbox" className="hidden" checked={vehicleForm.features?.includes(f)} onChange={(e) => {
-                          const feats = vehicleForm.features || [];
-                          if (e.target.checked) setVehicleForm({ ...vehicleForm, features: [...feats, f] });
-                          else setVehicleForm({ ...vehicleForm, features: feats.filter(item => item !== f) });
-                        }} />
-                        <span className={`text-sm font-bold ${vehicleForm.features?.includes(f) ? 'text-[var(--color-primary)]' : 'text-slate-400'}`}>{f}</span>
-                      </label>
-                    ))}
-                  </div>
+                  <h3 className="text-[15px] font-bold text-white">{vehicleForm.id ? 'Aracı Düzenle' : 'Yeni Araç Ekle'}</h3>
+                  <p className="text-[10px] text-slate-500">
+                    {vehicleForm.name || 'İsimsiz araç'} ·{' '}
+                    <span className={vehicleForm.category === 'VIP' ? 'text-amber-400' : vehicleForm.category === 'Business' ? 'text-violet-400' : 'text-blue-400'}>{vehicleForm.category}</span>
+                    {' '}· {vehicleForm.capacity || 0} kişi · {vehicleForm.features?.length || 0} donanım
+                  </p>
                 </div>
               </div>
-
-              {/* Footer */}
-              <div className="p-6 border-t border-white/5 flex gap-4 shrink-0 bg-white/5">
-                <button onClick={() => {
-                  const newVehicle = { ...vehicleForm, id: vehicleForm.id || Date.now().toString(), basePrice: 0 } as Vehicle;
-                  if (vehicleForm.id && editContent.vehicles.find(v => v.id === vehicleForm.id)) {
-                    setEditContent({ ...editContent, vehicles: editContent.vehicles.map(v => v.id === vehicleForm.id ? newVehicle : v) });
-                    showToast('Araç güncellendi', 'success');
-                  } else {
-                    setEditContent({ ...editContent, vehicles: [...editContent.vehicles, newVehicle] });
-                    showToast('Yeni araç eklendi', 'success');
-                  }
-                  setIsVehicleModalOpen(false);
-                }} className="flex-1 bg-[var(--color-primary)] hover:bg-amber-600 text-white py-4 rounded-2xl font-bold text-lg shadow-xl shadow-amber-500/20 transition-all">
-                  <i className="fa-solid fa-save mr-2"></i> Kaydet ve Kapat
-                </button>
-              </div>
+              <button onClick={() => setIsVehicleModalOpen(false)}
+                className="w-8 h-8 rounded-lg bg-white/5 hover:bg-red-500/20 text-slate-400 hover:text-red-400 flex items-center justify-center transition-colors">
+                <i className="fa-solid fa-xmark text-sm"></i>
+              </button>
             </div>
-          </div>)
-      }
+
+            {/* Tabs */}
+            <div className="flex items-center gap-1 px-5 py-2 border-b border-white/[0.06] shrink-0">
+              {([
+                { id: 'info' as const, label: 'Bilgiler', icon: 'fa-car-side' },
+                { id: 'features' as const, label: 'Donanımlar', icon: 'fa-star' },
+                { id: 'media' as const, label: 'Görsel', icon: 'fa-image' },
+              ] as const).map(t => (
+                <button key={t.id} onClick={() => setVehicleTab(t.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors duration-150 ${vehicleTab === t.id ? 'bg-white/10 text-white' : 'text-slate-500 hover:text-white'}`}>
+                  <i className={`fa-solid ${t.icon} text-[9px]`}></i>
+                  {t.label}
+                  {t.id === 'features' && (vehicleForm.features?.length || 0) > 0 && (
+                    <span className="ml-0.5 text-[9px] font-black text-[var(--color-primary)]">{vehicleForm.features?.length}</span>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* Body */}
+            <div className="flex-1 overflow-y-auto scrollbar-hide">
+
+              {/* ── Bilgiler tab ── */}
+              {vehicleTab === 'info' && (
+                <div className="p-5 space-y-5">
+                  {/* Preview banner */}
+                  <div className="relative h-36 rounded-2xl overflow-hidden bg-black/30 border border-white/[0.06]">
+                    {vehicleForm.image ? (
+                      <img src={vehicleForm.image} className="w-full h-full object-cover" alt={vehicleForm.name} />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <i className="fa-solid fa-car-side text-4xl text-slate-700"></i>
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <p className="font-outfit font-bold text-white text-lg leading-tight">{vehicleForm.name || 'Araç adı girin...'}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full border ${vehicleForm.category === 'VIP' ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : vehicleForm.category === 'Business' ? 'bg-violet-500/20 text-violet-400 border-violet-500/30' : 'bg-blue-500/20 text-blue-400 border-blue-500/30'}`}>{vehicleForm.category}</span>
+                        <span className="text-[10px] text-slate-400"><i className="fa-solid fa-user text-[8px] mr-1 text-[var(--color-primary)]"></i>{vehicleForm.capacity} kişi</span>
+                        <span className="text-[10px] text-slate-400"><i className="fa-solid fa-suitcase text-[8px] mr-1 text-blue-400"></i>{vehicleForm.luggage} bagaj</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Name */}
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                      <i className="fa-solid fa-car-side text-[var(--color-primary)] text-[8px]"></i> Araç Adı / Model
+                    </label>
+                    <input
+                      className="w-full bg-white/[0.04] border border-white/[0.07] rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:border-[var(--color-primary)]/50 outline-none transition-colors font-bold"
+                      value={vehicleForm.name || ''} onChange={e => setVehicleForm({ ...vehicleForm, name: e.target.value })}
+                      placeholder="Örn: Mercedes Vito VIP" />
+                  </div>
+
+                  {/* Category + Capacity + Luggage */}
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Kategori</label>
+                      <select
+                        className="w-full bg-white/[0.04] border border-white/[0.07] rounded-xl px-3 py-2.5 text-sm text-white focus:border-[var(--color-primary)]/50 outline-none transition-colors"
+                        value={vehicleForm.category || 'VIP'} onChange={e => setVehicleForm({ ...vehicleForm, category: e.target.value as any })}>
+                        <option value="VIP">VIP</option>
+                        <option value="Business">Business</option>
+                        <option value="Large Group">Grup</option>
+                      </select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                        <i className="fa-solid fa-user text-[var(--color-primary)] text-[8px]"></i> Kişi
+                      </label>
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => setVehicleForm({ ...vehicleForm, capacity: Math.max(1, (vehicleForm.capacity || 1) - 1) })}
+                          className="w-8 h-10 rounded-l-xl bg-white/[0.04] border border-white/[0.07] text-slate-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors text-sm font-bold">-</button>
+                        <input type="number" min={1} max={20}
+                          className="flex-1 bg-white/[0.04] border-y border-white/[0.07] py-2.5 text-sm text-white text-center focus:border-[var(--color-primary)]/50 outline-none"
+                          value={vehicleForm.capacity || ''} onChange={e => setVehicleForm({ ...vehicleForm, capacity: parseInt(e.target.value) || 1 })} />
+                        <button onClick={() => setVehicleForm({ ...vehicleForm, capacity: Math.min(20, (vehicleForm.capacity || 1) + 1) })}
+                          className="w-8 h-10 rounded-r-xl bg-white/[0.04] border border-white/[0.07] text-slate-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors text-sm font-bold">+</button>
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                        <i className="fa-solid fa-suitcase text-blue-400 text-[8px]"></i> Bagaj
+                      </label>
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => setVehicleForm({ ...vehicleForm, luggage: Math.max(0, (vehicleForm.luggage || 0) - 1) })}
+                          className="w-8 h-10 rounded-l-xl bg-white/[0.04] border border-white/[0.07] text-slate-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors text-sm font-bold">-</button>
+                        <input type="number" min={0} max={20}
+                          className="flex-1 bg-white/[0.04] border-y border-white/[0.07] py-2.5 text-sm text-white text-center focus:border-[var(--color-primary)]/50 outline-none"
+                          value={vehicleForm.luggage || ''} onChange={e => setVehicleForm({ ...vehicleForm, luggage: parseInt(e.target.value) || 0 })} />
+                        <button onClick={() => setVehicleForm({ ...vehicleForm, luggage: Math.min(20, (vehicleForm.luggage || 0) + 1) })}
+                          className="w-8 h-10 rounded-r-xl bg-white/[0.04] border border-white/[0.07] text-slate-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors text-sm font-bold">+</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Quick feature summary */}
+                  <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05]">
+                    <p className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider mb-3">Seçili Donanımlar</p>
+                    {(vehicleForm.features?.length || 0) === 0 ? (
+                      <button onClick={() => setVehicleTab('features')} className="text-[11px] text-slate-600 hover:text-violet-400 transition-colors">
+                        <i className="fa-solid fa-plus text-[9px] mr-1"></i> Donanım sekmesinden ekleyin
+                      </button>
+                    ) : (
+                      <div className="flex flex-wrap gap-1.5">
+                        {vehicleForm.features?.map(f => (
+                          <span key={f} className="text-[10px] px-2 py-1 rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/15 font-medium">{f}</span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* ── Donanımlar tab ── */}
+              {vehicleTab === 'features' && (
+                <div className="p-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-[11px] text-slate-500">{vehicleForm.features?.length || 0} / {VEHICLE_FEATURES.length} seçili</p>
+                    <button onClick={() => setVehicleForm({ ...vehicleForm, features: vehicleForm.features?.length === VEHICLE_FEATURES.length ? [] : [...VEHICLE_FEATURES] })}
+                      className="text-[10px] font-bold text-slate-500 hover:text-white transition-colors">
+                      {vehicleForm.features?.length === VEHICLE_FEATURES.length ? 'Tümünü Kaldır' : 'Tümünü Seç'}
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 gap-2">
+                    {VEHICLE_FEATURES.map((f, i) => {
+                      const icons: Record<string, string> = {
+                        'Ücretsiz Wifi': 'fa-wifi', 'Klima': 'fa-snowflake', 'Deri Koltuk': 'fa-couch',
+                        'Buzdolabı': 'fa-temperature-low', 'TV Ünitesi': 'fa-tv', 'Araç İçi İkram': 'fa-wine-glass',
+                        'USB Şarj': 'fa-plug', 'Özel Şoför': 'fa-user-tie', 'TÜRSAB Sigorta': 'fa-shield-halved'
+                      };
+                      const isSelected = vehicleForm.features?.includes(f);
+                      return (
+                        <button key={f} onClick={() => {
+                          const feats = vehicleForm.features || [];
+                          setVehicleForm({ ...vehicleForm, features: isSelected ? feats.filter(x => x !== f) : [...feats, f] });
+                        }}
+                          className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-all text-left ${isSelected ? 'bg-[var(--color-primary)]/[0.08] border-[var(--color-primary)]/25 shadow-sm' : 'bg-white/[0.02] border-white/[0.05] hover:bg-white/[0.05] hover:border-white/10'}`}>
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${isSelected ? 'bg-[var(--color-primary)] shadow-lg shadow-[var(--color-primary)]/30' : 'bg-white/5'}`}>
+                            <i className={`fa-solid ${icons[f] || 'fa-star'} text-[11px] ${isSelected ? 'text-white' : 'text-slate-500'}`}></i>
+                          </div>
+                          <span className={`text-[13px] font-semibold ${isSelected ? 'text-white' : 'text-slate-400'}`}>{f}</span>
+                          <div className={`ml-auto w-5 h-5 rounded-md border flex items-center justify-center shrink-0 ${isSelected ? 'bg-[var(--color-primary)] border-[var(--color-primary)]' : 'border-white/20'}`}>
+                            {isSelected && <i className="fa-solid fa-check text-white text-[9px]"></i>}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* ── Görsel tab ── */}
+              {vehicleTab === 'media' && (
+                <div className="p-5 space-y-4">
+                  {/* Current preview */}
+                  <div className="relative aspect-video rounded-2xl overflow-hidden bg-black/30 border border-white/[0.06]">
+                    {vehicleForm.image ? (
+                      <img src={vehicleForm.image} className="w-full h-full object-cover" alt={vehicleForm.name} />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center gap-2">
+                        <i className="fa-solid fa-car-side text-4xl text-slate-700"></i>
+                        <p className="text-xs text-slate-600">Henüz görsel yok</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Upload */}
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Dosyadan Yükle</label>
+                    <label className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.06] border-dashed hover:border-[var(--color-primary)]/40 hover:bg-[var(--color-primary)]/[0.03] transition-colors cursor-pointer group">
+                      <div className="w-8 h-8 rounded-lg bg-[var(--color-primary)]/10 flex items-center justify-center group-hover:bg-[var(--color-primary)]/20 transition-colors">
+                        <i className="fa-solid fa-cloud-arrow-up text-[var(--color-primary)] text-[11px]"></i>
+                      </div>
+                      <div>
+                        <p className="text-[12px] font-bold text-white">Görsel yükle</p>
+                        <p className="text-[10px] text-slate-600">JPG, PNG, WebP · Max 5MB</p>
+                      </div>
+                      <input type="file" accept="image/*" className="hidden"
+                        onChange={e => handleImageUpload(e, b => setVehicleForm({ ...vehicleForm, image: b }))} />
+                    </label>
+                  </div>
+
+                  {/* URL input */}
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Görsel URL</label>
+                    <input
+                      className="w-full bg-white/[0.04] border border-white/[0.07] rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:border-[var(--color-primary)]/50 outline-none transition-colors font-mono text-xs"
+                      value={vehicleForm.image?.startsWith('data:') ? '' : vehicleForm.image || ''}
+                      onChange={e => setVehicleForm({ ...vehicleForm, image: e.target.value })}
+                      placeholder="https://images.unsplash.com/..." />
+                    {vehicleForm.image?.startsWith('data:') && (
+                      <p className="text-[10px] text-emerald-400"><i className="fa-solid fa-circle-check mr-1"></i>Base64 dosya yüklendi</p>
+                    )}
+                  </div>
+
+                  {/* Stock suggestions */}
+                  <div>
+                    <p className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider mb-2">Hızlı Seçim</p>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        'https://images.unsplash.com/photo-1632245889029-e406faaa34cd?auto=format&fit=crop&q=80&w=800',
+                        'https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&q=80&w=800',
+                        'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=800',
+                      ].map((url, i) => (
+                        <button key={i} onClick={() => setVehicleForm({ ...vehicleForm, image: url })}
+                          className={`relative aspect-video rounded-xl overflow-hidden border-2 transition-all ${vehicleForm.image === url ? 'border-[var(--color-primary)] shadow-[0_0_12px_rgba(197,160,89,0.4)]' : 'border-transparent hover:border-white/20'}`}>
+                          <img src={url} className="w-full h-full object-cover" alt={`Stok ${i + 1}`} />
+                          {vehicleForm.image === url && (
+                            <div className="absolute inset-0 bg-[var(--color-primary)]/20 flex items-center justify-center">
+                              <i className="fa-solid fa-check text-white text-lg"></i>
+                            </div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="shrink-0 px-5 py-4 border-t border-white/[0.08] bg-white/[0.02] flex items-center gap-3">
+              <button onClick={() => setIsVehicleModalOpen(false)}
+                className="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white text-xs font-bold transition-colors">
+                İptal
+              </button>
+              <button onClick={() => {
+                if (!vehicleForm.name?.trim()) { showToast('Araç adı zorunludur', 'error'); setVehicleTab('info'); return; }
+                const newVehicle = { ...vehicleForm, id: vehicleForm.id || Date.now().toString(), basePrice: 0 } as Vehicle;
+                if (vehicleForm.id && editContent.vehicles.find(v => v.id === vehicleForm.id)) {
+                  setEditContent({ ...editContent, vehicles: editContent.vehicles.map(v => v.id === vehicleForm.id ? newVehicle : v) });
+                  showToast('Araç güncellendi', 'success');
+                } else {
+                  setEditContent({ ...editContent, vehicles: [...editContent.vehicles, newVehicle] });
+                  showToast('Yeni araç eklendi', 'success');
+                }
+                setIsVehicleModalOpen(false);
+              }}
+                className="flex-1 bg-[var(--color-primary)] hover:bg-amber-600 text-white py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-amber-500/20 transition-colors flex items-center justify-center gap-2">
+                <i className="fa-solid fa-floppy-disk text-[11px]"></i> Kaydet
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── COMMAND PALETTE OVERLAY ── */}
       {
