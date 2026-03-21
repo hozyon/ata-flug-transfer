@@ -652,7 +652,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
                             showToast('Kategori silindi', 'delete');
                           }
                         }}
-                        className={`w-6 h-6 rounded-lg flex items-center justify-center text-[10px] transition-all opacity-0 group-hover:opacity-100 ${postCount > 0 ? 'text-slate-600 cursor-not-allowed' : 'text-slate-500 hover:bg-red-500/20 hover:text-red-400'}`}
+                        className={`w-6 h-6 rounded-lg flex items-center justify-center text-[10px] transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100 ${postCount > 0 ? 'text-slate-600 cursor-not-allowed' : 'text-slate-500 hover:bg-red-500/20 hover:text-red-400'}`}
                         title={postCount > 0 ? `${postCount} yazı bu kategoride, silinemez` : 'Sil'}
                       >
                         <i className="fa-solid fa-trash"></i>
@@ -749,8 +749,8 @@ export const BlogView: React.FC<BlogViewProps> = ({
                             {post.featuredImage && <img src={post.featuredImage} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={post.title} />}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-bold text-white text-[13px] group-hover:text-[var(--color-primary)] transition-colors truncate max-w-[250px] sm:max-w-[350px]">{post.title}</p>
-                            <p className="text-[10px] text-slate-500 truncate max-w-[200px] sm:max-w-[300px] mt-0.5">{post.excerpt}</p>
+                            <p className="font-bold text-white text-[13px] group-hover:text-[var(--color-primary)] transition-colors truncate max-w-[140px] sm:max-w-[250px] md:max-w-[350px]">{post.title}</p>
+                            <p className="text-[10px] text-slate-500 truncate max-w-[120px] sm:max-w-[200px] md:max-w-[300px] mt-0.5">{post.excerpt}</p>
                           </div>
                         </div>
                       </td>
@@ -769,7 +769,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
                         </div>
                       </td>
                       <td className="px-3 py-3.5" onClick={e => e.stopPropagation()}>
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity justify-end">
+                        <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity justify-end">
                           <button onClick={() => openEdit(post)}
                             className="w-7 h-7 rounded-lg bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white flex items-center justify-center transition-all">
                             <i className="fa-solid fa-pen text-[10px]"></i>

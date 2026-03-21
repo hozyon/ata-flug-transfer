@@ -312,7 +312,7 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
                                     <th className="text-center px-3 py-3 w-28"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Puan</span></th>
                                     <th className="text-left px-3 py-3 hidden lg:table-cell w-28"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Tarih</span></th>
                                     <th className="text-left px-3 py-3 w-20"><span className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Kaynak</span></th>
-                                    <th className="w-40 px-3 py-3"></th>
+                                    <th className="w-28 sm:w-40 px-3 py-3"></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -352,7 +352,7 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
 
                                                 {/* Review Text */}
                                                 <td className="px-3 py-3.5 hidden md:table-cell">
-                                                    <p className={`text-[12px] leading-relaxed max-w-[300px] truncate ${isDimmed ? 'line-through text-slate-600' : 'text-slate-400'}`}>{r.text}</p>
+                                                    <p className={`text-[12px] leading-relaxed max-w-[180px] sm:max-w-[300px] truncate ${isDimmed ? 'line-through text-slate-600' : 'text-slate-400'}`}>{r.text}</p>
                                                 </td>
 
                                                 {/* Rating */}
@@ -383,7 +383,7 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
 
                                                 {/* Actions */}
                                                 <td className="px-3 py-3.5" onClick={e => e.stopPropagation()}>
-                                                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity justify-end">
+                                                    <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity justify-end">
                                                         {editableReviewsTab === 'pending' && (
                                                             <>
                                                                 <button onClick={() => setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'approved' } : item))}

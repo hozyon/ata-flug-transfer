@@ -104,7 +104,7 @@ export const HeroImagesView: React.FC<HeroImagesViewProps> = ({
                                     <th className="text-left px-3 py-3 w-12"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Sıra</span></th>
                                     <th className="text-left px-3 py-3"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Önizleme</span></th>
                                     <th className="text-left px-3 py-3 hidden md:table-cell"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Bilgi</span></th>
-                                    <th className="w-36 px-3 py-3"></th>
+                                    <th className="w-24 sm:w-36 px-3 py-3"></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -141,7 +141,7 @@ export const HeroImagesView: React.FC<HeroImagesViewProps> = ({
                                                 </div>
                                             </td>
                                             <td className="px-3 py-3.5">
-                                                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity justify-end">
+                                                <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity justify-end">
                                                     <button onClick={() => updateHeroBackgrounds(moveItem(heroBackgrounds, idx, 'up'))} disabled={idx === 0}
                                                         className="w-7 h-7 rounded-lg bg-white/5 text-slate-500 hover:bg-white/10 hover:text-white disabled:opacity-20 flex items-center justify-center transition-all">
                                                         <i className="fa-solid fa-chevron-up text-[10px]"></i>

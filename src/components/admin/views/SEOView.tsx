@@ -244,7 +244,7 @@ export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent })
                     {seo.ogImage && seo.ogImage.startsWith('http') && (
                         <div className="md:col-span-2">
                             <p className={labelClass}>Önizleme</p>
-                            <div className="rounded-xl overflow-hidden border border-white/[0.08] max-w-sm">
+                            <div className="rounded-xl overflow-hidden border border-white/[0.08] w-full max-w-sm">
                                 <img src={seo.ogImage} alt="OG Preview" className="w-full h-40 object-cover" onError={e => (e.currentTarget.style.display = 'none')} />
                                 <div className="p-3 bg-slate-800/60">
                                     <p className="text-[10px] text-slate-500 uppercase">{seo.canonicalUrl.replace('https://', '').replace('http://', '')}</p>
@@ -333,7 +333,7 @@ export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent })
                     {/* JSON-LD Preview */}
                     <div className="md:col-span-2 lg:col-span-3">
                         <label className={labelClass}>Oluşturulan JSON-LD Önizleme</label>
-                        <pre className="bg-black/40 border border-white/[0.06] rounded-xl p-4 text-[10px] text-emerald-400 overflow-x-auto font-mono leading-relaxed">
+                        <pre className="bg-black/40 border border-white/[0.06] rounded-xl p-4 text-[10px] text-emerald-400 overflow-x-auto overflow-y-auto max-h-[300px] font-mono leading-relaxed">
 {JSON.stringify({
   "@context": "https://schema.org",
   "@type": seo.structuredData.businessType,
