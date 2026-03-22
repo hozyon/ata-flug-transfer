@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { Booking, SiteContent, BlogPost, UserReview } from '../types';
-import { INITIAL_SITE_CONTENT, MOCK_BOOKINGS, BLOG_POSTS } from '../constants';
+import { INITIAL_SITE_CONTENT, MOCK_BOOKINGS } from '../constants';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 interface AppStore {
@@ -69,8 +69,8 @@ function saveContentToLS(content: SiteContent) {
 function loadBlogFromLS(): BlogPost[] {
     try {
         const saved = localStorage.getItem(LS_BLOG);
-        return saved ? JSON.parse(saved) : BLOG_POSTS;
-    } catch { return BLOG_POSTS; }
+        return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
 }
 
 function saveBlogToLS(posts: BlogPost[]) {
@@ -264,7 +264,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
                 set({
                     bookings: (!bookingsRes.error && bookingsRes.data) ? bookingsRes.data.map(rowToBooking) : [],
                     siteContent: (!contentRes.error && contentRes.data?.content) ? mergeContent(contentRes.data.content as SiteContent) : INITIAL_SITE_CONTENT,
-                    blogPosts: (!blogRes.error && blogRes.data && blogRes.data.length > 0) ? blogRes.data.map(rowToBlogPost) : loadBlogFromLS(),
+                    blogPosts: (!blogRes.error && blogRes.data) ? blogRes.data.map(rowToBlogPost) : loadBlogFromLS(),
                     userReviews: (!reviewsRes.error && reviewsRes.data) ? reviewsRes.data.map(rowToReview) : [],
                 });
             } catch (err) {
