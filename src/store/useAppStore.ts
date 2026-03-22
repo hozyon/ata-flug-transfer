@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { Booking, SiteContent, BlogPost, UserReview } from '../types';
 import { INITIAL_SITE_CONTENT, MOCK_BOOKINGS } from '../constants';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { mergeContent } from './mergeContent';
 
 interface AppStore {
     // State
@@ -141,56 +142,6 @@ function rowToReview(row: Record<string, unknown>): UserReview {
         status: row.status as UserReview['status'],
         createdAt: row.created_at as string,
     };
-}
-
-// ─── Merge persisted content with INITIAL defaults ───────────────────────────
-function mergeContent(parsed: SiteContent): SiteContent {
-    // parsed.regions = source of truth for WHICH regions are active (user may have deactivated some)
-    // INITIAL defaults = source of truth for field structure (fills in any missing fields)
-    // Rule: never re-add a region the user removed — only merge fields of existing ones
-    const defaultRegionMap = new Map(INITIAL_SITE_CONTENT.regions.map(r => [r.id, r]));
-    const mergedRegions = parsed.regions === undefined
-        // First-time init (no saved data): start with all defaults
-        ? INITIAL_SITE_CONTENT.regions
-        // Otherwise: use exactly what's saved, just fill in any missing fields from defaults
-        : parsed.regions.map(savedRegion => {
-            const def = defaultRegionMap.get(savedRegion.id);
-            return def ? { ...def, ...savedRegion } : savedRegion;
-        });
-
-    const merged: SiteContent = {
-        ...INITIAL_SITE_CONTENT,
-        ...parsed,
-        regions: mergedRegions,
-        hero: { ...INITIAL_SITE_CONTENT.hero, ...(parsed.hero || {}) },
-        about: { ...INITIAL_SITE_CONTENT.about, ...(parsed.about || {}) },
-        business: { ...INITIAL_SITE_CONTENT.business, ...(parsed.business || {}) },
-        visionMission: { ...INITIAL_SITE_CONTENT.visionMission, ...(parsed.visionMission || {}) },
-        seo: {
-            ...INITIAL_SITE_CONTENT.seo,
-            ...(parsed.seo || {}),
-            structuredData: { ...INITIAL_SITE_CONTENT.seo.structuredData, ...(parsed.seo?.structuredData || {}) },
-            pagesSeo: { ...INITIAL_SITE_CONTENT.seo.pagesSeo, ...(parsed.seo?.pagesSeo || {}) },
-        },
-        branding: { ...INITIAL_SITE_CONTENT.branding, ...(parsed.branding || {}) },
-        currency: { ...INITIAL_SITE_CONTENT.currency, ...(parsed.currency || {}) },
-        adminAccount: parsed.adminAccount
-            ? { ...INITIAL_SITE_CONTENT.adminAccount, ...parsed.adminAccount }
-            : INITIAL_SITE_CONTENT.adminAccount,
-        pricingRules: Array.isArray(parsed.pricingRules) ? parsed.pricingRules : [],
-        drivers: Array.isArray(parsed.drivers) ? parsed.drivers : [],
-        coupons: Array.isArray(parsed.coupons) ? parsed.coupons : [],
-    };
-    if (!Array.isArray(merged.hero.backgrounds) || merged.hero.backgrounds.length === 0) {
-        merged.hero.backgrounds = INITIAL_SITE_CONTENT.hero.backgrounds;
-    }
-    // Strip subMenus from /bolgeler nav item (enforced rule)
-    if (Array.isArray(merged.navbar)) {
-        merged.navbar = merged.navbar.map(item =>
-            item.url === '/bolgeler' ? { ...item, subMenus: [] } : item
-        );
-    }
-    return merged;
 }
 
 // ─── Generate booking ID ─────────────────────────────────────────────────────
@@ -391,12 +342,10 @@ export const useAppStore = create<AppStore>((set, get) => ({
         set({ bookings: updated });
 
         if (isSupabaseConfigured) {
-            try {
-                const { error } = await supabase.from('bookings').delete().eq('id', id);
-                if (error) throw error;
-            } catch (err) {
-                console.error('Failed to delete booking from Supabase:', err);
-                saveBookingsToLS(updated);
+            const { error } = await supabase.from('bookings').delete().eq('id', id);
+            if (error) {
+                set({ bookings }); // restore optimistic update
+                throw new Error(error.message);
             }
         } else {
             saveBookingsToLS(updated);
@@ -439,12 +388,17 @@ export const useAppStore = create<AppStore>((set, get) => ({
     },
 
     clearAllBlogPosts: async () => {
+        const { blogPosts } = get();
         set({ blogPosts: [] });
         localStorage.removeItem('ata_blog_posts_v1');
         if (isSupabaseConfigured) {
             // Supabase RLS requires authenticated user — this runs inside admin session
             const { error } = await supabase.from('blog_posts').delete().neq('id', '00000000-0000-0000-0000-000000000000');
-            if (error) console.error('Supabase blog_posts temizleme hatası:', error);
+            if (error) {
+                set({ blogPosts }); // restore
+                saveBlogToLS(blogPosts);
+                throw new Error(error.message);
+            }
         }
     },
 
@@ -454,12 +408,10 @@ export const useAppStore = create<AppStore>((set, get) => ({
         set({ blogPosts: updated });
 
         if (isSupabaseConfigured) {
-            try {
-                const { error } = await supabase.from('blog_posts').delete().eq('id', id);
-                if (error) throw error;
-            } catch (err) {
-                console.error('Failed to delete blog post from Supabase:', err);
-                saveBlogToLS(updated);
+            const { error } = await supabase.from('blog_posts').delete().eq('id', id);
+            if (error) {
+                set({ blogPosts }); // restore optimistic update
+                throw new Error(error.message);
             }
         } else {
             saveBlogToLS(updated);
@@ -523,12 +475,10 @@ export const useAppStore = create<AppStore>((set, get) => ({
         set({ userReviews: updated });
 
         if (isSupabaseConfigured) {
-            try {
-                const { error } = await supabase.from('reviews').delete().eq('id', id);
-                if (error) throw error;
-            } catch (err) {
-                console.error('Failed to delete review from Supabase:', err);
-                saveReviewsToLS(updated);
+            const { error } = await supabase.from('reviews').delete().eq('id', id);
+            if (error) {
+                set({ userReviews }); // restore optimistic update
+                throw new Error(error.message);
             }
         } else {
             saveReviewsToLS(updated);
