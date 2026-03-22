@@ -543,10 +543,6 @@ const App: React.FC = () => {
                     return (
                       <section className="relative overflow-hidden py-0" style={{ background: 'linear-gradient(160deg, #080c16 0%, #0c1220 50%, #080c16 100%)' }}>
 
-                        {/* Subtle horizontal lines */}
-                        <div className="absolute inset-0 opacity-[0.07]" style={{
-                          backgroundImage: 'repeating-linear-gradient(0deg, rgba(197,160,89,0.8) 0px, rgba(197,160,89,0.8) 1px, transparent 1px, transparent 40px)',
-                        }} />
                         {/* Gold radial glow */}
                         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[220px] opacity-[0.18]" style={{ background: 'radial-gradient(ellipse, #c5a059 0%, transparent 70%)' }} />
 
