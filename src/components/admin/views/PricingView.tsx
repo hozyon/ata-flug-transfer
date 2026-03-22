@@ -188,7 +188,7 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent, setEditCo
                                         </div>
                                     </div>
                                     <div className="text-right shrink-0">
-                                        <div className="inline-flex items-center gap-1 justify-end">
+                                        <div className="inline-flex items-center gap-2 justify-end group/price cursor-text">
                                             {!region.price && editingPriceId !== region.id && (
                                                 <i className="fa-solid fa-triangle-exclamation text-amber-400 text-[9px]" />
                                             )}
@@ -207,8 +207,9 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent, setEditCo
                                                     setEditContent({ ...editContent, regions: updated });
                                                     setEditingPriceId(null);
                                                 }}
-                                                className="w-16 bg-transparent text-right text-xl font-black text-white outline-none focus:text-[var(--color-primary)] transition-colors placeholder-slate-600 cursor-pointer [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                className="w-16 bg-transparent text-right text-xl font-black text-white outline-none focus:text-[var(--color-primary)] transition-colors placeholder-slate-600 cursor-text border-b border-transparent group-hover/price:border-dashed group-hover/price:border-white/20 focus:border-solid focus:border-[var(--color-primary)]/50 pb-px [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                             />
+                                            <i className="fa-solid fa-pen text-[8px] text-slate-600 opacity-0 group-hover/price:opacity-100 transition-opacity" />
                                         </div>
                                         <p className="text-[9px] text-slate-600">tek yön</p>
                                     </div>
@@ -276,27 +277,30 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent, setEditCo
                                                 {isMax && <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20">MAX</span>}
                                                 {isAvg && <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20">ORT</span>}
                                                 <div>
-                                                    <div className="inline-flex items-center gap-1">
+                                                    <div className="inline-flex items-center gap-2 group/price cursor-text">
                                                         {!region.price && editingPriceId !== region.id && (
-                                                            <i className="fa-solid fa-triangle-exclamation text-amber-400 text-[9px] mr-1" title="Fiyat girilmemiş" />
+                                                            <i className="fa-solid fa-triangle-exclamation text-amber-400 text-[9px]" title="Fiyat girilmemiş" />
                                                         )}
                                                         {(region.price || editingPriceId === region.id) && (
                                                             <span className="text-[var(--color-primary)] font-bold text-sm">{editContent.currency?.symbol || '€'}</span>
                                                         )}
-                                                        <input
-                                                            type="number"
-                                                            placeholder="—"
-                                                            value={editingPriceId === region.id ? editingPriceValue : (region.price || '')}
-                                                            onFocus={() => { setEditingPriceId(region.id); setEditingPriceValue(region.price ? String(region.price) : ''); }}
-                                                            onChange={e => setEditingPriceValue(e.target.value)}
-                                                            onBlur={() => {
-                                                                const parsed = editingPriceValue.trim() !== '' ? parseInt(editingPriceValue) : undefined;
-                                                                const updated = regions.map(r => r.id === region.id ? { ...r, price: parsed } : r);
-                                                                setEditContent({ ...editContent, regions: updated });
-                                                                setEditingPriceId(null);
-                                                            }}
-                                                            className="w-16 bg-transparent text-right text-lg font-black text-white outline-none focus:text-[var(--color-primary)] transition-colors placeholder-slate-600 cursor-pointer [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                                        />
+                                                        <div className="relative">
+                                                            <input
+                                                                type="number"
+                                                                placeholder="—"
+                                                                value={editingPriceId === region.id ? editingPriceValue : (region.price || '')}
+                                                                onFocus={() => { setEditingPriceId(region.id); setEditingPriceValue(region.price ? String(region.price) : ''); }}
+                                                                onChange={e => setEditingPriceValue(e.target.value)}
+                                                                onBlur={() => {
+                                                                    const parsed = editingPriceValue.trim() !== '' ? parseInt(editingPriceValue) : undefined;
+                                                                    const updated = regions.map(r => r.id === region.id ? { ...r, price: parsed } : r);
+                                                                    setEditContent({ ...editContent, regions: updated });
+                                                                    setEditingPriceId(null);
+                                                                }}
+                                                                className="w-16 bg-transparent text-right text-lg font-black text-white outline-none focus:text-[var(--color-primary)] transition-colors placeholder-slate-600 cursor-text border-b border-transparent group-hover/price:border-dashed group-hover/price:border-white/20 focus:border-solid focus:border-[var(--color-primary)]/50 pb-px [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                            />
+                                                        </div>
+                                                        <i className="fa-solid fa-pen text-[8px] text-slate-600 opacity-0 group-hover/price:opacity-100 transition-opacity" />
                                                     </div>
                                                     <p className="text-[9px] text-slate-600">tek yön</p>
                                                 </div>
