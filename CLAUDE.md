@@ -24,7 +24,7 @@ cp .env.example .env.local
 
 Without env vars the app runs in **localStorage fallback mode** — fully functional for development.
 
-Dev admin login: `admin@ataflugtransfer.com` / `admin123`
+Dev admin login: Supabase Auth ile `ataflugtransfer@gmail.com` (gerçek credentials .env.local'da)
 
 ## Architecture
 
@@ -98,3 +98,25 @@ vercel --prod
 - `vercel.json` includes SPA rewrites — no extra config needed
 - Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in Vercel project environment variables
 - Before first deploy, run `supabase/migrations/001_initial_schema.sql` in the Supabase SQL editor
+- Blog posts are already seeded in Supabase (47 posts, migrated 2026-03-22)
+
+## Blog Post System — Önemli Notlar
+
+### Düzeltilen Buglar (2026-03-22)
+
+`src/components/admin/views/BlogView.tsx` ve `src/store/useAppStore.ts` dosyalarında aşağıdaki hatalar giderildi:
+
+1. **UUID mismatch** — Yeni yazı oluştururken `Date.now().toString()` kullanılıyordu; Supabase `UUID` sütunuyla uyumsuzdu. `crypto.randomUUID()` ile düzeltildi.
+2. **handleSave async değildi** — `setBlogPosts()` await edilmiyordu; Supabase hatası yakalanamıyordu. `handleSave` async yapıldı, try/catch + kullanıcıya toast eklendi.
+3. **publishedAt: undefined** — Taslak yazılarda `publishedAt` boş bırakılıyordu; DB default ile çakışıyordu. Her yazıda `now` atanıyor.
+4. **Supabase hatası sessiz** — Store hata fırlatmak yerine sessizce localStorage'a düşüyordu. Artık hata fırlatıp çağıran taraf yakalar.
+5. **Slug benzersizlik kontrolü yoktu** — Kayıt öncesi client-side uniqueness kontrolü eklendi.
+6. **Kırılgan JSON.stringify karşılaştırması** — `AdminPanel.tsx`'teki setBlogPosts diff algoritması, alan bazlı karşılaştırmaya çevrildi (gereksiz Supabase update'leri önlendi).
+
+### setBlogPosts Prop Tipi
+
+`BlogViewProps.setBlogPosts` tipi `Dispatch<SetStateAction<BlogPost[]>>` iken `(posts: BlogPost[] | ((prev: BlogPost[]) => BlogPost[])) => Promise<void>` olarak güncellendi. Bu tip AdminPanel.tsx'teki async implementasyonla uyumludur.
+
+### Blog Verisi Seeding
+
+`BLOG_POSTS` sabiti `src/constants.ts` içinde `SCRAPED_REGIONS` (47 bölge) üzerinden dinamik olarak üretilir. İlk kurulumda veya Supabase tablosu boşsa bu yazıları `node migrate-blog-posts.mjs` scriptiyle (tek kullanımlık) aktarabilirsin — script çalıştıktan sonra silinmelidir.

@@ -1,24 +1,25 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BLOG_POSTS } from '../constants';
 import TextureBackground from '../components/TextureBackground';
 import { Helmet } from 'react-helmet-async';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useSiteContent } from '../SiteContext';
+import { useAppStore } from '../store/useAppStore';
 
 const Blog: React.FC = () => {
     const { t } = useLanguage();
     const { siteContent } = useSiteContent();
+    const blogPosts = useAppStore(s => s.blogPosts);
     const businessName = siteContent.business.name;
     const canonicalBase = siteContent.seo?.canonicalUrl || '';
 
     // Auto-translate blog post fields
-    const translatePost = (post: typeof BLOG_POSTS[0]) => ({
+    const translatePost = (post: typeof blogPosts[0]) => ({
         title: t(post.title),
         category: t(post.category),
         excerpt: t(post.excerpt),
     });
-    const publishedPosts = BLOG_POSTS.filter(post => post.isPublished);
+    const publishedPosts = blogPosts.filter(post => post.isPublished);
 
     // Pagination
     const [currentPage, setCurrentPage] = React.useState(1);

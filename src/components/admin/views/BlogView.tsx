@@ -26,7 +26,7 @@ const BLOG_PER_PAGE = 10;
 
 interface BlogViewProps {
   blogPosts: BlogPost[];
-  setBlogPosts: Dispatch<SetStateAction<BlogPost[]>>;
+  setBlogPosts: (posts: BlogPost[] | ((prev: BlogPost[]) => BlogPost[])) => Promise<void>;
   blogTab: 'published' | 'draft';
   setBlogTab: Dispatch<SetStateAction<'published' | 'draft'>>;
   blogCategories: string[];
@@ -396,28 +396,38 @@ export const BlogView: React.FC<BlogViewProps> = ({
     setIsDrawerOpen(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!newBlogPost.title.trim()) { showToast('Başlık zorunludur', 'error'); return; }
     if (!newBlogPost.slug.trim()) { showToast('URL (slug) zorunludur', 'error'); return; }
+    // Slug benzersizlik kontrolü
+    const isSlugTaken = blogPosts.some(
+      p => p.slug === newBlogPost.slug.trim() && p.id !== (editingBlogPost?.id || '')
+    );
+    if (isSlugTaken) { showToast('Bu URL (slug) zaten kullanımda', 'error'); return; }
+
     const now = new Date().toISOString();
-    if (editingBlogPost) {
-      const updated: BlogPost = { ...newBlogPost, updatedAt: now };
-      setBlogPosts(blogPosts.map(p => p.id === editingBlogPost.id ? updated : p));
-      showToast('Blog yazısı güncellendi', 'success');
-    } else {
-      const created: BlogPost = {
-        ...newBlogPost,
-        id: Date.now().toString(),
-        publishedAt: newBlogPost.isPublished ? now : undefined,
-        updatedAt: now,
-        tags: newBlogPost.tags || [],
-        author: newBlogPost.author || 'Ata Flug Transfer',
-        seoTitle: newBlogPost.seoTitle || newBlogPost.title,
-        seoDescription: newBlogPost.seoDescription || newBlogPost.excerpt,
-        viewCount: 0,
-      };
-      setBlogPosts([...blogPosts, created]);
-      showToast('Blog yazısı oluşturuldu', 'success');
+    try {
+      if (editingBlogPost) {
+        const updated: BlogPost = { ...newBlogPost, updatedAt: now };
+        await setBlogPosts(blogPosts.map(p => p.id === editingBlogPost.id ? updated : p));
+        showToast('Blog yazısı güncellendi', 'success');
+      } else {
+        const created: BlogPost = {
+          ...newBlogPost,
+          id: crypto.randomUUID(),
+          publishedAt: now,
+          updatedAt: now,
+          tags: newBlogPost.tags || [],
+          author: newBlogPost.author || 'Ata Flug Transfer',
+          seoTitle: newBlogPost.seoTitle || newBlogPost.title,
+          seoDescription: newBlogPost.seoDescription || newBlogPost.excerpt,
+          viewCount: 0,
+        };
+        await setBlogPosts([...blogPosts, created]);
+        showToast('Blog yazısı oluşturuldu', 'success');
+      }
+    } catch {
+      showToast('Veritabanına kaydedilemedi, yerel depolamaya yazıldı', 'error');
     }
     // Clear draft on manual save
     localStorage.removeItem(BLOG_DRAFT_KEY);

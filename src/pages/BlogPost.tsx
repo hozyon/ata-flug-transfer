@@ -2,17 +2,18 @@
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { BLOG_POSTS } from '../constants';
 import TextureBackground from '../components/TextureBackground';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useSiteContent } from '../SiteContext';
+import { useAppStore } from '../store/useAppStore';
 import DOMPurify from 'dompurify';
 
 const BlogPost: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
     const { t, language } = useLanguage();
     const { siteContent } = useSiteContent();
-    const post = BLOG_POSTS.find(p => p.slug === slug);
+    const blogPosts = useAppStore(s => s.blogPosts);
+    const post = blogPosts.find(p => p.slug === slug);
     const canonicalBase = siteContent.seo?.canonicalUrl || '';
     const businessName = siteContent.business.name;
 
@@ -62,7 +63,7 @@ const BlogPost: React.FC = () => {
         });
     };
 
-    const otherPosts = BLOG_POSTS.filter(p => p.id !== post?.id && p.isPublished).slice(0, 3);
+    const otherPosts = blogPosts.filter(p => p.id !== post?.id && p.isPublished).slice(0, 3);
 
     return (
         <div className="min-h-screen bg-slate-50">

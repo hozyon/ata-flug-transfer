@@ -391,12 +391,11 @@ export const useAppStore = create<AppStore>((set, get) => ({
         set({ blogPosts: updated });
 
         if (isSupabaseConfigured) {
-            try {
-                const { error } = await supabase.from('blog_posts').insert(blogPostToRow(post));
-                if (error) throw error;
-            } catch (err) {
-                console.error('Failed to save blog post to Supabase:', err);
+            const { error } = await supabase.from('blog_posts').insert(blogPostToRow(post));
+            if (error) {
+                console.error('Failed to save blog post to Supabase:', error);
                 saveBlogToLS(updated);
+                throw new Error(error.message);
             }
         } else {
             saveBlogToLS(updated);
@@ -409,12 +408,11 @@ export const useAppStore = create<AppStore>((set, get) => ({
         set({ blogPosts: updated });
 
         if (isSupabaseConfigured) {
-            try {
-                const { error } = await supabase.from('blog_posts').upsert(blogPostToRow(post));
-                if (error) throw error;
-            } catch (err) {
-                console.error('Failed to update blog post in Supabase:', err);
+            const { error } = await supabase.from('blog_posts').upsert(blogPostToRow(post));
+            if (error) {
+                console.error('Failed to update blog post in Supabase:', error);
                 saveBlogToLS(updated);
+                throw new Error(error.message);
             }
         } else {
             saveBlogToLS(updated);

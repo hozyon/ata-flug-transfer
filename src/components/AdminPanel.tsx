@@ -200,7 +200,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     const removed = blogPostsProp.filter(e => !next.find(p => p.id === e.id));
     const updated = next.filter(p => {
       const existing = blogPostsProp.find(e => e.id === p.id);
-      return existing && JSON.stringify(existing) !== JSON.stringify(p);
+      if (!existing) return false;
+      return existing.title !== p.title || existing.content !== p.content ||
+        existing.slug !== p.slug || existing.excerpt !== p.excerpt ||
+        existing.isPublished !== p.isPublished || existing.featuredImage !== p.featuredImage ||
+        existing.category !== p.category || existing.seoTitle !== p.seoTitle ||
+        existing.seoDescription !== p.seoDescription || existing.scheduledAt !== p.scheduledAt ||
+        JSON.stringify(existing.tags) !== JSON.stringify(p.tags);
     });
     for (const p of added) await onAddBlogPost(p);
     for (const p of updated) await onUpdateBlogPost(p);
