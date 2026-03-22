@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useAppStore } from '../store/useAppStore';
+import { useLanguage } from '../i18n/LanguageContext';
 import { slugify } from '../utils/slugify';
 import { DESTINATION_META } from '../data/destinationMeta';
 import { INITIAL_SITE_CONTENT } from '../constants';
@@ -9,6 +10,7 @@ import { INITIAL_SITE_CONTENT } from '../constants';
 const TransferDestination: React.FC = () => {
   const { transferSlug } = useParams<{ transferSlug: string }>();
   const { siteContent } = useAppStore();
+  const { t } = useLanguage();
 
   // slug from URL is like "kemer-transfer" → strip "-transfer" to get region slug
   const regionSlug = transferSlug?.replace(/-transfer$/, '') || '';
@@ -18,7 +20,6 @@ const TransferDestination: React.FC = () => {
     || INITIAL_SITE_CONTENT.regions.find(r => slugify(r.name) === regionSlug);
 
   if (!region) return <Navigate to="/" replace />;
-
   const meta = DESTINATION_META[regionSlug];
   const seo = siteContent.seo;
   const business = siteContent.business;
@@ -94,11 +95,11 @@ const TransferDestination: React.FC = () => {
         <div className="relative z-10 max-w-6xl mx-auto px-5 pb-10 w-full">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-white/50 text-xs mb-4" aria-label="Breadcrumb">
-            <Link to="/" className="hover:text-white transition-colors">Ana Sayfa</Link>
+            <Link to="/" className="hover:text-white transition-colors">{t('nav.home')}</Link>
             <span>/</span>
-            <Link to="/bolgeler" className="hover:text-white transition-colors">Bölgeler</Link>
+            <Link to="/bolgeler" className="hover:text-white transition-colors">{t('nav.regions')}</Link>
             <span>/</span>
-            <span className="text-white">{region.name} Transfer</span>
+            <span className="text-white">{region.name}</span>
           </nav>
           <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight" style={{ fontFamily: "'Outfit', sans-serif" }}>
             {region.name} Transfer

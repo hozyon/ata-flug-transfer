@@ -285,7 +285,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
                 <div className="flex items-center gap-2">
                   <i className="fa-regular fa-user text-[var(--color-primary)] text-[9px] flex-shrink-0" />
                   <input required type="text" name="firstName" value={formData.firstName} onChange={handleChange}
-                    className={inp} placeholder={t('Adınız')} />
+                    className={inp} placeholder={t('Adınız')} autoComplete="given-name" />
                 </div>
                 {errors.firstName && <p className="text-rose-400 text-[9px] mt-1">{errors.firstName}</p>}
               </div>
@@ -294,7 +294,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
                 <div className="flex items-center gap-2">
                   <i className="fa-regular fa-user text-[var(--color-primary)] text-[9px] flex-shrink-0" />
                   <input type="text" name="lastName" value={formData.lastName} onChange={handleChange}
-                    className={inp} placeholder={t('Soyadınız')} />
+                    className={inp} placeholder={t('Soyadınız')} autoComplete="family-name" />
                 </div>
               </div>
             </div>
@@ -311,7 +311,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
                 </select>
                 <div className="w-px h-4 bg-white/10 flex-shrink-0" />
                 <input required type="tel" name="phone" value={formData.phone} onChange={handleChange}
-                  className={inp + ' flex-1'} placeholder="555 123 4567" />
+                  className={inp + ' flex-1'} placeholder="555 123 4567" autoComplete="tel" />
               </div>
               {errors.phone && <p className="text-rose-400 text-[9px] mt-1">{errors.phone}</p>}
             </div>
@@ -321,7 +321,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
               <div className="flex items-center gap-2">
                 <i className="fa-regular fa-envelope text-[var(--color-primary)] text-[9px] flex-shrink-0" />
                 <input type="email" name="email" value={formData.email} onChange={handleChange}
-                  className={inp} placeholder="ornek@email.com" />
+                  className={inp} placeholder="ornek@email.com" autoComplete="email" />
               </div>
             </div>
           </>

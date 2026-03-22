@@ -114,7 +114,7 @@ const Iletisim: React.FC = () => {
 
                         {/* Phone */}
                         <a href={`tel:${business.phone}`}
-                            className="contact-channel flex-1 flex items-center gap-5 px-6 py-6 group transition-colors duration-200"
+                            className="contact-channel flex-1 flex items-center gap-4 sm:gap-5 px-4 sm:px-6 py-4 sm:py-6 group transition-colors duration-200"
                             style={{ borderRight: '1px solid rgba(255,255,255,0.05)' }}
                             onMouseEnter={e => (e.currentTarget.style.background = 'rgba(197,160,89,0.06)')}
                             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
@@ -132,7 +132,7 @@ const Iletisim: React.FC = () => {
 
                         {/* WhatsApp */}
                         <a href={`https://wa.me/${business.whatsapp}`} target="_blank" rel="noopener noreferrer"
-                            className="contact-channel flex-1 flex items-center gap-5 px-6 py-6 group transition-colors duration-200"
+                            className="contact-channel flex-1 flex items-center gap-4 sm:gap-5 px-4 sm:px-6 py-4 sm:py-6 group transition-colors duration-200"
                             style={{ borderRight: '1px solid rgba(255,255,255,0.05)' }}
                             onMouseEnter={e => (e.currentTarget.style.background = 'rgba(37,211,102,0.05)')}
                             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
@@ -150,7 +150,7 @@ const Iletisim: React.FC = () => {
 
                         {/* Email */}
                         <a href={`mailto:${business.email}`}
-                            className="contact-channel flex-1 flex items-center gap-5 px-6 py-6 group transition-colors duration-200"
+                            className="contact-channel flex-1 flex items-center gap-4 sm:gap-5 px-4 sm:px-6 py-4 sm:py-6 group transition-colors duration-200"
                             onMouseEnter={e => (e.currentTarget.style.background = 'rgba(56,189,248,0.05)')}
                             onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                         >
@@ -329,6 +329,7 @@ const Iletisim: React.FC = () => {
                                             <input
                                                 type="text"
                                                 required
+                                                autoComplete="name"
                                                 value={formData.name}
                                                 onChange={e => setFormData({ ...formData, name: e.target.value })}
                                                 onFocus={() => setFocused('name')}
@@ -353,6 +354,7 @@ const Iletisim: React.FC = () => {
                                             <input
                                                 type="email"
                                                 required
+                                                autoComplete="email"
                                                 value={formData.email}
                                                 onChange={e => setFormData({ ...formData, email: e.target.value })}
                                                 onFocus={() => setFocused('email')}

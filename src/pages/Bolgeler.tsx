@@ -262,7 +262,7 @@ const Bolgeler: React.FC = () => {
                         <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse"></span>
                         <span>{t('regionsPage.eyebrow')}</span>
                     </div>
-                    <h1 className="text-5xl md:text-7xl font-playfair font-medium text-white mb-6 tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 drop-shadow-2xl">
+                    <h1 className="text-4xl sm:text-5xl md:text-7xl font-playfair font-medium text-white mb-6 tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 drop-shadow-2xl">
                         {t('regionsPage.title')}
                     </h1>
                     <p className="text-slate-300 text-lg md:text-xl font-light tracking-wide animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
@@ -374,19 +374,25 @@ const Bolgeler: React.FC = () => {
                                 <i className="fas fa-chevron-left"></i>
                             </button>
 
-                            <div className="flex gap-1">
-                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                                    <button
-                                        key={page}
-                                        onClick={() => setCurrentPage(page)}
-                                        className={`w-11 h-11 flex items-center justify-center rounded-lg border transition-colors ${currentPage === page
-                                            ? 'bg-[var(--color-dark)] border-[var(--color-dark)] text-white'
-                                            : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
-                                            }`}
-                                    >
-                                        {page}
-                                    </button>
-                                ))}
+                            <div className="flex flex-wrap gap-1">
+                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                                    const isActive = currentPage === page;
+                                    const isNearCurrent = Math.abs(page - currentPage) <= 1;
+                                    const isEdge = page === 1 || page === totalPages;
+                                    if (!isActive && !isNearCurrent && !isEdge && totalPages > 5) return null;
+                                    return (
+                                        <button
+                                            key={page}
+                                            onClick={() => setCurrentPage(page)}
+                                            className={`w-11 h-11 flex items-center justify-center rounded-lg border transition-colors ${isActive
+                                                ? 'bg-[var(--color-dark)] border-[var(--color-dark)] text-white'
+                                                : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
+                                                }`}
+                                        >
+                                            {page}
+                                        </button>
+                                    );
+                                })}
                             </div>
 
                             <button
