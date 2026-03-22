@@ -1,36 +1,10 @@
-import React, { useState, useEffect } from 'react';
-
-interface Coupon {
-    id: string;
-    code: string;
-    type: 'percent' | 'fixed';
-    value: number;
-    minAmount?: number;
-    usageLimit?: number;
-    usedCount: number;
-    expiresAt?: string;
-    isActive: boolean;
-    description?: string;
-    createdAt: string;
-}
+import React, { useState } from 'react';
+import { Coupon, SiteContent } from '../../../types';
 
 interface CouponsViewProps {
     showToast: (msg: string, type: 'success' | 'error' | 'delete' | 'info') => void;
-}
-
-const STORAGE_KEY = 'ata_coupons_v1';
-
-function loadCoupons(): Coupon[] {
-    try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? JSON.parse(raw) : [];
-    } catch {
-        return [];
-    }
-}
-
-function saveCoupons(coupons: Coupon[]) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(coupons));
+    editContent: SiteContent;
+    setEditContent: (content: SiteContent) => void;
 }
 
 function generateCode(): string {
@@ -51,16 +25,17 @@ const emptyForm = (): Omit<Coupon, 'id' | 'usedCount' | 'createdAt'> => ({
     description: '',
 });
 
-export const CouponsView: React.FC<CouponsViewProps> = ({ showToast }) => {
-    const [coupons, setCoupons] = useState<Coupon[]>(loadCoupons);
+export const CouponsView: React.FC<CouponsViewProps> = ({ showToast, editContent, setEditContent }) => {
+    // Supabase-backed via editContent — auto-save handles persistence
+    const coupons = editContent.coupons || [];
+    const setCoupons = (next: Coupon[] | ((prev: Coupon[]) => Coupon[])) => {
+        const resolved = typeof next === 'function' ? next(coupons) : next;
+        setEditContent({ ...editContent, coupons: resolved });
+    };
     const [searchTerm, setSearchTerm] = useState('');
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [form, setForm] = useState(emptyForm());
-
-    useEffect(() => {
-        saveCoupons(coupons);
-    }, [coupons]);
 
     const now = new Date();
     const thisMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;

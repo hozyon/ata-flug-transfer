@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { SiteContent } from '../../../types';
+import React, { useState } from 'react';
+import { SiteContent, PricingRule } from '../../../types';
 import { useViewMode } from '../../../hooks/useViewMode';
 import { MobileViewToggle } from '../MobileViewToggle';
 
@@ -7,19 +7,6 @@ interface PricingViewProps {
     editContent: SiteContent;
     setEditContent: (content: SiteContent) => void;
 }
-
-interface PricingRule {
-    id: string;
-    name: string;
-    type: 'percent' | 'fixed';
-    value: number;
-    direction: 'add' | 'subtract';
-    dateFrom?: string;
-    dateTo?: string;
-    isActive: boolean;
-}
-
-const PRICING_RULES_KEY = 'ata_pricing_rules_v1';
 
 const emptyRule = (): PricingRule => ({
     id: Date.now().toString(),
@@ -45,21 +32,16 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent, setEditCo
         !searchTerm || r.name.toLowerCase().includes(searchTerm.toLowerCase()) || (r.desc || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // ── Pricing Rules State ──
-    const [rules, setRules] = useState<PricingRule[]>(() => {
-        try {
-            const stored = localStorage.getItem(PRICING_RULES_KEY);
-            return stored ? JSON.parse(stored) : [];
-        } catch { return []; }
-    });
+    // ── Pricing Rules State — Supabase-backed via editContent ──
+    const rules = editContent.pricingRules || [];
+    const setRules = (next: PricingRule[] | ((prev: PricingRule[]) => PricingRule[])) => {
+        const resolved = typeof next === 'function' ? next(rules) : next;
+        setEditContent({ ...editContent, pricingRules: resolved });
+    };
     const [showRuleForm, setShowRuleForm] = useState(false);
     const [editingRule, setEditingRule] = useState<PricingRule | null>(null);
     const [formRule, setFormRule] = useState<PricingRule>(emptyRule());
     const [previewBase, setPreviewBase] = useState(1000);
-
-    useEffect(() => {
-        localStorage.setItem(PRICING_RULES_KEY, JSON.stringify(rules));
-    }, [rules]);
 
     const saveRule = () => {
         if (!formRule.name.trim()) return;

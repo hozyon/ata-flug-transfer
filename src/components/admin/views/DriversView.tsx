@@ -1,36 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Vehicle } from '../../../types';
-
-interface Driver {
-    id: string;
-    name: string;
-    phone: string;
-    email?: string;
-    vehicleId?: string;
-    licenseNo?: string;
-    isActive: boolean;
-    notes?: string;
-    createdAt: string;
-}
+import React, { useState } from 'react';
+import { Vehicle, Driver, SiteContent } from '../../../types';
 
 interface DriversViewProps {
     vehicles: Vehicle[];
     showToast: (msg: string, type: 'success' | 'error' | 'delete' | 'info') => void;
-}
-
-const STORAGE_KEY = 'ata_drivers_v1';
-
-function loadDrivers(): Driver[] {
-    try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? JSON.parse(raw) : [];
-    } catch {
-        return [];
-    }
-}
-
-function saveDrivers(drivers: Driver[]) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(drivers));
+    editContent: SiteContent;
+    setEditContent: (content: SiteContent) => void;
 }
 
 function getInitials(name: string): string {
@@ -62,16 +37,17 @@ const emptyForm = (): Omit<Driver, 'id' | 'createdAt'> => ({
     notes: '',
 });
 
-export const DriversView: React.FC<DriversViewProps> = ({ vehicles, showToast }) => {
-    const [drivers, setDrivers] = useState<Driver[]>(loadDrivers);
+export const DriversView: React.FC<DriversViewProps> = ({ vehicles, showToast, editContent, setEditContent }) => {
+    // Supabase-backed via editContent — auto-save handles persistence
+    const drivers = editContent.drivers || [];
+    const setDrivers = (next: Driver[] | ((prev: Driver[]) => Driver[])) => {
+        const resolved = typeof next === 'function' ? next(drivers) : next;
+        setEditContent({ ...editContent, drivers: resolved });
+    };
     const [searchTerm, setSearchTerm] = useState('');
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [form, setForm] = useState(emptyForm());
-
-    useEffect(() => {
-        saveDrivers(drivers);
-    }, [drivers]);
 
     const activeDrivers = drivers.filter(d => d.isActive);
     const assignedDrivers = drivers.filter(d => d.vehicleId);

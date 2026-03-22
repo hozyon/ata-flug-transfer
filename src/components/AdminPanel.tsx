@@ -2834,6 +2834,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
             activeView === 'coupons' && (
               <CouponsView
                 showToast={showToast}
+                editContent={editContent}
+                setEditContent={setEditContent}
               />
             )
           }
@@ -2842,6 +2844,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               <DriversView
                 vehicles={editContent.vehicles}
                 showToast={showToast}
+                editContent={editContent}
+                setEditContent={setEditContent}
               />
             )
           }

@@ -153,6 +153,46 @@ export interface SiteContent {
     passwordHistory?: string[];
     activeSessionToken?: string;
   };
+  pricingRules?: PricingRule[];
+  drivers?: Driver[];
+  coupons?: Coupon[];
+}
+
+export interface PricingRule {
+  id: string;
+  name: string;
+  type: 'percent' | 'fixed';
+  value: number;
+  direction: 'add' | 'subtract';
+  dateFrom?: string;
+  dateTo?: string;
+  isActive: boolean;
+}
+
+export interface Driver {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string;
+  vehicleId?: string;
+  licenseNo?: string;
+  isActive: boolean;
+  notes?: string;
+  createdAt: string;
+}
+
+export interface Coupon {
+  id: string;
+  code: string;
+  type: 'percent' | 'fixed';
+  value: number;
+  minAmount?: number;
+  usageLimit?: number;
+  usedCount: number;
+  expiresAt?: string;
+  isActive: boolean;
+  description?: string;
+  createdAt: string;
 }
 
 export interface Region {

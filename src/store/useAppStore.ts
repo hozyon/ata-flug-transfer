@@ -177,6 +177,9 @@ function mergeContent(parsed: SiteContent): SiteContent {
         adminAccount: parsed.adminAccount
             ? { ...INITIAL_SITE_CONTENT.adminAccount, ...parsed.adminAccount }
             : INITIAL_SITE_CONTENT.adminAccount,
+        pricingRules: Array.isArray(parsed.pricingRules) ? parsed.pricingRules : [],
+        drivers: Array.isArray(parsed.drivers) ? parsed.drivers : [],
+        coupons: Array.isArray(parsed.coupons) ? parsed.coupons : [],
     };
     if (!Array.isArray(merged.hero.backgrounds) || merged.hero.backgrounds.length === 0) {
         merged.hero.backgrounds = INITIAL_SITE_CONTENT.hero.backgrounds;
