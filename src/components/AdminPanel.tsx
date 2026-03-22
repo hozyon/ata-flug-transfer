@@ -554,7 +554,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
         setSaveStatus('idle');
         showToast('Kayıt başarısız — internet bağlantınızı kontrol edin', 'error');
       }
-    }, 1500);
+    }, 800);
     return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
   }, [editContent]);
 
@@ -704,9 +704,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     siteContent.adminAccount?.twoFa,
   ]);
 
-  const handleSaveAccount = (form = accountForm) => {
+  const handleSaveAccount = async (form = accountForm) => {
     const { currentPassword: _currentPassword, newPassword: _newPassword, confirmPassword: _confirmPassword, ...toSave } = form;
-    onUpdateSiteContent({ ...editContent, adminAccount: toSave });
+    try {
+      await onUpdateSiteContent({ ...editContentRef.current, adminAccount: toSave });
+    } catch {
+      showToast('Hesap kaydedilemedi — internet bağlantınızı kontrol edin', 'error');
+    }
   };
 
   const hashPassword = async (password: string): Promise<string> => {
@@ -735,8 +739,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     // Update password history (keep last 3 hashes)
     const updatedHistory = [...history, newHash].slice(-3);
     await onUpdateSiteContent({
-      ...editContent,
-      adminAccount: { ...editContent.adminAccount!, passwordHistory: updatedHistory },
+      ...editContentRef.current,
+      adminAccount: { ...editContentRef.current.adminAccount!, passwordHistory: updatedHistory },
     });
 
     return { error: null };
