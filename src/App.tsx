@@ -543,8 +543,10 @@ const App: React.FC = () => {
                     return (
                       <section className="relative overflow-hidden py-0" style={{ background: 'linear-gradient(160deg, #080c16 0%, #0c1220 50%, #080c16 100%)' }}>
 
-                        {/* Dot grid */}
-                        <div className="absolute inset-0 opacity-[0.15]" style={{ backgroundImage: 'radial-gradient(circle, #c5a059 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+                        {/* Diamond crosshatch */}
+                        <div className="absolute inset-0 opacity-[0.12]" style={{
+                          backgroundImage: `repeating-linear-gradient(45deg, rgba(197,160,89,0.5) 0px, rgba(197,160,89,0.5) 1px, transparent 1px, transparent 22px), repeating-linear-gradient(-45deg, rgba(197,160,89,0.5) 0px, rgba(197,160,89,0.5) 1px, transparent 1px, transparent 22px)`,
+                        }} />
                         {/* Gold radial glow */}
                         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[220px] opacity-[0.18]" style={{ background: 'radial-gradient(ellipse, #c5a059 0%, transparent 70%)' }} />
 
