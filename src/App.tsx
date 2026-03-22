@@ -503,11 +503,14 @@ const App: React.FC = () => {
                     const sym = siteContent.currency?.symbol || '€';
                     const allRegions = siteContent.regions;
                     if (allRegions.length === 0) return null;
-                    const sorted = [...allRegions].sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
+
+                    // Only show regions that have a price set
+                    const pricedRegions = allRegions.filter(r => r.price && r.price > 0);
+                    const sorted = [...pricedRegions].sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
                     const groups = [
-                      { labelKey: 'pricing.near', dotCls: 'bg-emerald-400', lineCls: 'bg-emerald-400/20', regions: sorted.filter(r => (r.price ?? 0) <= 60) },
-                      { labelKey: 'pricing.mid',  dotCls: 'bg-amber-400',   lineCls: 'bg-amber-400/20',   regions: sorted.filter(r => (r.price ?? 0) > 60 && (r.price ?? 0) <= 120) },
-                      { labelKey: 'pricing.far',  dotCls: 'bg-rose-400',    lineCls: 'bg-rose-400/20',    regions: sorted.filter(r => (r.price ?? 0) > 120) },
+                      { labelKey: 'pricing.near', accent: '#34d399', accentBg: 'rgba(52,211,153,0.08)', borderClr: 'rgba(52,211,153,0.2)', regions: sorted.filter(r => (r.price ?? 0) <= 60) },
+                      { labelKey: 'pricing.mid',  accent: '#c5a059', accentBg: 'rgba(197,160,89,0.08)',  borderClr: 'rgba(197,160,89,0.2)',  regions: sorted.filter(r => (r.price ?? 0) > 60 && (r.price ?? 0) <= 120) },
+                      { labelKey: 'pricing.far',  accent: '#fb7185', accentBg: 'rgba(251,113,133,0.08)', borderClr: 'rgba(251,113,133,0.2)', regions: sorted.filter(r => (r.price ?? 0) > 120) },
                     ].filter(g => g.regions.length > 0);
 
                     const LANG_FLAGS: Record<string, string> = { en: '🇬🇧', de: '🇩🇪', fr: '🇫🇷', ru: '🇷🇺', ar: '🇸🇦', tr: '🇹🇷' };
@@ -522,127 +525,164 @@ const App: React.FC = () => {
                       return `https://wa.me/${siteContent.business.whatsapp}?text=${encodeURIComponent(intlBody)}`;
                     };
 
-                    const sym2 = sym;
+                    const searchBase = pricedRegions;
                     const filteredRegions = priceSearch.trim()
-                      ? allRegions.filter(r => {
+                      ? searchBase.filter(r => {
                           const q = priceSearch.trim().toLowerCase();
                           return r.name.toLowerCase().includes(q) || String(r.price ?? '').includes(q);
                         })
-                      : allRegions;
+                      : searchBase;
                     const filteredGroups = [
-                      { labelKey: 'pricing.near', dotCls: 'bg-emerald-400', lineCls: 'bg-emerald-400/20', regions: filteredRegions.filter(r => (r.price ?? 0) <= 60) },
-                      { labelKey: 'pricing.mid',  dotCls: 'bg-amber-400',   lineCls: 'bg-amber-400/20',   regions: filteredRegions.filter(r => (r.price ?? 0) > 60 && (r.price ?? 0) <= 120) },
-                      { labelKey: 'pricing.far',  dotCls: 'bg-rose-400',    lineCls: 'bg-rose-400/20',    regions: filteredRegions.filter(r => (r.price ?? 0) > 120) },
+                      { labelKey: 'pricing.near', accent: '#34d399', accentBg: 'rgba(52,211,153,0.08)', borderClr: 'rgba(52,211,153,0.2)', regions: filteredRegions.filter(r => (r.price ?? 0) <= 60) },
+                      { labelKey: 'pricing.mid',  accent: '#c5a059', accentBg: 'rgba(197,160,89,0.08)',  borderClr: 'rgba(197,160,89,0.2)',  regions: filteredRegions.filter(r => (r.price ?? 0) > 60 && (r.price ?? 0) <= 120) },
+                      { labelKey: 'pricing.far',  accent: '#fb7185', accentBg: 'rgba(251,113,133,0.08)', borderClr: 'rgba(251,113,133,0.2)', regions: filteredRegions.filter(r => (r.price ?? 0) > 120) },
                     ].filter(g => g.regions.length > 0);
-                    void sym2;
+
+                    const activeGroups = priceSearch.trim() ? filteredGroups : groups;
 
                     return (
-                      <section className="relative overflow-hidden bg-slate-50 py-12 md:py-16">
-                        <TextureBackground />
+                      <section className="relative overflow-hidden py-16 md:py-24" style={{ background: 'linear-gradient(160deg, #080c16 0%, #0c1220 50%, #080c16 100%)' }}>
 
-                        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 pt-10 pb-0">
+                        {/* Dot grid background */}
+                        <div className="absolute inset-0 opacity-[0.18]" style={{
+                          backgroundImage: 'radial-gradient(circle, #c5a059 1px, transparent 1px)',
+                          backgroundSize: '28px 28px',
+                        }} />
+                        {/* Radial glow top-center */}
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] rounded-full opacity-20" style={{ background: 'radial-gradient(ellipse, #c5a059 0%, transparent 70%)' }} />
+
+                        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                           {/* ── Header ── */}
-                          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+                          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10">
                             <div className="reveal">
-                              <div className="flex items-center gap-2.5 mb-2.5">
-                                <i className="fa-solid fa-plane-departure text-[var(--color-primary)] text-[10px]"></i>
-                                <span className="text-[9px] font-black tracking-[0.35em] text-slate-400 uppercase">{t('pricing.eyebrow')}</span>
+                              <div className="flex items-center gap-2.5 mb-3">
+                                <span className="w-5 h-px bg-[var(--color-primary)]"></span>
+                                <span className="text-[9px] font-black tracking-[0.4em] uppercase" style={{ color: '#c5a059' }}>{t('pricing.eyebrow')}</span>
                               </div>
-                              <h2 className="text-[26px] md:text-[32px] font-black text-slate-900 tracking-tight leading-none" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                {t('pricing.title')}&nbsp;<span className="text-[var(--color-primary)]">{t('pricing.titleAccent')}</span>
+                              <h2 className="text-[28px] md:text-[36px] font-black tracking-tight leading-none text-white" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                                {t('pricing.title')}&nbsp;<span style={{ color: '#c5a059' }}>{t('pricing.titleAccent')}</span>
                               </h2>
-                              <p className="text-slate-400 text-[12px] mt-1.5">{t('pricing.subtitle')}</p>
+                              <p className="text-white/40 text-[12px] mt-2 font-medium">{t('pricing.subtitle')}</p>
                             </div>
+
                             {/* Search + Legend */}
-                            <div className="flex flex-col items-end gap-3 pb-0.5">
-                            {/* Search box */}
-                            <div className="relative">
-                              <i className="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[11px] pointer-events-none"></i>
-                              <input
-                                type="text"
-                                value={priceSearch}
-                                onChange={e => setPriceSearch(e.target.value)}
-                                placeholder={t('pricing.search') || 'Bölge adı veya fiyat ara...'}
-                                className="pl-8 pr-3 py-2 text-[12px] rounded-xl border border-slate-200 bg-white text-slate-700 placeholder-slate-400 focus:outline-none focus:border-[var(--color-primary)] transition-colors w-52"
-                              />
-                              {priceSearch && (
-                                <button onClick={() => setPriceSearch('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-                                  <i className="fa-solid fa-xmark text-[10px]"></i>
-                                </button>
-                              )}
-                            </div>
-                            {/* Legend */}
-                            <div className="flex items-center gap-4">
-                              {([
-                                { cls: 'bg-emerald-500', lk: 'pricing.legendNear' },
-                                { cls: 'bg-amber-500',   lk: 'pricing.legendMid' },
-                                { cls: 'bg-rose-500',    lk: 'pricing.legendFar' },
-                              ] as const).map(item => (
-                                <div key={item.lk} className="flex items-center gap-1.5">
-                                  <span className={`w-1.5 h-1.5 rounded-full ${item.cls} shrink-0`}></span>
-                                  <span className="text-[10px] text-slate-400">{t(item.lk)}</span>
-                                </div>
-                              ))}
-                            </div>
+                            <div className="flex flex-col items-start sm:items-end gap-3">
+                              <div className="relative">
+                                <i className="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30 text-[11px] pointer-events-none"></i>
+                                <input
+                                  type="text"
+                                  value={priceSearch}
+                                  onChange={e => setPriceSearch(e.target.value)}
+                                  placeholder={t('pricing.search') || 'Bölge adı veya fiyat ara...'}
+                                  className="pl-9 pr-8 py-2.5 text-[12px] rounded-xl text-white/80 placeholder-white/25 focus:outline-none transition-all w-56"
+                                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', focusBorderColor: '#c5a059' } as React.CSSProperties}
+                                  onFocus={e => (e.target.style.borderColor = '#c5a059')}
+                                  onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.08)')}
+                                />
+                                {priceSearch && (
+                                  <button onClick={() => setPriceSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70 transition-colors">
+                                    <i className="fa-solid fa-xmark text-[10px]"></i>
+                                  </button>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-4">
+                                {[
+                                  { color: '#34d399', lk: 'pricing.legendNear' },
+                                  { color: '#c5a059', lk: 'pricing.legendMid' },
+                                  { color: '#fb7185', lk: 'pricing.legendFar' },
+                                ].map(item => (
+                                  <div key={item.lk} className="flex items-center gap-1.5">
+                                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: item.color }}></span>
+                                    <span className="text-[10px] text-white/35 font-medium">{t(item.lk)}</span>
+                                  </div>
+                                ))}
+                              </div>
                             </div>
                           </div>
 
                           {/* ── Groups ── */}
-                          <div className="space-y-7">
-                            {(priceSearch.trim() ? filteredGroups : groups).map(group => (
-                              <div key={group.labelKey}>
-                                {/* Group label */}
-                                <div className="flex items-center gap-3 mb-3.5">
-                                  <span className={`w-1.5 h-1.5 rounded-full ${group.dotCls} shrink-0`}></span>
-                                  <span className="text-[8.5px] font-black uppercase tracking-[0.35em] text-slate-400">{t(group.labelKey)}</span>
-                                  <span className="flex-1 h-px bg-slate-200"></span>
+                          {activeGroups.length === 0 ? (
+                            <div className="text-center py-16">
+                              <i className="fa-solid fa-magnifying-glass text-white/10 text-3xl mb-3 block"></i>
+                              <p className="text-white/30 text-sm">Sonuç bulunamadı</p>
+                            </div>
+                          ) : (
+                            <div className="space-y-8">
+                              {activeGroups.map(group => (
+                                <div key={group.labelKey}>
+                                  {/* Group label */}
+                                  <div className="flex items-center gap-3 mb-4">
+                                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: group.accent }}></span>
+                                    <span className="text-[8.5px] font-black uppercase tracking-[0.4em]" style={{ color: group.accent }}>{t(group.labelKey)}</span>
+                                    <span className="flex-1 h-px" style={{ background: `linear-gradient(to right, ${group.borderClr}, transparent)` }}></span>
+                                    <span className="text-[9px] font-bold text-white/20">{group.regions.length}</span>
+                                  </div>
+                                  {/* Cards */}
+                                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 stagger-children">
+                                    {group.regions.map(region => (
+                                      <a
+                                        key={region.id}
+                                        href={buildWaUrl(region.name, region.price)}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="reveal group relative flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl transition-all duration-200 overflow-hidden"
+                                        style={{
+                                          background: 'rgba(255,255,255,0.03)',
+                                          border: '1px solid rgba(255,255,255,0.07)',
+                                        }}
+                                        onMouseEnter={e => {
+                                          (e.currentTarget as HTMLAnchorElement).style.background = group.accentBg;
+                                          (e.currentTarget as HTMLAnchorElement).style.borderColor = group.borderClr;
+                                        }}
+                                        onMouseLeave={e => {
+                                          (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(255,255,255,0.03)';
+                                          (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.07)';
+                                        }}
+                                      >
+                                        <div className="flex items-center gap-2 min-w-0">
+                                          <i className="fa-solid fa-location-dot text-[10px] shrink-0 transition-colors duration-200 text-white/20 group-hover:text-white/50"></i>
+                                          <span className="text-white/60 text-[11.5px] font-medium truncate group-hover:text-white/90 transition-colors duration-200" style={{ fontFamily: "'Montserrat', sans-serif" }}>{region.name}</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5 shrink-0">
+                                          <span className="font-black text-[13px] leading-none transition-colors duration-200" style={{ color: group.accent, fontFamily: "'Outfit', sans-serif" }}>
+                                            {sym}{region.price}
+                                          </span>
+                                          <i className="fa-brands fa-whatsapp text-[#25D366] text-[11px] opacity-0 group-hover:opacity-100 transition-opacity duration-200"></i>
+                                        </div>
+                                      </a>
+                                    ))}
+                                  </div>
                                 </div>
-                                {/* Cards */}
-                                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 stagger-children">
-                                  {group.regions.map(region => (
-                                    <a
-                                      key={region.id}
-                                      href={buildWaUrl(region.name, region.price)}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="reveal group flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl border border-slate-200 bg-white hover:border-[var(--color-primary)]/40 hover:bg-amber-50/50 hover:shadow-sm transition-all duration-200 cursor-pointer"
-                                    >
-                                      <div className="flex items-center gap-2 min-w-0">
-                                        <i className="fa-solid fa-location-dot text-slate-300 group-hover:text-[var(--color-primary)] text-[10px] shrink-0 transition-colors duration-200"></i>
-                                        <span className="text-slate-600 text-[11.5px] font-medium truncate group-hover:text-slate-900 transition-colors duration-200" style={{ fontFamily: "'Montserrat', sans-serif" }}>{region.name}</span>
-                                      </div>
-                                      <div className="flex items-center gap-1.5 shrink-0">
-                                        {region.price ? (
-                                          <span className="text-[var(--color-primary)] font-black text-[13px] leading-none">{sym}{region.price}</span>
-                                        ) : (
-                                          <span className="text-slate-300 font-medium text-[11px] leading-none">—</span>
-                                        )}
-                                        <i className="fa-brands fa-whatsapp text-[#25D366] text-[11px] opacity-0 group-hover:opacity-100 transition-opacity duration-200"></i>
-                                      </div>
-                                    </a>
-                                  ))}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
+                              ))}
+                            </div>
+                          )}
 
                           {/* ── Footer ── */}
-                          <div className="mt-8 pt-5 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-10">
+                          <div className="mt-10 pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                             <div className="flex items-start gap-2">
-                              <i className="fa-solid fa-circle-info text-slate-300 text-[9px] mt-[3px] shrink-0"></i>
-                              <p className="text-slate-400 text-[10.5px] leading-relaxed max-w-lg">{t('pricing.note')}</p>
+                              <i className="fa-solid fa-circle-info text-white/20 text-[9px] mt-[3px] shrink-0"></i>
+                              <p className="text-white/30 text-[10.5px] leading-relaxed max-w-lg">{t('pricing.note')}</p>
                             </div>
                             <a
                               href="/bolgeler"
-                              className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 text-slate-500 hover:border-[var(--color-primary)]/40 hover:text-[var(--color-primary)] text-[10px] font-black tracking-[0.15em] uppercase transition-all duration-200"
+                              className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-white/50 hover:text-[var(--color-primary)] text-[10px] font-black tracking-[0.15em] uppercase transition-all duration-200"
+                              style={{ border: '1px solid rgba(255,255,255,0.08)' }}
+                              onMouseEnter={e => {
+                                (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(197,160,89,0.35)';
+                                (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(197,160,89,0.05)';
+                              }}
+                              onMouseLeave={e => {
+                                (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.08)';
+                                (e.currentTarget as HTMLAnchorElement).style.background = 'transparent';
+                              }}
                             >
                               {t('pricing.allRegions')}
                               <i className="fa-solid fa-arrow-right text-[8px]"></i>
                             </a>
                           </div>
-                        </div>
 
+                        </div>
                       </section>
                     );
                   })()}
