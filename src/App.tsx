@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Routes, Route, useLocation, Link, useNavigate, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
@@ -7,7 +7,7 @@ import BookingForm from './components/BookingForm';
 import TextureBackground from './components/TextureBackground';
 import { useLanguage } from './i18n/LanguageContext';
 const AdminPanel = React.lazy(() => import('./components/AdminPanel'));
-import { REVIEWS, BLOG_POSTS, BUSINESS_INFO } from './constants';
+import { REVIEWS, BLOG_POSTS } from './constants';
 import { SiteProvider } from './SiteContext';
 import { useAppStore } from './store/useAppStore';
 import { supabase, isSupabaseConfigured } from './lib/supabase';
@@ -24,6 +24,9 @@ import Iletisim from './pages/Iletisim';
 import AdminLogin from './pages/AdminLogin';
 import TransferDestination from './pages/TransferDestination';
 import ErrorBoundary from './components/ErrorBoundary';
+
+// Computed once at module load — avoids calling Math.random during render
+const RANDOM_BLOG_POSTS = [...BLOG_POSTS].sort(() => 0.5 - Math.random()).slice(0, 4);
 
 const App: React.FC = () => {
   const {
@@ -244,8 +247,6 @@ const App: React.FC = () => {
 
 
 
-  // Memoize random blog posts outside of JSX
-  const randomBlogPosts = useMemo(() => [...BLOG_POSTS].sort(() => 0.5 - Math.random()).slice(0, 4), []);
   if (authChecking) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-[#0f172a]">
@@ -835,7 +836,7 @@ const App: React.FC = () => {
                         </h2>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                        {randomBlogPosts.map((post) => (
+                        {RANDOM_BLOG_POSTS.map((post) => (
                           <Link key={post.id} to={`/blog/${post.slug}`} className="group bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                             <div className="relative h-40 overflow-hidden">
                               <img src={post.featuredImage} alt={t(post.title)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />

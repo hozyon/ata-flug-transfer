@@ -44,7 +44,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
         ? regions.filter(r => r.name.toLowerCase().includes(regionSearch.toLowerCase()) || (r.desc || '').toLowerCase().includes(regionSearch.toLowerCase()))
         : regions;
 
-    const { getDragProps, getRowClassName, isDragging } = useDragAndDrop(
+    const { getDragProps, getRowClassName, isDragging: _isDragging } = useDragAndDrop(
         regions,
         (newRegions) => setEditContent({ ...editContent, regions: newRegions })
     );
@@ -264,7 +264,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                                 </tr>
                             </thead>
                             <tbody>
-                                {filtered.map((region, index) => {
+                                {filtered.map((region) => {
                                     const realIndex = regions.findIndex(r => r.id === region.id);
                                     const dragProps = !regionSearch ? getDragProps(realIndex) : {};
                                     return (

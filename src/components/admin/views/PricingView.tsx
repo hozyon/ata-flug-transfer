@@ -167,7 +167,7 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent }) => {
                 ) : viewMode === 'card' ? (
                     /* ── MOBILE CARD VIEW ── */
                     <div className="p-3 space-y-3">
-                        {filtered.map((region, index) => (
+                        {filtered.map((region) => (
                             <div key={region.id} className="p-4 rounded-2xl bg-white/[0.03] border border-white/[0.06] hover:border-white/[0.12] transition-all">
                                 <div className="flex items-center gap-3">
                                     <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/10 shrink-0">

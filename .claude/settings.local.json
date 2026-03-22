@@ -18,7 +18,10 @@
       "Bash(git checkout:*)",
       "Bash(npx eslint:*)",
       "Bash(curl -s http://localhost:3001/)",
-      "Bash(git merge:*)"
+      "Bash(git merge:*)",
+      "Bash(grep -v \"^$\")",
+      "Bash(grep -v \"✖\\\\|✓\\\\|problems\\\\|^$\")",
+      "Read(//private/tmp/**)"
     ]
   }
 }

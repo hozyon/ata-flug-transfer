@@ -43,7 +43,7 @@ const BlogPost: React.FC = () => {
 
     const formatContent = (content: string) => {
         // Improved simple markdown parser
-        let html = content
+        const html = content
             .replace(/^# (.*$)/gm, '<h1 class="text-4xl md:text-5xl font-playfair font-bold text-slate-900 mb-8 mt-12 leading-tight">$1</h1>')
             .replace(/^## (.*$)/gm, '<h2 class="text-2xl md:text-3xl font-playfair font-bold text-slate-800 mt-12 mb-6 border-l-4 border-[var(--color-primary)] pl-4">$1</h2>')
             .replace(/^### (.*$)/gm, '<h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-8 mb-4">$1</h3>')

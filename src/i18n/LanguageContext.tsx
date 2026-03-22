@@ -53,6 +53,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
 
                 // If more texts accumulated while translating, fire again
                 if (pendingTexts.current.size > 0) {
+                    // eslint-disable-next-line react-hooks/immutability
                     fireBatch();
                 }
             })

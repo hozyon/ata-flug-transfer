@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Fuse from 'fuse.js';
 import { INITIAL_SITE_CONTENT } from '../constants';
@@ -38,7 +38,7 @@ const Bolgeler: React.FC = () => {
     };
     const [regions, setRegions] = React.useState(siteContent.regions || INITIAL_SITE_CONTENT.regions);
     const [searchTerm, setSearchTerm] = React.useState('');
-    const [isAnimating, setIsAnimating] = React.useState(false);
+    const [_isAnimating, setIsAnimating] = React.useState(false);
     const location = useLocation();
 
     React.useEffect(() => {

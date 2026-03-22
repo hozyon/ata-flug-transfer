@@ -26,20 +26,9 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
     const [loginStage, setLoginStage] = useState<'idle' | 'authenticating' | 'success' | 'error'>('idle');
     const [errorMessage, setErrorMessage] = useState('');
     const [resetSent, setResetSent] = useState(false);
-    const [sloganIndex, setSloganIndex] = useState(Math.floor(Math.random() * LOGIN_SLOGANS.length));
-    const [particles] = useState(() =>
-        Array.from({ length: 40 }, (_, i) => ({
-            id: i,
-            x: Math.random() * 100,
-            y: Math.random() * 100,
-            size: Math.random() * 3 + 1,
-            speed: Math.random() * 20 + 15,
-            delay: Math.random() * 10,
-            opacity: Math.random() * 0.3 + 0.1,
-        }))
-    );
+    const [_sloganIndex, setSloganIndex] = useState(() => Math.floor(Math.random() * LOGIN_SLOGANS.length));
     const emailRef = useRef<HTMLInputElement>(null);
-    const navigate = useNavigate();
+    const _navigate = useNavigate();
 
     useEffect(() => {
         setTimeout(() => emailRef.current?.focus(), 600);
@@ -119,8 +108,6 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
             setErrorMessage('');
         }
     };
-
-    const activeSlogan = LOGIN_SLOGANS[sloganIndex];
 
     return (
         <div className="h-screen h-[100dvh] flex bg-[#020617] overflow-hidden">

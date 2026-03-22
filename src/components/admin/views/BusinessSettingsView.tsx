@@ -131,6 +131,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
 
             {/* ── Stats Row ──────────────────────────────────────── */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {/* eslint-disable react-hooks/refs -- refs used only in onClick handlers, not during render */}
                 {[
                     {
                         label: 'Doldurulmuş',
@@ -202,6 +203,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
                         )}
                     </button>
                 ))}
+                {/* eslint-enable react-hooks/refs */}
             </div>
 
             {/* ── Logo ───────────────────────────────────────────── */}

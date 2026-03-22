@@ -129,7 +129,7 @@ class TranslationService {
                 }
             }
             this.flushCache(lang);
-        } catch (error) {
+        } catch (_error) {
             // On error, fill remaining with originals
             for (const idx of uncachedIndices) {
                 if (!results[idx]) results[idx] = texts[idx];

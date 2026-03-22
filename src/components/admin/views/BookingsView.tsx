@@ -23,6 +23,10 @@ const STATUS_MAP: Record<string, { label: string; color: string; bg: string; bor
     Deleted: { label: 'Silindi', color: 'text-red-300', bg: 'bg-red-500/5', border: 'border-red-500/10', dot: 'bg-red-300', icon: 'fa-trash' },
 };
 
+const SortIcon = ({ col, sortBy, sortDir }: { col: 'date' | 'created' | 'name' | 'price'; sortBy: 'date' | 'created' | 'name' | 'price'; sortDir: 'asc' | 'desc' }) => (
+    <i className={`fa-solid ${sortBy === col ? (sortDir === 'asc' ? 'fa-arrow-up' : 'fa-arrow-down') : 'fa-sort'} text-[8px] ${sortBy === col ? 'text-[var(--color-primary)]' : 'text-slate-600'}`}></i>
+);
+
 export const BookingsView: React.FC<BookingsViewProps> = ({
     bookings, onUpdateStatus, onDeleteBooking, setSelectedBookingForView
 }) => {
@@ -55,7 +59,7 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
     };
 
     const filteredBookings = useMemo(() => {
-        let list = bookings.filter(b => {
+        const list = bookings.filter(b => {
             if (b.status === 'Deleted' && bookingFilter !== 'Deleted') return false;
             const matchFilter = bookingFilter === 'All' ? true : b.status === bookingFilter;
             const q = searchTerm.toLowerCase();
@@ -89,7 +93,7 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
     const toggleSelect = (id: string) => {
         setSelectedIds(prev => {
             const s = new Set(prev);
-            s.has(id) ? s.delete(id) : s.add(id);
+            if (s.has(id)) { s.delete(id); } else { s.add(id); }
             return s;
         });
     };
@@ -138,10 +142,6 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
         a.click();
         URL.revokeObjectURL(url);
     };
-
-    const SortIcon = ({ col }: { col: typeof sortBy }) => (
-        <i className={`fa-solid ${sortBy === col ? (sortDir === 'asc' ? 'fa-arrow-up' : 'fa-arrow-down') : 'fa-sort'} text-[8px] ${sortBy === col ? 'text-[var(--color-primary)]' : 'text-slate-600'}`}></i>
-    );
 
     // Unique regions from bookings for filter dropdown
     const regionOptions = useMemo(() => {
@@ -595,7 +595,7 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                                     </th>
                                     <th className="text-left px-3 py-3.5">
                                         <button onClick={() => toggleSort('name')} className="flex items-center gap-1.5 font-outfit text-[9.5px] font-[750] text-slate-500 uppercase tracking-[0.12em] hover:text-white transition-colors">
-                                            Müşteri <SortIcon col="name" />
+                                            Müşteri <SortIcon col="name" sortBy={sortBy} sortDir={sortDir} />
                                         </button>
                                     </th>
                                     <th className="text-left px-3 py-3.5 hidden md:table-cell">
@@ -603,7 +603,7 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                                     </th>
                                     <th className="text-left px-3 py-3.5">
                                         <button onClick={() => toggleSort('date')} className="flex items-center gap-1.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-white transition-colors">
-                                            Tarih <SortIcon col="date" />
+                                            Tarih <SortIcon col="date" sortBy={sortBy} sortDir={sortDir} />
                                         </button>
                                     </th>
                                     <th className="text-left px-3 py-3.5 hidden lg:table-cell">
@@ -611,7 +611,7 @@ export const BookingsView: React.FC<BookingsViewProps> = ({
                                     </th>
                                     <th className="text-right px-3 py-3.5">
                                         <button onClick={() => toggleSort('price')} className="flex items-center gap-1.5 text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-white transition-colors ml-auto">
-                                            Tutar <SortIcon col="price" />
+                                            Tutar <SortIcon col="price" sortBy={sortBy} sortDir={sortDir} />
                                         </button>
                                     </th>
                                     <th className="text-left px-3 py-3.5">

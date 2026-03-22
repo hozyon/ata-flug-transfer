@@ -908,7 +908,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
                   } else {
                     const half = Math.floor(maxVisible / 2);
                     let start = Math.max(1, blogPage - half);
-                    let end = Math.min(totalBlogPages, start + maxVisible - 1);
+                    const end = Math.min(totalBlogPages, start + maxVisible - 1);
                     if (end - start < maxVisible - 1) start = Math.max(1, end - maxVisible + 1);
                     if (start > 1) { pages.push(1); if (start > 2) pages.push('ellipsis'); }
                     for (let i = start; i <= end; i++) pages.push(i);

@@ -99,6 +99,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         {/* Toolbar */}
         <div className="flex flex-wrap items-center gap-0.5 px-2 py-1.5 border-b border-white/[0.06] bg-white/[0.02] shrink-0">
           {/* Inline formatting */}
+          {/* eslint-disable react-hooks/refs -- refs are only accessed in click handlers, not during render */}
           <div className="flex items-center gap-0.5 pr-2 mr-1 border-r border-white/10">
             {tb('', 'fa-bold', 'Kalın', () => ins('**', '**', 'kalın'))}
             {tb('', 'fa-italic', 'İtalik', () => ins('*', '*', 'italik'))}
@@ -130,6 +131,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
               {tb('', 'fa-image', 'Resim', () => ins('![', '](https://resim-url)', 'açıklama'))}
             </div>
           )}
+          {/* eslint-enable react-hooks/refs */}
 
           <div className="flex-1" />
 

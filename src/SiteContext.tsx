@@ -1,6 +1,5 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import { SiteContent } from './types';
-import { INITIAL_SITE_CONTENT } from './constants';
 
 interface SiteContextType {
     siteContent: SiteContent;

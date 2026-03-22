@@ -23,8 +23,17 @@ export default tseslint.config(
                 'warn',
                 { allowConstantExport: true },
             ],
+            'react-hooks/set-state-in-effect': 'warn',
             '@typescript-eslint/no-explicit-any': 'off',
             '@typescript-eslint/no-var-requires': 'off',
+            '@typescript-eslint/no-unused-vars': [
+                'error',
+                {
+                    varsIgnorePattern: '^_',
+                    argsIgnorePattern: '^_',
+                    caughtErrorsIgnorePattern: '^_',
+                },
+            ],
         },
     }
 );

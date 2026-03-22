@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback, Suspense, lazy } from 'react';
-import ParticlesBackground from './ParticlesBackground';
+// ParticlesBackground removed — unused
 import { usePullToRefresh } from '../hooks/usePullToRefresh';
 import { MobileSpotlight } from './admin/MobileSpotlight';
 import { KpiCarousel } from './admin/KpiCarousel';
@@ -10,10 +10,10 @@ import { MobileBookingItem } from './admin/MobileBookingItem';
 
 import { haptic } from '../utils/haptic';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
-import { Booking, SiteContent, NavMenuItem, Vehicle, BusinessSettings, BlogPost, UserReview, Region } from '../types';
+import { Booking, SiteContent, Vehicle, BlogPost, UserReview } from '../types';
 import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
-  PieChart, Pie, Legend, AreaChart, Area, BarChart, Bar
+  PieChart, Pie, AreaChart, Area, BarChart, Bar
 } from 'recharts';
 
 // Lazy-loaded admin views for code splitting
@@ -35,7 +35,7 @@ const MediaLibraryView = lazy(() => import('./admin/views/MediaLibraryView').the
 const ActivityLogView = lazy(() => import('./admin/views/ActivityLogView').then(m => ({ default: m.ActivityLogView })));
 const CouponsView = lazy(() => import('./admin/views/CouponsView').then(m => ({ default: m.CouponsView })));
 const DriversView = lazy(() => import('./admin/views/DriversView').then(m => ({ default: m.DriversView })));
-import { DESTINATIONS, BLOG_POSTS, REVIEWS, SCRAPED_REGIONS, INITIAL_SITE_CONTENT } from '../constants';
+import { DESTINATIONS, REVIEWS, INITIAL_SITE_CONTENT } from '../constants';
 
 interface AdminPanelProps {
   bookings: Booking[];
@@ -65,6 +65,76 @@ const COUNTRY_NAMES: Record<string, string> = {
 
 
 const getCountryName = (flag: string) => COUNTRY_NAMES[flag] || 'Bilinmiyor';
+
+// ── Sidebar sub-components (defined outside AdminPanel to avoid react/no-unstable-nested-components) ──
+
+interface SidebarNavItemProps {
+  id: string;
+  label: string;
+  badge?: number;
+  icon: React.ReactNode;
+  activeView: string;
+  isSidebarOpen: boolean;
+  onNavigate: (id: string) => void;
+}
+
+const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ id, label, badge = 0, icon, activeView, isSidebarOpen, onNavigate }) => {
+  const isActive = activeView === id;
+  return (
+    <div className="relative group">
+      <button
+        onClick={() => onNavigate(id)}
+        className={`w-full rounded-xl flex items-center transition-colors duration-150 relative ${
+          isSidebarOpen
+            ? `px-3 py-2.5 gap-3 ${isActive ? 'bg-gradient-to-r from-[var(--color-primary)]/[0.13] via-[var(--color-primary)]/[0.04] to-transparent' : 'hover:bg-white/[0.04]'}`
+            : `justify-center p-2.5 ${isActive ? 'bg-[var(--color-primary)]/[0.15] rounded-xl' : 'hover:bg-white/[0.05]'}`
+        }`}
+      >
+        {isActive && isSidebarOpen && (
+          <div className="absolute left-0 top-[18%] bottom-[18%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-amber-500 rounded-r-full shadow-[0_0_14px_rgba(197,160,89,0.65)]" />
+        )}
+        <div className={`shrink-0 transition-colors duration-150 ${isActive ? 'text-[var(--color-primary)] drop-shadow-[0_0_8px_rgba(197,160,89,0.5)]' : 'text-slate-500 group-hover:text-slate-300'}`}>
+          {icon}
+        </div>
+        {isSidebarOpen && (
+          <span className={`font-outfit text-[12.5px] font-[560] whitespace-nowrap truncate tracking-[0.01em] transition-colors ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`}>
+            {label}
+          </span>
+        )}
+        {badge > 0 && (
+          <span className={`flex items-center justify-center text-[8px] font-black rounded-full bg-red-500 text-white shadow-[0_0_8px_rgba(239,68,68,0.4)] ${isSidebarOpen ? 'ml-auto w-[18px] h-[18px] shrink-0' : 'absolute -top-0.5 -right-0.5 w-[14px] h-[14px]'}`}>
+            {badge > 9 ? '9+' : badge}
+          </span>
+        )}
+      </button>
+      {!isSidebarOpen && (
+        <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 pointer-events-none opacity-0 group-hover:opacity-100 translate-x-1 group-hover:translate-x-0 transition-all duration-200 z-[100]">
+          <div className="relative px-3 py-2 rounded-xl bg-[#0a0e1a]/98 backdrop-blur-xl border border-white/[0.08] shadow-2xl shadow-black/70 whitespace-nowrap">
+            <div className="absolute left-0 top-[22%] bottom-[22%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-amber-500 rounded-r-full" />
+            <div className="flex items-center gap-2 pl-1">
+              <span className="text-[12px] font-semibold text-white">{label}</span>
+              {badge > 0 && <span className="px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-400 text-[9px] font-black border border-red-500/20">{badge}</span>}
+            </div>
+            <div className="absolute right-full top-1/2 -translate-y-1/2 border-[5px] border-transparent border-r-[#0a0e1a]" />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+interface SidebarGroupLabelProps {
+  label: string;
+  isSidebarOpen: boolean;
+}
+
+const SidebarGroupLabel: React.FC<SidebarGroupLabelProps> = ({ label, isSidebarOpen }) => isSidebarOpen ? (
+  <div className="flex items-center gap-2.5 px-3.5 pt-3 pb-1.5">
+    <span className="font-outfit text-[9px] font-[750] text-slate-600 uppercase tracking-[0.25em] whitespace-nowrap">{label}</span>
+    <div className="flex-1 h-px bg-gradient-to-r from-white/[0.07] to-transparent" />
+  </div>
+) : <div className="pt-2.5" />;
+
 const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAddBooking, siteContent, onUpdateSiteContent, onExitAdmin, onDeleteBooking, blogPosts: blogPostsProp, onAddBlogPost, onUpdateBlogPost, onDeleteBlogPost, userReviews: userReviewsProp, onUpdateReviewStatus, onDeleteReview }) => {
   // Theme Toggle
   const [isDarkTheme, setIsDarkTheme] = useState(() => {
@@ -117,7 +187,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
       editContentInitialized.current = true;
     }
   }, [siteContent]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [_searchTerm, _setSearchTerm] = useState('');
   const [isAddBookingModalOpen, setIsAddBookingModalOpen] = useState(false);
   const [selectedBookingForView, setSelectedBookingForView] = useState<Booking | null>(null);
 
@@ -136,9 +206,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     for (const p of updated) await onUpdateBlogPost(p);
     for (const p of removed) await onDeleteBlogPost(p.id);
   };
-  const [editingBlogPost, setEditingBlogPost] = useState<BlogPost | null>(null);
-  const [isAddBlogModalOpen, setIsAddBlogModalOpen] = useState(false);
-  const [newBlogPost, setNewBlogPost] = useState<Partial<BlogPost>>({
+  const [_editingBlogPost, _setEditingBlogPost] = useState<BlogPost | null>(null);
+  const [_isAddBlogModalOpen, setIsAddBlogModalOpen] = useState(false);
+  const [_newBlogPost, _setNewBlogPost] = useState<Partial<BlogPost>>({
     title: '',
     slug: '',
     excerpt: '',
@@ -147,7 +217,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     featuredImage: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800',
     isPublished: false
   });
-  const [showBlogPreview, setShowBlogPreview] = useState(false);
+  const [_showBlogPreview, _setShowBlogPreview] = useState(false);
   const [blogTab, setBlogTab] = useState<'published' | 'draft'>('published');
   const [selectedBlogs, setSelectedBlogs] = useState<string[]>([]);
   const [blogSearchTerm, setBlogSearchTerm] = useState('');
@@ -180,7 +250,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     for (const r of changed) await onUpdateReviewStatus(r.id, r.status);
     for (const r of removed) await onDeleteReview(r.id);
   };
-  const [siteReviews, setSiteReviews] = useState(REVIEWS);
+  const [siteReviews, _setSiteReviews] = useState(REVIEWS);
   const [editableReviewsTab, setEditableReviewsTab] = useState<'pending' | 'approved' | 'rejected' | 'deleted'>('pending');
   const [selectedReviews, setSelectedReviews] = useState<string[]>([]);
 
@@ -198,7 +268,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   const [faqFilter, setFaqFilter] = useState<'all' | 'answered' | 'unanswered'>('all');
 
   // Drag & Drop State
-  const [draggedItem, setDraggedItem] = useState<number | null>(null);
+  const [_draggedItem, _setDraggedItem] = useState<number | null>(null);
 
   // Toast Notification State
   const [toast, setToast] = useState<{ message: string; type: 'delete' | 'success' | 'warning' | 'error' | 'info' } | null>(null);
@@ -393,7 +463,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     setEditContent({ ...editContent, navbar: moveItem(editContent.navbar, index, direction) });
   };
 
-  const handleMoveSubMenu = (menuIndex: number, subIndex: number, direction: 'up' | 'down') => {
+  const _handleMoveSubMenu = (menuIndex: number, subIndex: number, direction: 'up' | 'down') => {
     const nav = [...editContent.navbar];
     if (nav[menuIndex].subMenus) {
       nav[menuIndex].subMenus = moveItem(nav[menuIndex].subMenus!, subIndex, direction);
@@ -574,7 +644,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   ]);
 
   const handleSaveAccount = (form = accountForm) => {
-    const { currentPassword, newPassword, confirmPassword, ...toSave } = form;
+    const { currentPassword: _currentPassword, newPassword: _newPassword, confirmPassword: _confirmPassword, ...toSave } = form;
     onUpdateSiteContent({ ...editContent, adminAccount: toSave });
   };
 
@@ -623,7 +693,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
       email: siteContent.adminAccount?.email || INITIAL_SITE_CONTENT.adminAccount!.email,
     } : u));
   }, [siteContent.adminAccount?.fullName, siteContent.adminAccount?.email]);
-  const [isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
+  const [_isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
   const [newUserForm, setNewUserForm] = useState({ name: '', email: '', role: 'Editör', password: '', confirmPassword: '' });
 
@@ -636,7 +706,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     showToast('Kullanıcı başarıyla silindi', 'success');
   };
 
-  const handleSaveUser = () => {
+  const _handleSaveUser = () => {
     if (!newUserForm.name || !newUserForm.email) {
       showToast('Lütfen Ad Soyad ve E-posta alanlarını doldurun', 'warning');
       return;
@@ -831,7 +901,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     });
   };
 
-  const COLORS = ['#c5a059', '#0f172a', '#64748b', '#2563eb', '#10b981'];
+  const _COLORS = ['#c5a059', '#0f172a', '#64748b', '#2563eb', '#10b981'];
 
   // Time-based greeting
   const getGreeting = () => {
@@ -1285,94 +1355,38 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
         {/* ── NAV ── */}
         <nav className="flex-1 flex flex-col py-3 overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] relative z-10">
 
-          {(() => {
-            // Reusable nav item renderer
-            const NavItem = ({ id, label, badge = 0, icon }: { id: string; label: string; badge?: number; icon: React.ReactNode }) => {
-              const isActive = activeView === id;
-              return (
-                <div className="relative group">
-                  <button
-                    onClick={() => setActiveView(id as DashboardView)}
-                    className={`w-full rounded-xl flex items-center transition-colors duration-150 relative ${
-                      isSidebarOpen
-                        ? `px-3 py-2.5 gap-3 ${isActive ? 'bg-gradient-to-r from-[var(--color-primary)]/[0.13] via-[var(--color-primary)]/[0.04] to-transparent' : 'hover:bg-white/[0.04]'}`
-                        : `justify-center p-2.5 ${isActive ? 'bg-[var(--color-primary)]/[0.15] rounded-xl' : 'hover:bg-white/[0.05]'}`
-                    }`}
-                  >
-                    {isActive && isSidebarOpen && (
-                      <div className="absolute left-0 top-[18%] bottom-[18%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-amber-500 rounded-r-full shadow-[0_0_14px_rgba(197,160,89,0.65)]" />
-                    )}
-                    <div className={`shrink-0 transition-colors duration-150 ${isActive ? 'text-[var(--color-primary)] drop-shadow-[0_0_8px_rgba(197,160,89,0.5)]' : 'text-slate-500 group-hover:text-slate-300'}`}>
-                      {icon}
-                    </div>
-                    {isSidebarOpen && (
-                      <span className={`font-outfit text-[12.5px] font-[560] whitespace-nowrap truncate tracking-[0.01em] transition-colors ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`}>
-                        {label}
-                      </span>
-                    )}
-                    {badge > 0 && (
-                      <span className={`flex items-center justify-center text-[8px] font-black rounded-full bg-red-500 text-white shadow-[0_0_8px_rgba(239,68,68,0.4)] ${isSidebarOpen ? 'ml-auto w-[18px] h-[18px] shrink-0' : 'absolute -top-0.5 -right-0.5 w-[14px] h-[14px]'}`}>
-                        {badge > 9 ? '9+' : badge}
-                      </span>
-                    )}
-                  </button>
-                  {!isSidebarOpen && (
-                    <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 pointer-events-none opacity-0 group-hover:opacity-100 translate-x-1 group-hover:translate-x-0 transition-all duration-200 z-[100]">
-                      <div className="relative px-3 py-2 rounded-xl bg-[#0a0e1a]/98 backdrop-blur-xl border border-white/[0.08] shadow-2xl shadow-black/70 whitespace-nowrap">
-                        <div className="absolute left-0 top-[22%] bottom-[22%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-amber-500 rounded-r-full" />
-                        <div className="flex items-center gap-2 pl-1">
-                          <span className="text-[12px] font-semibold text-white">{label}</span>
-                          {badge > 0 && <span className="px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-400 text-[9px] font-black border border-red-500/20">{badge}</span>}
-                        </div>
-                        <div className="absolute right-full top-1/2 -translate-y-1/2 border-[5px] border-transparent border-r-[#0a0e1a]" />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            };
-
-            // Group label renderer
-            const GroupLabel = ({ label }: { label: string }) => isSidebarOpen ? (
-              <div className="flex items-center gap-2.5 px-3.5 pt-3 pb-1.5">
-                <span className="font-outfit text-[9px] font-[750] text-slate-600 uppercase tracking-[0.25em] whitespace-nowrap">{label}</span>
-                <div className="flex-1 h-px bg-gradient-to-r from-white/[0.07] to-transparent" />
-              </div>
-            ) : <div className="pt-2.5" />;
-
-            return (
-              <>
+          <>
                 {/* OPERASYON */}
-                <GroupLabel label="Operasyon" />
+                <SidebarGroupLabel label="Operasyon" isSidebarOpen={isSidebarOpen} />
                 <div className="space-y-0.5 px-2">
-                  <NavItem id="overview" label="Dashboard" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>} />
-                  <NavItem id="bookings" label="Rezervasyonlar" badge={pendingCount} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>} />
-                  <NavItem id="reviews" label="Yorumlar" badge={pendingReviews} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>} />
+                  <SidebarNavItem id="overview" label="Dashboard" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>} />
+                  <SidebarNavItem id="bookings" label="Rezervasyonlar" badge={pendingCount} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>} />
+                  <SidebarNavItem id="reviews" label="Yorumlar" badge={pendingReviews} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>} />
                 </div>
 
                 <div className={`${isSidebarOpen ? 'mx-4' : 'mx-3'} my-2.5 h-px bg-white/[0.05]`} />
 
                 {/* İÇERİK */}
-                <GroupLabel label="İçerik & Katalog" />
+                <SidebarGroupLabel label="İçerik & Katalog" isSidebarOpen={isSidebarOpen} />
                 <div className="space-y-0.5 px-2">
-                  <NavItem id="blog" label="Blog Yönetimi" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>} />
-                  <NavItem id="regions" label="Bölgeler" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>} />
-                  <NavItem id="pricing" label="Fiyatlar" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42l-8.704-8.704z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>} />
-                  <NavItem id="fleet" label="Araçlar" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>} />
-                  <NavItem id="drivers" label="Sürücüler" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="14" x="3" y="5" rx="2"/><path d="M21 8H3"/><circle cx="12" cy="14" r="2"/><path d="M12 12v-1"/></svg>} />
-                  <NavItem id="coupons" label="Kuponlar" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>} />
+                  <SidebarNavItem id="blog" label="Blog Yönetimi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>} />
+                  <SidebarNavItem id="regions" label="Bölgeler" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>} />
+                  <SidebarNavItem id="pricing" label="Fiyatlar" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42l-8.704-8.704z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>} />
+                  <SidebarNavItem id="fleet" label="Araçlar" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>} />
+                  <SidebarNavItem id="drivers" label="Sürücüler" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="14" x="3" y="5" rx="2"/><path d="M21 8H3"/><circle cx="12" cy="14" r="2"/><path d="M12 12v-1"/></svg>} />
+                  <SidebarNavItem id="coupons" label="Kuponlar" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>} />
                 </div>
 
                 <div className={`${isSidebarOpen ? 'mx-4' : 'mx-3'} my-2.5 h-px bg-white/[0.05]`} />
 
                 {/* SİTE YÖNETİMİ */}
-                <GroupLabel label="Site Yönetimi" />
+                <SidebarGroupLabel label="Site Yönetimi" isSidebarOpen={isSidebarOpen} />
                 <div className="space-y-0.5 px-2 pb-1">
-                  <NavItem id="hero-images" label="Anasayfa Banner" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>} />
-                  <NavItem id="site-settings" label="Menü Yönetimi" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>} />
-                  <NavItem id="faq" label="S.S.S" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>} />
-                  <NavItem id="business" label="İşletme Bilgileri" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>} />
-                  <NavItem id="seo" label="SEO Yönetimi" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>} />
+                  <SidebarNavItem id="hero-images" label="Anasayfa Banner" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>} />
+                  <SidebarNavItem id="site-settings" label="Menü Yönetimi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>} />
+                  <SidebarNavItem id="faq" label="S.S.S" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>} />
+                  <SidebarNavItem id="business" label="İşletme Bilgileri" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>} />
+                  <SidebarNavItem id="seo" label="SEO Yönetimi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>} />
 
                   {/* Kurumsal accordion */}
                   <div className="relative group">
@@ -1418,14 +1432,12 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                     )}
                   </div>
 
-                  <NavItem id="media" label="Medya Kütüphanesi" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>} />
-                  <NavItem id="activity" label="Aktivite Günlüğü" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>} />
+                  <SidebarNavItem id="media" label="Medya Kütüphanesi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>} />
+                  <SidebarNavItem id="activity" label="Aktivite Günlüğü" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>} />
                   <div className={`${isSidebarOpen ? 'mx-2' : 'mx-1'} my-2 h-px bg-white/[0.05]`} />
-                  <NavItem id="account" label="Hesap Ayarları" icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>} />
+                  <SidebarNavItem id="account" label="Hesap Ayarları" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>} />
                 </div>
               </>
-            );
-          })()}
         </nav>
 
         {/* ── FOOTER ── */}
@@ -2922,7 +2934,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                     </button>
                   </div>
                   <div className="grid grid-cols-1 gap-2">
-                    {VEHICLE_FEATURES.map((f, i) => {
+                    {VEHICLE_FEATURES.map((f) => {
                       const icons: Record<string, string> = {
                         'Ücretsiz Wifi': 'fa-wifi', 'Klima': 'fa-snowflake', 'Deri Koltuk': 'fa-couch',
                         'Buzdolabı': 'fa-temperature-low', 'TV Ünitesi': 'fa-tv', 'Araç İçi İkram': 'fa-wine-glass',

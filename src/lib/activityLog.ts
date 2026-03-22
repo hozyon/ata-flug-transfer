@@ -25,5 +25,5 @@ export function logActivity(
         // Keep max 200 entries
         const updated = [entry, ...existing].slice(0, 200);
         localStorage.setItem(LS_KEY, JSON.stringify(updated));
-    } catch {}
+    } catch { /* intentionally empty */ }
 }
