@@ -738,92 +738,127 @@ const App: React.FC = () => {
                     <div className="w-full h-px" style={{ background: 'linear-gradient(90deg, transparent 0%, #c5a059 30%, #e0c07a 50%, #c5a059 70%, transparent 100%)', opacity: 0.25 }} />
                   </section>
 
-                  <section id="regions" className="pt-2 pb-8 md:pt-4 md:pb-10 bg-slate-900 text-white relative overflow-hidden scroll-mt-20">
-                    {/* Ambient background */}
-                    <div className="absolute inset-0 z-0">
-                      <div className="absolute inset-0 bg-slate-900 z-10"></div>
-                      <div className="absolute inset-0 z-10" style={{ backgroundImage: 'radial-gradient(var(--color-primary) 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.03 }}></div>
-                    </div>
+                  <section id="regions" className="relative overflow-hidden scroll-mt-20" style={{ background: 'linear-gradient(180deg, #060a12 0%, #080c16 100%)' }}>
+                    {/* Subtle gold dot grid */}
+                    <div className="absolute inset-0 z-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#c5a059 1px, transparent 1px)', backgroundSize: '48px 48px', opacity: 0.025 }} />
+                    {/* Ambient side glows */}
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-64 h-64 pointer-events-none z-0" style={{ background: 'radial-gradient(ellipse, rgba(197,160,89,0.06) 0%, transparent 70%)' }} />
+                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-64 h-64 pointer-events-none z-0" style={{ background: 'radial-gradient(ellipse, rgba(197,160,89,0.06) 0%, transparent 70%)' }} />
 
-                    <div className="relative z-10 max-w-7xl mx-auto px-4">
-                      {/* Section Header */}
-                      <div className="text-center mb-10 md:mb-12">
-                        <div className="inline-flex items-center gap-2 mb-3">
-                          <span className="w-8 h-px bg-gradient-to-r from-transparent to-[var(--color-primary)]"></span>
-                          <span className="text-[var(--color-primary)] font-bold text-[11px] uppercase tracking-[0.3em]">{t('regions.eyebrow')}</span>
-                          <span className="w-8 h-px bg-gradient-to-l from-transparent to-[var(--color-primary)]"></span>
+                    {/* Top gold rule */}
+                    <div className="w-full h-px" style={{ background: 'linear-gradient(90deg, transparent 0%, #c5a059 30%, #e0c07a 50%, #c5a059 70%, transparent 100%)', opacity: 0.2 }} />
+
+                    {/* ── Editorial Header: left title / right desc+cta ── */}
+                    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-10 md:pt-16 md:pb-12">
+                      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 lg:gap-16">
+                        {/* Left */}
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-4">
+                            <span className="h-px w-10 flex-shrink-0" style={{ background: '#c5a059' }} />
+                            <span className="text-[10px] font-black tracking-[0.35em] uppercase" style={{ color: '#c5a059' }}>{t('regions.eyebrow')}</span>
+                          </div>
+                          <h2 className="font-playfair font-bold leading-[1.1] text-white" style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)' }}>
+                            {t('regions.title')}{' '}
+                            <span style={{ background: 'linear-gradient(90deg, #c5a059, #e0c07a, #c5a059)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                              {t('regions.titleAccent')}
+                            </span>
+                          </h2>
                         </div>
-                        <h2 className="text-3xl md:text-4xl lg:text-5xl font-playfair font-bold leading-tight">
-                          {t('regions.title')} <span className="bg-gradient-to-r from-[var(--color-primary)] via-[#e0c07a] to-[var(--color-primary)] bg-clip-text text-transparent">{t('regions.titleAccent')}</span>
-                        </h2>
-                        <p className="text-slate-400 mt-4 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">{t('regions.desc')}</p>
+                        {/* Right */}
+                        <div className="lg:max-w-xs xl:max-w-sm flex-shrink-0">
+                          <p className="text-white/40 text-sm leading-relaxed mb-5">{t('regions.desc')}</p>
+                          <Link
+                            to="/bolgeler"
+                            className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.15em] uppercase border-b pb-0.5 transition-all duration-200 hover:gap-3"
+                            style={{ color: '#c5a059', borderColor: 'rgba(197,160,89,0.4)' }}
+                          >
+                            {t('regions.viewAll') || 'Tüm Bölgeler'}
+                            <i className="fa-solid fa-arrow-right text-[9px]"></i>
+                          </Link>
+                        </div>
                       </div>
                     </div>
 
-                    {/* Dual-Row Marquee — Opposite Directions */}
-                    <div className="relative space-y-3 md:space-y-4">
+                    {/* ── Dual-Row Marquee ── */}
+                    <div className="relative z-10 space-y-3 md:space-y-4 pb-14 md:pb-16">
                       {/* Fade edges */}
-                      <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-slate-900 to-transparent z-20 pointer-events-none"></div>
-                      <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-slate-900 to-transparent z-20 pointer-events-none"></div>
+                      <div className="absolute left-0 top-0 bottom-0 w-20 md:w-36 z-20 pointer-events-none" style={{ background: 'linear-gradient(90deg, #080c16, transparent)' }} />
+                      <div className="absolute right-0 top-0 bottom-0 w-20 md:w-36 z-20 pointer-events-none" style={{ background: 'linear-gradient(270deg, #080c16, transparent)' }} />
 
-                      {/* Row 1 — Left to Right (first half of active regions × 2) */}
+                      {/* Row 1 — Left to Right */}
                       <div className="flex gap-3 md:gap-4 marquee-row-1 px-4">
                         {(() => { const half = Math.ceil(siteContent.regions.length / 2); const row1 = siteContent.regions.slice(0, half); return [...row1, ...row1]; })().map((region, index) => (
                           <Link
                             key={`r1-${region.id}-${index}`}
                             to={`/blog/${region.name.toLowerCase().replace(/ /g, '-').replace(/[ğĞ]/g, 'g').replace(/[üÜ]/g, 'u').replace(/[şŞ]/g, 's').replace(/[ıİ]/g, 'i').replace(/[öÖ]/g, 'o').replace(/[çÇ]/g, 'c').replace(/[^a-z0-9-]/g, '')}-transfer-rehberi`}
-                            className="group relative w-[160px] sm:w-[200px] md:w-[260px] aspect-square rounded-lg overflow-hidden flex-shrink-0"
+                            className="group relative flex-shrink-0 overflow-hidden"
+                            style={{ width: 'clamp(148px, 18vw, 240px)', aspectRatio: '3/4', borderRadius: '4px' }}
                           >
-                            <img src={region.image} alt={region.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                            <div className="absolute inset-0 rounded-lg border border-white/[0.08] group-hover:border-[var(--color-primary)]/40 transition-colors duration-300"></div>
+                            <img src={region.image} alt={region.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                            {/* Deep gradient */}
+                            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(4,6,12,0.92) 0%, rgba(4,6,12,0.3) 50%, transparent 100%)' }} />
+                            {/* Border overlay */}
+                            <div className="absolute inset-0 transition-all duration-300" style={{ boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.06)', borderRadius: '4px' }} />
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: 'inset 0 0 0 1px rgba(197,160,89,0.45)', borderRadius: '4px' }} />
+                            {/* Price badge */}
                             {region.price ? (
-                              <div className="absolute top-3 right-3 z-10">
-                                <span className="bg-black/40 text-white px-2.5 py-1 rounded text-[11px] font-bold">{siteContent.currency?.symbol || '€'}{region.price}</span>
+                              <div className="absolute top-3 left-3 z-10">
+                                <span className="text-[10px] font-black tracking-wide" style={{ color: '#c5a059', fontFamily: "'Outfit', sans-serif" }}>
+                                  {siteContent.currency?.symbol || '€'}{region.price}
+                                </span>
                               </div>
                             ) : null}
-                            <div className="absolute bottom-0 left-0 w-full p-3 md:p-4 z-10">
-                              <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider block">{t('regions.airportLabel')}</span>
-                              <svg width="14" height="22" viewBox="0 0 14 22" className="my-1 block" fill="none">
-                                <path d="M7 0l3.5 4.5H8.5v2h-3v-2H3.5L7 0z" fill="var(--color-primary)" />
-                                <line x1="7" y1="8" x2="7" y2="14" stroke="var(--color-primary)" strokeWidth="1.5" strokeDasharray="2 2" />
-                                <path d="M7 22l-3.5-4.5H5.5v-2h3v2h2L7 22z" fill="var(--color-primary)" />
-                              </svg>
-                              <h3 className="text-sm md:text-base font-bold text-white leading-tight group-hover:text-[var(--color-primary)] transition-colors duration-300">{region.name}</h3>
+                            {/* Bottom content */}
+                            <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 z-10">
+                              <span className="text-[9px] font-bold uppercase tracking-[0.2em] block mb-1" style={{ color: 'rgba(197,160,89,0.6)' }}>
+                                AYT → {region.name.split(' ')[0].toUpperCase()}
+                              </span>
+                              <h3 className="font-bold leading-tight text-white transition-colors duration-300 group-hover:text-[#c5a059]" style={{ fontSize: 'clamp(13px, 1.4vw, 16px)', fontFamily: "'Outfit', sans-serif" }}>
+                                {region.name}
+                              </h3>
+                              {/* Gold reveal line */}
+                              <div className="mt-2 h-px scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" style={{ background: 'linear-gradient(90deg, #c5a059, transparent)' }} />
                             </div>
                           </Link>
                         ))}
                       </div>
 
-                      {/* Row 2 — Right to Left (second half of active regions × 2) */}
+                      {/* Row 2 — Right to Left */}
                       <div className="flex gap-3 md:gap-4 marquee-row-2 px-4">
                         {(() => { const half = Math.ceil(siteContent.regions.length / 2); const row2 = siteContent.regions.slice(half); return [...row2, ...row2]; })().map((region, index) => (
                           <Link
                             key={`r2-${region.id}-${index}`}
                             to={`/blog/${region.name.toLowerCase().replace(/ /g, '-').replace(/[ğĞ]/g, 'g').replace(/[üÜ]/g, 'u').replace(/[şŞ]/g, 's').replace(/[ıİ]/g, 'i').replace(/[öÖ]/g, 'o').replace(/[çÇ]/g, 'c').replace(/[^a-z0-9-]/g, '')}-transfer-rehberi`}
-                            className="group relative w-[160px] sm:w-[200px] md:w-[260px] aspect-square rounded-lg overflow-hidden flex-shrink-0"
+                            className="group relative flex-shrink-0 overflow-hidden"
+                            style={{ width: 'clamp(148px, 18vw, 240px)', aspectRatio: '3/4', borderRadius: '4px' }}
                           >
-                            <img src={region.image} alt={region.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                            <div className="absolute inset-0 rounded-lg border border-white/[0.08] group-hover:border-[var(--color-primary)]/40 transition-colors duration-300"></div>
+                            <img src={region.image} alt={region.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(4,6,12,0.92) 0%, rgba(4,6,12,0.3) 50%, transparent 100%)' }} />
+                            <div className="absolute inset-0 transition-all duration-300" style={{ boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.06)', borderRadius: '4px' }} />
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: 'inset 0 0 0 1px rgba(197,160,89,0.45)', borderRadius: '4px' }} />
                             {region.price ? (
-                              <div className="absolute top-3 right-3 z-10">
-                                <span className="bg-black/40 text-white px-2.5 py-1 rounded text-[11px] font-bold">{siteContent.currency?.symbol || '€'}{region.price}</span>
+                              <div className="absolute top-3 left-3 z-10">
+                                <span className="text-[10px] font-black tracking-wide" style={{ color: '#c5a059', fontFamily: "'Outfit', sans-serif" }}>
+                                  {siteContent.currency?.symbol || '€'}{region.price}
+                                </span>
                               </div>
                             ) : null}
-                            <div className="absolute bottom-0 left-0 w-full p-3 md:p-4 z-10">
-                              <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider block">{t('regions.airportLabel')}</span>
-                              <svg width="14" height="22" viewBox="0 0 14 22" className="my-1 block" fill="none">
-                                <path d="M7 0l3.5 4.5H8.5v2h-3v-2H3.5L7 0z" fill="var(--color-primary)" />
-                                <line x1="7" y1="8" x2="7" y2="14" stroke="var(--color-primary)" strokeWidth="1.5" strokeDasharray="2 2" />
-                                <path d="M7 22l-3.5-4.5H5.5v-2h3v2h2L7 22z" fill="var(--color-primary)" />
-                              </svg>
-                              <h3 className="text-sm md:text-base font-bold text-white leading-tight group-hover:text-[var(--color-primary)] transition-colors duration-300">{region.name}</h3>
+                            <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 z-10">
+                              <span className="text-[9px] font-bold uppercase tracking-[0.2em] block mb-1" style={{ color: 'rgba(197,160,89,0.6)' }}>
+                                AYT → {region.name.split(' ')[0].toUpperCase()}
+                              </span>
+                              <h3 className="font-bold leading-tight text-white transition-colors duration-300 group-hover:text-[#c5a059]" style={{ fontSize: 'clamp(13px, 1.4vw, 16px)', fontFamily: "'Outfit', sans-serif" }}>
+                                {region.name}
+                              </h3>
+                              <div className="mt-2 h-px scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" style={{ background: 'linear-gradient(90deg, #c5a059, transparent)' }} />
                             </div>
                           </Link>
                         ))}
                       </div>
                     </div>
+
+                    {/* Bottom gold rule */}
+                    <div className="w-full h-px" style={{ background: 'linear-gradient(90deg, transparent 0%, #c5a059 30%, #e0c07a 50%, #c5a059 70%, transparent 100%)', opacity: 0.15 }} />
                   </section>
 
                   {randomBlogPosts.length > 0 && (
