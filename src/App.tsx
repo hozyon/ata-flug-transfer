@@ -541,84 +541,74 @@ const App: React.FC = () => {
                     const activeGroups = priceSearch.trim() ? filteredGroups : groups;
 
                     return (
-                      <section className="relative overflow-hidden py-16 md:py-24" style={{ background: 'linear-gradient(160deg, #080c16 0%, #0c1220 50%, #080c16 100%)' }}>
+                      <section className="relative overflow-hidden py-0" style={{ background: 'linear-gradient(160deg, #080c16 0%, #0c1220 50%, #080c16 100%)' }}>
 
-                        {/* Dot grid background */}
-                        <div className="absolute inset-0 opacity-[0.18]" style={{
-                          backgroundImage: 'radial-gradient(circle, #c5a059 1px, transparent 1px)',
-                          backgroundSize: '28px 28px',
-                        }} />
-                        {/* Radial glow top-center */}
-                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[700px] h-[300px] rounded-full opacity-20" style={{ background: 'radial-gradient(ellipse, #c5a059 0%, transparent 70%)' }} />
+                        {/* Dot grid */}
+                        <div className="absolute inset-0 opacity-[0.15]" style={{ backgroundImage: 'radial-gradient(circle, #c5a059 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+                        {/* Gold radial glow */}
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[220px] opacity-[0.18]" style={{ background: 'radial-gradient(ellipse, #c5a059 0%, transparent 70%)' }} />
 
-                        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-10">
 
-                          {/* ── Header ── */}
-                          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10">
+                          {/* ── Header row: title left, legend right ── */}
+                          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-5">
                             <div className="reveal">
-                              <div className="flex items-center gap-2.5 mb-3">
-                                <span className="w-5 h-px bg-[var(--color-primary)]"></span>
+                              <div className="flex items-center gap-2.5 mb-2.5">
+                                <span className="w-5 h-px" style={{ background: '#c5a059' }}></span>
                                 <span className="text-[9px] font-black tracking-[0.4em] uppercase" style={{ color: '#c5a059' }}>{t('pricing.eyebrow')}</span>
                               </div>
-                              <h2 className="text-[28px] md:text-[36px] font-black tracking-tight leading-none text-white" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                              <h2 className="text-[26px] md:text-[34px] font-black tracking-tight leading-none text-white" style={{ fontFamily: "'Outfit', sans-serif" }}>
                                 {t('pricing.title')}&nbsp;<span style={{ color: '#c5a059' }}>{t('pricing.titleAccent')}</span>
                               </h2>
-                              <p className="text-white/40 text-[12px] mt-2 font-medium">{t('pricing.subtitle')}</p>
+                              <p className="text-white/35 text-[12px] mt-1.5 font-medium">{t('pricing.subtitle')}</p>
                             </div>
+                            {/* Legend — only visible sm+ */}
+                            <div className="hidden sm:flex items-center gap-5 pb-1">
+                              {[
+                                { color: '#34d399', lk: 'pricing.legendNear' },
+                                { color: '#c5a059', lk: 'pricing.legendMid' },
+                                { color: '#fb7185', lk: 'pricing.legendFar' },
+                              ].map(item => (
+                                <div key={item.lk} className="flex items-center gap-1.5">
+                                  <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: item.color }}></span>
+                                  <span className="text-[10px] text-white/35 font-medium">{t(item.lk)}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
 
-                            {/* Search + Legend */}
-                            <div className="flex flex-col items-start sm:items-end gap-3">
-                              <div className="relative">
-                                <i className="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-white/30 text-[11px] pointer-events-none"></i>
-                                <input
-                                  type="text"
-                                  value={priceSearch}
-                                  onChange={e => setPriceSearch(e.target.value)}
-                                  placeholder={t('pricing.search') || 'Bölge adı veya fiyat ara...'}
-                                  className="pl-9 pr-8 py-2.5 text-[12px] rounded-xl text-white/80 placeholder-white/25 focus:outline-none transition-all w-56"
-                                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', focusBorderColor: '#c5a059' } as React.CSSProperties}
-                                  onFocus={e => (e.target.style.borderColor = '#c5a059')}
-                                  onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.08)')}
-                                />
-                                {priceSearch && (
-                                  <button onClick={() => setPriceSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70 transition-colors">
-                                    <i className="fa-solid fa-xmark text-[10px]"></i>
-                                  </button>
-                                )}
-                              </div>
-                              <div className="flex items-center gap-4">
-                                {[
-                                  { color: '#34d399', lk: 'pricing.legendNear' },
-                                  { color: '#c5a059', lk: 'pricing.legendMid' },
-                                  { color: '#fb7185', lk: 'pricing.legendFar' },
-                                ].map(item => (
-                                  <div key={item.lk} className="flex items-center gap-1.5">
-                                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: item.color }}></span>
-                                    <span className="text-[10px] text-white/35 font-medium">{t(item.lk)}</span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
+                          {/* ── Toolbar: search full-width slim bar ── */}
+                          <div className="flex items-center gap-3 mb-7 rounded-xl px-3 py-2" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                            <i className="fa-solid fa-magnifying-glass text-white/25 text-[11px] shrink-0"></i>
+                            <input
+                              type="text"
+                              value={priceSearch}
+                              onChange={e => setPriceSearch(e.target.value)}
+                              placeholder={t('pricing.search') || 'Bölge adı veya fiyat ara...'}
+                              className="flex-1 bg-transparent text-[12px] text-white/70 placeholder-white/20 focus:outline-none"
+                            />
+                            {priceSearch
+                              ? <button onClick={() => setPriceSearch('')} className="text-white/30 hover:text-white/70 transition-colors shrink-0"><i className="fa-solid fa-xmark text-[11px]"></i></button>
+                              : <span className="text-[10px] text-white/15 font-mono shrink-0">{pricedRegions.length} bölge</span>
+                            }
                           </div>
 
                           {/* ── Groups ── */}
                           {activeGroups.length === 0 ? (
-                            <div className="text-center py-16">
+                            <div className="text-center py-12">
                               <i className="fa-solid fa-magnifying-glass text-white/10 text-3xl mb-3 block"></i>
-                              <p className="text-white/30 text-sm">Sonuç bulunamadı</p>
+                              <p className="text-white/25 text-sm">Sonuç bulunamadı</p>
                             </div>
                           ) : (
-                            <div className="space-y-8">
+                            <div className="space-y-7">
                               {activeGroups.map(group => (
                                 <div key={group.labelKey}>
-                                  {/* Group label */}
-                                  <div className="flex items-center gap-3 mb-4">
+                                  <div className="flex items-center gap-3 mb-3">
                                     <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: group.accent }}></span>
                                     <span className="text-[8.5px] font-black uppercase tracking-[0.4em]" style={{ color: group.accent }}>{t(group.labelKey)}</span>
                                     <span className="flex-1 h-px" style={{ background: `linear-gradient(to right, ${group.borderClr}, transparent)` }}></span>
                                     <span className="text-[9px] font-bold text-white/20">{group.regions.length}</span>
                                   </div>
-                                  {/* Cards */}
                                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 stagger-children">
                                     {group.regions.map(region => (
                                       <a
@@ -626,11 +616,8 @@ const App: React.FC = () => {
                                         href={buildWaUrl(region.name, region.price)}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="reveal group relative flex items-center justify-between gap-2 px-3.5 py-3 rounded-xl transition-all duration-200 overflow-hidden"
-                                        style={{
-                                          background: 'rgba(255,255,255,0.03)',
-                                          border: '1px solid rgba(255,255,255,0.07)',
-                                        }}
+                                        className="reveal group relative flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl transition-all duration-200"
+                                        style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
                                         onMouseEnter={e => {
                                           (e.currentTarget as HTMLAnchorElement).style.background = group.accentBg;
                                           (e.currentTarget as HTMLAnchorElement).style.borderColor = group.borderClr;
@@ -641,14 +628,18 @@ const App: React.FC = () => {
                                         }}
                                       >
                                         <div className="flex items-center gap-2 min-w-0">
-                                          <i className="fa-solid fa-location-dot text-[10px] shrink-0 transition-colors duration-200 text-white/20 group-hover:text-white/50"></i>
-                                          <span className="text-white/60 text-[11.5px] font-medium truncate group-hover:text-white/90 transition-colors duration-200" style={{ fontFamily: "'Montserrat', sans-serif" }}>{region.name}</span>
+                                          <i className="fa-solid fa-location-dot text-[10px] shrink-0 text-white/25 group-hover:text-white/55 transition-colors duration-200"></i>
+                                          <span className="text-white/80 text-[12px] font-semibold truncate group-hover:text-white transition-colors duration-200" style={{ fontFamily: "'Montserrat', sans-serif", letterSpacing: '0.01em' }}>{region.name}</span>
                                         </div>
                                         <div className="flex items-center gap-1.5 shrink-0">
-                                          <span className="font-black text-[13px] leading-none transition-colors duration-200" style={{ color: group.accent, fontFamily: "'Outfit', sans-serif" }}>
+                                          <span className="font-black text-[13px] leading-none" style={{ color: group.accent, fontFamily: "'Outfit', sans-serif" }}>
                                             {sym}{region.price}
                                           </span>
-                                          <i className="fa-brands fa-whatsapp text-[#25D366] text-[11px] opacity-0 group-hover:opacity-100 transition-opacity duration-200"></i>
+                                          {/* WhatsApp pulse icon */}
+                                          <span className="relative w-4 h-4 flex items-center justify-center shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                            <span className="animate-ping absolute inline-flex h-3.5 w-3.5 rounded-full bg-[#25D366] opacity-30"></span>
+                                            <i className="fa-brands fa-whatsapp text-[#25D366] text-[13px] relative"></i>
+                                          </span>
                                         </div>
                                       </a>
                                     ))}
@@ -659,23 +650,17 @@ const App: React.FC = () => {
                           )}
 
                           {/* ── Footer ── */}
-                          <div className="mt-10 pt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                          <div className="mt-7 pt-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                             <div className="flex items-start gap-2">
                               <i className="fa-solid fa-circle-info text-white/20 text-[9px] mt-[3px] shrink-0"></i>
-                              <p className="text-white/30 text-[10.5px] leading-relaxed max-w-lg">{t('pricing.note')}</p>
+                              <p className="text-white/25 text-[10.5px] leading-relaxed max-w-lg">{t('pricing.note')}</p>
                             </div>
                             <a
                               href="/bolgeler"
-                              className="shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-white/50 hover:text-[var(--color-primary)] text-[10px] font-black tracking-[0.15em] uppercase transition-all duration-200"
+                              className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-white/45 hover:text-[var(--color-primary)] text-[10px] font-black tracking-[0.15em] uppercase transition-all duration-200"
                               style={{ border: '1px solid rgba(255,255,255,0.08)' }}
-                              onMouseEnter={e => {
-                                (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(197,160,89,0.35)';
-                                (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(197,160,89,0.05)';
-                              }}
-                              onMouseLeave={e => {
-                                (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.08)';
-                                (e.currentTarget as HTMLAnchorElement).style.background = 'transparent';
-                              }}
+                              onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(197,160,89,0.35)'; (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(197,160,89,0.05)'; }}
+                              onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.08)'; (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; }}
                             >
                               {t('pricing.allRegions')}
                               <i className="fa-solid fa-arrow-right text-[8px]"></i>
