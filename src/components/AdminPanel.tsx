@@ -554,7 +554,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
         setSaveStatus('idle');
         showToast('Kayıt başarısız — internet bağlantınızı kontrol edin', 'error');
       }
-    }, 800);
+    }, 300);
     return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
   }, [editContent]);
 
