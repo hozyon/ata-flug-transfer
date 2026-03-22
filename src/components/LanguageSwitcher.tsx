@@ -1,31 +1,46 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage, LANGUAGE_LABELS, type Language } from '../i18n/LanguageContext';
 
 const LanguageSwitcher: React.FC = () => {
     const { language, setLanguage } = useLanguage();
     const [isOpen, setIsOpen] = useState(false);
+    const containerRef = useRef<HTMLDivElement>(null);
     const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const current = LANGUAGE_LABELS[language];
     const languages = Object.entries(LANGUAGE_LABELS) as [Language, typeof current][];
 
+    // Desktop: hover
     const handleMouseEnter = () => {
         if (closeTimer.current) clearTimeout(closeTimer.current);
         setIsOpen(true);
     };
-
     const handleMouseLeave = () => {
         closeTimer.current = setTimeout(() => setIsOpen(false), 150);
     };
 
+    // Mobile: click/tap outside → close
+    useEffect(() => {
+        if (!isOpen) return;
+        const onPointerDown = (e: PointerEvent) => {
+            if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+        document.addEventListener('pointerdown', onPointerDown);
+        return () => document.removeEventListener('pointerdown', onPointerDown);
+    }, [isOpen]);
+
     return (
         <div
+            ref={containerRef}
             className="relative"
             style={{ fontFamily: "'Outfit', sans-serif" }}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
         >
             <button
+                onClick={() => setIsOpen(v => !v)}
                 className="relative flex items-center gap-1.5 overflow-hidden rounded-xl font-black text-[11.5px] uppercase tracking-[0.09em] transition-all duration-200 active:scale-[0.96] hover:-translate-y-px"
                 style={{
                     fontFamily: "'Outfit', sans-serif",

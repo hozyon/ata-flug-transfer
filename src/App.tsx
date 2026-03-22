@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Routes, Route, useLocation, Link, useNavigate, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
@@ -7,7 +7,7 @@ import BookingForm from './components/BookingForm';
 import TextureBackground from './components/TextureBackground';
 import { useLanguage } from './i18n/LanguageContext';
 const AdminPanel = React.lazy(() => import('./components/AdminPanel'));
-import { REVIEWS, BLOG_POSTS } from './constants';
+import { REVIEWS } from './constants';
 import { SiteProvider } from './SiteContext';
 import { useAppStore } from './store/useAppStore';
 import { supabase, isSupabaseConfigured } from './lib/supabase';
@@ -25,8 +25,6 @@ import AdminLogin from './pages/AdminLogin';
 import TransferDestination from './pages/TransferDestination';
 import ErrorBoundary from './components/ErrorBoundary';
 
-// Computed once at module load — avoids calling Math.random during render
-const RANDOM_BLOG_POSTS = [...BLOG_POSTS].sort(() => 0.5 - Math.random()).slice(0, 4);
 
 const App: React.FC = () => {
   const {
@@ -39,6 +37,11 @@ const App: React.FC = () => {
   } = useAppStore();
 
   useScrollReveal();
+
+  const randomBlogPosts = useMemo(
+    () => [...blogPosts].sort(() => 0.5 - Math.random()).slice(0, 4),
+    [blogPosts]
+  );
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -583,12 +586,12 @@ const App: React.FC = () => {
                               type="text"
                               value={priceSearch}
                               onChange={e => setPriceSearch(e.target.value)}
-                              placeholder={t('pricing.search') || 'Bölge adı veya fiyat ara...'}
+                              placeholder={t('pricing.search')}
                               className="flex-1 bg-transparent text-[12px] text-white/70 placeholder-white/20 focus:outline-none"
                             />
                             {priceSearch
                               ? <button onClick={() => setPriceSearch('')} className="text-white/30 hover:text-white/70 transition-colors shrink-0"><i className="fa-solid fa-xmark text-[11px]"></i></button>
-                              : <span className="text-[10px] text-white/15 font-mono shrink-0">{pricedRegions.length} bölge</span>
+                              : <span className="text-[10px] text-white/15 font-mono shrink-0">{pricedRegions.length} {t('pricing.regionsLabel')}</span>
                             }
                           </div>
 
@@ -832,7 +835,7 @@ const App: React.FC = () => {
                               </div>
                             ) : null}
                             <div className="absolute bottom-0 left-0 w-full p-3 md:p-4 z-10">
-                              <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider block">Antalya Airport</span>
+                              <span className="text-white/60 text-[10px] font-semibold uppercase tracking-wider block">{t('regions.airportLabel')}</span>
                               <svg width="14" height="22" viewBox="0 0 14 22" className="my-1 block" fill="none">
                                 <path d="M7 0l3.5 4.5H8.5v2h-3v-2H3.5L7 0z" fill="var(--color-primary)" />
                                 <line x1="7" y1="8" x2="7" y2="14" stroke="var(--color-primary)" strokeWidth="1.5" strokeDasharray="2 2" />
@@ -846,6 +849,7 @@ const App: React.FC = () => {
                     </div>
                   </section>
 
+                  {randomBlogPosts.length > 0 && (
                   <section id="blog-highlights" className="py-12 bg-slate-50 scroll-mt-20 relative overflow-hidden">
                     <TextureBackground />
                     <div className="max-w-7xl mx-auto px-4 relative z-10">
@@ -860,7 +864,7 @@ const App: React.FC = () => {
                         </h2>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                        {RANDOM_BLOG_POSTS.map((post) => (
+                        {randomBlogPosts.map((post) => (
                           <Link key={post.id} to={`/blog/${post.slug}`} className="group bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
                             <div className="relative h-40 overflow-hidden">
                               <img src={post.featuredImage} alt={t(post.title)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -886,6 +890,7 @@ const App: React.FC = () => {
                       </div>
                     </div>
                   </section>
+                  )}
 
                   {/* Müşteri Yorumları — 2026 UI */}
                   <section id="reviews" className="py-8 md:py-10 bg-[var(--color-dark)] overflow-hidden relative">

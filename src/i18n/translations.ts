@@ -24,6 +24,10 @@ const sourceTexts: Record<string, string> = {
     'nav.home': 'ANA SAYFA', 'nav.corporate': 'KURUMSAL', 'nav.about': 'Hakkımızda', 'nav.vision': 'Vizyon & Misyon',
     'nav.regions': 'BÖLGELER', 'nav.faq': 'S.S.S', 'nav.blog': 'BLOG', 'nav.contact': 'İLETİŞİM',
     'nav.search': 'Ne aramıştınız?',
+    'nav.menu': 'Menü',
+    'nav.noResults': 'Sonuç bulunamadı',
+    'nav.call': 'Ara',
+    'nav.admin': 'Yönetici',
 
     // Hero section
     'hero.eyebrow': 'Premium VIP Transfer', 'hero.title': 'Lüks Ve Konforun', 'hero.titleAccent': 'Yeni Tanımı',
@@ -121,6 +125,8 @@ const sourceTexts: Record<string, string> = {
     'pricing.legendFar': 'Uzak mesafe',
     'pricing.note': 'Fiyatlar araç başıdır. Gece transferi (00:00–06:00) ve ekstra bagaj için fiyat değişmez. Listede olmayan bölge için WhatsApp\'tan fiyat alın.',
     'pricing.allRegions': 'Tüm Bölgeler',
+    'pricing.search': 'Bölge adı veya fiyat ara...',
+    'pricing.regionsLabel': 'bölge',
 
     // Blog page
     'blogPage.eyebrow': 'Seyahat & Yaşam', 'blogPage.title': 'Antalya Keşif Rehberi',

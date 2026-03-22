@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { BUSINESS_INFO, BLOG_POSTS } from '../constants';
+import { BUSINESS_INFO } from '../constants';
 import { useSiteContent } from '../SiteContext';
 import type { NavMenuItem } from '../types';
 import LanguageSwitcher from './LanguageSwitcher';
-import { useLanguage } from '../i18n/LanguageContext';
+import { useLanguage, LANGUAGE_LABELS, type Language } from '../i18n/LanguageContext';
 import { useAppStore } from '../store/useAppStore';
 
 interface NavbarProps {
@@ -28,8 +28,8 @@ const HamburgerIcon: React.FC<{ isOpen: boolean }> = ({ isOpen }) => (
 /* ─── Main component ─────────────────────────────────────────── */
 const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
   const { siteContent } = useSiteContent();
-  const { t } = useLanguage();
-  const { setBookingFormOpen } = useAppStore();
+  const { t, language, setLanguage } = useLanguage();
+  const { setBookingFormOpen, blogPosts } = useAppStore();
   const location = useLocation();
 
   const navigate = useNavigate();
@@ -114,7 +114,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
     const nq = q.toLowerCase();
     const pages = menuItems.filter(i => i.label.toLowerCase().includes(nq))
       .map(i => ({ type: 'SAYFA', label: i.label, url: i.url, icon: 'fa-link' }));
-    const blogs = BLOG_POSTS.filter(p => p.title.toLowerCase().includes(nq) || p.tags.some(tag => tag.includes(nq)))
+    const blogs = blogPosts.filter(p => p.title.toLowerCase().includes(nq) || p.tags.some((tag: string) => tag.includes(nq)))
       .slice(0, 4).map(p => ({ type: 'BLOG', label: p.title, url: `/blog/${p.slug}`, icon: 'fa-newspaper' }));
     const regions = siteContent.regions.filter(r => r.name.toLowerCase().includes(nq))
       .slice(0, 4).map(r => ({ type: 'BÖLGE', label: r.name, url: `/bolgeler?q=${encodeURIComponent(r.name)}`, icon: 'fa-location-dot' }));
@@ -568,7 +568,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                 {searchResults.length === 0 ? (
                   <div className="flex flex-col items-center py-10 gap-3 text-white/25">
                     <i className="fa-solid fa-magnifying-glass text-3xl" />
-                    <p className="text-sm font-medium">Sonuç bulunamadı</p>
+                    <p className="text-sm font-medium">{t('nav.noResults')}</p>
                   </div>
                 ) : searchResults.map((r, i) => (
                   <Link key={i} to={r.url} onClick={close}
@@ -586,7 +586,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
               </div>
             ) : (
               <>
-                <p className="text-[9px] font-black text-white/20 uppercase tracking-[0.25em] px-2 pb-2 pt-1">Menü</p>
+                <p className="text-[9px] font-black text-white/20 uppercase tracking-[0.25em] px-2 pb-2 pt-1">{t('nav.menu')}</p>
 
                 <div className="space-y-0.5">
                   {menuItems.map((item, idx) => {
@@ -658,6 +658,25 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
 
                 <div className="my-4 border-t border-white/[0.05]" />
 
+                {/* Language selector row */}
+                <div className="flex items-center gap-2 flex-wrap pb-3">
+                  {(Object.entries(LANGUAGE_LABELS) as [Language, { label: string; flag: string; native: string }][]).map(([code, info]) => (
+                    <button
+                      key={code}
+                      onClick={() => setLanguage(code)}
+                      className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-[12px] font-bold transition-all active:scale-95 border
+                        ${language === code
+                          ? 'bg-[var(--color-primary)]/15 border-[var(--color-primary)]/30 text-[var(--color-primary)]'
+                          : 'bg-white/[0.04] border-white/[0.06] text-white/35 hover:text-white/60'}`}
+                    >
+                      <span className="text-base leading-none">{info.flag}</span>
+                      <span>{info.native}</span>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="mb-3 border-t border-white/[0.05]" />
+
                 {/* Contact row */}
                 <div className="grid grid-cols-2 gap-2">
                   <a href={`tel:${siteContent.business.phone}`}
@@ -667,7 +686,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                       <i className="fa-solid fa-phone text-emerald-400 text-xs" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-[9px] font-bold text-white/25 uppercase tracking-wider">Ara</p>
+                      <p className="text-[9px] font-bold text-white/25 uppercase tracking-wider">{t('nav.call')}</p>
                       <p className="text-[11px] font-bold text-white/55 truncate">{siteContent.business.phone}</p>
                     </div>
                   </a>
@@ -678,7 +697,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                       <i className="fa-solid fa-envelope text-[var(--color-primary)] text-xs" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-[9px] font-bold text-white/25 uppercase tracking-wider">E-posta</p>
+                      <p className="text-[9px] font-bold text-white/25 uppercase tracking-wider">{t('faq.email')}</p>
                       <p className="text-[11px] font-bold text-white/55 truncate">{siteContent.business.email}</p>
                     </div>
                   </a>
@@ -719,7 +738,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
               title={isAdmin ? 'Panel' : 'v2.4'}
             >
               <i className={`fa-solid ${isAdmin ? 'fa-user-gear' : 'fa-gear'} text-[10px]`} />
-              <span>Yönetici</span>
+              <span>{t('nav.admin')}</span>
             </button>
           </div>
         </div>
