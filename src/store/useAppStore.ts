@@ -145,18 +145,18 @@ function rowToReview(row: Record<string, unknown>): UserReview {
 
 // ─── Merge persisted content with INITIAL defaults ───────────────────────────
 function mergeContent(parsed: SiteContent): SiteContent {
-    // Deep-merge regions by ID: saved prices/data win; new default regions get added
-    const savedRegionMap = new Map((parsed.regions || []).map(r => [r.id, r]));
-    const mergedRegions = INITIAL_SITE_CONTENT.regions.map(defaultRegion => {
-        const saved = savedRegionMap.get(defaultRegion.id);
-        return saved ? { ...defaultRegion, ...saved } : defaultRegion;
-    });
-    // Also keep any saved regions not in defaults (future-proof)
-    (parsed.regions || []).forEach(r => {
-        if (!INITIAL_SITE_CONTENT.regions.find(d => d.id === r.id)) {
-            mergedRegions.push(r);
-        }
-    });
+    // parsed.regions = source of truth for WHICH regions are active (user may have deactivated some)
+    // INITIAL defaults = source of truth for field structure (fills in any missing fields)
+    // Rule: never re-add a region the user removed — only merge fields of existing ones
+    const defaultRegionMap = new Map(INITIAL_SITE_CONTENT.regions.map(r => [r.id, r]));
+    const mergedRegions = parsed.regions === undefined
+        // First-time init (no saved data): start with all defaults
+        ? INITIAL_SITE_CONTENT.regions
+        // Otherwise: use exactly what's saved, just fill in any missing fields from defaults
+        : parsed.regions.map(savedRegion => {
+            const def = defaultRegionMap.get(savedRegion.id);
+            return def ? { ...def, ...savedRegion } : savedRegion;
+        });
 
     const merged: SiteContent = {
         ...INITIAL_SITE_CONTENT,
