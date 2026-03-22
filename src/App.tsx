@@ -674,91 +674,68 @@ const App: React.FC = () => {
                     );
                   })()}
 
-                  {/* ── Section Divider ── */}
-                  <div className="relative bg-slate-50 flex items-center justify-center py-6">
-                    <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
-                    <div className="relative flex items-center gap-3 px-5 py-2 rounded-full border border-slate-200 bg-white shadow-sm">
-                      <span className="w-4 h-px bg-gradient-to-r from-transparent to-[var(--color-primary)]/50"></span>
-                      <i className="fa-solid fa-car-side text-[var(--color-primary)] text-[10px]"></i>
-                      <span className="text-[9px] font-black tracking-[0.3em] text-slate-400 uppercase">VIP Transfer</span>
-                      <i className="fa-solid fa-star text-[var(--color-primary)] text-[7px]"></i>
-                      <span className="text-[9px] font-black tracking-[0.3em] text-slate-400 uppercase">Premium</span>
-                      <i className="fa-solid fa-car-side text-[var(--color-primary)] text-[10px] scale-x-[-1]"></i>
-                      <span className="w-4 h-px bg-gradient-to-l from-transparent to-[var(--color-primary)]/50"></span>
-                    </div>
-                  </div>
+                  {/* ── Services Section — Dark Luxury ── */}
+                  <section id="about" className="relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #080c16 0%, #060a12 100%)' }}>
+                    {/* Top gold rule */}
+                    <div className="w-full h-px" style={{ background: 'linear-gradient(90deg, transparent 0%, #c5a059 30%, #e0c07a 50%, #c5a059 70%, transparent 100%)', opacity: 0.35 }} />
 
-                  <section id="about" className="py-4 md:py-6 bg-slate-50 relative group/section">
-                    <TextureBackground />
+                    {/* Subtle dot grid */}
+                    <div className="absolute inset-0 z-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#c5a059 1px, transparent 1px)', backgroundSize: '48px 48px', opacity: 0.025 }} />
 
-                    <div className="max-w-7xl mx-auto px-4 lg:px-6 relative z-10 w-full">
-                      <div className="relative">
-                        {/* Admin Edit Trigger */}
-                        {isAdmin && (
-                          <button className="absolute -top-6 right-0 text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-1 rounded hover:bg-[var(--color-primary)] hover:text-white transition-colors flex items-center gap-1 z-50 shadow-sm border border-slate-300">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                            EDIT
-                          </button>
-                        )}
+                    {/* Ambient center glow */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[300px] pointer-events-none z-0" style={{ background: 'radial-gradient(ellipse, rgba(197,160,89,0.07) 0%, transparent 65%)' }} />
 
-                        {/* Section Header */}
-                        <div className="text-center mb-6 md:mb-8">
-                          <div className="inline-flex items-center gap-3 mb-4">
-                            <span className="w-8 h-px bg-gradient-to-r from-transparent to-[var(--color-primary)]"></span>
-                            <h2 className="text-xs font-bold tracking-[0.2em] text-slate-400 uppercase">{t('services.eyebrow')}</h2>
-                            <span className="w-8 h-px bg-gradient-to-l from-transparent to-[var(--color-primary)]"></span>
-                          </div>
-                        </div>
+                    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
 
-                        {/* Premium Services Grid Minimal */}
-                        <div className="w-full mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 stagger-children">
-                          {/* Card 1 */}
-                          <div className="reveal bg-white rounded-[2rem] p-6 xl:p-8 border border-slate-100 transition-all duration-200 hover:border-[var(--color-primary)]/30 hover:shadow-md hover:bg-slate-50/50 group flex flex-col items-center text-center">
-                            <div className="w-14 h-14 rounded-xl bg-amber-50/50 flex items-center justify-center text-[var(--color-primary)] mb-4 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors duration-200">
-                              <i className="fa-solid fa-plane-arrival text-xl"></i>
-                            </div>
-                            <h4 className="text-slate-900 font-playfair font-bold text-lg mb-3">{t('services.card1.title')}</h4>
-                            <p className="text-slate-500 text-xs md:text-sm leading-relaxed">
-                              {t('services.card1.desc')}
-                            </p>
-                          </div>
-
-                          {/* Card 2 */}
-                          <div className="reveal bg-white rounded-[2rem] p-6 xl:p-8 border border-slate-100 transition-all duration-200 hover:border-[var(--color-primary)]/30 hover:shadow-md hover:bg-slate-50/50 group flex flex-col items-center text-center">
-                            <div className="w-14 h-14 rounded-xl bg-amber-50/50 flex items-center justify-center text-[var(--color-primary)] mb-4 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors duration-200">
-                              <i className="fa-solid fa-map text-xl"></i>
-                            </div>
-                            <h4 className="text-slate-900 font-playfair font-bold text-lg mb-3">{t('services.card2.title')}</h4>
-                            <p className="text-slate-500 text-xs md:text-sm leading-relaxed">
-                              {t('services.card2.desc')}
-                            </p>
-                          </div>
-
-                          {/* Card 3 */}
-                          <div className="reveal bg-white rounded-[2rem] p-6 xl:p-8 border border-slate-100 transition-all duration-200 hover:border-[var(--color-primary)]/30 hover:shadow-md hover:bg-slate-50/50 group flex flex-col items-center text-center">
-                            <div className="w-14 h-14 rounded-xl bg-amber-50/50 flex items-center justify-center text-[var(--color-primary)] mb-4 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors duration-200">
-                              <i className="fa-solid fa-route text-xl"></i>
-                            </div>
-                            <h4 className="text-slate-900 font-playfair font-bold text-lg mb-3">{t('services.card3.title')}</h4>
-                            <p className="text-slate-500 text-xs md:text-sm leading-relaxed">
-                              {t('services.card3.desc')}
-                            </p>
-                          </div>
-
-                          {/* Card 4 */}
-                          <div className="reveal bg-white rounded-[2rem] p-6 xl:p-8 border border-slate-100 transition-all duration-200 hover:border-[var(--color-primary)]/30 hover:shadow-md hover:bg-slate-50/50 group flex flex-col items-center text-center">
-                            <div className="w-14 h-14 rounded-xl bg-amber-50/50 flex items-center justify-center text-[var(--color-primary)] mb-4 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-colors duration-200">
-                              <i className="fa-solid fa-car-side text-xl"></i>
-                            </div>
-                            <h4 className="text-slate-900 font-playfair font-bold text-lg mb-3">{t('services.card4.title')}</h4>
-                            <p className="text-slate-500 text-xs md:text-sm leading-relaxed">
-                              {t('services.card4.desc')}
-                            </p>
-                          </div>
-                        </div>
-
+                      {/* Eyebrow */}
+                      <div className="flex items-center justify-center gap-4 mb-12 md:mb-16">
+                        <span className="flex-1 max-w-[80px] h-px" style={{ background: 'linear-gradient(90deg, transparent, #c5a059)' }} />
+                        <span className="text-[10px] font-black tracking-[0.35em] uppercase" style={{ color: '#c5a059' }}>{t('services.eyebrow')}</span>
+                        <span className="flex-1 max-w-[80px] h-px" style={{ background: 'linear-gradient(270deg, transparent, #c5a059)' }} />
                       </div>
+
+                      {/* 4 Service Cards */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0">
+                        {[
+                          { num: '01', icon: 'fa-plane-arrival', titleKey: 'services.card1.title', descKey: 'services.card1.desc' },
+                          { num: '02', icon: 'fa-map',           titleKey: 'services.card2.title', descKey: 'services.card2.desc' },
+                          { num: '03', icon: 'fa-route',         titleKey: 'services.card3.title', descKey: 'services.card3.desc' },
+                          { num: '04', icon: 'fa-car-side',      titleKey: 'services.card4.title', descKey: 'services.card4.desc' },
+                        ].map((s, i) => (
+                          <div
+                            key={i}
+                            className="group relative flex flex-col px-6 py-8 md:px-8 md:py-10 border-t border-white/[0.06] sm:border-t-0 first:border-t-0 sm:border-l sm:first:border-l-0 transition-all duration-300 hover:bg-white/[0.025]"
+                          >
+                            {/* Number */}
+                            <span className="text-[42px] md:text-[56px] font-black leading-none mb-6 select-none" style={{ color: 'rgba(197,160,89,0.12)', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}>
+                              {s.num}
+                            </span>
+
+                            {/* Icon */}
+                            <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-5 border transition-all duration-300 group-hover:border-[#c5a059]/40 group-hover:bg-[#c5a059]/10" style={{ borderColor: 'rgba(197,160,89,0.2)', background: 'rgba(197,160,89,0.06)' }}>
+                              <i className={`fa-solid ${s.icon} text-sm`} style={{ color: '#c5a059' }}></i>
+                            </div>
+
+                            {/* Title */}
+                            <h4 className="text-white font-semibold text-base mb-3 leading-snug transition-colors duration-300 group-hover:text-[#c5a059]" style={{ fontFamily: "'Outfit', sans-serif" }}>
+                              {t(s.titleKey)}
+                            </h4>
+
+                            {/* Desc */}
+                            <p className="text-white/35 text-xs md:text-sm leading-relaxed">
+                              {t(s.descKey)}
+                            </p>
+
+                            {/* Bottom gold line on hover */}
+                            <div className="absolute bottom-0 left-6 right-6 h-px scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" style={{ background: 'linear-gradient(90deg, #c5a059, transparent)' }} />
+                          </div>
+                        ))}
+                      </div>
+
                     </div>
+
+                    {/* Bottom gold rule */}
+                    <div className="w-full h-px" style={{ background: 'linear-gradient(90deg, transparent 0%, #c5a059 30%, #e0c07a 50%, #c5a059 70%, transparent 100%)', opacity: 0.25 }} />
                   </section>
 
                   <section id="regions" className="pt-2 pb-8 md:pt-4 md:pb-10 bg-slate-900 text-white relative overflow-hidden scroll-mt-20">
@@ -789,9 +766,9 @@ const App: React.FC = () => {
                       <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-slate-900 to-transparent z-20 pointer-events-none"></div>
                       <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-slate-900 to-transparent z-20 pointer-events-none"></div>
 
-                      {/* Row 1 — Left to Right (first 5 regions × 2) */}
+                      {/* Row 1 — Left to Right (first half of active regions × 2) */}
                       <div className="flex gap-3 md:gap-4 marquee-row-1 px-4">
-                        {[...siteContent.regions.slice(0, 5), ...siteContent.regions.slice(0, 5)].map((region, index) => (
+                        {(() => { const half = Math.ceil(siteContent.regions.length / 2); const row1 = siteContent.regions.slice(0, half); return [...row1, ...row1]; })().map((region, index) => (
                           <Link
                             key={`r1-${region.id}-${index}`}
                             to={`/blog/${region.name.toLowerCase().replace(/ /g, '-').replace(/[ğĞ]/g, 'g').replace(/[üÜ]/g, 'u').replace(/[şŞ]/g, 's').replace(/[ıİ]/g, 'i').replace(/[öÖ]/g, 'o').replace(/[çÇ]/g, 'c').replace(/[^a-z0-9-]/g, '')}-transfer-rehberi`}
@@ -818,9 +795,9 @@ const App: React.FC = () => {
                         ))}
                       </div>
 
-                      {/* Row 2 — Right to Left (last 5 regions × 2) */}
+                      {/* Row 2 — Right to Left (second half of active regions × 2) */}
                       <div className="flex gap-3 md:gap-4 marquee-row-2 px-4">
-                        {[...siteContent.regions.slice(5, 10), ...siteContent.regions.slice(5, 10)].map((region, index) => (
+                        {(() => { const half = Math.ceil(siteContent.regions.length / 2); const row2 = siteContent.regions.slice(half); return [...row2, ...row2]; })().map((region, index) => (
                           <Link
                             key={`r2-${region.id}-${index}`}
                             to={`/blog/${region.name.toLowerCase().replace(/ /g, '-').replace(/[ğĞ]/g, 'g').replace(/[üÜ]/g, 'u').replace(/[şŞ]/g, 's').replace(/[ıİ]/g, 'i').replace(/[öÖ]/g, 'o').replace(/[çÇ]/g, 'c').replace(/[^a-z0-9-]/g, '')}-transfer-rehberi`}
