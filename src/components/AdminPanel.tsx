@@ -229,11 +229,22 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   const [blogSearchTerm, setBlogSearchTerm] = useState('');
   const [blogCategories, setBlogCategories] = useState<string[]>([
     'Havalimanı Transfer',
-    'Antalya Gezi Rehberi',
-    'VIP Hizmetler',
-    'Seyahat İpuçları',
-    'Destinasyonlar'
+    'Şehir İçi Transfer',
+    'Otel Transfer',
+    'Tatil & Resort Transfer',
+    'Turistik Transfer',
+    'Şehirlerarası Transfer',
+    'Doğa & Macera Transfer',
+    'Kültür & Tarih Transfer',
   ]);
+
+  // Sync categories from loaded blog posts (Supabase'den gelen gerçek kategoriler)
+  React.useEffect(() => {
+    if (blogPostsProp.length > 0) {
+      const fromPosts = [...new Set(blogPostsProp.map(p => p.category).filter(Boolean))];
+      setBlogCategories(prev => [...new Set([...prev, ...fromPosts])]);
+    }
+  }, [blogPostsProp]);
   // Hero Images State
   const [selectedHeroImages, setSelectedHeroImages] = useState<number[]>([]);
   const heroBackgrounds = editContent.hero?.backgrounds || [];

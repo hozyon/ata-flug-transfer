@@ -728,10 +728,10 @@ export const BlogView: React.FC<BlogViewProps> = ({
                   return (
                     <div key={cat} className="group flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.05] hover:border-white/[0.10] transition-all">
                       <div className="flex items-center gap-2 min-w-0">
-                        <div className="w-1.5 h-1.5 rounded-full bg-violet-400 shrink-0"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] shrink-0 animate-pulse"></div>
                         <span className="text-[12px] font-semibold text-slate-200 truncate">{cat}</span>
                         {postCount > 0 && (
-                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-white/5 text-slate-500 shrink-0">{postCount}</span>
+                          <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[var(--color-primary)]/15 text-[var(--color-primary)] border border-[var(--color-primary)]/20 shrink-0 animate-pulse">{postCount}</span>
                         )}
                       </div>
                       <button
