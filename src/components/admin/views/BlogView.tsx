@@ -36,6 +36,7 @@ interface BlogViewProps {
   selectedBlogs: string[];
   setSelectedBlogs: Dispatch<SetStateAction<string[]>>;
   showToast: (message: string, type?: 'success' | 'error' | 'delete') => void;
+  clearAllBlogPosts: () => Promise<void>;
 }
 
 // ── Markdown → HTML renderer ────────────────────────────────────────────────
@@ -244,7 +245,7 @@ YAZI TÜRÜ: ${articleType}
 
 export const BlogView: React.FC<BlogViewProps> = ({
   blogPosts, setBlogPosts, blogTab, setBlogTab, blogCategories, setBlogCategories,
-  blogSearchTerm, setBlogSearchTerm, selectedBlogs, setSelectedBlogs, showToast
+  blogSearchTerm, setBlogSearchTerm, selectedBlogs, setSelectedBlogs, showToast, clearAllBlogPosts
 }) => {
   const [editingBlogPost, setEditingBlogPost] = useState<BlogPost | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -795,6 +796,17 @@ export const BlogView: React.FC<BlogViewProps> = ({
               className="px-4 py-2.5 bg-[var(--color-primary)] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 shrink-0">
               <i className="fa-solid fa-plus text-[10px]"></i> Yeni Yazı
             </button>
+            {blogPosts.length > 0 && (
+              <button
+                onClick={async () => {
+                  if (!window.confirm(`Tüm ${blogPosts.length} blog yazısı silinecek. Bu işlem geri alınamaz. Emin misiniz?`)) return;
+                  await clearAllBlogPosts();
+                  showToast(`Tüm blog yazıları silindi`, 'delete');
+                }}
+                className="px-4 py-2.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-xl font-bold text-xs transition-all flex items-center gap-2 shrink-0">
+                <i className="fa-solid fa-trash-can text-[10px]"></i> Tümünü Sil
+              </button>
+            )}
           </div>
         </div>
 

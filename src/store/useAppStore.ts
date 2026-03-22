@@ -29,6 +29,7 @@ interface AppStore {
     addBlogPost: (post: BlogPost) => Promise<void>;
     updateBlogPost: (post: BlogPost) => Promise<void>;
     deleteBlogPost: (id: string) => Promise<void>;
+    clearAllBlogPosts: () => Promise<void>;
 
     // Reviews
     addReview: (review: Omit<UserReview, 'id' | 'status' | 'createdAt'>) => Promise<void>;
@@ -431,6 +432,16 @@ export const useAppStore = create<AppStore>((set, get) => ({
             }
         } else {
             saveBlogToLS(updated);
+        }
+    },
+
+    clearAllBlogPosts: async () => {
+        set({ blogPosts: [] });
+        localStorage.removeItem('ata_blog_posts_v1');
+        if (isSupabaseConfigured) {
+            // Supabase RLS requires authenticated user — this runs inside admin session
+            const { error } = await supabase.from('blog_posts').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+            if (error) console.error('Supabase blog_posts temizleme hatası:', error);
         }
     },
 

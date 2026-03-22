@@ -83,6 +83,7 @@ interface AdminPanelProps {
   onAddBlogPost: (post: BlogPost) => Promise<void>;
   onUpdateBlogPost: (post: BlogPost) => Promise<void>;
   onDeleteBlogPost: (id: string) => Promise<void>;
+  onClearAllBlogPosts: () => Promise<void>;
   userReviews: UserReview[];
   onUpdateReviewStatus: (id: string, status: UserReview['status']) => Promise<void>;
   onDeleteReview: (id: string) => Promise<void>;
@@ -169,7 +170,7 @@ const SidebarGroupLabel: React.FC<SidebarGroupLabelProps> = ({ label, isSidebarO
   </div>
 ) : <div className="pt-2.5" />;
 
-const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAddBooking, siteContent, onUpdateSiteContent, onExitAdmin, onDeleteBooking, blogPosts: blogPostsProp, onAddBlogPost, onUpdateBlogPost, onDeleteBlogPost, userReviews: userReviewsProp, onUpdateReviewStatus, onDeleteReview }) => {
+const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAddBooking, siteContent, onUpdateSiteContent, onExitAdmin, onDeleteBooking, blogPosts: blogPostsProp, onAddBlogPost, onUpdateBlogPost, onDeleteBlogPost, onClearAllBlogPosts, userReviews: userReviewsProp, onUpdateReviewStatus, onDeleteReview }) => {
   // Theme Toggle
   const [isDarkTheme, setIsDarkTheme] = useState(() => {
     const saved = localStorage.getItem('ata_admin_theme');
@@ -2771,6 +2772,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 selectedBlogs={selectedBlogs}
                 setSelectedBlogs={setSelectedBlogs}
                 showToast={showToast}
+                clearAllBlogPosts={onClearAllBlogPosts}
               />
             )
           }

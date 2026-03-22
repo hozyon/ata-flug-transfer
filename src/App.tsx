@@ -34,7 +34,7 @@ const App: React.FC = () => {
     siteContent, updateSiteContent: handleUpdateSiteContent,
     bookings, isBookingFormOpen, setBookingFormOpen: setIsBookingFormOpen,
     initializeStore, addBooking: handleNewBooking, updateBookingStatus, deleteBooking: handleDeleteBooking,
-    blogPosts, addBlogPost, updateBlogPost, deleteBlogPost,
+    blogPosts, addBlogPost, updateBlogPost, deleteBlogPost, clearAllBlogPosts,
     userReviews, addReview, updateReviewStatus, deleteReview,
   } = useAppStore();
 
@@ -291,6 +291,7 @@ const App: React.FC = () => {
                   onAddBlogPost={addBlogPost}
                   onUpdateBlogPost={updateBlogPost}
                   onDeleteBlogPost={deleteBlogPost}
+                  onClearAllBlogPosts={clearAllBlogPosts}
                   userReviews={userReviews}
                   onUpdateReviewStatus={updateReviewStatus}
                   onDeleteReview={deleteReview}
