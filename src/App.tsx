@@ -24,78 +24,7 @@ import Iletisim from './pages/Iletisim';
 import AdminLogin from './pages/AdminLogin';
 import TransferDestination from './pages/TransferDestination';
 import ErrorBoundary from './components/ErrorBoundary';
-import { Region } from './types';
 
-// ── RegionCard — scroll-reveal grid card ─────────────────────────────────
-const RegionCard: React.FC<{ region: Region; currencySymbol: string; index: number }> = ({ region, currencySymbol, index }) => {
-  const slug = region.name
-    .toLowerCase()
-    .replace(/ /g, '-')
-    .replace(/[ğĞ]/g, 'g').replace(/[üÜ]/g, 'u').replace(/[şŞ]/g, 's')
-    .replace(/[ıİ]/g, 'i').replace(/[öÖ]/g, 'o').replace(/[çÇ]/g, 'c')
-    .replace(/[^a-z0-9-]/g, '');
-
-  return (
-    <Link
-      to={`/blog/${slug}-transfer-rehberi`}
-      className="reveal group relative w-full overflow-hidden"
-      style={{
-        aspectRatio: '2/3',
-        borderRadius: '8px',
-        display: 'block',
-        transitionDelay: `${Math.min(index, 9) * 65}ms`,
-      }}
-    >
-      {/* Image */}
-      <img
-        src={region.image}
-        alt={region.name}
-        loading="lazy"
-        className="w-full h-full object-cover transition-[filter,transform] duration-500 group-hover:brightness-[1.12] group-hover:scale-[1.03]"
-        style={{ willChange: 'filter' }}
-      />
-
-      {/* Gradient overlay */}
-      <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(3,5,10,0.97) 0%, rgba(3,5,10,0.6) 40%, rgba(3,5,10,0.1) 70%, transparent 100%)' }} />
-
-      {/* Default & hover border */}
-      <div className="absolute inset-0 rounded-[8px]" style={{ boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.06)' }} />
-      <div className="absolute inset-0 rounded-[8px] opacity-0 group-hover:opacity-100 transition-opacity duration-400" style={{ boxShadow: 'inset 0 0 0 1.5px rgba(197,160,89,0.55)' }} />
-
-      {/* Price badge */}
-      {region.price ? (
-        <div className="absolute top-3 right-3 z-10" style={{ backdropFilter: 'blur(10px)' }}>
-          <div className="px-2.5 py-1 rounded-md" style={{ background: 'rgba(5,8,15,0.72)', border: '1px solid rgba(197,160,89,0.35)' }}>
-            <span className="text-[12px] font-black tracking-tight leading-none" style={{ color: '#c5a059', fontFamily: "'Outfit', sans-serif" }}>
-              {currencySymbol}{region.price}
-            </span>
-          </div>
-        </div>
-      ) : null}
-
-      {/* AYT chip */}
-      <div className="absolute top-3 left-3 z-10">
-        <span className="text-[8px] font-black uppercase tracking-[0.22em] px-2 py-0.5 rounded-sm" style={{ color: 'rgba(197,160,89,0.65)', background: 'rgba(3,5,10,0.5)', fontFamily: "'Outfit', sans-serif", backdropFilter: 'blur(4px)', border: '1px solid rgba(197,160,89,0.12)' }}>
-          AYT
-        </span>
-      </div>
-
-      {/* Bottom content */}
-      <div className="absolute bottom-0 left-0 right-0 z-10 p-4">
-        {/* Animated gold line */}
-        <div className="mb-2.5 h-px origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" style={{ background: 'linear-gradient(90deg, #c5a059, rgba(197,160,89,0.2))' }} />
-
-        <h3 className="font-bold text-white leading-tight group-hover:text-[#e0c07a] transition-colors duration-300" style={{ fontSize: 'clamp(14px, 1.6vw, 18px)', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.01em' }}>
-          {region.name}
-        </h3>
-        <div className="flex items-center gap-1.5 mt-1">
-          <span className="text-[10px] uppercase tracking-[0.15em] font-medium" style={{ color: 'rgba(255,255,255,0.3)', fontFamily: "'Outfit', sans-serif" }}>Transfer</span>
-          <i className="fa-solid fa-arrow-right text-[8px] translate-x-0 group-hover:translate-x-1 transition-transform duration-300" style={{ color: 'rgba(197,160,89,0.6)' }} />
-        </div>
-      </div>
-    </Link>
-  );
-};
 
 const App: React.FC = () => {
   const {
@@ -809,117 +738,62 @@ const App: React.FC = () => {
                     <div className="w-full h-px" style={{ background: 'linear-gradient(90deg, transparent 0%, #c5a059 30%, #e0c07a 50%, #c5a059 70%, transparent 100%)', opacity: 0.25 }} />
                   </section>
 
-                  <section id="regions" className="relative overflow-hidden scroll-mt-20" style={{ background: 'linear-gradient(180deg, #060a12 0%, #080c16 100%)' }}>
-                    {/* Subtle gold dot grid */}
-                    <div className="absolute inset-0 z-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(#c5a059 1px, transparent 1px)', backgroundSize: '48px 48px', opacity: 0.025 }} />
-                    {/* Ambient side glows */}
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-64 h-64 pointer-events-none z-0" style={{ background: 'radial-gradient(ellipse, rgba(197,160,89,0.06) 0%, transparent 70%)' }} />
-                    <div className="absolute right-0 top-1/2 -translate-y-1/2 w-64 h-64 pointer-events-none z-0" style={{ background: 'radial-gradient(ellipse, rgba(197,160,89,0.06) 0%, transparent 70%)' }} />
+                  <section id="regions" className="scroll-mt-20 py-20" style={{ background: '#080c16' }}>
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-                    {/* Top gold rule */}
-                    <div className="w-full h-px" style={{ background: 'linear-gradient(90deg, transparent 0%, #c5a059 30%, #e0c07a 50%, #c5a059 70%, transparent 100%)', opacity: 0.2 }} />
-
-                    {/* ── Editorial Header: left title / right desc+cta ── */}
-                    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-10 md:pt-16 md:pb-12">
-                      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 lg:gap-16">
-                        {/* Left */}
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-4">
-                            <span className="h-px w-10 flex-shrink-0" style={{ background: '#c5a059' }} />
-                            <span className="text-[10px] font-black tracking-[0.35em] uppercase" style={{ color: '#c5a059' }}>{t('regions.eyebrow')}</span>
-                          </div>
-                          <h2 className="font-playfair font-bold leading-[1.1] text-white" style={{ fontSize: 'clamp(2rem, 4vw, 3.5rem)' }}>
-                            {t('regions.title')}{' '}
-                            <span style={{ background: 'linear-gradient(90deg, #c5a059, #e0c07a, #c5a059)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                              {t('regions.titleAccent')}
-                            </span>
-                          </h2>
-                        </div>
-                        {/* Right */}
-                        <div className="lg:max-w-xs xl:max-w-sm flex-shrink-0">
-                          <p className="text-white/40 text-sm leading-relaxed mb-5">{t('regions.desc')}</p>
-                          <Link
-                            to="/bolgeler"
-                            className="inline-flex items-center gap-2 text-xs font-bold tracking-[0.15em] uppercase border-b pb-0.5 transition-all duration-200 hover:gap-3"
-                            style={{ color: '#c5a059', borderColor: 'rgba(197,160,89,0.4)' }}
-                          >
-                            {t('regions.viewAll') || 'Tüm Bölgeler'}
-                            <i className="fa-solid fa-arrow-right text-[9px]"></i>
-                          </Link>
-                        </div>
+                      {/* Header */}
+                      <div className="flex items-center gap-3 mb-3">
+                        <span className="h-px w-8" style={{ background: '#c5a059' }} />
+                        <span className="text-[10px] font-black uppercase tracking-[0.3em]" style={{ color: '#c5a059' }}>{t('regions.eyebrow')}</span>
                       </div>
-                    </div>
-
-                    {/* ── Stagger Grid ── */}
-                    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 md:pb-20">
-
-                      {/* Featured + grid hybrid */}
-                      {siteContent.regions.length > 0 && (() => {
-                        const sym = siteContent.currency?.symbol || '€';
-                        const [featured, ...rest] = siteContent.regions;
-                        return (
-                          <div className="grid gap-3 md:gap-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(min(160px, 100%), 1fr))' }}>
-                            {/* Featured card — 2 cols × 2 rows on sm+ */}
-                            <Link
-                              to={`/blog/${featured.name.toLowerCase().replace(/ /g, '-').replace(/[ğĞ]/g,'g').replace(/[üÜ]/g,'u').replace(/[şŞ]/g,'s').replace(/[ıİ]/g,'i').replace(/[öÖ]/g,'o').replace(/[çÇ]/g,'c').replace(/[^a-z0-9-]/g,'')}-transfer-rehberi`}
-                              className="reveal group relative overflow-hidden"
-                              style={{ aspectRatio: '1/1', borderRadius: '8px', gridColumn: 'span 2', gridRow: 'span 2', transitionDelay: '0ms' }}
-                            >
-                              <img src={featured.image} alt={featured.name} loading="lazy" className="w-full h-full object-cover transition-[filter] duration-500 group-hover:brightness-[1.1]" />
-                              <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, rgba(3,5,10,0.15) 0%, rgba(3,5,10,0.85) 100%)' }} />
-                              <div className="absolute inset-0 rounded-[8px]" style={{ boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.06)' }} />
-                              <div className="absolute inset-0 rounded-[8px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: 'inset 0 0 0 1.5px rgba(197,160,89,0.55)' }} />
-                              {/* Featured label */}
-                              <div className="absolute top-4 left-4 z-10">
-                                <span className="text-[9px] font-black uppercase tracking-[0.25em] px-2.5 py-1 rounded" style={{ color: '#c5a059', background: 'rgba(5,8,15,0.7)', border: '1px solid rgba(197,160,89,0.3)', backdropFilter: 'blur(8px)', fontFamily: "'Outfit', sans-serif" }}>
-                                  Öne Çıkan
-                                </span>
-                              </div>
-                              {featured.price && (
-                                <div className="absolute top-4 right-4 z-10" style={{ backdropFilter: 'blur(10px)' }}>
-                                  <div className="px-3 py-1.5 rounded-md" style={{ background: 'rgba(5,8,15,0.72)', border: '1px solid rgba(197,160,89,0.35)' }}>
-                                    <span className="text-[14px] font-black tracking-tight" style={{ color: '#c5a059', fontFamily: "'Outfit', sans-serif" }}>{sym}{featured.price}</span>
-                                  </div>
-                                </div>
-                              )}
-                              <div className="absolute bottom-0 left-0 right-0 z-10 p-5 md:p-6">
-                                <div className="mb-3 h-px w-8 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300" style={{ background: 'linear-gradient(90deg, #c5a059, transparent)' }} />
-                                <p className="text-white/50 text-xs mb-1 uppercase tracking-[0.2em] font-semibold" style={{ fontFamily: "'Outfit', sans-serif" }}>AYT Transfer</p>
-                                <h3 className="font-bold text-white group-hover:text-[#e0c07a] transition-colors duration-300 leading-tight" style={{ fontSize: 'clamp(18px, 2.5vw, 28px)', fontFamily: "'Outfit', sans-serif" }}>
-                                  {featured.name}
-                                </h3>
-                                <div className="flex items-center gap-2 mt-2">
-                                  <span className="text-[11px] uppercase tracking-[0.15em] font-medium" style={{ color: 'rgba(255,255,255,0.3)', fontFamily: "'Outfit', sans-serif" }}>Detaylar</span>
-                                  <i className="fa-solid fa-arrow-right text-[9px] translate-x-0 group-hover:translate-x-1 transition-transform duration-300" style={{ color: 'rgba(197,160,89,0.7)' }} />
-                                </div>
-                              </div>
-                            </Link>
-
-                            {/* Rest of regions */}
-                            {rest.map((region, i) => (
-                              <RegionCard key={region.id} region={region} currencySymbol={sym} index={i + 1} />
-                            ))}
-                          </div>
-                        );
-                      })()}
-
-                      {/* Bottom CTA */}
-                      <div className="flex justify-center mt-10">
-                        <Link
-                          to="/bolgeler"
-                          className="group inline-flex items-center gap-3 px-8 py-3.5 rounded-full text-sm font-bold tracking-[0.1em] uppercase transition-all duration-300"
-                          style={{ background: 'rgba(197,160,89,0.08)', border: '1px solid rgba(197,160,89,0.3)', color: '#c5a059' }}
-                          onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(197,160,89,0.15)'; (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(197,160,89,0.5)'; }}
-                          onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(197,160,89,0.08)'; (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(197,160,89,0.3)'; }}
-                        >
-                          {t('regions.viewAll') || 'Tüm Bölgeleri Gör'}
-                          <i className="fa-solid fa-arrow-right text-[10px] group-hover:translate-x-1 transition-transform duration-200" />
+                      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
+                        <h2 className="font-playfair font-bold text-white leading-tight" style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)' }}>
+                          {t('regions.title')}{' '}
+                          <span className="bg-gradient-to-r from-[#c5a059] via-[#e0c07a] to-[#c5a059] bg-clip-text text-transparent">{t('regions.titleAccent')}</span>
+                        </h2>
+                        <Link to="/bolgeler" className="shrink-0 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest transition-colors hover:text-[#e0c07a]" style={{ color: '#c5a059' }}>
+                          {t('regions.viewAll') || 'Tüm Bölgeler'} <i className="fa-solid fa-arrow-right text-[9px]" />
                         </Link>
                       </div>
-                    </div>
 
-                    {/* Bottom gold rule */}
-                    <div className="w-full h-px" style={{ background: 'linear-gradient(90deg, transparent 0%, #c5a059 30%, #e0c07a 50%, #c5a059 70%, transparent 100%)', opacity: 0.15 }} />
+                      {/* Grid */}
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
+                        {siteContent.regions.map((region, i) => {
+                          const slug = region.name.toLowerCase()
+                            .replace(/ /g,'-').replace(/[ğĞ]/g,'g').replace(/[üÜ]/g,'u')
+                            .replace(/[şŞ]/g,'s').replace(/[ıİ]/g,'i').replace(/[öÖ]/g,'o')
+                            .replace(/[çÇ]/g,'c').replace(/[^a-z0-9-]/g,'');
+                          const sym = siteContent.currency?.symbol || '€';
+                          return (
+                            <Link
+                              key={region.id}
+                              to={`/${slug}-transfer`}
+                              className="reveal group relative block overflow-hidden rounded-xl"
+                              style={{ aspectRatio: '3/4', transitionDelay: `${Math.min(i, 9) * 60}ms` }}
+                            >
+                              <img
+                                src={region.image}
+                                alt={region.name}
+                                loading="lazy"
+                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              />
+                              <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(5,8,15,0.95) 0%, rgba(5,8,15,0.4) 50%, transparent 100%)' }} />
+                              {region.price && (
+                                <div className="absolute top-2.5 right-2.5 rounded-md px-2 py-1 text-[11px] font-black" style={{ background: 'rgba(5,8,15,0.75)', color: '#c5a059', border: '1px solid rgba(197,160,89,0.35)', backdropFilter: 'blur(8px)' }}>
+                                  {sym}{region.price}
+                                </div>
+                              )}
+                              <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4">
+                                <p className="text-[9px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: 'rgba(197,160,89,0.65)' }}>Transfer</p>
+                                <h3 className="font-bold text-white text-sm md:text-base leading-tight group-hover:text-[#e0c07a] transition-colors duration-200">{region.name}</h3>
+                              </div>
+                              <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: 'inset 0 0 0 1.5px rgba(197,160,89,0.5)' }} />
+                            </Link>
+                          );
+                        })}
+                      </div>
+
+                    </div>
                   </section>
 
                   {randomBlogPosts.length > 0 && (
