@@ -37,6 +37,40 @@ const CouponsView = lazy(() => import('./admin/views/CouponsView').then(m => ({ 
 const DriversView = lazy(() => import('./admin/views/DriversView').then(m => ({ default: m.DriversView })));
 import { DESTINATIONS, REVIEWS, INITIAL_SITE_CONTENT } from '../constants';
 
+// ─── Error Boundary for lazy-loaded admin views ───────────────────────────────
+interface EBState { hasError: boolean; error: Error | null; }
+class AdminViewErrorBoundary extends React.Component<{ activeView: string; children: React.ReactNode }, EBState> {
+  state: EBState = { hasError: false, error: null };
+  static getDerivedStateFromError(error: Error): EBState { return { hasError: true, error }; }
+  componentDidUpdate(prevProps: { activeView: string }) {
+    if (prevProps.activeView !== this.props.activeView && this.state.hasError) {
+      this.setState({ hasError: false, error: null });
+    }
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center p-20 text-center gap-6">
+          <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center">
+            <i className="fa-solid fa-triangle-exclamation text-red-400 text-2xl"></i>
+          </div>
+          <div>
+            <p className="text-white font-bold text-lg mb-1">Bu sayfa yüklenirken bir hata oluştu</p>
+            <p className="text-white/40 text-sm">{this.state.error?.message || 'Bilinmeyen hata'}</p>
+          </div>
+          <button
+            onClick={() => this.setState({ hasError: false, error: null })}
+            className="px-6 py-2.5 bg-[var(--color-primary)] text-[#0f172a] font-bold rounded-xl text-sm hover:bg-[#d4af6a] transition-colors"
+          >
+            <i className="fa-solid fa-rotate-right mr-2"></i>Tekrar Dene
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 interface AdminPanelProps {
   bookings: Booking[];
   onUpdateStatus: (id: string, status: Booking['status']) => void;
@@ -2604,6 +2638,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
         )
         }
 
+        <AdminViewErrorBoundary activeView={activeView}>
         <Suspense fallback={<div className="flex items-center justify-center p-20"><i className="fa-solid fa-circle-notch fa-spin text-3xl text-[var(--color-primary)]"></i></div>}>
           {
             activeView === 'bookings' && (
@@ -2805,6 +2840,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
             )
           }
         </Suspense>
+        </AdminViewErrorBoundary>
       </main >
 
       {/* Vehicle Drawer */}
