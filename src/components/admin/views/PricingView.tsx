@@ -229,6 +229,7 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent, setEditCo
                                     <th className="text-left px-4 py-3 w-12"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">#</span></th>
                                     <th className="text-left px-3 py-3"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Bölge</span></th>
                                     <th className="text-left px-3 py-3 hidden md:table-cell"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Güzergah</span></th>
+                                    <th className="text-center px-3 py-3 w-20 hidden sm:table-cell"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Seviye</span></th>
                                     <th className="text-right px-3 py-3"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Fiyat</span></th>
                                     <th className="text-center px-3 py-3 w-24"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Durum</span></th>
                                 </tr>
@@ -274,41 +275,40 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent, setEditCo
                                                 </div>
                                             </div>
                                         </td>
+                                        <td className="px-3 py-3.5 text-center hidden sm:table-cell">
+                                            {isMin && <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">MIN</span>}
+                                            {isMax && <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20">MAX</span>}
+                                            {isAvg && <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20">ORT</span>}
+                                            {!isMin && !isMax && !isAvg && price > 0 && <span className="text-[8px] text-slate-700">—</span>}
+                                        </td>
                                         <td className="px-3 py-3.5 text-right">
-                                            <div className="flex items-center justify-end gap-2">
-                                                {isMin && <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">MIN</span>}
-                                                {isMax && <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20">MAX</span>}
-                                                {isAvg && <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20">ORT</span>}
-                                                <div>
-                                                    <div className="inline-flex items-center gap-0.5 group/price cursor-text">
-                                                        {!region.price && editingPriceId !== region.id && (
-                                                            <i className="fa-solid fa-triangle-exclamation text-amber-400 text-[9px]" title="Fiyat girilmemiş" />
-                                                        )}
-                                                        {(region.price || editingPriceId === region.id) && (
-                                                            <span className="text-[var(--color-primary)] font-bold text-sm leading-none">{editContent.currency?.symbol || '€'}</span>
-                                                        )}
-                                                        <input
-                                                            type="number"
-                                                            placeholder="—"
-                                                            value={editingPriceId === region.id ? editingPriceValue : (region.price || '')}
-                                                            onFocus={() => { setEditingPriceId(region.id); setEditingPriceValue(region.price ? String(region.price) : ''); }}
-                                                            onChange={e => setEditingPriceValue(e.target.value)}
-                                                            onBlur={() => {
-                                                                const parsed = editingPriceValue.trim() !== '' ? parseInt(editingPriceValue) : undefined;
-                                                                const updated = regions.map(r => r.id === region.id ? { ...r, price: parsed } : r);
-                                                                setEditContent({ ...editContent, regions: updated });
-                                                                setEditingPriceId(null);
-                                                            }}
-                                                            className="w-16 bg-transparent text-right text-lg font-black text-white outline-none focus:text-[var(--color-primary)] transition-colors placeholder-slate-600 cursor-text border-b border-transparent group-hover/price:border-dashed group-hover/price:border-white/20 focus:border-solid focus:border-[var(--color-primary)]/60 pb-px [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                                        />
-                                                        <span className={`relative flex h-1.5 w-1.5 ml-1 shrink-0 ${editingPriceId === region.id ? 'opacity-0' : 'opacity-100'} transition-opacity`}>
-                                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-primary)] opacity-50"></span>
-                                                            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]/70"></span>
-                                                        </span>
-                                                    </div>
-                                                    <p className="text-[9px] text-slate-600">tek yön</p>
-                                                </div>
+                                            <div className="inline-flex items-center gap-0 group/price cursor-text">
+                                                {!region.price && editingPriceId !== region.id && (
+                                                    <i className="fa-solid fa-triangle-exclamation text-amber-400 text-[9px] mr-1" title="Fiyat girilmemiş" />
+                                                )}
+                                                {(region.price || editingPriceId === region.id) && (
+                                                    <span className="text-[var(--color-primary)] font-black text-lg leading-none">{editContent.currency?.symbol || '€'}</span>
+                                                )}
+                                                <input
+                                                    type="number"
+                                                    placeholder="—"
+                                                    value={editingPriceId === region.id ? editingPriceValue : (region.price || '')}
+                                                    onFocus={() => { setEditingPriceId(region.id); setEditingPriceValue(region.price ? String(region.price) : ''); }}
+                                                    onChange={e => setEditingPriceValue(e.target.value)}
+                                                    onBlur={() => {
+                                                        const parsed = editingPriceValue.trim() !== '' ? parseInt(editingPriceValue) : undefined;
+                                                        const updated = regions.map(r => r.id === region.id ? { ...r, price: parsed } : r);
+                                                        setEditContent({ ...editContent, regions: updated });
+                                                        setEditingPriceId(null);
+                                                    }}
+                                                    className="w-16 bg-transparent text-right text-lg font-black text-white outline-none focus:text-[var(--color-primary)] transition-colors placeholder-slate-600 cursor-text border-b border-transparent group-hover/price:border-dashed group-hover/price:border-white/20 focus:border-solid focus:border-[var(--color-primary)]/60 pb-px [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                />
+                                                <span className={`relative flex h-1.5 w-1.5 ml-1.5 shrink-0 ${editingPriceId === region.id ? 'opacity-0' : 'opacity-100'} transition-opacity`}>
+                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-primary)] opacity-50"></span>
+                                                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[var(--color-primary)]/70"></span>
+                                                </span>
                                             </div>
+                                            <p className="text-[9px] text-slate-600 text-right mt-0.5">tek yön</p>
                                         </td>
                                         <td className="px-3 py-3.5 text-center">
                                             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
