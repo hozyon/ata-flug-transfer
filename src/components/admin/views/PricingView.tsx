@@ -5,6 +5,7 @@ import { MobileViewToggle } from '../MobileViewToggle';
 
 interface PricingViewProps {
     editContent: SiteContent;
+    setEditContent: (content: SiteContent) => void;
 }
 
 interface PricingRule {
@@ -31,9 +32,11 @@ const emptyRule = (): PricingRule => ({
     isActive: true,
 });
 
-export const PricingView: React.FC<PricingViewProps> = ({ editContent }) => {
+export const PricingView: React.FC<PricingViewProps> = ({ editContent, setEditContent }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const { viewMode, toggleViewMode } = useViewMode();
+    const [editingPriceId, setEditingPriceId] = useState<string | null>(null);
+    const [editingPriceValue, setEditingPriceValue] = useState<string>('');
     const regions = editContent.regions || [];
     const prices = regions.map(r => r.price || 0).filter(p => p > 0);
     const avg = prices.length > 0 ? Math.round(prices.reduce((s, p) => s + p, 0) / prices.length) : 0;
@@ -149,9 +152,9 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent }) => {
 
                         <MobileViewToggle viewMode={viewMode} onToggle={toggleViewMode} />
                         {/* Info Badge */}
-                        <div className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-500/10 border border-blue-500/20 shrink-0">
-                            <i className="fa-solid fa-circle-info text-blue-400 text-[10px]"></i>
-                            <span className="text-[10px] text-blue-400 font-medium whitespace-nowrap">Bölgeler'den düzenleyin</span>
+                        <div className="hidden sm:flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 shrink-0">
+                            <i className="fa-solid fa-pen text-emerald-400 text-[10px]"></i>
+                            <span className="text-[10px] text-emerald-400 font-medium whitespace-nowrap">Fiyatı tıklayarak düzenleyin</span>
                         </div>
                     </div>
                 </div>
@@ -185,11 +188,28 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent }) => {
                                         </div>
                                     </div>
                                     <div className="text-right shrink-0">
-                                        {region.price ? (
-                                            <p className="text-xl font-black text-[var(--color-primary)]">{editContent.currency?.symbol || '€'}{region.price}</p>
-                                        ) : (
-                                            <p className="text-sm font-bold text-amber-400 flex items-center gap-1"><i className="fa-solid fa-triangle-exclamation text-[10px]" />Fiyat yok</p>
-                                        )}
+                                        <div className="inline-flex items-center gap-1 justify-end">
+                                            {!region.price && editingPriceId !== region.id && (
+                                                <i className="fa-solid fa-triangle-exclamation text-amber-400 text-[9px]" />
+                                            )}
+                                            {(region.price || editingPriceId === region.id) && (
+                                                <span className="text-[var(--color-primary)] font-bold text-base">{editContent.currency?.symbol || '€'}</span>
+                                            )}
+                                            <input
+                                                type="number"
+                                                placeholder="—"
+                                                value={editingPriceId === region.id ? editingPriceValue : (region.price || '')}
+                                                onFocus={() => { setEditingPriceId(region.id); setEditingPriceValue(region.price ? String(region.price) : ''); }}
+                                                onChange={e => setEditingPriceValue(e.target.value)}
+                                                onBlur={() => {
+                                                    const parsed = editingPriceValue.trim() !== '' ? parseInt(editingPriceValue) : undefined;
+                                                    const updated = regions.map(r => r.id === region.id ? { ...r, price: parsed } : r);
+                                                    setEditContent({ ...editContent, regions: updated });
+                                                    setEditingPriceId(null);
+                                                }}
+                                                className="w-16 bg-transparent text-right text-xl font-black text-white outline-none focus:text-[var(--color-primary)] transition-colors placeholder-slate-600 cursor-pointer [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                            />
+                                        </div>
                                         <p className="text-[9px] text-slate-600">tek yön</p>
                                     </div>
                                 </div>
@@ -256,11 +276,28 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent }) => {
                                                 {isMax && <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-red-500/10 text-red-400 border border-red-500/20">MAX</span>}
                                                 {isAvg && <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-[var(--color-primary)]/10 text-[var(--color-primary)] border border-[var(--color-primary)]/20">ORT</span>}
                                                 <div>
-                                                    {region.price ? (
-                                                        <p className={`text-lg font-black ${priceColor}`}>{editContent.currency?.symbol || '€'}{region.price}</p>
-                                                    ) : (
-                                                        <p className="text-sm font-bold text-amber-400 flex items-center gap-1"><i className="fa-solid fa-triangle-exclamation text-[10px]" />Fiyat yok</p>
-                                                    )}
+                                                    <div className="inline-flex items-center gap-1">
+                                                        {!region.price && editingPriceId !== region.id && (
+                                                            <i className="fa-solid fa-triangle-exclamation text-amber-400 text-[9px] mr-1" title="Fiyat girilmemiş" />
+                                                        )}
+                                                        {(region.price || editingPriceId === region.id) && (
+                                                            <span className="text-[var(--color-primary)] font-bold text-sm">{editContent.currency?.symbol || '€'}</span>
+                                                        )}
+                                                        <input
+                                                            type="number"
+                                                            placeholder="—"
+                                                            value={editingPriceId === region.id ? editingPriceValue : (region.price || '')}
+                                                            onFocus={() => { setEditingPriceId(region.id); setEditingPriceValue(region.price ? String(region.price) : ''); }}
+                                                            onChange={e => setEditingPriceValue(e.target.value)}
+                                                            onBlur={() => {
+                                                                const parsed = editingPriceValue.trim() !== '' ? parseInt(editingPriceValue) : undefined;
+                                                                const updated = regions.map(r => r.id === region.id ? { ...r, price: parsed } : r);
+                                                                setEditContent({ ...editContent, regions: updated });
+                                                                setEditingPriceId(null);
+                                                            }}
+                                                            className="w-16 bg-transparent text-right text-lg font-black text-white outline-none focus:text-[var(--color-primary)] transition-colors placeholder-slate-600 cursor-pointer [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                        />
+                                                    </div>
                                                     <p className="text-[9px] text-slate-600">tek yön</p>
                                                 </div>
                                             </div>

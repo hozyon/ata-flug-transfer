@@ -2616,7 +2616,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
           {/* Pricing View */}
           {
             activeView === 'pricing' && (
-              <PricingView editContent={editContent} />
+              <PricingView editContent={editContent} setEditContent={setEditContent} />
             )
           }
 

@@ -27,8 +27,6 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
     const [isAddRegionModalOpen, setIsAddRegionModalOpen] = useState(false);
     const [editingRegion, setEditingRegion] = useState<Region | null>(null);
     const [showQuickAdd, setShowQuickAdd] = useState(false);
-    const [editingPriceId, setEditingPriceId] = useState<string | null>(null);
-    const [editingPriceValue, setEditingPriceValue] = useState<string>('');
     const [newRegion, setNewRegion] = useState<Region>({
         id: '', name: '', desc: '',
         image: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800',
@@ -295,26 +293,14 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                                             </td>
                                             <td className="px-3 py-3.5 text-right">
                                                 <div className="inline-flex items-center gap-1">
-                                                    {!region.price && editingPriceId !== region.id && (
-                                                        <i className="fa-solid fa-triangle-exclamation text-amber-400 text-[9px] mr-1" title="Fiyat girilmemiş" />
+                                                    {region.price ? (
+                                                        <>
+                                                            <span className="text-[var(--color-primary)] font-bold text-sm">{editContent.currency?.symbol || '€'}</span>
+                                                            <span className="text-sm font-black text-white">{region.price}</span>
+                                                        </>
+                                                    ) : (
+                                                        <span className="text-[10px] text-amber-400 font-medium">Fiyat yok</span>
                                                     )}
-                                                    {(region.price || editingPriceId === region.id) && (
-                                                        <span className="text-[var(--color-primary)] font-bold text-sm">{editContent.currency?.symbol || '€'}</span>
-                                                    )}
-                                                    <input
-                                                        type="number"
-                                                        placeholder="—"
-                                                        value={editingPriceId === region.id ? editingPriceValue : (region.price || '')}
-                                                        onFocus={() => { setEditingPriceId(region.id); setEditingPriceValue(region.price ? String(region.price) : ''); }}
-                                                        onChange={e => setEditingPriceValue(e.target.value)}
-                                                        onBlur={() => {
-                                                            const parsed = editingPriceValue.trim() !== '' ? parseInt(editingPriceValue) : undefined;
-                                                            const n = [...regions];
-                                                            n[realIndex] = { ...n[realIndex], price: parsed };
-                                                            setEditContent({ ...editContent, regions: n });
-                                                            setEditingPriceId(null);
-                                                        }}
-                                                        className="w-14 bg-transparent text-right text-sm font-black text-white outline-none focus:text-[var(--color-primary)] transition-colors placeholder-slate-600 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
                                                 </div>
                                             </td>
                                             <td className="px-3 py-3.5 text-center hidden md:table-cell">
@@ -446,23 +432,8 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                                     </div>
                                 </div>
 
-                                {/* Price + Distance */}
+                                {/* Distance + Price notice */}
                                 <div className="grid grid-cols-2 gap-3">
-                                    <div className="space-y-1.5">
-                                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                                            <i className="fa-solid fa-tag text-[8px] text-[var(--color-primary)]"></i> Fiyat *
-                                        </label>
-                                        <div className="relative">
-                                            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 font-bold text-[var(--color-primary)] text-base">{editContent.currency?.symbol || '€'}</span>
-                                            <input
-                                                type="number"
-                                                className="w-full bg-white/5 border border-white/[0.06] rounded-xl pl-9 pr-4 py-3 text-sm font-black text-white focus:border-[var(--color-primary)]/50 outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                                value={newRegion.price ?? ''}
-                                                onChange={e => setNewRegion({ ...newRegion, price: e.target.value !== '' ? parseInt(e.target.value) : undefined })}
-                                                placeholder="0"
-                                            />
-                                        </div>
-                                    </div>
                                     <div className="space-y-1.5">
                                         <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                                             <i className="fa-solid fa-route text-[8px] text-blue-400"></i> Mesafe (km)
@@ -474,6 +445,19 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                                             onChange={e => setNewRegion({ ...newRegion, distance: parseInt(e.target.value) || 0 } as any)}
                                             placeholder="0"
                                         />
+                                    </div>
+                                    <div className="space-y-1.5">
+                                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                                            <i className="fa-solid fa-tag text-[8px] text-[var(--color-primary)]"></i> Fiyat
+                                        </label>
+                                        <div className="w-full bg-white/[0.02] border border-white/[0.06] rounded-xl px-4 py-3 flex items-center gap-2">
+                                            {newRegion.price ? (
+                                                <span className="text-sm font-black text-[var(--color-primary)]">{editContent.currency?.symbol || '€'}{newRegion.price}</span>
+                                            ) : (
+                                                <span className="text-xs text-amber-400">Fiyat yok</span>
+                                            )}
+                                            <span className="text-[9px] text-slate-600 ml-auto">Fiyatlar'dan</span>
+                                        </div>
                                     </div>
                                 </div>
 
