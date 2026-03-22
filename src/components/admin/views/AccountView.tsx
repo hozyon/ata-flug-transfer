@@ -3,77 +3,71 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 const AI_LS_KEY = 'ata_ai_api_key';
 
 // ── Avatar System ─────────────────────────────────────────────────────────────
-type AvatarCategory = 'Tatil' | 'Sürücü' | 'Gece' | 'Günlük' | 'Profesyonel' | 'Yaratıcı' | 'Aktif' | 'Dijital' | 'Karakter' | 'Marka';
+type AvatarCategory = 'Karakter' | 'Marka';
 interface AvatarItem { url: string; label: string; category: AvatarCategory; }
 
+const _s = (svg: string) => `data:image/svg+xml,${encodeURIComponent(svg)}`;
+
+const BRAND_SVGS = {
+  Mercedes: _s("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='10' fill='#0f172a'/><circle cx='50' cy='50' r='36' fill='none' stroke='#c5a059' stroke-width='1.5'/><line x1='50' y1='14' x2='50' y2='50' stroke='#c5a059' stroke-width='3' stroke-linecap='round'/><line x1='50' y1='50' x2='19' y2='68' stroke='#c5a059' stroke-width='3' stroke-linecap='round'/><line x1='50' y1='50' x2='81' y2='68' stroke='#c5a059' stroke-width='3' stroke-linecap='round'/><circle cx='50' cy='14' r='3.5' fill='#c5a059'/><circle cx='19' cy='68' r='3.5' fill='#c5a059'/><circle cx='81' cy='68' r='3.5' fill='#c5a059'/><circle cx='50' cy='50' r='4' fill='#c5a059'/></svg>"),
+  BMW: _s("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='10' fill='#0f172a'/><clipPath id='bmw'><circle cx='50' cy='50' r='28'/></clipPath><path d='M50 22 A28 28 0 0 1 78 50 L50 50Z' fill='#1d4ed8'/><path d='M78 50 A28 28 0 0 1 50 78 L50 50Z' fill='#f1f5f9'/><path d='M50 78 A28 28 0 0 1 22 50 L50 50Z' fill='#1d4ed8'/><path d='M22 50 A28 28 0 0 1 50 22 L50 50Z' fill='#f1f5f9'/><circle cx='50' cy='50' r='28' fill='none' stroke='#0f172a' stroke-width='1'/><circle cx='50' cy='50' r='36' fill='none' stroke='#c5a059' stroke-width='2'/><circle cx='50' cy='50' r='28' fill='none' stroke='#c5a059' stroke-width='1'/></svg>"),
+  Audi: _s("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='10' fill='#0f172a'/><circle cx='22' cy='50' r='14' fill='none' stroke='#c5a059' stroke-width='3'/><circle cx='36' cy='50' r='14' fill='none' stroke='#c5a059' stroke-width='3'/><circle cx='50' cy='50' r='14' fill='none' stroke='#c5a059' stroke-width='3'/><circle cx='64' cy='50' r='14' fill='none' stroke='#c5a059' stroke-width='3'/></svg>"),
+  Ferrari: _s("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='10' fill='#0f172a'/><path d='M50 8 L80 22 L80 70 Q80 88 50 96 Q20 88 20 70 L20 22Z' fill='#dc2626' stroke='#c5a059' stroke-width='1.5'/><line x1='20' y1='40' x2='80' y2='40' stroke='#c5a059' stroke-width='1' opacity='0.4'/><text x='50' y='36' text-anchor='middle' fill='#fbbf24' font-size='9' font-weight='900' font-family='Arial' letter-spacing='1'>SCUDERIA</text><text x='50' y='60' text-anchor='middle' fill='#fbbf24' font-size='18' font-weight='900' font-family='Arial'>SF</text></svg>"),
+  Porsche: _s("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='10' fill='#0f172a'/><path d='M50 10 L76 24 L76 68 Q76 85 50 93 Q24 85 24 68 L24 24Z' fill='none' stroke='#c5a059' stroke-width='2'/><line x1='50' y1='10' x2='50' y2='93' stroke='#c5a059' stroke-width='1' opacity='0.3'/><line x1='24' y1='46' x2='76' y2='46' stroke='#c5a059' stroke-width='1' opacity='0.3'/><text x='50' y='38' text-anchor='middle' fill='#c5a059' font-size='9' font-weight='bold' font-family='Arial' letter-spacing='0.5'>PORSCHE</text><text x='38' y='72' text-anchor='middle' fill='#c5a059' font-size='18' font-weight='900' font-family='serif'>P</text></svg>"),
+  Lamborghini: _s("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='10' fill='#0f172a'/><polygon points='50,8 88,28 88,72 50,92 12,72 12,28' fill='none' stroke='#c5a059' stroke-width='2'/><text x='50' y='47' text-anchor='middle' fill='#fbbf24' font-size='22' font-weight='900' font-family='Arial'>L</text><text x='50' y='65' text-anchor='middle' fill='#c5a059' font-size='8' font-weight='bold' font-family='Arial' letter-spacing='1'>LAMBORGHINI</text></svg>"),
+  RollsRoyce: _s("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='10' fill='#0f172a'/><circle cx='50' cy='50' r='36' fill='none' stroke='#c5a059' stroke-width='1.5'/><text x='50' y='58' text-anchor='middle' fill='#c5a059' font-size='26' font-weight='bold' font-family='Georgia,serif' letter-spacing='-3'>RR</text></svg>"),
+  Bentley: _s("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='10' fill='#0f172a'/><circle cx='50' cy='50' r='18' fill='none' stroke='#c5a059' stroke-width='2'/><text x='50' y='58' text-anchor='middle' fill='#c5a059' font-size='24' font-weight='bold' font-family='Georgia,serif'>B</text><path d='M15 50 Q30 42 30 50 Q30 58 15 50' fill='none' stroke='#c5a059' stroke-width='2.5'/><path d='M85 50 Q70 42 70 50 Q70 58 85 50' fill='none' stroke='#c5a059' stroke-width='2.5'/><path d='M15 50 Q20 44 26 47' fill='none' stroke='#c5a059' stroke-width='1' opacity='0.5'/><path d='M85 50 Q80 44 74 47' fill='none' stroke='#c5a059' stroke-width='1' opacity='0.5'/></svg>"),
+  Maserati: _s("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='10' fill='#0f172a'/><line x1='50' y1='12' x2='50' y2='85' stroke='#c5a059' stroke-width='4' stroke-linecap='round'/><line x1='34' y1='12' x2='34' y2='55' stroke='#c5a059' stroke-width='3' stroke-linecap='round'/><line x1='66' y1='12' x2='66' y2='55' stroke='#c5a059' stroke-width='3' stroke-linecap='round'/><path d='M34 55 Q42 72 50 67' stroke='#c5a059' stroke-width='3' fill='none' stroke-linecap='round'/><path d='M66 55 Q58 72 50 67' stroke='#c5a059' stroke-width='3' fill='none' stroke-linecap='round'/></svg>"),
+  Tesla: _s("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='10' fill='#0f172a'/><path d='M28 34 Q39 27 50 30 Q61 27 72 34 L65 34 Q56 29 50 32 Q44 29 35 34Z' fill='#c5a059'/><line x1='28' y1='34' x2='72' y2='34' stroke='#c5a059' stroke-width='4' stroke-linecap='round'/><line x1='50' y1='34' x2='50' y2='82' stroke='#c5a059' stroke-width='4.5' stroke-linecap='round'/></svg>"),
+};
+
 const AVATARS: AvatarItem[] = [
-  // 🏖️ TATİL — beach/vacation vibes, ocean & sand backgrounds
-  { url: 'https://api.dicebear.com/7.x/open-peeps/svg?seed=BeachBoy&backgroundColor=0369a1&clothingColor=fbbf24', label: 'Plaj', category: 'Tatil' },
-  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Sunny&backgroundColor=b45309', label: 'Güneş', category: 'Tatil' },
-  { url: 'https://api.dicebear.com/7.x/personas/svg?seed=Resort&backgroundColor=0c4a6e', label: 'Resort', category: 'Tatil' },
-  { url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=HolidayGirl&backgroundColor=0ea5e9', label: 'Tatilci', category: 'Tatil' },
-  { url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=Tropical&backgroundColor=065f46', label: 'Tropikal', category: 'Tatil' },
+  // 🚬 SİGARA İÇEN — moody café, cinematic shadow
+  { url: 'https://api.dicebear.com/7.x/open-peeps/svg?seed=CafeSmoker&backgroundColor=1a0e06&clothingColor=374151', label: 'Sigara', category: 'Karakter' },
+  { url: 'https://api.dicebear.com/7.x/notionists/svg?seed=PhilosopherSmoke&backgroundColor=1a1426', label: 'Düşünür', category: 'Karakter' },
+  { url: 'https://api.dicebear.com/7.x/micah/svg?seed=NightSmoker&backgroundColor=0a0a14', label: 'Gece Sigara', category: 'Karakter' },
 
-  // 🚗 SÜRÜCÜ — driver/road trip aesthetic, dark moody backgrounds
-  { url: 'https://api.dicebear.com/7.x/notionists-neutral/svg?seed=Throttle&backgroundColor=1c1917', label: 'Gaz', category: 'Sürücü' },
-  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Racer&backgroundColor=1c0a02', label: 'Yarışçı', category: 'Sürücü' },
-  { url: 'https://api.dicebear.com/7.x/lorelei-neutral/svg?seed=Cruiser&backgroundColor=292524', label: 'Yolcu', category: 'Sürücü' },
-  { url: 'https://api.dicebear.com/7.x/micah/svg?seed=Trucker&backgroundColor=1e1b4b', label: 'Sürücü', category: 'Sürücü' },
-  { url: 'https://api.dicebear.com/7.x/croodles-neutral/svg?seed=RoadTrip&backgroundColor=0c1a0c', label: 'Yol', category: 'Sürücü' },
+  // 🚗 ARABADA SİGARA — road, window down, cruising
+  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=DriverSmoke&backgroundColor=1c1917', label: 'Arabalı', category: 'Karakter' },
+  { url: 'https://api.dicebear.com/7.x/lorelei-neutral/svg?seed=RoadSmoke&backgroundColor=14100a', label: 'Yolda Sigara', category: 'Karakter' },
 
-  // 🌙 GECE — nightlife, urban nights, deep dark palettes
-  { url: 'https://api.dicebear.com/7.x/notionists/svg?seed=NightOwl&backgroundColor=0f0728', label: 'Gece Kuşu', category: 'Gece' },
-  { url: 'https://api.dicebear.com/7.x/croodles/svg?seed=ClubKid&backgroundColor=13082a', label: 'Kulüp', category: 'Gece' },
-  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Midnight&backgroundColor=1a0a2e', label: 'Gece Yarısı', category: 'Gece' },
-  { url: 'https://api.dicebear.com/7.x/big-smile/svg?seed=Party&backgroundColor=160a26', label: 'Parti', category: 'Gece' },
-  { url: 'https://api.dicebear.com/7.x/personas/svg?seed=BarHopper&backgroundColor=0a0a1a', label: 'Bar', category: 'Gece' },
+  // 🏖️ TATİL MODU — sun, pool, cocktail
+  { url: 'https://api.dicebear.com/7.x/open-peeps/svg?seed=BeachVibe&backgroundColor=0369a1&clothingColor=fbbf24', label: 'Plajda', category: 'Karakter' },
+  { url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=PoolKing&backgroundColor=0c4a6e', label: 'Tatil', category: 'Karakter' },
+  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=SunsetCocktail&backgroundColor=92400e', label: 'Kokteyl', category: 'Karakter' },
 
-  // ☕ GÜNLÜK — casual everyday life, café, home, street
-  { url: 'https://api.dicebear.com/7.x/open-peeps/svg?seed=CoffeeMorning&backgroundColor=292524&clothingColor=6b7280', label: 'Kahve', category: 'Günlük' },
-  { url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=CasualFriday&backgroundColor=1c1917', label: 'Günlük', category: 'Günlük' },
-  { url: 'https://api.dicebear.com/7.x/lorelei/svg?seed=Homebody&backgroundColor=27130c', label: 'Ev', category: 'Günlük' },
-  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Chill&backgroundColor=1a200f', label: 'Rahat', category: 'Günlük' },
-  { url: 'https://api.dicebear.com/7.x/dylan/svg?seed=Streetwear&backgroundColor=1e1e1e', label: 'Sokak', category: 'Günlük' },
+  // 😤 MEŞGUL — rushing, stressed, overwhelmed
+  { url: 'https://api.dicebear.com/7.x/notionists-neutral/svg?seed=BusyBoss&backgroundColor=0f172a', label: 'Meşgul', category: 'Karakter' },
+  { url: 'https://api.dicebear.com/7.x/personas/svg?seed=StressedOut&backgroundColor=1e1b4b', label: 'Stresli', category: 'Karakter' },
+  { url: 'https://api.dicebear.com/7.x/open-peeps/svg?seed=RushHourGuy&backgroundColor=1e293b&clothingColor=1d4ed8', label: 'Acele', category: 'Karakter' },
+  { url: 'https://api.dicebear.com/7.x/micah/svg?seed=Workaholic&backgroundColor=172030', label: 'İşkolik', category: 'Karakter' },
 
-  // 💼 PROFESYONEL — business, formal, executive
-  { url: 'https://api.dicebear.com/7.x/notionists-neutral/svg?seed=CEO&backgroundColor=0f172a', label: 'CEO', category: 'Profesyonel' },
-  { url: 'https://api.dicebear.com/7.x/personas/svg?seed=Executive&backgroundColor=172030', label: 'Yönetici', category: 'Profesyonel' },
-  { url: 'https://api.dicebear.com/7.x/lorelei-neutral/svg?seed=Director&backgroundColor=1e293b', label: 'Direktör', category: 'Profesyonel' },
-  { url: 'https://api.dicebear.com/7.x/micah/svg?seed=SuitGuy&backgroundColor=0f1c2e', label: 'Takım Elbise', category: 'Profesyonel' },
+  // 😑 SIKILMIŞ — bored, done, zoning out
+  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Boredom101&backgroundColor=374151', label: 'Sıkılmış', category: 'Karakter' },
+  { url: 'https://api.dicebear.com/7.x/lorelei/svg?seed=LazyAfternoon&backgroundColor=1f2937', label: 'Uyuşuk', category: 'Karakter' },
+  { url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=DaydreamZone&backgroundColor=1a1a2e', label: 'Hayal Kuran', category: 'Karakter' },
 
-  // 🎨 YARATICI — artists, freelancers, makers
-  { url: 'https://api.dicebear.com/7.x/croodles/svg?seed=StreetArtist&backgroundColor=1a0a2e', label: 'Ressam', category: 'Yaratıcı' },
-  { url: 'https://api.dicebear.com/7.x/notionists/svg?seed=WriterSoul&backgroundColor=0f1a0a', label: 'Yazar', category: 'Yaratıcı' },
-  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Poet&backgroundColor=1a0a1a', label: 'Şair', category: 'Yaratıcı' },
-  { url: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=Pixelator&backgroundColor=0a0a1a', label: 'Piksel', category: 'Yaratıcı' },
-  { url: 'https://api.dicebear.com/7.x/open-peeps/svg?seed=Musician&backgroundColor=1a1000&clothingColor=374151', label: 'Müzisyen', category: 'Yaratıcı' },
+  // 💎 PREMİUM — VIP, chauffeur, luxury
+  { url: 'https://api.dicebear.com/7.x/notionists-neutral/svg?seed=VIPPassenger&backgroundColor=1a1200', label: 'VIP', category: 'Karakter' },
+  { url: 'https://api.dicebear.com/7.x/personas/svg?seed=EliteChauffeur&backgroundColor=0a0a0a', label: 'Şoför', category: 'Karakter' },
+  { url: 'https://api.dicebear.com/7.x/avataaars/svg?seed=LuxuryRider&backgroundColor=0f172a', label: 'Lüks', category: 'Karakter' },
+  { url: 'https://api.dicebear.com/7.x/notionists/svg?seed=NightOwlVIP&backgroundColor=0f0728', label: 'Gece Kuşu', category: 'Karakter' },
+  { url: 'https://api.dicebear.com/7.x/croodles-neutral/svg?seed=NoirMystery&backgroundColor=080808', label: 'Gizemli', category: 'Karakter' },
 
-  // 🏃 AKTİF — sports, gym, outdoor, energetic
-  { url: 'https://api.dicebear.com/7.x/adventurer/svg?seed=Sprinter&backgroundColor=1a2e0a', label: 'Koşucu', category: 'Aktif' },
-  { url: 'https://api.dicebear.com/7.x/open-peeps/svg?seed=GymRat&backgroundColor=0a2e1a&clothingColor=1d4ed8', label: 'Spor', category: 'Aktif' },
-  { url: 'https://api.dicebear.com/7.x/personas/svg?seed=Climber&backgroundColor=2e1a0a', label: 'Dağcı', category: 'Aktif' },
-  { url: 'https://api.dicebear.com/7.x/micah/svg?seed=Swimmer&backgroundColor=0a1a2e', label: 'Yüzücü', category: 'Aktif' },
-
-  // 🎮 DİJİTAL — gamer, coder, tech geek
-  { url: 'https://api.dicebear.com/7.x/bottts/svg?seed=GamerBot&backgroundColor=0a0a1e', label: 'Oyuncu', category: 'Dijital' },
-  { url: 'https://api.dicebear.com/7.x/pixel-art/svg?seed=HackerPixel&backgroundColor=0a1a0a', label: 'Kodcu', category: 'Dijital' },
-  { url: 'https://api.dicebear.com/7.x/bottts-neutral/svg?seed=AI-Dev&backgroundColor=0e0a1a', label: 'Dev', category: 'Dijital' },
-  { url: 'https://api.dicebear.com/7.x/fun-emoji/svg?seed=NerdAlert&backgroundColor=0a0e1a', label: 'Geek', category: 'Dijital' },
+  // 🚗 MARKA LOGOLARI — premium car brands
+  { url: BRAND_SVGS.Mercedes, label: 'Mercedes', category: 'Marka' },
+  { url: BRAND_SVGS.BMW, label: 'BMW', category: 'Marka' },
+  { url: BRAND_SVGS.Audi, label: 'Audi', category: 'Marka' },
+  { url: BRAND_SVGS.Ferrari, label: 'Ferrari', category: 'Marka' },
+  { url: BRAND_SVGS.Porsche, label: 'Porsche', category: 'Marka' },
+  { url: BRAND_SVGS.Lamborghini, label: 'Lamborghini', category: 'Marka' },
+  { url: BRAND_SVGS.RollsRoyce, label: 'Rolls-Royce', category: 'Marka' },
+  { url: BRAND_SVGS.Bentley, label: 'Bentley', category: 'Marka' },
+  { url: BRAND_SVGS.Maserati, label: 'Maserati', category: 'Marka' },
+  { url: BRAND_SVGS.Tesla, label: 'Tesla', category: 'Marka' },
 ];
 
-const AVATAR_CATEGORIES: AvatarCategory[] = ['Tatil', 'Sürücü', 'Gece', 'Günlük', 'Profesyonel', 'Yaratıcı', 'Aktif', 'Dijital'];
-const CATEGORY_ICONS: Record<AvatarCategory, string> = {
-  'Tatil': 'fa-umbrella-beach',
-  'Sürücü': 'fa-car',
-  'Gece': 'fa-moon',
-  'Günlük': 'fa-mug-hot',
-  'Profesyonel': 'fa-briefcase',
-  'Yaratıcı': 'fa-palette',
-  'Aktif': 'fa-person-running',
-  'Dijital': 'fa-gamepad',
-  'Karakter': 'fa-user',
-  'Marka': 'fa-car',
-};
+const AVATAR_CATEGORIES: AvatarCategory[] = ['Karakter', 'Marka'];
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface AccountViewProps {
@@ -102,7 +96,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
 }) => {
     const [showAvatarPicker, setShowAvatarPicker] = useState(false);
     const [avatarCategory, setAvatarCategory] = useState<AvatarCategory>('Karakter');
-    const [hoverAvatar, setHoverAvatar] = useState<string | null>(null);
+
     const [pendingAvatar, setPendingAvatar] = useState<string | null>(null);
     const [aiApiKey, setAiApiKey] = useState(() => localStorage.getItem(AI_LS_KEY) || '');
     const [showAiKey, setShowAiKey] = useState(false);
@@ -552,153 +546,92 @@ export const AccountView: React.FC<AccountViewProps> = ({
         {showAvatarPicker && (
             <div
                 className="fixed inset-0 z-[300] flex items-center justify-center p-4"
-                onClick={() => { setShowAvatarPicker(false); setPendingAvatar(null); setHoverAvatar(null); }}
+                onClick={() => { setShowAvatarPicker(false); setPendingAvatar(null); }}
             >
-                {/* Backdrop */}
-                <div className="absolute inset-0 bg-black/75 backdrop-blur-md" />
-
-                {/* Modal card */}
+                <div className="absolute inset-0 bg-black/70" />
                 <div
-                    className="relative z-10 w-full max-w-3xl bg-[#0d1117] border border-white/[0.08] rounded-3xl shadow-2xl shadow-black/60 animate-in zoom-in-95 fade-in duration-200 overflow-hidden"
+                    className="relative z-10 w-full max-w-md bg-[#0d1117] border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
                     onClick={e => e.stopPropagation()}
                 >
                     {/* Header */}
-                    <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.06]">
-                        <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-xl bg-[var(--color-primary)]/15 flex items-center justify-center">
-                                <i className="fa-solid fa-user-pen text-[var(--color-primary)] text-[12px]"></i>
-                            </div>
-                            <div>
-                                <h3 className="text-[14px] font-black font-outfit text-white tracking-wide">Avatar Seç</h3>
-                                <p className="text-[10px] text-slate-500">34 avatar · 8 yaşam tarzı · 10 farklı stil</p>
-                            </div>
-                        </div>
+                    <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/[0.06]">
+                        <span className="text-sm font-bold text-white">Avatar Seç</span>
                         <button
-                            onClick={() => { setShowAvatarPicker(false); setPendingAvatar(null); setHoverAvatar(null); }}
-                            className="w-8 h-8 rounded-xl bg-white/5 hover:bg-red-500/20 text-slate-400 hover:text-red-400 flex items-center justify-center transition-colors"
+                            onClick={() => { setShowAvatarPicker(false); setPendingAvatar(null); }}
+                            className="text-slate-500 hover:text-white transition-colors p-1"
                         >
                             <i className="fa-solid fa-xmark text-sm"></i>
                         </button>
                     </div>
 
-                    {/* Category tabs */}
-                    <div className="flex items-center gap-1.5 px-6 pt-4 pb-2 overflow-x-auto scrollbar-hide">
+                    {/* Tabs */}
+                    <div className="flex gap-1 px-5 pt-4 pb-1">
                         {AVATAR_CATEGORIES.map(cat => (
                             <button
                                 key={cat}
                                 onClick={() => setAvatarCategory(cat)}
-                                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all shrink-0 ${
+                                className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                                     avatarCategory === cat
-                                        ? 'bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/20'
-                                        : 'bg-white/[0.04] text-slate-400 hover:bg-white/[0.08] hover:text-white border border-white/[0.06]'
+                                        ? 'bg-[var(--color-primary)]/15 text-[var(--color-primary)] border border-[var(--color-primary)]/30'
+                                        : 'text-slate-500 hover:text-slate-300'
                                 }`}
                             >
-                                <i className={`fa-solid ${CATEGORY_ICONS[cat]} text-[9px]`}></i>
                                 {cat}
-                                <span className={`text-[9px] font-black px-1.5 py-0.5 rounded-full ${avatarCategory === cat ? 'bg-white/20' : 'bg-white/[0.05]'}`}>
-                                    {AVATARS.filter(a => a.category === cat).length}
-                                </span>
+                                <span className="ml-1.5 text-[10px] opacity-50">{AVATARS.filter(a => a.category === cat).length}</span>
                             </button>
                         ))}
                     </div>
 
-                    {/* Body: grid + preview */}
-                    <div className="flex gap-0 p-6 pt-3">
-                        {/* Avatar grid */}
-                        <div className="flex-1">
-                            <div className="grid grid-cols-4 sm:grid-cols-5 gap-3">
-                                {AVATARS.filter(a => a.category === avatarCategory).map(av => {
-                                    const isCurrent = accountForm.avatar === av.url;
-                                    const isPending = pendingAvatar === av.url;
-                                    const isSelected = isPending || (!pendingAvatar && isCurrent);
-                                    return (
-                                        <button
-                                            key={av.url}
-                                            onClick={() => setPendingAvatar(av.url)}
-                                            onMouseEnter={() => setHoverAvatar(av.url)}
-                                            onMouseLeave={() => setHoverAvatar(null)}
-                                            className="group flex flex-col items-center gap-1.5"
-                                        >
-                                            <div className={`relative w-full aspect-square rounded-2xl overflow-hidden border-2 transition-all duration-200 ${
-                                                isSelected
-                                                    ? 'border-[var(--color-primary)] shadow-lg shadow-[var(--color-primary)]/30 scale-105'
-                                                    : 'border-white/10 group-hover:border-white/30 group-hover:scale-105'
-                                            }`}>
-                                                <img src={av.url} alt={av.label} className="w-full h-full object-cover" loading="lazy" />
-                                                {/* Selected checkmark */}
-                                                {isSelected && (
-                                                    <div className="absolute bottom-1 right-1 w-5 h-5 bg-[var(--color-primary)] rounded-full flex items-center justify-center shadow-md">
-                                                        <i className="fa-solid fa-check text-white text-[8px]"></i>
-                                                    </div>
-                                                )}
-                                                {/* Hover overlay */}
-                                                {!isSelected && (
-                                                    <div className="absolute inset-0 bg-[var(--color-primary)]/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                                )}
-                                            </div>
-                                            <span className={`text-[9px] font-semibold transition-colors ${isSelected ? 'text-[var(--color-primary)]' : 'text-slate-600 group-hover:text-slate-300'}`}>
-                                                {av.label}
-                                            </span>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
-
-                        {/* Preview panel (desktop) */}
-                        <div className="hidden sm:flex w-32 shrink-0 flex-col items-center gap-3 pl-5 border-l border-white/[0.06] ml-5">
-                            <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest self-start">Önizleme</p>
-                            <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-[var(--color-primary)]/40 shadow-xl shadow-[var(--color-primary)]/10 bg-slate-900">
-                                <img
-                                    src={hoverAvatar || pendingAvatar || accountForm.avatar}
-                                    alt="Önizleme"
-                                    className="w-full h-full object-cover transition-all duration-200"
-                                />
-                            </div>
-                            <div className="text-center">
-                                <p className="text-[10px] font-bold text-white">
-                                    {AVATARS.find(a => a.url === (hoverAvatar || pendingAvatar || accountForm.avatar))?.label || 'Mevcut'}
-                                </p>
-                                <p className="text-[9px] text-slate-600 mt-0.5">
-                                    {AVATARS.find(a => a.url === (hoverAvatar || pendingAvatar || accountForm.avatar))?.category || ''}
-                                </p>
-                            </div>
+                    {/* Grid */}
+                    <div className="p-5 pt-3">
+                        <div className="grid grid-cols-5 gap-2">
+                            {AVATARS.filter(a => a.category === avatarCategory).map(av => {
+                                const isSelected = pendingAvatar ? pendingAvatar === av.url : accountForm.avatar === av.url;
+                                return (
+                                    <button
+                                        key={av.url}
+                                        onClick={() => setPendingAvatar(av.url)}
+                                        className="flex flex-col items-center gap-1 group"
+                                    >
+                                        <div className={`w-full aspect-square rounded-xl overflow-hidden border transition-all ${
+                                            isSelected
+                                                ? 'border-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/30'
+                                                : 'border-white/10 group-hover:border-white/25'
+                                        }`}>
+                                            <img src={av.url} alt={av.label} className="w-full h-full object-cover" loading="lazy" />
+                                        </div>
+                                        <span className={`text-[9px] leading-none transition-colors ${isSelected ? 'text-[var(--color-primary)]' : 'text-slate-600'}`}>
+                                            {av.label}
+                                        </span>
+                                    </button>
+                                );
+                            })}
                         </div>
                     </div>
 
                     {/* Footer */}
-                    <div className="flex items-center justify-between px-6 py-4 border-t border-white/[0.06] bg-white/[0.01]">
-                        <p className="text-[10px] text-slate-600">
-                            {pendingAvatar
-                                ? <span className="text-[var(--color-primary)] font-semibold">Seçim yapıldı — kaydetmek için "Uygula" butonuna tıklayın</span>
-                                : 'Bir avatar seçin'
-                            }
-                        </p>
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={() => { setShowAvatarPicker(false); setPendingAvatar(null); setHoverAvatar(null); }}
-                                className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 text-xs font-bold transition-colors"
-                            >
-                                İptal
-                            </button>
-                            <button
-                                disabled={!pendingAvatar}
-                                onClick={() => {
-                                    if (!pendingAvatar) return;
-                                    const updated = { ...accountForm, avatar: pendingAvatar };
-                                    setAccountForm(updated);
-                                    onSaveAccount(updated);
-                                    setShowAvatarPicker(false);
-                                    setPendingAvatar(null);
-                                    setHoverAvatar(null);
-                                    showToast('Avatar güncellendi', 'success');
-                                }}
-                                className="px-5 py-2 rounded-xl bg-[var(--color-primary)] hover:bg-amber-600 disabled:opacity-30 disabled:cursor-not-allowed text-white text-xs font-black transition-all shadow-lg shadow-[var(--color-primary)]/20"
-                            >
-                                <i className="fa-solid fa-check mr-1.5 text-[10px]"></i>
-                                Uygula
-                            </button>
-                        </div>
+                    <div className="flex items-center justify-end gap-2 px-5 py-3.5 border-t border-white/[0.06]">
+                        <button
+                            onClick={() => { setShowAvatarPicker(false); setPendingAvatar(null); }}
+                            className="px-4 py-2 text-xs text-slate-500 hover:text-white transition-colors"
+                        >
+                            İptal
+                        </button>
+                        <button
+                            disabled={!pendingAvatar}
+                            onClick={() => {
+                                if (!pendingAvatar) return;
+                                const updated = { ...accountForm, avatar: pendingAvatar };
+                                setAccountForm(updated);
+                                onSaveAccount(updated);
+                                setShowAvatarPicker(false);
+                                setPendingAvatar(null);
+                                showToast('Avatar güncellendi', 'success');
+                            }}
+                            className="px-5 py-2 rounded-xl bg-[var(--color-primary)] disabled:opacity-30 disabled:cursor-not-allowed text-white text-xs font-bold transition-all"
+                        >
+                            Uygula
+                        </button>
                     </div>
                 </div>
             </div>
