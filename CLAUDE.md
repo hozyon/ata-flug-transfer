@@ -13,7 +13,7 @@ npm run preview  # Preview production build locally
 npm run lint     # ESLint (TypeScript + React hooks)
 ```
 
-No test runner is configured.
+No test runner is configured (Vitest kurulu ama aktif script yok).
 
 ## Environment Setup
 
@@ -98,6 +98,9 @@ Turkish is the source language. All other languages are auto-translated via Goog
 
 - `t('key')` resolves through `src/i18n/translations.ts` → Turkish text → translated text
 - Add new UI strings to `src/i18n/translations.ts` only — no per-language files needed
+- `LanguageSwitcher` supports both hover (desktop) and click/tap (mobile) — `onClick` toggle + `pointerdown` outside-click handler
+- Mobile menu sheet (`Navbar.tsx`) contains an inline language selector row (flat buttons, no dropdown) for easy language switching on touch devices
+- **Never use `onMouseEnter/onMouseLeave` as the sole interaction** for interactive UI — always add `onClick` or `active:` Tailwind class for touch support
 
 ### CSS
 
@@ -127,9 +130,11 @@ SEO is managed via `SeoSettings` in `src/types.ts` and stored as part of `SiteCo
 ## Deployment
 
 ```bash
-vercel --prod
+git push   # Vercel auto-deploys from GitHub (linked via vercel link --repo)
 ```
 
+- Vercel project linked to `git@github.com:hozyon/ata-flug-transfer.git` under `hasanozyon-8289s-projects`
+- Every push to `main` triggers a production deployment automatically
 - `vercel.json` includes SPA rewrites — no extra config needed
 - Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in Vercel project environment variables
 - Before first deploy, run `supabase/migrations/001_initial_schema.sql` in the Supabase SQL editor
@@ -179,3 +184,48 @@ Blog posts are stored in the `blog_posts` Supabase table. The `BLOG_POSTS` const
 ### setBlogPosts Prop Type
 
 `BlogViewProps.setBlogPosts` is `(posts: BlogPost[] | ((prev: BlogPost[]) => BlogPost[])) => Promise<void>` — async, matches AdminPanel's implementation.
+
+### Homepage Blog Section
+
+Homepage blog highlights section (`#blog-highlights` in `App.tsx`) renders only when `blogPosts.length > 0`. It uses `useMemo` over the store's `blogPosts` (not the hardcoded `BLOG_POSTS` constant). If there are no blog posts, the entire section is hidden.
+
+## Mobile — Rules & Known Fixes
+
+### Hover-Only Interactions (fixed 2026-03-22)
+
+**Symptom:** Language switcher, dropdowns, or hover-highlighted elements don't respond to tap on mobile.
+**Root cause:** Interactions bound only to `onMouseEnter/onMouseLeave` — no touch/click equivalent.
+**Rule:** Every interactive element must have an `onClick` handler. Use `active:` Tailwind classes for visual tap feedback. Never rely solely on hover events.
+
+### LanguageSwitcher Mobile (fixed 2026-03-22)
+
+**Symptom:** Users could not change language on mobile — dropdown never opened.
+**Root cause:** `LanguageSwitcher` had no `onClick` on the trigger button; only `onMouseEnter` on the wrapper.
+**Fix:** Added `onClick` toggle to button + `pointerdown` outside-click handler. Also added inline language row inside the mobile bottom sheet.
+
+### Homepage Blog Posts Showing When Empty (fixed 2026-03-22)
+
+**Symptom:** Blog section heading visible even with no blog posts.
+**Root cause:** `<section>` rendered unconditionally; grid was empty but header/eyebrow still showed.
+**Rule:** Wrap the entire blog section with `{randomBlogPosts.length > 0 && (...)}`.
+
+### Homepage Used Hardcoded BLOG_POSTS (fixed 2026-03-22)
+
+**Symptom:** Deleted blog posts reappeared on the homepage after admin deletion.
+**Root cause:** `RANDOM_BLOG_POSTS` was computed at module load from the `BLOG_POSTS` constant, never reading live store data.
+**Rule:** Use `useMemo(() => [...blogPosts].sort(...).slice(0, 4), [blogPosts])` inside the component.
+
+### Mobile Autocomplete Missing (fixed 2026-03-22)
+
+**Rule:** All name/email/phone inputs must have correct `autoComplete` attributes:
+- First name → `autoComplete="given-name"`
+- Last name → `autoComplete="family-name"`
+- Phone → `autoComplete="tel"`
+- Email → `autoComplete="email"`
+- Full name → `autoComplete="name"`
+
+### Hooks After Conditional Return (fixed 2026-03-22)
+
+**Symptom:** TypeScript/React error or unexpected behavior in `TransferDestination.tsx`.
+**Root cause:** `useLanguage()` was called after an early `return <Navigate />`, violating React's Rules of Hooks.
+**Rule:** All hooks must be called unconditionally at the top of the component, before any early returns.
