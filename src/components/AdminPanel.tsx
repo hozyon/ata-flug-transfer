@@ -42,7 +42,7 @@ interface AdminPanelProps {
   onUpdateStatus: (id: string, status: Booking['status']) => void;
   onAddBooking: (booking: Partial<Booking>) => void;
   siteContent: SiteContent;
-  onUpdateSiteContent: (content: SiteContent) => void;
+  onUpdateSiteContent: (content: SiteContent) => Promise<void>;
   onExitAdmin: () => void;
   onDeleteBooking: (id: string) => void;
   blogPosts: BlogPost[];
@@ -496,6 +496,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   const siteContentRef = useRef(siteContent);
   useEffect(() => { siteContentRef.current = siteContent; }, [siteContent]);
 
+  // Ref to always capture the latest editContent inside the async timer closure
+  const editContentRef = useRef(editContent);
+  useEffect(() => { editContentRef.current = editContent; }, [editContent]);
+
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -503,13 +507,18 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     }
     setSaveStatus('saving');
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(() => {
-      // Use siteContentRef.current so we always get the latest adminAccount,
-      // even if it was updated (e.g. phone/email save) after this effect ran
-      onUpdateSiteContent({ ...editContent, adminAccount: siteContentRef.current.adminAccount });
-      setSaveStatus('saved');
-      showToast('Değişiklikler kaydedildi', 'success');
-      setTimeout(() => setSaveStatus('idle'), 2000);
+    saveTimerRef.current = setTimeout(async () => {
+      // Always read the LATEST editContent and siteContent via refs to avoid stale closures
+      const toSave = { ...editContentRef.current, adminAccount: siteContentRef.current.adminAccount };
+      try {
+        await onUpdateSiteContent(toSave);
+        setSaveStatus('saved');
+        showToast('Değişiklikler kaydedildi', 'success');
+        setTimeout(() => setSaveStatus('idle'), 2000);
+      } catch {
+        setSaveStatus('idle');
+        showToast('Kayıt başarısız — internet bağlantınızı kontrol edin', 'error');
+      }
     }, 1500);
     return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
   }, [editContent]);

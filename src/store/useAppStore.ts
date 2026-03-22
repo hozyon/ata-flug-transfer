@@ -144,9 +144,23 @@ function rowToReview(row: Record<string, unknown>): UserReview {
 
 // ─── Merge persisted content with INITIAL defaults ───────────────────────────
 function mergeContent(parsed: SiteContent): SiteContent {
+    // Deep-merge regions by ID: saved prices/data win; new default regions get added
+    const savedRegionMap = new Map((parsed.regions || []).map(r => [r.id, r]));
+    const mergedRegions = INITIAL_SITE_CONTENT.regions.map(defaultRegion => {
+        const saved = savedRegionMap.get(defaultRegion.id);
+        return saved ? { ...defaultRegion, ...saved } : defaultRegion;
+    });
+    // Also keep any saved regions not in defaults (future-proof)
+    (parsed.regions || []).forEach(r => {
+        if (!INITIAL_SITE_CONTENT.regions.find(d => d.id === r.id)) {
+            mergedRegions.push(r);
+        }
+    });
+
     const merged: SiteContent = {
         ...INITIAL_SITE_CONTENT,
         ...parsed,
+        regions: mergedRegions,
         hero: { ...INITIAL_SITE_CONTENT.hero, ...(parsed.hero || {}) },
         about: { ...INITIAL_SITE_CONTENT.about, ...(parsed.about || {}) },
         business: { ...INITIAL_SITE_CONTENT.business, ...(parsed.business || {}) },
@@ -280,15 +294,16 @@ export const useAppStore = create<AppStore>((set, get) => ({
         set({ siteContent: newContent });
 
         if (isSupabaseConfigured) {
-            try {
-                const { error } = await supabase
-                    .from('site_content')
-                    .upsert({ id: 1, content: newContent as unknown as Record<string, unknown> });
-                if (error) throw error;
-            } catch (err) {
-                console.error('Failed to save site content to Supabase:', err);
+            const { error } = await supabase
+                .from('site_content')
+                .upsert({ id: 1, content: newContent as unknown as Record<string, unknown> });
+            if (error) {
+                console.error('Failed to save site content to Supabase:', error);
                 saveContentToLS(newContent);
+                throw new Error(error.message); // AdminPanel'in catch bloğu çalışsın
             }
+            // Supabase başarılıysa localStorage'ı da güncelle (offline fallback)
+            saveContentToLS(newContent);
         } else {
             saveContentToLS(newContent);
         }
