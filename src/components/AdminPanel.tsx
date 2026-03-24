@@ -2276,51 +2276,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               {/* Right Column — Pie + Countries */}
               <div className="col-span-12 xl:col-span-4 space-y-4">
 
-                {/* Activity Log — Timeline */}
-                <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-outfit text-[11px] font-[700] text-slate-300 uppercase tracking-[0.1em] flex items-center gap-2">
-                      <i className="fa-solid fa-clock-rotate-left text-[var(--color-primary)] text-[10px]"></i>
-                      Son Aktiviteler
-                    </h3>
-                    {activityLog.length > 0 && (
-                      <span className="text-[10px] text-slate-600 font-mono">{activityLog.length} kayıt</span>
-                    )}
-                  </div>
-                  {activityLog.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-6 gap-2">
-                      <div className="w-8 h-8 rounded-full bg-white/[0.04] flex items-center justify-center">
-                        <i className="fa-regular fa-clock text-slate-600 text-sm"></i>
-                      </div>
-                      <p className="text-slate-600 text-[11px] text-center">Panel kullanıldıkça aktiviteler burada görünür.</p>
-                    </div>
-                  ) : (
-                    <div className="relative max-h-52 overflow-y-auto pr-1 space-y-0">
-                      {/* Vertical timeline line */}
-                      <div className="absolute left-[7px] top-2 bottom-2 w-px bg-white/[0.06]"></div>
-                      {activityLog.slice(0, 10).map((log, idx) => (
-                        <div key={log.id} className="relative flex items-start gap-3 py-2">
-                          {/* Timeline dot */}
-                          <div className={`relative z-10 w-3.5 h-3.5 rounded-full border-2 border-[#06080F] shrink-0 mt-0.5 ${idx === 0 ? 'bg-[var(--color-primary)] shadow-[0_0_6px_rgba(197,160,89,0.5)]' : 'bg-slate-700'}`}></div>
-                          <div className="flex-1 min-w-0 pb-0.5">
-                            <p className="text-[11px] font-semibold text-slate-300 leading-tight">{log.action}</p>
-                            <p className="text-[10px] text-slate-500 truncate mt-0.5">{log.detail}</p>
-                          </div>
-                          <span className="text-[9px] text-slate-600 font-mono shrink-0 mt-0.5 tabular-nums">
-                            {(() => {
-                              const diff = Math.round((Date.now() - log.time.getTime()) / 1000);
-                              if (diff < 10) return 'şimdi';
-                              if (diff < 60) return `${diff}sn`;
-                              if (diff < 3600) return `${Math.floor(diff / 60)}dk`;
-                              return `${Math.floor(diff / 3600)}sa`;
-                            })()}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
                 {/* Ülke Dağılımı */}
                 <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/[0.06]">
                   <h3 className="font-outfit text-[11px] font-[700] text-slate-300 uppercase tracking-[0.1em] mb-4 flex items-center gap-2">
