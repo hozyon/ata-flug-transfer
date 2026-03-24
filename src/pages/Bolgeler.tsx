@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Fuse from 'fuse.js';
 import { INITIAL_SITE_CONTENT } from '../constants';
-import TextureBackground from '../components/TextureBackground';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useAppStore } from '../store/useAppStore';
 import { useScrollReveal } from '../hooks/useScrollReveal';
@@ -149,7 +148,7 @@ const Bolgeler: React.FC = () => {
     const pageDesc = seo.pagesSeo?.regions?.description || INITIAL_SITE_CONTENT.seo.pagesSeo.regions.description;
 
     return (
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen" style={{ background: '#f8f7f4' }}>
             <Helmet>
                 <title>{pageTitle} | {siteContent.business.name}</title>
                 <meta name="description" content={pageDesc} />
@@ -188,63 +187,7 @@ const Bolgeler: React.FC = () => {
                     }))
                 })}</script>
             </Helmet>
-            {/* Custom Animation Styles */}
-            <style>{`
-                @property --angle {
-                  syntax: '<angle>';
-                  initial-value: 0deg;
-                  inherits: false;
-                }
-                
-                @keyframes rotate {
-                    to {
-                        --angle: 360deg;
-                    }
-                }
-                
-                .animate-border-rotate {
-                    position: relative;
-                    z-index: 0;
-                    overflow: hidden;
-                    border-radius: 1rem; /* rounded-2xl */
-                    padding: 2px; /* Slight thickness for visibility */
-                    display: flex;
-                    /* Outer Neon Glow */
-                    box-shadow: 0 0 20px rgba(99, 102, 241, 0.3), 0 0 40px rgba(197, 160, 89, 0.1); 
-                }
-                
-                .animate-border-rotate::before {
-                    content: "";
-                    position: absolute;
-                    z-index: -1;
-                    inset: 0;
-                    margin: -50%;
-                    width: 200%;
-                    height: 200%;
-                    background: conic-gradient(
-                        from var(--angle), 
-                        #ff4545, 
-                        #00ff99, 
-                        #006aff, 
-                        #ff0095, 
-                        #ff4545
-                    );
-                    animation: rotate 6s linear infinite;
-                }
-                
-                .animate-border-rotate::after {
-                    content: "";
-                    position: absolute;
-                    z-index: -1;
-                    inset: 2px; /* Match padding */
-                    background: white;
-                    border-radius: calc(1rem - 2px);
-                    /* Inner Neon Glow (Simulated with Inset Shadow) */
-                    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.05); 
-                }
-            `}</style>
-
-            {/* STANDARDIZED HERO SECTION - IMAGE BACKGROUND */}
+            {/* BANNER SECTION */}
             <section className="relative pt-28 pb-14 overflow-hidden border-b border-white/5">
                 {/* ... existing hero code ... */}
                 <div className="absolute inset-0 z-0">
@@ -289,8 +232,7 @@ const Bolgeler: React.FC = () => {
             </section>
 
             {/* Regions Grid */}
-            <section className="pt-6 pb-16 relative z-20 overflow-hidden">
-                <TextureBackground />
+            <section className="py-12 md:py-16 relative z-20 overflow-hidden" style={{ background: '#f8f7f4' }}>
                 <div className="max-w-7xl mx-auto px-4 relative z-10">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
                         {currentItems.length > 0 ? (
@@ -303,7 +245,7 @@ const Bolgeler: React.FC = () => {
                                         key={region.id}
                                         className={shouldAnimate ? "animate-border-rotate" : "h-full"}
                                     >
-                                        <div className="group flex flex-col h-full bg-white rounded-2xl overflow-hidden hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] transition-all duration-300 transform hover:-translate-y-1">
+                                        <div className="group flex flex-col h-full bg-white rounded-2xl overflow-hidden border border-slate-100 hover:shadow-lg hover:border-slate-200 transition-all duration-300 transform hover:-translate-y-0.5">
                                             {/* Image Container */}
                                             <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
                                                 <div className="absolute inset-0 bg-slate-900/5 group-hover:bg-transparent transition-colors duration-300 z-10"></div>
@@ -408,15 +350,16 @@ const Bolgeler: React.FC = () => {
             </section>
 
             {/* CTA */}
-            <section className="py-16 bg-[var(--color-dark)]">
-                <div className="max-w-4xl mx-auto px-4 text-center">
-                    <h2 className="text-3xl font-bold text-white">{t('regionsPage.ctaTitle')}</h2>
-                    <p className="text-slate-300 mt-4">{t('regionsPage.ctaDesc')}</p>
+            <section className="py-16 md:py-20 bg-[var(--color-dark)]">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+                    <h2 className="font-playfair font-bold text-white leading-tight" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)' }}>{t('regionsPage.ctaTitle')}</h2>
+                    <p className="text-white/40 mt-3 text-sm">{t('regionsPage.ctaDesc')}</p>
                     <a
                         href={`https://wa.me/${siteContent.business.whatsapp}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[#d4af6a] text-black font-bold px-8 py-4 rounded-full mt-8 transition-all duration-200 active:scale-[0.98]"
+                        className="inline-flex items-center gap-2.5 text-[#0f172a] font-bold px-8 py-3.5 rounded-2xl mt-8 transition-all duration-200 hover:brightness-110 active:scale-[0.98]"
+                        style={{ background: '#c5a059' }}
                     >
                         <i className="fab fa-whatsapp text-xl"></i>
                         {t('regionsPage.ctaBtn')}

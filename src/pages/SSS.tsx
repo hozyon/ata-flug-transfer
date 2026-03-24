@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import TextureBackground from '../components/TextureBackground';
 import { useSiteContent } from '../SiteContext';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useScrollReveal } from '../hooks/useScrollReveal';
@@ -81,18 +80,17 @@ const SSS: React.FC = () => {
                 </div>
             </section>
 
-            <section className="py-16 relative z-20 overflow-hidden">
-                <TextureBackground />
-                <div className="max-w-4xl mx-auto px-4 relative z-10">
-                    <div className="space-y-4 stagger-children">
+            <section className="py-16 md:py-24 relative z-20 overflow-hidden" style={{ background: '#f8f7f4' }}>
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 relative z-10">
+                    <div className="space-y-3 stagger-children">
                         {translatedFaqs.map((faq) => (
-                            <div key={faq.id} className="reveal bg-white rounded-2xl shadow-sm overflow-hidden">
-                                <button onClick={() => setOpenId(openId === faq.id ? null : faq.id)} className="w-full px-4 sm:px-6 py-4 sm:py-5 min-h-[56px] flex items-center justify-between text-left hover:bg-slate-50 transition-colors">
-                                    <span className="font-bold text-slate-800 pr-4">{faq.q}</span>
-                                    <i className={`fa-solid fa-chevron-down text-[var(--color-primary)] transition-transform ${openId === faq.id ? 'rotate-180' : ''}`}></i>
+                            <div key={faq.id} className="reveal bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm transition-all duration-200 hover:shadow-md hover:border-[var(--color-primary)]/20">
+                                <button onClick={() => setOpenId(openId === faq.id ? null : faq.id)} className="w-full px-5 sm:px-6 py-4 sm:py-5 min-h-[56px] flex items-center justify-between text-left hover:bg-slate-50/80 transition-colors">
+                                    <span className="font-bold text-slate-800 pr-4 text-sm sm:text-base">{faq.q}</span>
+                                    <i className={`fa-solid fa-chevron-down text-[var(--color-primary)] transition-transform duration-300 shrink-0 ${openId === faq.id ? 'rotate-180' : ''}`}></i>
                                 </button>
                                 <div className={`overflow-hidden transition-all duration-300 ${openId === faq.id ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
-                                    <div className="px-4 sm:px-6 pb-4 sm:pb-5 border-t border-slate-100">
+                                    <div className="px-5 sm:px-6 pb-5 border-t border-slate-100">
                                         <p className="text-slate-600 text-sm sm:text-base leading-relaxed pt-4">{faq.a}</p>
                                     </div>
                                 </div>
@@ -102,37 +100,37 @@ const SSS: React.FC = () => {
                 </div>
             </section>
 
-            <section className="py-16 bg-white">
-                <div className="max-w-4xl mx-auto px-4 text-center">
-                    <div className="w-20 h-20 bg-[var(--color-primary)]/10 rounded-full mx-auto flex items-center justify-center mb-6">
-                        <i className="fa-solid fa-question text-[var(--color-primary)] text-3xl"></i>
+            <section className="py-16 md:py-20" style={{ background: '#f8f7f4' }}>
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+                    <div className="inline-flex w-16 h-16 rounded-2xl items-center justify-center mb-6" style={{ background: 'rgba(197,160,89,0.12)', border: '1px solid rgba(197,160,89,0.2)' }}>
+                        <i className="fa-solid fa-question text-[var(--color-primary)] text-2xl"></i>
                     </div>
-                    <h2 className="text-2xl font-bold text-slate-800">{t('faq.moreQ')}</h2>
-                    <p className="text-slate-600 mt-2">{t('faq.moreQDesc')}</p>
-                    <a href={`https://wa.me/${business.whatsapp}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[#d4af6a] text-[#0f172a] font-bold px-8 py-4 rounded-full mt-6 transition-colors active:scale-[0.98]">
+                    <h2 className="text-2xl font-playfair font-bold text-slate-900">{t('faq.moreQ')}</h2>
+                    <p className="text-slate-500 mt-2 text-sm">{t('faq.moreQDesc')}</p>
+                    <a href={`https://wa.me/${business.whatsapp}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2.5 text-[#0f172a] font-bold px-8 py-3.5 rounded-2xl mt-6 transition-all duration-200 hover:brightness-110 active:scale-[0.98]" style={{ background: '#c5a059' }}>
                         <i className="fab fa-whatsapp text-xl"></i>
                         {t('faq.askWhatsapp')}
                     </a>
                 </div>
             </section>
 
-            <section className="py-16 bg-[var(--color-dark)]">
-                <div className="max-w-7xl mx-auto px-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 stagger-children">
-                        <div className="reveal text-center">
-                            <div className="w-16 h-16 bg-[var(--color-primary)] rounded-2xl mx-auto flex items-center justify-center text-[#0f172a] text-2xl"><i className="fa-solid fa-phone"></i></div>
-                            <h3 className="text-white font-bold mt-4">{t('faq.phone')}</h3>
-                            <p className="text-slate-300 mt-1">{business.phone}</p>
+            <section className="py-16 md:py-20 bg-[var(--color-dark)]">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 stagger-children">
+                        <div className="reveal text-center p-6 rounded-2xl transition-all duration-200 hover:bg-white/[0.03]" style={{ border: '1px solid rgba(255,255,255,0.06)' }}>
+                            <div className="w-12 h-12 rounded-xl mx-auto flex items-center justify-center text-[#0f172a] text-xl mb-4" style={{ background: '#c5a059' }}><i className="fa-solid fa-phone"></i></div>
+                            <h3 className="text-white font-bold text-sm">{t('faq.phone')}</h3>
+                            <p className="text-slate-400 mt-1 text-sm">{business.phone}</p>
                         </div>
-                        <div className="reveal text-center">
-                            <div className="w-16 h-16 bg-[var(--color-primary)] rounded-2xl mx-auto flex items-center justify-center text-[#0f172a] text-2xl"><i className="fa-solid fa-envelope"></i></div>
-                            <h3 className="text-white font-bold mt-4">{t('faq.email')}</h3>
-                            <p className="text-slate-300 mt-1">{business.email}</p>
+                        <div className="reveal text-center p-6 rounded-2xl transition-all duration-200 hover:bg-white/[0.03]" style={{ border: '1px solid rgba(255,255,255,0.06)' }}>
+                            <div className="w-12 h-12 rounded-xl mx-auto flex items-center justify-center text-[#0f172a] text-xl mb-4" style={{ background: '#c5a059' }}><i className="fa-solid fa-envelope"></i></div>
+                            <h3 className="text-white font-bold text-sm">{t('faq.email')}</h3>
+                            <p className="text-slate-400 mt-1 text-sm">{business.email}</p>
                         </div>
-                        <div className="reveal text-center">
-                            <div className="w-16 h-16 bg-[var(--color-primary)] rounded-2xl mx-auto flex items-center justify-center text-[#0f172a] text-2xl"><i className="fa-solid fa-clock"></i></div>
-                            <h3 className="text-white font-bold mt-4">{t('faq.workHours')}</h3>
-                            <p className="text-slate-300 mt-1">{t('faq.service247')}</p>
+                        <div className="reveal text-center p-6 rounded-2xl transition-all duration-200 hover:bg-white/[0.03]" style={{ border: '1px solid rgba(255,255,255,0.06)' }}>
+                            <div className="w-12 h-12 rounded-xl mx-auto flex items-center justify-center text-[#0f172a] text-xl mb-4" style={{ background: '#c5a059' }}><i className="fa-solid fa-clock"></i></div>
+                            <h3 className="text-white font-bold text-sm">{t('faq.workHours')}</h3>
+                            <p className="text-slate-400 mt-1 text-sm">{t('faq.service247')}</p>
                         </div>
                     </div>
                 </div>

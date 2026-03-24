@@ -30,38 +30,6 @@ const Iletisim: React.FC = () => {
 
     return (
         <div className="min-h-screen flex flex-col" style={{ background: '#020617' }}>
-            <style>{`
-                @keyframes gridFloat {
-                    0%, 100% { transform: translateY(0); }
-                    50% { transform: translateY(-8px); }
-                }
-                @keyframes lineReveal {
-                    from { scaleX: 0; }
-                    to { scaleX: 1; }
-                }
-                @keyframes channelIn {
-                    from { opacity: 0; transform: translateX(-20px); }
-                    to { opacity: 1; transform: translateX(0); }
-                }
-                .contact-channel {
-                    animation: channelIn 0.5s cubic-bezier(0.22,1,0.36,1) both;
-                }
-                .contact-channel:nth-child(1) { animation-delay: 0.1s; }
-                .contact-channel:nth-child(2) { animation-delay: 0.2s; }
-                .contact-channel:nth-child(3) { animation-delay: 0.3s; }
-                .iletisim-input {
-                    background: rgba(255,255,255,0.03) !important;
-                    border: 1px solid rgba(255,255,255,0.07) !important;
-                    color: white !important;
-                    transition: border-color 0.2s ease, background 0.2s ease !important;
-                }
-                .iletisim-input:focus {
-                    background: rgba(197,160,89,0.04) !important;
-                    border-color: rgba(197,160,89,0.4) !important;
-                    outline: none !important;
-                }
-                .iletisim-input::placeholder { color: rgba(255,255,255,0.18); }
-            `}</style>
 
             <Helmet>
                 <title>{pageTitle} | {business.name}</title>
@@ -124,7 +92,7 @@ const Iletisim: React.FC = () => {
                                 <i className="fa-solid fa-phone text-sm" style={{ color: '#c5a059' }} />
                             </div>
                             <div>
-                                <p className="text-[9px] font-black uppercase tracking-[0.28em] mb-1" style={{ color: 'rgba(197,160,89,0.5)', fontFamily: "'Outfit', sans-serif" }}>{t('faq.phone')}</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.28em] mb-1" style={{ color: 'rgba(197,160,89,0.6)' }}>{t('faq.phone')}</p>
                                 <p className="text-white font-bold text-[15px]" style={{ fontFamily: "'Outfit', sans-serif" }}>{business.phone}</p>
                             </div>
                             <i className="fa-solid fa-arrow-right ml-auto text-[10px] opacity-0 group-hover:opacity-60 transition-opacity" style={{ color: '#c5a059' }} />
@@ -142,7 +110,7 @@ const Iletisim: React.FC = () => {
                                 <i className="fa-brands fa-whatsapp text-xl" style={{ color: '#25D366' }} />
                             </div>
                             <div>
-                                <p className="text-[9px] font-black uppercase tracking-[0.28em] mb-1" style={{ color: 'rgba(37,211,102,0.5)', fontFamily: "'Outfit', sans-serif" }}>WhatsApp</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.28em] mb-1" style={{ color: 'rgba(37,211,102,0.6)' }}>WhatsApp</p>
                                 <p className="text-white font-bold text-[15px]" style={{ fontFamily: "'Outfit', sans-serif" }}>{t('hero.whatsapp')}</p>
                             </div>
                             <i className="fa-solid fa-arrow-right ml-auto text-[10px] opacity-0 group-hover:opacity-60 transition-opacity" style={{ color: '#25D366' }} />
@@ -159,7 +127,7 @@ const Iletisim: React.FC = () => {
                                 <i className="fa-solid fa-envelope text-sm" style={{ color: '#38bdf8' }} />
                             </div>
                             <div className="min-w-0">
-                                <p className="text-[9px] font-black uppercase tracking-[0.28em] mb-1" style={{ color: 'rgba(56,189,248,0.5)', fontFamily: "'Outfit', sans-serif" }}>{t('faq.email')}</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.28em] mb-1" style={{ color: 'rgba(56,189,248,0.6)' }}>{t('faq.email')}</p>
                                 <p className="text-white font-bold text-[14px] truncate" style={{ fontFamily: "'Outfit', sans-serif" }}>{business.email}</p>
                             </div>
                             <i className="fa-solid fa-arrow-right ml-auto text-[10px] shrink-0 opacity-0 group-hover:opacity-60 transition-opacity" style={{ color: '#38bdf8' }} />
@@ -193,7 +161,7 @@ const Iletisim: React.FC = () => {
                             <div>
                                 <div className="flex items-center gap-3 mb-6">
                                     <div className="h-px w-8" style={{ background: '#c5a059' }} />
-                                    <span className="text-[9px] font-black tracking-[0.4em] uppercase" style={{ color: 'rgba(197,160,89,0.55)', fontFamily: "'Outfit', sans-serif" }}>
+                                    <span className="text-[10px] font-black tracking-[0.35em] uppercase" style={{ color: 'rgba(197,160,89,0.65)' }}>
                                         {t('contact.eyebrow')}
                                     </span>
                                 </div>
@@ -235,7 +203,7 @@ const Iletisim: React.FC = () => {
                                             <i className={`fa-solid ${item.icon} text-sm`} style={{ color: item.color }} />
                                         </div>
                                         <div>
-                                            <p className="text-[9px] font-black tracking-[0.22em] uppercase mb-1" style={{ color: 'rgba(197,160,89,0.4)', fontFamily: "'Outfit', sans-serif" }}>
+                                            <p className="text-[10px] font-black tracking-[0.25em] uppercase mb-1" style={{ color: 'rgba(197,160,89,0.5)' }}>
                                                 {item.label}
                                             </p>
                                             <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: 14, fontFamily: "'Montserrat', sans-serif" }}>

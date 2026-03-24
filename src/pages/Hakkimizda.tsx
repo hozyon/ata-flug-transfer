@@ -1,6 +1,5 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import TextureBackground from '../components/TextureBackground';
 import { useSiteContent } from '../SiteContext';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useScrollReveal } from '../hooks/useScrollReveal';
@@ -63,48 +62,47 @@ const Hakkimizda: React.FC = () => {
                 </div>
             </section>
 
-            <section className="py-10 md:py-20 relative z-20 overflow-hidden bg-white">
-                <TextureBackground />
-                <div className="max-w-7xl mx-auto px-4 relative z-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 mb-2 items-start">
-                        <div className="pt-4 reveal-left">
-                            <h2 className="text-4xl font-playfair font-medium text-slate-900 mb-8 leading-tight">{t(about.title)}</h2>
-                            <div className="text-slate-500 text-lg leading-relaxed font-light space-y-6 text-left md:text-justify whitespace-pre-line border-l-2 border-[var(--color-primary)]/30 pl-6 bg-white/50 backdrop-blur-sm rounded-r-xl p-4">
+            <section className="py-16 md:py-24 relative z-20 overflow-hidden" style={{ background: '#f8f7f4' }}>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+                        <div className="pt-2 reveal-left">
+                            <h2 className="font-playfair font-bold text-slate-900 leading-tight mb-6" style={{ fontSize: 'clamp(1.6rem, 3vw, 2.5rem)' }}>{t(about.title)}</h2>
+                            <div className="text-slate-600 text-base leading-relaxed space-y-5 whitespace-pre-line border-l-2 pl-6" style={{ borderColor: 'rgba(197,160,89,0.4)' }}>
                                 {t(about.content)}
                             </div>
-                            <div className="mt-10 flex items-center gap-6">
-                                <a href={`https://wa.me/${business.whatsapp}`} target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-3 text-slate-900 font-medium hover:text-[var(--color-primary)] transition-colors">
-                                    <span className="text-lg">{t('about.contactCta')}</span>
-                                    <i className="fa-solid fa-arrow-right transform group-hover:translate-x-1 transition-transform"></i>
+                            <div className="mt-8">
+                                <a href={`https://wa.me/${business.whatsapp}`} target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-3 font-semibold transition-colors hover:opacity-80" style={{ color: '#c5a059' }}>
+                                    <span>{t('about.contactCta')}</span>
+                                    <i className="fa-solid fa-arrow-right text-sm transform group-hover:translate-x-1 transition-transform"></i>
                                 </a>
                             </div>
                         </div>
                         <div className="relative reveal">
-                            <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl">
+                            <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl border border-slate-200">
                                 <img src={about.image || '/images/about-custom.jpg'} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" alt="About Us Feature" />
                             </div>
-                            <div className="absolute -bottom-10 -left-10 w-2/3 bg-slate-50 p-8 rounded-tr-3xl hidden md:block border-t-4 border-[var(--color-primary)]/10 shadow-lg">
-                                <div className="text-[var(--color-primary)] text-4xl font-playfair font-bold mb-2">VIP</div>
-                                <div className="text-slate-900 font-medium uppercase tracking-widest text-sm">{t('about.transferService')}</div>
+                            <div className="absolute -bottom-8 -left-8 w-2/3 bg-white p-6 rounded-2xl hidden md:block shadow-lg border border-slate-100">
+                                <div className="font-playfair font-bold mb-1" style={{ color: '#c5a059', fontSize: '2rem' }}>VIP</div>
+                                <div className="text-slate-700 font-semibold uppercase tracking-widest text-xs">{t('about.transferService')}</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section className="py-12 bg-[var(--color-dark)] border-t border-slate-800">
-                <div className="max-w-7xl mx-auto px-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 stagger-children">
+            <section className="py-16 md:py-20 bg-[var(--color-dark)]">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 stagger-children">
                         {features.map((feature, idx) => (
-                            <div key={idx} className="reveal bg-transparent rounded-2xl p-6 border border-slate-800 hover:border-[var(--color-primary)]/50 hover:bg-slate-800/50 transition-all duration-300 group hover:-translate-y-1">
-                                <div className="flex flex-col items-center text-center gap-4">
-                                    <div className="w-12 h-12 rounded-xl bg-slate-800 text-[var(--color-primary)] flex items-center justify-center text-xl shrink-0 group-hover:bg-[var(--color-primary)] group-hover:text-white transition-all duration-300 mb-2 border border-slate-700/50">
+                            <div key={idx} className="reveal rounded-2xl p-6 border transition-all duration-300 group hover:-translate-y-1 cursor-default" style={{ borderColor: 'rgba(255,255,255,0.07)', background: 'rgba(255,255,255,0.03)' }}
+                                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(197,160,89,0.35)'; (e.currentTarget as HTMLDivElement).style.background = 'rgba(197,160,89,0.04)'; }}
+                                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,255,255,0.07)'; (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)'; }}>
+                                <div className="flex flex-col items-center text-center gap-3">
+                                    <div className="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-1 transition-all duration-300 group-hover:scale-110" style={{ background: 'rgba(197,160,89,0.12)', color: '#c5a059', border: '1px solid rgba(197,160,89,0.25)' }}>
                                         <i className={`fa-solid ${feature.icon}`}></i>
                                     </div>
-                                    <div>
-                                        <h3 className="text-lg font-playfair font-medium text-white mb-3 group-hover:text-[var(--color-primary)] transition-colors">{feature.title}</h3>
-                                        <p className="text-slate-500 text-sm leading-relaxed font-light group-hover:text-slate-400 transition-colors">{feature.desc}</p>
-                                    </div>
+                                    <h3 className="font-playfair font-bold text-white text-base group-hover:text-[#c5a059] transition-colors">{feature.title}</h3>
+                                    <p className="text-white/40 text-sm leading-relaxed">{feature.desc}</p>
                                 </div>
                             </div>
                         ))}

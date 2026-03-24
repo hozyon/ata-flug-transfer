@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSiteContent } from '../SiteContext';
-import TextureBackground from '../components/TextureBackground';
 import { useLanguage } from '../i18n/LanguageContext';
 
 const VizyonMisyon: React.FC = () => {
@@ -9,7 +8,7 @@ const VizyonMisyon: React.FC = () => {
     const vm = siteContent.visionMission;
 
     return (
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen" style={{ background: '#f8f7f4' }}>
             <section className="relative pt-28 pb-14 flex items-center justify-center overflow-hidden border-b border-white/5">
                 <div className="absolute inset-0 z-0">
                     <img src={vm?.hero?.bannerImage || "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=2000"} alt="Antalya Luxury" className="w-full h-full object-cover" />
@@ -29,24 +28,24 @@ const VizyonMisyon: React.FC = () => {
                 </div>
             </section>
 
-            <section className="py-20 md:py-28 relative z-20 overflow-hidden bg-white">
-                <TextureBackground />
-                <div className="max-w-7xl mx-auto px-4 relative z-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                        <div className="bg-white rounded-[2rem] p-10 shadow-xl border border-slate-100 hover:border-[var(--color-primary)]/30 transition-all duration-500 hover:shadow-[0_20px_50px_-12px_rgba(197,160,89,0.3)] hover:-translate-y-2 group relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--color-primary)]/5 rounded-full blur-3xl -mr-32 -mt-32 transition-all duration-700 group-hover:bg-[var(--color-primary)]/10"></div>
+            <section className="py-16 md:py-24 relative z-20 overflow-hidden" style={{ background: '#f8f7f4' }}>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+                        {/* Vision Card */}
+                        <div className="bg-white rounded-2xl p-8 md:p-10 border border-slate-100 hover:border-[var(--color-primary)]/30 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 group relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-48 h-48 rounded-full blur-3xl -mr-24 -mt-24 transition-all duration-500" style={{ background: 'rgba(197,160,89,0.05)' }}></div>
                             <div className="relative z-10">
-                                <div className="w-20 h-20 bg-[var(--color-primary)]/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-[var(--color-primary)] transition-colors duration-500">
-                                    <i className="fa-solid fa-eye text-[var(--color-primary)] text-3xl group-hover:text-white group-hover:scale-110 transition-transform duration-500"></i>
+                                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-105" style={{ background: 'rgba(197,160,89,0.1)', border: '1px solid rgba(197,160,89,0.2)' }}>
+                                    <i className="fa-solid fa-eye text-xl" style={{ color: '#c5a059' }}></i>
                                 </div>
-                                <h2 className="text-3xl font-playfair font-bold text-slate-800 mb-4 group-hover:text-[var(--color-primary)] transition-colors">{t(vm?.vision?.title || '')}</h2>
-                                <p className="text-slate-600 leading-relaxed text-lg">{t(vm?.vision?.desc || '')}</p>
-                                <div className="mt-8 space-y-4">
+                                <h2 className="font-playfair font-bold text-slate-900 mb-3 leading-snug group-hover:text-[var(--color-primary)] transition-colors" style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.75rem)' }}>{t(vm?.vision?.title || '')}</h2>
+                                <p className="text-slate-500 leading-relaxed text-sm mb-6">{t(vm?.vision?.desc || '')}</p>
+                                <div className="space-y-3">
                                     {vm?.vision?.items?.map((item, idx) => (
                                         item ? (
-                                            <div key={idx} className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 group-hover:bg-white border border-transparent group-hover:border-[var(--color-primary)]/20 transition-all duration-300">
-                                                <div className="w-8 h-8 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center text-[var(--color-primary)] shrink-0"><i className="fa-solid fa-check text-sm"></i></div>
-                                                <span className="text-slate-700 font-medium">{t(item)}</span>
+                                            <div key={idx} className="flex items-center gap-3 p-3 rounded-xl transition-colors duration-200" style={{ background: '#f8f7f4' }}>
+                                                <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(197,160,89,0.15)', color: '#c5a059' }}><i className="fa-solid fa-check text-[10px]"></i></div>
+                                                <span className="text-slate-600 text-sm font-medium">{t(item)}</span>
                                             </div>
                                         ) : null
                                     ))}
@@ -54,20 +53,21 @@ const VizyonMisyon: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-[2rem] p-10 shadow-xl border border-slate-100 hover:border-[var(--color-primary)]/30 transition-all duration-500 hover:shadow-[0_20px_50px_-12px_rgba(197,160,89,0.3)] hover:-translate-y-2 group relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-slate-200/50 rounded-full blur-3xl -mr-32 -mt-32 transition-all duration-700 group-hover:bg-[var(--color-primary)]/10"></div>
+                        {/* Mission Card */}
+                        <div className="bg-white rounded-2xl p-8 md:p-10 border border-slate-100 hover:border-[var(--color-primary)]/30 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 group relative overflow-hidden">
+                            <div className="absolute top-0 right-0 w-48 h-48 rounded-full blur-3xl -mr-24 -mt-24 transition-all duration-500" style={{ background: 'rgba(197,160,89,0.04)' }}></div>
                             <div className="relative z-10">
-                                <div className="w-20 h-20 bg-[var(--color-primary)]/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-[var(--color-primary)] transition-colors duration-500">
-                                    <i className="fa-solid fa-bullseye text-[var(--color-primary)] text-3xl group-hover:text-white group-hover:rotate-12 transition-transform duration-500"></i>
+                                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-105" style={{ background: 'rgba(197,160,89,0.1)', border: '1px solid rgba(197,160,89,0.2)' }}>
+                                    <i className="fa-solid fa-bullseye text-xl" style={{ color: '#c5a059' }}></i>
                                 </div>
-                                <h2 className="text-3xl font-playfair font-bold text-slate-800 mb-4 group-hover:text-[var(--color-primary)] transition-colors">{t(vm?.mission?.title || '')}</h2>
-                                <p className="text-slate-600 leading-relaxed text-lg">{t(vm?.mission?.desc || '')}</p>
-                                <div className="mt-8 space-y-4">
+                                <h2 className="font-playfair font-bold text-slate-900 mb-3 leading-snug group-hover:text-[var(--color-primary)] transition-colors" style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.75rem)' }}>{t(vm?.mission?.title || '')}</h2>
+                                <p className="text-slate-500 leading-relaxed text-sm mb-6">{t(vm?.mission?.desc || '')}</p>
+                                <div className="space-y-3">
                                     {vm?.mission?.items?.map((item, idx) => (
                                         item ? (
-                                            <div key={idx} className="flex items-center gap-4 p-4 rounded-xl bg-slate-50 group-hover:bg-white border border-transparent group-hover:border-[var(--color-primary)]/20 transition-all duration-300">
-                                                <div className="w-8 h-8 rounded-full bg-[var(--color-primary)]/20 flex items-center justify-center text-[var(--color-primary)] shrink-0"><i className="fa-solid fa-check text-sm"></i></div>
-                                                <span className="text-slate-700 font-medium">{t(item)}</span>
+                                            <div key={idx} className="flex items-center gap-3 p-3 rounded-xl transition-colors duration-200" style={{ background: '#f8f7f4' }}>
+                                                <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(197,160,89,0.15)', color: '#c5a059' }}><i className="fa-solid fa-check text-[10px]"></i></div>
+                                                <span className="text-slate-600 text-sm font-medium">{t(item)}</span>
                                             </div>
                                         ) : null
                                     ))}
@@ -78,21 +78,25 @@ const VizyonMisyon: React.FC = () => {
                 </div>
             </section>
 
-            <section className="py-20 bg-white border-t border-slate-100">
-                <div className="max-w-7xl mx-auto px-4">
-                    <div className="text-center mb-16">
-                        <div className="text-[var(--color-primary)] font-bold text-xs uppercase tracking-[0.2em] mb-3">{t('vision.valuesEyebrow')}</div>
-                        <h2 className="text-3xl md:text-4xl font-playfair font-bold text-slate-800">{t(vm?.values?.title || '')}</h2>
-                        <p className="text-slate-600 mt-4 max-w-2xl mx-auto text-lg">{t(vm?.values?.desc || '')}</p>
+            <section className="py-16 md:py-20" style={{ background: '#f8f7f4', borderTop: '1px solid rgba(0,0,0,0.04)' }}>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-12">
+                        <div className="flex items-center justify-center gap-4 mb-4">
+                            <span className="flex-1 max-w-[72px] h-px" style={{ background: 'linear-gradient(90deg, transparent, #c5a059)' }} />
+                            <span className="text-[10px] font-black tracking-[0.35em] uppercase" style={{ color: '#c5a059' }}>{t('vision.valuesEyebrow')}</span>
+                            <span className="flex-1 max-w-[72px] h-px" style={{ background: 'linear-gradient(270deg, transparent, #c5a059)' }} />
+                        </div>
+                        <h2 className="font-playfair font-bold text-slate-900 leading-tight" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.25rem)' }}>{t(vm?.values?.title || '')}</h2>
+                        <p className="text-slate-500 mt-2 max-w-2xl mx-auto text-sm">{t(vm?.values?.desc || '')}</p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
                         {vm?.values?.items?.map((valueItem, idx) => (
-                            <div key={idx} className="bg-white rounded-2xl p-8 border border-slate-200 hover:border-[var(--color-primary)]/30 hover:bg-slate-50 transition-colors duration-300 text-center group">
-                                <div className="w-16 h-16 bg-slate-50 group-hover:bg-white rounded-xl mx-auto flex items-center justify-center text-[var(--color-primary)] text-2xl mb-6 shadow-sm border border-slate-100 transition-colors duration-300">
+                            <div key={idx} className="bg-white rounded-2xl p-6 border border-slate-100 hover:border-[var(--color-primary)]/25 hover:shadow-md transition-all duration-200 text-center group hover:-translate-y-0.5">
+                                <div className="w-12 h-12 rounded-2xl mx-auto flex items-center justify-center text-xl mb-4 transition-all duration-200 group-hover:scale-105" style={{ background: 'rgba(197,160,89,0.1)', color: '#c5a059', border: '1px solid rgba(197,160,89,0.2)' }}>
                                     <i className={`fa-solid ${valueItem.icon}`}></i>
                                 </div>
-                                <h3 className="font-playfair font-bold text-xl text-slate-800 mb-3">{t(valueItem.title)}</h3>
-                                <p className="text-slate-600 leading-relaxed text-sm">{t(valueItem.desc)}</p>
+                                <h3 className="font-playfair font-bold text-slate-900 text-base mb-2 group-hover:text-[var(--color-primary)] transition-colors">{t(valueItem.title)}</h3>
+                                <p className="text-slate-500 leading-relaxed text-xs">{t(valueItem.desc)}</p>
                             </div>
                         ))}
                     </div>

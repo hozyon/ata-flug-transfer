@@ -567,19 +567,19 @@ const App: React.FC = () => {
                     const activeGroups = priceSearch.trim() ? filteredGroups : groups;
 
                     return (
-                      <section className="relative overflow-hidden py-0" style={{ background: 'linear-gradient(160deg, #080c16 0%, #0c1220 50%, #080c16 100%)' }}>
+                      <section className="relative overflow-hidden py-16 md:py-24" style={{ background: 'linear-gradient(160deg, #080c16 0%, #0c1220 50%, #080c16 100%)' }}>
 
                         {/* Gold radial glow */}
                         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[220px] opacity-[0.18]" style={{ background: 'radial-gradient(ellipse, #c5a059 0%, transparent 70%)' }} />
 
-                        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-10">
+                        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                           {/* ── Header row: title left, legend right ── */}
                           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-5">
                             <div className="reveal">
                               <div className="flex items-center gap-2.5 mb-2.5">
                                 <span className="w-5 h-px" style={{ background: '#c5a059' }}></span>
-                                <span className="text-[9px] font-black tracking-[0.4em] uppercase" style={{ color: '#c5a059' }}>{t('pricing.eyebrow')}</span>
+                                <span className="text-[10px] font-black tracking-[0.35em] uppercase" style={{ color: '#c5a059' }}>{t('pricing.eyebrow')}</span>
                               </div>
                               <h2 className="text-[26px] md:text-[34px] font-black tracking-tight leading-none text-white" style={{ fontFamily: "'Outfit', sans-serif" }}>
                                 {t('pricing.title')}&nbsp;<span style={{ color: '#c5a059' }}>{t('pricing.titleAccent')}</span>
@@ -707,13 +707,19 @@ const App: React.FC = () => {
                     {/* Ambient center glow */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[300px] pointer-events-none z-0" style={{ background: 'radial-gradient(ellipse, rgba(197,160,89,0.07) 0%, transparent 65%)' }} />
 
-                    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 md:py-20">
+                    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
 
-                      {/* Eyebrow */}
-                      <div className="flex items-center justify-center gap-4 mb-12 md:mb-16">
-                        <span className="flex-1 max-w-[80px] h-px" style={{ background: 'linear-gradient(90deg, transparent, #c5a059)' }} />
-                        <span className="text-[10px] font-black tracking-[0.35em] uppercase" style={{ color: '#c5a059' }}>{t('services.eyebrow')}</span>
-                        <span className="flex-1 max-w-[80px] h-px" style={{ background: 'linear-gradient(270deg, transparent, #c5a059)' }} />
+                      {/* Eyebrow + Heading */}
+                      <div className="text-center mb-12 md:mb-16 reveal">
+                        <div className="flex items-center justify-center gap-4 mb-5">
+                          <span className="flex-1 max-w-[72px] h-px" style={{ background: 'linear-gradient(90deg, transparent, #c5a059)' }} />
+                          <span className="text-[10px] font-black tracking-[0.35em] uppercase" style={{ color: '#c5a059' }}>{t('services.eyebrow')}</span>
+                          <span className="flex-1 max-w-[72px] h-px" style={{ background: 'linear-gradient(270deg, transparent, #c5a059)' }} />
+                        </div>
+                        <h2 className="font-playfair font-bold text-white leading-tight" style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)' }}>
+                          {t('services.title') || 'VIP Transfer'}&nbsp;<span className="bg-gradient-to-r from-[#c5a059] via-[#e0c07a] to-[#c5a059] bg-clip-text text-transparent">{t('services.titleAccent') || 'Hizmetleri'}</span>
+                        </h2>
+                        <p className="text-white/35 text-sm mt-3 max-w-xl mx-auto">{t('services.subtitle') || 'Antalya havalimanı ve çevresi için premium transfer deneyimi'}</p>
                       </div>
 
                       {/* 4 Service Cards */}
@@ -760,13 +766,13 @@ const App: React.FC = () => {
                     <div className="w-full h-px" style={{ background: 'linear-gradient(90deg, transparent 0%, #c5a059 30%, #e0c07a 50%, #c5a059 70%, transparent 100%)', opacity: 0.25 }} />
                   </section>
 
-                  <section id="regions" className="scroll-mt-20 py-20" style={{ background: '#080c16' }}>
+                  <section id="regions" className="scroll-mt-20 py-16 md:py-24" style={{ background: '#080c16' }}>
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                       {/* Header */}
                       <div className="flex items-center gap-3 mb-3">
                         <span className="h-px w-8" style={{ background: '#c5a059' }} />
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em]" style={{ color: '#c5a059' }}>{t('regions.eyebrow')}</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.35em]" style={{ color: '#c5a059' }}>{t('regions.eyebrow')}</span>
                       </div>
                       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
                         <h2 className="font-playfair font-bold text-white leading-tight" style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)' }}>
@@ -819,42 +825,47 @@ const App: React.FC = () => {
                   </section>
 
                   {randomBlogPosts.length > 0 && (
-                  <section id="blog-highlights" className="py-12 bg-slate-50 scroll-mt-20 relative overflow-hidden">
-                    <TextureBackground />
-                    <div className="max-w-7xl mx-auto px-4 relative z-10">
-                      <div className="text-center mb-10 md:mb-12">
-                        <div className="inline-flex items-center gap-2 mb-3">
-                          <span className="w-8 h-px bg-gradient-to-r from-transparent to-[var(--color-primary)]"></span>
-                          <span className="text-[var(--color-primary)] font-bold text-[11px] uppercase tracking-[0.3em]">{t('blog.eyebrow')}</span>
-                          <span className="w-8 h-px bg-gradient-to-l from-transparent to-[var(--color-primary)]"></span>
+                  <section id="blog-highlights" className="scroll-mt-20 relative overflow-hidden py-16 md:py-24" style={{ background: 'linear-gradient(180deg, #080c16 0%, #0a0f1c 100%)' }}>
+                    {/* Ambient glow */}
+                    <div className="absolute top-0 right-1/4 w-[500px] h-[300px] pointer-events-none" style={{ background: 'radial-gradient(ellipse, rgba(197,160,89,0.06) 0%, transparent 70%)' }} />
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                      <div className="text-center mb-10 md:mb-14 reveal">
+                        <div className="flex items-center justify-center gap-4 mb-5">
+                          <span className="flex-1 max-w-[72px] h-px" style={{ background: 'linear-gradient(90deg, transparent, #c5a059)' }} />
+                          <span className="text-[10px] font-black tracking-[0.35em] uppercase" style={{ color: '#c5a059' }}>{t('blog.eyebrow')}</span>
+                          <span className="flex-1 max-w-[72px] h-px" style={{ background: 'linear-gradient(270deg, transparent, #c5a059)' }} />
                         </div>
-                        <h2 className="text-3xl md:text-4xl lg:text-5xl font-playfair font-bold leading-tight text-slate-900">
-                          {t('blog.title')} <span className="bg-gradient-to-r from-[var(--color-primary)] via-[#e0c07a] to-[var(--color-primary)] bg-clip-text text-transparent">{t('blog.titleAccent')}</span>
+                        <h2 className="font-playfair font-bold text-white leading-tight" style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)' }}>
+                          {t('blog.title')}&nbsp;<span className="bg-gradient-to-r from-[#c5a059] via-[#e0c07a] to-[#c5a059] bg-clip-text text-transparent">{t('blog.titleAccent')}</span>
                         </h2>
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 stagger-children">
                         {randomBlogPosts.map((post) => (
-                          <Link key={post.id} to={`/blog/${post.slug}`} className="group bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                          <Link key={post.id} to={`/blog/${post.slug}`} className="reveal group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+                            onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(197,160,89,0.3)'; (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 8px 32px rgba(197,160,89,0.08)'; }}
+                            onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.08)'; (e.currentTarget as HTMLAnchorElement).style.boxShadow = 'none'; }}>
                             <div className="relative h-40 overflow-hidden">
                               <img src={post.featuredImage} alt={t(post.title)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                              <span className="absolute bottom-2 left-3 text-[10px] font-bold text-white/80 bg-black/30 backdrop-blur-sm rounded-full px-2.5 py-0.5">{t(post.category)}</span>
+                              <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(5,8,15,0.85) 0%, rgba(5,8,15,0.2) 100%)' }}></div>
+                              <span className="absolute bottom-2 left-3 text-[10px] font-bold text-white/70 rounded-full px-2.5 py-0.5" style={{ background: 'rgba(197,160,89,0.2)', border: '1px solid rgba(197,160,89,0.3)' }}>{t(post.category)}</span>
                             </div>
                             <div className="p-4">
-                              <h3 className="text-sm font-bold text-[var(--color-dark)] line-clamp-2 mb-2 group-hover:text-[var(--color-primary)] transition-colors leading-snug">{t(post.title)}</h3>
-                              <p className="text-xs text-slate-400 line-clamp-2 leading-relaxed">{t(post.excerpt)}</p>
-                              <div className="mt-3 flex items-center gap-1 text-[var(--color-primary)] text-xs font-semibold">
+                              <h3 className="text-sm font-bold text-white/90 line-clamp-2 mb-2 group-hover:text-[#c5a059] transition-colors leading-snug">{t(post.title)}</h3>
+                              <p className="text-xs text-white/35 line-clamp-2 leading-relaxed">{t(post.excerpt)}</p>
+                              <div className="mt-3 flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest" style={{ color: '#c5a059' }}>
                                 <span>{t('blog.readMore')}</span>
-                                <i className="fa-solid fa-arrow-right text-[9px] group-hover:translate-x-1 transition-transform"></i>
+                                <i className="fa-solid fa-arrow-right text-[8px] group-hover:translate-x-1 transition-transform"></i>
                               </div>
                             </div>
                           </Link>
                         ))}
                       </div>
-                      <div className="text-center mt-8">
-                        <Link to="/blog" className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-[var(--color-primary)] transition-colors">
+                      <div className="text-center mt-10">
+                        <Link to="/blog" className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-200 hover:text-[#c5a059]" style={{ color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.08)' }}
+                          onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(197,160,89,0.35)'; (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(197,160,89,0.05)'; }}
+                          onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.08)'; (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; }}>
                           <span>{t('blog.viewAll')}</span>
-                          <i className="fa-solid fa-arrow-right text-xs"></i>
+                          <i className="fa-solid fa-arrow-right text-[9px]"></i>
                         </Link>
                       </div>
                     </div>
@@ -862,17 +873,17 @@ const App: React.FC = () => {
                   )}
 
                   {/* Müşteri Yorumları — 2026 UI */}
-                  <section id="reviews" className="py-8 md:py-10 bg-[var(--color-dark)] overflow-hidden relative">
+                  <section id="reviews" className="py-16 md:py-24 bg-[var(--color-dark)] overflow-hidden relative">
                     {/* Ambient glow */}
                     <div className="absolute top-0 left-1/4 w-[500px] h-[300px] bg-[var(--color-primary)]/[0.03] rounded-full blur-[100px] pointer-events-none"></div>
                     <div className="absolute bottom-0 right-1/4 w-[400px] h-[200px] bg-[var(--color-primary)]/[0.02] rounded-full blur-[80px] pointer-events-none"></div>
 
                     <div className="max-w-7xl mx-auto px-4 mb-10 md:mb-14 relative z-10">
                       <div className="text-center">
-                        <div className="inline-flex items-center gap-2 mb-3">
-                          <span className="w-8 h-px bg-gradient-to-r from-transparent to-[var(--color-primary)]"></span>
-                          <span className="text-[var(--color-primary)] font-bold text-[11px] uppercase tracking-[0.3em]">{t('reviews.eyebrow')}</span>
-                          <span className="w-8 h-px bg-gradient-to-l from-transparent to-[var(--color-primary)]"></span>
+                        <div className="flex items-center justify-center gap-4 mb-4">
+                          <span className="flex-1 max-w-[72px] h-px" style={{ background: 'linear-gradient(90deg, transparent, #c5a059)' }} />
+                          <span className="text-[10px] font-black tracking-[0.35em] uppercase" style={{ color: '#c5a059' }}>{t('reviews.eyebrow')}</span>
+                          <span className="flex-1 max-w-[72px] h-px" style={{ background: 'linear-gradient(270deg, transparent, #c5a059)' }} />
                         </div>
                         <h2 className="text-3xl md:text-4xl lg:text-5xl font-playfair font-bold text-white leading-tight">
                           <span className="bg-gradient-to-r from-[var(--color-primary)] via-[#e0c07a] to-[var(--color-primary)] bg-clip-text text-transparent">2.847</span> {t('reviews.count')}

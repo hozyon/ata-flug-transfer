@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import TextureBackground from '../components/TextureBackground';
 import { Helmet } from 'react-helmet-async';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useSiteContent } from '../SiteContext';
@@ -37,7 +36,7 @@ const Blog: React.FC = () => {
     );
 
     return (
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen" style={{ background: '#f8f7f4' }}>
             <Helmet>
                 <title>{t('blogPage.title')} | {businessName}</title>
                 <meta name="description" content="Antalya havalimanı transfer rehberi, gezilecek yerler, tatil ipuçları ve daha fazlası. Antalya'nın en güncel gezi blogu." />
@@ -82,18 +81,17 @@ const Blog: React.FC = () => {
                 </div>
             </div>
 
-            {/* Minimal Blog Grid */}
-            <section className="py-20 relative z-10">
-                <TextureBackground />
+            {/* Blog Grid */}
+            <section className="py-12 md:py-16 relative z-10" style={{ background: '#f8f7f4' }}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-8 sm:gap-x-6 sm:gap-y-10">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
                         {currentPosts.map((post) => {
                             const tp = translatePost(post);
                             return (
                                 <Link
                                     to={`/blog/${post.slug}`}
                                     key={post.id}
-                                    className="group flex flex-col h-full bg-white rounded-2xl overflow-hidden hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] transition-all duration-300 transform hover:-translate-y-1"
+                                    className="group flex flex-col h-full bg-white rounded-2xl overflow-hidden border border-slate-100 hover:shadow-md hover:border-slate-200 transition-all duration-300 transform hover:-translate-y-0.5"
                                 >
                                     {/* Image Container */}
                                     <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
@@ -173,19 +171,19 @@ const Blog: React.FC = () => {
                 </div>
             </section>
 
-            {/* Minimal CTA */}
-            <section className="py-20 bg-[var(--color-dark)] relative overflow-hidden">
-                <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-                <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
-                    <h2 className="text-3xl md:text-4xl font-playfair font-bold text-white mb-6">{t('blogPage.ctaTitle')}</h2>
-                    <p className="text-slate-400 mb-8 max-w-xl mx-auto text-lg">
+            {/* CTA */}
+            <section className="py-16 md:py-20 bg-[var(--color-dark)]">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+                    <h2 className="font-playfair font-bold text-white leading-tight mb-4" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)' }}>{t('blogPage.ctaTitle')}</h2>
+                    <p className="text-white/40 mb-8 max-w-xl mx-auto text-sm">
                         {t('blogPage.ctaDesc')}
                     </p>
                     <a
                         href={`https://wa.me/${siteContent.business.whatsapp}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-3 bg-[#25D366] text-white px-8 py-4 rounded-full font-bold text-sm uppercase tracking-wider hover:bg-[#20bd5a] transition-all duration-300 shadow-lg hover:shadow-green-500/30 hover:-translate-y-1"
+                        className="inline-flex items-center justify-center gap-2.5 text-white font-bold px-8 py-3.5 rounded-2xl transition-all duration-200 hover:brightness-110 active:scale-[0.98]"
+                        style={{ background: '#25D366' }}
                     >
                         <i className="fa-brands fa-whatsapp text-xl"></i>
                         <span>{t('blogPage.ctaBtn')}</span>
