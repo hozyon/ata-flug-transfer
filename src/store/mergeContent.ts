@@ -17,7 +17,15 @@ export function mergeContent(parsed: SiteContent): SiteContent {
         ? INITIAL_SITE_CONTENT.regions
         : parsed.regions.map(savedRegion => {
             const def = defaultRegionMap.get(savedRegion.id);
-            return def ? { ...def, ...savedRegion } : savedRegion;
+            const merged = def ? { ...def, ...savedRegion } : savedRegion;
+            // Safety net: if price ended up undefined/NaN after merge (happens when
+            // price:undefined was saved — JSON.stringify omits undefined keys so the
+            // field is absent from the parsed object, letting def.price win normally,
+            // but this guard catches any remaining edge case).
+            if (typeof merged.price !== 'number' || isNaN(merged.price)) {
+                merged.price = def?.price ?? 50;
+            }
+            return merged;
         });
 
     const merged: SiteContent = {

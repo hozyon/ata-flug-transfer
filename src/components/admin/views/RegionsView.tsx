@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { RichTextEditor } from '../RichTextEditor';
 import { SiteContent, Region } from '../../../types';
-import { SCRAPED_REGIONS } from '../../../constants';
+import { SCRAPED_REGIONS, INITIAL_SITE_CONTENT } from '../../../constants';
 import { useAppStore } from '../../../store/useAppStore';
 import { useDragAndDrop } from '../../../hooks/useDragAndDrop';
 import { useViewMode } from '../../../hooks/useViewMode';
@@ -30,7 +30,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
     const [newRegion, setNewRegion] = useState<Region>({
         id: '', name: '', desc: '',
         image: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800',
-        icon: 'fa-location-dot', price: undefined
+        icon: 'fa-location-dot', price: 50
     });
 
     const { viewMode, toggleViewMode } = useViewMode();
@@ -67,7 +67,10 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                 name: regionName,
                 desc: scraped?.desc || '',
                 image: scraped?.image || 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=600',
-                icon: 'fa-location-dot', price: undefined
+                icon: 'fa-location-dot',
+                // Use INITIAL default price so JSON serialization never omits the field.
+                // price: undefined → JSON.stringify omits key → mergeContent fills 50 from default.
+                price: INITIAL_SITE_CONTENT.regions.find(r => r.name === regionName)?.price ?? 50
             };
             setEditContent({ ...editContent, regions: [...regions, newR] });
             showToast(`${regionName} eklendi`, 'success');

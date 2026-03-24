@@ -184,9 +184,15 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent, setEditCo
                                                 onFocus={() => { setEditingPriceId(region.id); setEditingPriceValue(region.price ? String(region.price) : ''); }}
                                                 onChange={e => setEditingPriceValue(e.target.value)}
                                                 onBlur={() => {
-                                                    const parsed = editingPriceValue.trim() !== '' ? parseInt(editingPriceValue) : undefined;
-                                                    const updated = regions.map(r => r.id === region.id ? { ...r, price: parsed } : r);
-                                                    setEditContent({ ...editContent, regions: updated });
+                                                    const val = editingPriceValue.trim();
+                                                    const parsed = val !== '' ? parseInt(val) : undefined;
+                                                    // Only update if a valid positive number was entered.
+                                                    // Never save undefined — JSON.stringify omits undefined keys,
+                                                    // causing mergeContent to fill in the 50€ default on next load.
+                                                    if (parsed !== undefined && !isNaN(parsed) && parsed > 0) {
+                                                        const updated = regions.map(r => r.id === region.id ? { ...r, price: parsed } : r);
+                                                        setEditContent({ ...editContent, regions: updated });
+                                                    }
                                                     setEditingPriceId(null);
                                                 }}
                                                 className="w-16 bg-transparent text-right text-xl font-black text-white outline-none focus:text-[var(--color-primary)] transition-colors placeholder-slate-600 cursor-text border-b border-transparent group-hover/price:border-white/20 group-hover/price:border-dashed focus:border-solid focus:border-[var(--color-primary)]/60 pb-px [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
@@ -278,9 +284,12 @@ export const PricingView: React.FC<PricingViewProps> = ({ editContent, setEditCo
                                                     onFocus={() => { setEditingPriceId(region.id); setEditingPriceValue(region.price ? String(region.price) : ''); }}
                                                     onChange={e => setEditingPriceValue(e.target.value)}
                                                     onBlur={() => {
-                                                        const parsed = editingPriceValue.trim() !== '' ? parseInt(editingPriceValue) : undefined;
-                                                        const updated = regions.map(r => r.id === region.id ? { ...r, price: parsed } : r);
-                                                        setEditContent({ ...editContent, regions: updated });
+                                                        const val = editingPriceValue.trim();
+                                                        const parsed = val !== '' ? parseInt(val) : undefined;
+                                                        if (parsed !== undefined && !isNaN(parsed) && parsed > 0) {
+                                                            const updated = regions.map(r => r.id === region.id ? { ...r, price: parsed } : r);
+                                                            setEditContent({ ...editContent, regions: updated });
+                                                        }
                                                         setEditingPriceId(null);
                                                     }}
                                                     className="w-16 bg-transparent text-right text-lg font-black text-white outline-none focus:text-[var(--color-primary)] transition-colors placeholder-slate-600 cursor-text border-b border-transparent group-hover/price:border-dashed group-hover/price:border-white/20 focus:border-solid focus:border-[var(--color-primary)]/60 pb-px [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"

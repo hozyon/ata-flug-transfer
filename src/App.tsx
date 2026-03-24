@@ -85,9 +85,19 @@ const App: React.FC = () => {
   const isRecoveryModeRef = useRef(false);
   const { t, language } = useLanguage();
 
+  // Store the initializeStore() promise so applySessionToken can await it
+  // CRITICAL: applySessionToken must NOT run before initializeStore completes,
+  // or it will read INITIAL_SITE_CONTENT from the store and overwrite Supabase
+  // with all-defaults (prices reset to 50, all customizations lost).
+  const initStoreRef = useRef<Promise<void> | null>(null);
+
   // Generate and persist a session token (single-session enforcement)
   const applySessionToken = async () => {
     if (!isSupabaseConfigured) return;
+    // Wait for real Supabase data to load before reading siteContent from store.
+    // Without this await, applySessionToken reads INITIAL_SITE_CONTENT and
+    // overwrites Supabase with default prices (50€) on every page refresh.
+    if (initStoreRef.current) await initStoreRef.current;
     const token = crypto.randomUUID();
     sessionStorage.setItem('ata_session_token', token);
     // Update in-memory store immediately (sync)
@@ -121,9 +131,9 @@ const App: React.FC = () => {
     navigate('/');
   };
 
-  // Initialize store on mount
+  // Initialize store on mount — store promise so applySessionToken can await it
   useEffect(() => {
-    initializeStore();
+    initStoreRef.current = initializeStore();
   }, []);
 
   // Listen for Supabase auth state changes
