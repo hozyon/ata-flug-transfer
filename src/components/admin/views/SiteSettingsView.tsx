@@ -271,11 +271,6 @@ export const SiteSettingsView: React.FC<SiteSettingsViewProps> = ({
                     )}
                 </div>
 
-                <div className="px-4 pb-4">
-                    <p className="text-[10px] text-slate-600">
-                        Yedeklenen anahtarlar: {BACKUP_KEYS.join(', ')}
-                    </p>
-                </div>
             </div>
         </div>
     );
