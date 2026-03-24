@@ -224,7 +224,6 @@ export const INITIAL_SITE_CONTENT: SiteContent = {
     notifySystem: true,
     twoFa: false,
   },
-  pricingRules: [],
   drivers: [],
   coupons: [],
 };

@@ -9,7 +9,7 @@ import { INITIAL_SITE_CONTENT } from '../constants';
  *   INITIAL defaults only fill in missing *fields* on existing regions.
  *   A region absent from parsed.regions must never be re-added.
  * - Exception: if parsed.regions === undefined (first-time init), use all INITIAL defaults.
- * - Same rule for pricingRules, drivers, coupons — use parsed arrays as-is.
+ * - Same rule for drivers, coupons — use parsed arrays as-is.
  */
 export function mergeContent(parsed: SiteContent): SiteContent {
     const defaultRegionMap = new Map(INITIAL_SITE_CONTENT.regions.map(r => [r.id, r]));
@@ -47,7 +47,6 @@ export function mergeContent(parsed: SiteContent): SiteContent {
         adminAccount: parsed.adminAccount
             ? { ...INITIAL_SITE_CONTENT.adminAccount, ...parsed.adminAccount }
             : INITIAL_SITE_CONTENT.adminAccount,
-        pricingRules: Array.isArray(parsed.pricingRules) ? parsed.pricingRules : [],
         drivers: Array.isArray(parsed.drivers) ? parsed.drivers : [],
         coupons: Array.isArray(parsed.coupons) ? parsed.coupons : [],
     };

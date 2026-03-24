@@ -56,20 +56,7 @@ describe('mergeContent — regions', () => {
     });
 });
 
-describe('mergeContent — pricingRules / drivers / coupons', () => {
-    it('uses parsed.pricingRules as-is when it is an array', () => {
-        const rule = { id: 'r1', name: 'Summer', type: 'percent' as const, value: 10, active: true };
-        const input = base({ pricingRules: [rule] });
-        const result = mergeContent(input);
-        expect(result.pricingRules).toEqual([rule]);
-    });
-
-    it('returns [] for pricingRules when parsed value is undefined', () => {
-        const input = base({ pricingRules: undefined });
-        const result = mergeContent(input);
-        expect(result.pricingRules).toEqual([]);
-    });
-
+describe('mergeContent — drivers / coupons', () => {
     it('returns [] for drivers when parsed value is undefined', () => {
         const input = base({ drivers: undefined });
         const result = mergeContent(input);

@@ -20,7 +20,6 @@ import {
 const BookingsView = lazy(() => import('./admin/views/BookingsView').then(m => ({ default: m.BookingsView })));
 const SiteSettingsView = lazy(() => import('./admin/views/SiteSettingsView').then(m => ({ default: m.SiteSettingsView })));
 const RegionsView = lazy(() => import('./admin/views/RegionsView').then(m => ({ default: m.RegionsView })));
-const PricingView = lazy(() => import('./admin/views/PricingView').then(m => ({ default: m.PricingView })));
 const FAQView = lazy(() => import('./admin/views/FAQView').then(m => ({ default: m.FAQView })));
 const BusinessSettingsView = lazy(() => import('./admin/views/BusinessSettingsView').then(m => ({ default: m.BusinessSettingsView })));
 const FleetView = lazy(() => import('./admin/views/FleetView').then(m => ({ default: m.FleetView })));
@@ -89,7 +88,7 @@ interface AdminPanelProps {
   onDeleteReview: (id: string) => Promise<void>;
 }
 
-type DashboardView = 'overview' | 'bookings' | 'site-settings' | 'hero-images' | 'regions' | 'fleet' | 'blog' | 'reviews' | 'faq' | 'business' | 'pricing' | 'about' | 'visionMission' | 'account' | 'seo' | 'media' | 'coupons' | 'drivers' | 'activity';
+type DashboardView = 'overview' | 'bookings' | 'site-settings' | 'hero-images' | 'regions' | 'fleet' | 'blog' | 'reviews' | 'faq' | 'business' | 'about' | 'visionMission' | 'account' | 'seo' | 'media' | 'coupons' | 'drivers' | 'activity';
 
 const COUNTRY_NAMES: Record<string, string> = {
   '🇩🇪': 'Almanya', '🇹🇷': 'Türkiye', '🇬🇧': 'İngiltere', '🇺🇸': 'ABD', '🇷🇺': 'Rusya',
@@ -610,8 +609,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     'reviews': { label: 'YORUMLAR', icon: 'fa-star', description: 'Yorum moderasyonu' },
     'hero-images': { label: 'ANASAYFA BANNER', icon: 'fa-images', description: 'Slider görselleri' },
     'site-settings': { label: 'MENÜ YÖNETİMİ', icon: 'fa-bars', description: 'Site menü yapısı' },
-    'regions': { label: 'BÖLGELER', icon: 'fa-map-location-dot', description: 'Transfer bölgeleri' },
-    'pricing': { label: 'FİYATLAR', icon: 'fa-tag', description: 'Fiyat tablosu' },
+    'regions': { label: 'BÖLGE & FİYAT', icon: 'fa-map-location-dot', description: 'Transfer bölgeleri ve fiyatları' },
     'fleet': { label: 'ARAÇLAR', icon: 'fa-car-side', description: 'Araç filosu' },
     'faq': { label: 'S.S.S', icon: 'fa-circle-question', description: 'Sıkça sorulan sorular' },
     'business': { label: 'İŞLETME BİLGİLERİ', icon: 'fa-building', description: 'İşletme bilgileri' },
@@ -882,7 +880,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
       }
       // 1-9 — Navigate to pages
       const navKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
-      const navViews = ['overview', 'bookings', 'blog', 'reviews', 'hero-images', 'site-settings', 'regions', 'pricing', 'fleet'];
+      const navViews = ['overview', 'bookings', 'blog', 'reviews', 'hero-images', 'site-settings', 'regions', 'fleet'];
       const keyIdx = navKeys.indexOf(e.key);
       if (keyIdx !== -1 && navViews[keyIdx]) {
         e.preventDefault();
@@ -1435,8 +1433,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 <SidebarGroupLabel label="İçerik & Katalog" isSidebarOpen={isSidebarOpen} />
                 <div className="space-y-0.5 px-2">
                   <SidebarNavItem id="blog" label="Blog Yönetimi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>} />
-                  <SidebarNavItem id="regions" label="Bölgeler" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>} />
-                  <SidebarNavItem id="pricing" label="Fiyatlar" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42l-8.704-8.704z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>} />
+                  <SidebarNavItem id="regions" label="Bölge & Fiyat" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>} />
                   <SidebarNavItem id="fleet" label="Araçlar" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>} />
                   <SidebarNavItem id="drivers" label="Sürücüler" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="14" x="3" y="5" rx="2"/><path d="M21 8H3"/><circle cx="12" cy="14" r="2"/><path d="M12 12v-1"/></svg>} />
                   <SidebarNavItem id="coupons" label="Kuponlar" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>} />
@@ -1602,7 +1599,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                   { id: 'overview', label: 'Dashboard', icon: 'fa-chart-pie', color: 'text-blue-400' },
                   { id: 'bookings', label: 'Rezervasyon', icon: 'fa-calendar-check', color: 'text-emerald-400', badge: pendingCount },
                   { id: 'reviews', label: 'Yorumlar', icon: 'fa-star', color: 'text-amber-400', badge: pendingReviews },
-                  { id: 'regions', label: 'Bölgeler', icon: 'fa-map-location-dot', color: 'text-teal-400' },
+                  { id: 'regions', label: 'Bölge & Fiyat', icon: 'fa-map-location-dot', color: 'text-teal-400' },
                 ].map(item => (
                   <button key={item.id} onClick={() => { setActiveView(item.id as DashboardView); setIsMobileMenuOpen(false); }}
                     className={`flex flex-col items-center gap-1.5 py-3 px-1 rounded-2xl transition-all active:scale-95 ${activeView === item.id ? 'bg-[var(--color-primary)]/10 ring-1 ring-[var(--color-primary)]/20' : 'bg-white/[0.03]'}`}>
@@ -1621,7 +1618,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                   { id: 'blog', label: 'Blog', icon: 'fa-newspaper', color: 'text-purple-400' },
                   { id: 'hero-images', label: 'Banner', icon: 'fa-images', color: 'text-pink-400' },
                   { id: 'fleet', label: 'Araçlar', icon: 'fa-car-side', color: 'text-red-400' },
-                  { id: 'pricing', label: 'Fiyatlar', icon: 'fa-tag', color: 'text-yellow-400' },
                   { id: 'faq', label: 'S.S.S', icon: 'fa-circle-question', color: 'text-indigo-400' },
                   { id: 'about', label: 'Hakkımızda', icon: 'fa-info-circle', color: 'text-sky-400' },
                   { id: 'visionMission', label: 'Vizyon', icon: 'fa-bullseye', color: 'text-violet-400' },
@@ -2679,13 +2675,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
             )
           }
 
-          {/* Pricing View */}
-          {
-            activeView === 'pricing' && (
-              <PricingView editContent={editContent} setEditContent={setEditContent} />
-            )
-          }
-
           {
             activeView === 'fleet' && (
               <FleetView
@@ -3244,9 +3233,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                   { key: '4', desc: 'Yorumlar' },
                   { key: '5', desc: 'Banner' },
                   { key: '6', desc: 'Menü' },
-                  { key: '7', desc: 'Bölgeler' },
-                  { key: '8', desc: 'Fiyatlar' },
-                  { key: '9', desc: 'Araçlar' },
+                  { key: '7', desc: 'Bölge & Fiyat' },
+                  { key: '8', desc: 'Araçlar' },
                 ].map(s => (
                   <div key={s.key} className="flex items-center justify-between py-2 px-1 rounded-lg hover:bg-white/[0.02]">
                     <span className="text-sm text-slate-300">{s.desc}</span>

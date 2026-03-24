@@ -153,20 +153,8 @@ export interface SiteContent {
     passwordHistory?: string[];
     activeSessionToken?: string;
   };
-  pricingRules?: PricingRule[];
   drivers?: Driver[];
   coupons?: Coupon[];
-}
-
-export interface PricingRule {
-  id: string;
-  name: string;
-  type: 'percent' | 'fixed';
-  value: number;
-  direction: 'add' | 'subtract';
-  dateFrom?: string;
-  dateTo?: string;
-  isActive: boolean;
 }
 
 export interface Driver {
