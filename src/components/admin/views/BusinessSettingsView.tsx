@@ -24,6 +24,10 @@ const INPUT_CLS =
 
 const LABEL_CLS = 'block text-[10px] font-bold font-outfit uppercase tracking-wider text-slate-500 mb-1.5';
 
+const isValidEmail = (v: string) => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+const isValidPhone = (v: string) => !v || /^\+?[\d\s\-()]{7,20}$/.test(v);
+const isValidUrl = (v: string) => { if (!v) return true; try { new URL(v); return true; } catch { return false; } };
+
 export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ editContent, setEditContent }) => {
     const [logoDragOver, setLogoDragOver] = useState(false);
     const [faviconDragOver, setFaviconDragOver] = useState(false);
@@ -55,6 +59,10 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
         });
 
     const readFile = (file: File, onResult: (dataUrl: string) => void) => {
+        if (file.size > 2 * 1024 * 1024) {
+            alert('Dosya 2MB sınırını aşıyor. Lütfen daha küçük bir dosya seçin.');
+            return;
+        }
         const r = new FileReader();
         r.onloadend = () => onResult(r.result as string);
         r.readAsDataURL(file);
@@ -342,16 +350,19 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
                             </label>
                             <div className="relative">
                                 <input
-                                    className={INPUT_CLS}
+                                    className={`${INPUT_CLS} ${biz.phone && !isValidPhone(biz.phone) ? '!border-red-500/60 focus:!border-red-500' : biz.phone && isValidPhone(biz.phone) ? '!border-emerald-500/40' : ''}`}
                                     value={biz.phone || ''}
                                     onChange={e => setBiz({ phone: e.target.value })}
                                     placeholder="+90 505 000 00 00"
                                     type="tel"
                                 />
                                 {biz.phone?.trim() && (
-                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
+                                    <div className={`absolute right-3 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full ${isValidPhone(biz.phone) ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]' : 'bg-red-400'}`} />
                                 )}
                             </div>
+                            {biz.phone && !isValidPhone(biz.phone) && (
+                                <p className="mt-1 text-[10px] text-red-400">Geçerli bir telefon numarası girin</p>
+                            )}
                         </div>
                     </div>
 
@@ -364,16 +375,19 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
                             </label>
                             <div className="relative">
                                 <input
-                                    className={INPUT_CLS}
+                                    className={`${INPUT_CLS} ${biz.email && !isValidEmail(biz.email) ? '!border-red-500/60 focus:!border-red-500' : biz.email && isValidEmail(biz.email) ? '!border-emerald-500/40' : ''}`}
                                     value={biz.email || ''}
                                     onChange={e => setBiz({ email: e.target.value })}
                                     placeholder="info@example.com"
                                     type="email"
                                 />
                                 {biz.email?.trim() && (
-                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
+                                    <div className={`absolute right-3 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full ${isValidEmail(biz.email) ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]' : 'bg-red-400'}`} />
                                 )}
                             </div>
+                            {biz.email && !isValidEmail(biz.email) && (
+                                <p className="mt-1 text-[10px] text-red-400">Geçerli bir e-posta adresi girin</p>
+                            )}
                         </div>
                         <div>
                             <label className={LABEL_CLS}>
@@ -874,6 +888,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
                                     allowFullScreen
                                     loading="lazy"
                                     referrerPolicy="no-referrer-when-downgrade"
+                                    sandbox="allow-scripts allow-same-origin"
                                     title="Harita Önizleme"
                                 />
                             </div>

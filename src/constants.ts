@@ -70,13 +70,13 @@ export const INITIAL_SITE_CONTENT: SiteContent = {
   ],
   business: {
     name: "ATA FLUG TRANSFER",
-    phone: "+90 505 228 15 96",
-    email: "info@ataflugtransfer.com",
-    address: "Antalya, Turkey",
-    whatsapp: "905052281596",
-    instagram: "https://instagram.com/ataflug",
-    facebook: "https://facebook.com/ataflug",
-    telegram: "https://t.me/ataflug",
+    phone: "",
+    email: "",
+    address: "",
+    whatsapp: "",
+    instagram: "",
+    facebook: "",
+    telegram: "",
     mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d49731.614179975106!2d31.435059487862148!3d36.7799226034246!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6388f97fd7616259%3A0x950a0fc95df9f8ba!2sAta%20Flug%20Transfer!5e0!3m2!1str!2str!4v1769547150156!5m2!1str!2str",
     logo: "/logo.png"
   },
@@ -218,27 +218,13 @@ export const INITIAL_SITE_CONTENT: SiteContent = {
     fullName: 'Admin',
     email: 'ataflugtransfer@gmail.com',
     phone: '+90 505 228 15 96',
-    avatar: 'https://api.dicebear.com/7.x/notionists/svg?seed=Admin1&backgroundColor=c5a059',
     notifyEmail: true,
     notifySms: false,
     notifySystem: true,
     twoFa: false,
   },
-  drivers: [],
-  coupons: [],
 };
 
-export const DESTINATIONS = [
-  "Antalya Havalimanı (AYT)",
-  ...SCRAPED_REGIONS
-    .map(region => region.name)
-    .filter(name => name !== "Antalya Havalimanı (AYT)")
-    .sort()
-];
-
-export const BUSINESS_INFO = INITIAL_SITE_CONTENT.business;
-
-export const REVIEWS: { id: number; name: string; country: string; lang: string; rating: number; text: string }[] = [];
 
 import { BlogPost } from './types';
 

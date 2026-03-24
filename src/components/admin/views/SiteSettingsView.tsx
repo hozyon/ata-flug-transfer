@@ -16,24 +16,12 @@ export const SiteSettingsView: React.FC<SiteSettingsViewProps> = ({
     const [restoreStatus, setRestoreStatus] = useState<'idle' | 'success' | 'error'>('idle');
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const BACKUP_KEYS = [
-        'ata_bookings_v6',
-        'ata_site_content_v10',
-        'ata_blog_posts_v1',
-        'ata_user_reviews_v1',
-        'ata_coupons_v1',
-        'ata_drivers_v1',
-        'ata_pricing_rules_v1',
-    ];
-
     const exportBackup = () => {
-        const backup: Record<string, unknown> = {};
-        BACKUP_KEYS.forEach(k => {
-            const v = localStorage.getItem(k);
-            if (v) {
-                try { backup[k] = JSON.parse(v); } catch { backup[k] = v; }
-            }
-        });
+        const backup = {
+            siteContent: editContent,
+            exportedAt: new Date().toISOString(),
+            version: 'v2',
+        };
         const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -49,16 +37,17 @@ export const SiteSettingsView: React.FC<SiteSettingsViewProps> = ({
         const reader = new FileReader();
         reader.onload = () => {
             try {
-                const data = JSON.parse(reader.result as string) as Record<string, unknown>;
-                Object.entries(data).forEach(([k, v]) => {
-                    localStorage.setItem(k, JSON.stringify(v));
-                });
-                setRestoreStatus('success');
-                setTimeout(() => window.location.reload(), 1200);
+                const data = JSON.parse(reader.result as string) as { siteContent?: SiteContent };
+                if (data.siteContent) {
+                    setEditContent(data.siteContent); // AdminPanel auto-save → Supabase
+                    setRestoreStatus('success');
+                } else {
+                    setRestoreStatus('error');
+                }
             } catch {
                 setRestoreStatus('error');
-                setTimeout(() => setRestoreStatus('idle'), 3000);
             }
+            setTimeout(() => setRestoreStatus('idle'), 3000);
         };
         reader.readAsText(file);
         if (fileInputRef.current) fileInputRef.current.value = '';

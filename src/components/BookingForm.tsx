@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { DESTINATIONS, BUSINESS_INFO } from '../constants';
 import { Booking, Vehicle } from '../types';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useAppStore } from '../store/useAppStore';
@@ -38,8 +37,9 @@ const STEPS = ['Rota', 'Bilgiler', 'Detaylar', 'Özet'] as const;
 
 const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) => {
   const { t, language } = useLanguage();
-  const businessName = useAppStore(state => state.siteContent.business.name);
-  const whatsappNumber = useAppStore(state => state.siteContent.business.whatsapp);
+  const siteContent = useAppStore(state => state.siteContent);
+  const businessName = siteContent.business.name;
+  const whatsappNumber = siteContent.business.whatsapp;
 
   const today = new Date().toISOString().split('T')[0];
 
@@ -49,8 +49,8 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
     countryCode: '+90',
     phone: '',
     email: '',
-    pickup: DESTINATIONS[0],
-    destination: DESTINATIONS[1],
+    pickup: '',
+    destination: '',
     date: '',
     time: '',
     passengers: 1,
@@ -155,7 +155,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
     }
 
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const waNumber = whatsappNumber || BUSINESS_INFO.whatsapp;
+    const waNumber = whatsappNumber;
     const waUrl = isMobile
       ? 'https://api.whatsapp.com/send?phone=' + waNumber + '&text=' + encodeURIComponent(msg)
       : 'https://web.whatsapp.com/send?phone=' + waNumber + '&text=' + encodeURIComponent(msg);
@@ -230,7 +230,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
                     <i className="fa-solid fa-circle-dot text-[var(--color-primary)] text-[9px] flex-shrink-0" />
                     <select name="pickup" value={formData.pickup} onChange={handleChange}
                       className="w-full bg-transparent outline-none text-[12px] text-white font-medium appearance-none cursor-pointer truncate">
-                      {DESTINATIONS.map(d => <option key={d} value={d} className="bg-[#0a0a0e] text-white">{d}</option>)}
+                      {siteContent.regions.map(r => <option key={r.id} value={r.name} className="bg-[#0a0a0e] text-white">{r.name}</option>)}
                     </select>
                   </div>
                 </div>
@@ -241,7 +241,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
                     <i className="fa-solid fa-location-dot text-[var(--color-primary)] text-[9px] flex-shrink-0" />
                     <select name="destination" value={formData.destination} onChange={handleChange}
                       className="w-full bg-transparent outline-none text-[12px] text-white font-medium appearance-none cursor-pointer truncate">
-                      {DESTINATIONS.map(d => <option key={d} value={d} className="bg-[#0a0a0e] text-white">{d}</option>)}
+                      {siteContent.regions.map(r => <option key={r.id} value={r.name} className="bg-[#0a0a0e] text-white">{r.name}</option>)}
                     </select>
                   </div>
                 </div>

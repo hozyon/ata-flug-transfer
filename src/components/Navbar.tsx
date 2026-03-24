@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { BUSINESS_INFO } from '../constants';
 import { useSiteContent } from '../SiteContext';
 import type { NavMenuItem } from '../types';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -267,7 +266,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
               <div className="relative">
                 <img
                   src={siteContent.business.logo || '/logo.png'}
-                  alt={BUSINESS_INFO.name}
+                  alt={siteContent.business.name || 'Logo'}
                   className="h-9 md:h-10 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
                   onError={e => (e.currentTarget.src = '/logo.png')}
                 />
@@ -278,7 +277,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                 </div>
                 <div className="text-[12px] sm:text-[15px] font-extrabold text-white leading-tight tracking-tight"
                   style={{ fontFamily: "'Outfit', sans-serif" }}>
-                  {BUSINESS_INFO.name}
+                  {siteContent.business.name}
                 </div>
               </div>
             </Link>

@@ -30,11 +30,8 @@ const BlogView = lazy(() => import('./admin/views/BlogView').then(m => ({ defaul
 const ReviewsView = lazy(() => import('./admin/views/ReviewsView').then(m => ({ default: m.ReviewsView })));
 const HeroImagesView = lazy(() => import('./admin/views/HeroImagesView').then(m => ({ default: m.HeroImagesView })));
 const SEOView = lazy(() => import('./admin/views/SEOView').then(m => ({ default: m.SEOView })));
-const MediaLibraryView = lazy(() => import('./admin/views/MediaLibraryView').then(m => ({ default: m.MediaLibraryView })));
-const ActivityLogView = lazy(() => import('./admin/views/ActivityLogView').then(m => ({ default: m.ActivityLogView })));
-const CouponsView = lazy(() => import('./admin/views/CouponsView').then(m => ({ default: m.CouponsView })));
-const DriversView = lazy(() => import('./admin/views/DriversView').then(m => ({ default: m.DriversView })));
-import { DESTINATIONS, REVIEWS, INITIAL_SITE_CONTENT } from '../constants';
+
+import { INITIAL_SITE_CONTENT } from '../constants';
 
 // ─── Error Boundary for lazy-loaded admin views ───────────────────────────────
 interface EBState { hasError: boolean; error: Error | null; }
@@ -88,7 +85,7 @@ interface AdminPanelProps {
   onDeleteReview: (id: string) => Promise<void>;
 }
 
-type DashboardView = 'overview' | 'bookings' | 'site-settings' | 'hero-images' | 'regions' | 'fleet' | 'blog' | 'reviews' | 'faq' | 'business' | 'about' | 'visionMission' | 'account' | 'seo' | 'media' | 'coupons' | 'drivers' | 'activity';
+type DashboardView = 'overview' | 'bookings' | 'site-settings' | 'hero-images' | 'regions' | 'fleet' | 'blog' | 'reviews' | 'faq' | 'business' | 'about' | 'visionMission' | 'account' | 'seo';
 
 const COUNTRY_NAMES: Record<string, string> = {
   '🇩🇪': 'Almanya', '🇹🇷': 'Türkiye', '🇬🇧': 'İngiltere', '🇺🇸': 'ABD', '🇷🇺': 'Rusya',
@@ -301,7 +298,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     for (const r of changed) await onUpdateReviewStatus(r.id, r.status);
     for (const r of removed) await onDeleteReview(r.id);
   };
-  const [siteReviews, _setSiteReviews] = useState(REVIEWS);
+  const [siteReviews, _setSiteReviews] = useState<never[]>([]);
   const [editableReviewsTab, setEditableReviewsTab] = useState<'pending' | 'approved' | 'rejected' | 'deleted'>('pending');
   const [selectedReviews, setSelectedReviews] = useState<string[]>([]);
 
@@ -340,8 +337,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   const [newBookingData, setNewBookingData] = useState<Partial<Booking>>({
     customerName: '',
     phone: '',
-    pickup: DESTINATIONS[0],
-    destination: DESTINATIONS[1],
+    pickup: '',
+    destination: '',
     date: new Date().toISOString().split('T')[0],
     time: '12:00',
     passengers: 1,
@@ -462,7 +459,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     }).filter(v => v.revenue > 0);
 
     // Country Stats
-    const allReviews = [...userReviews, ...REVIEWS];
+    const allReviews = [...userReviews, ...siteReviews];
     const countryStats: Record<string, number> = {};
     allReviews.forEach(r => {
       if (r.country) countryStats[r.country] = (countryStats[r.country] || 0) + 1;
@@ -617,10 +614,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     'visionMission': { label: 'VİZYON & MİSYON', icon: 'fa-bullseye', description: 'Vizyon ve misyon sayfası' },
     'account': { label: 'HESAP AYARLARI', icon: 'fa-user', description: 'Profil ve güvenlik tercihlerinizi merkezden yönetin.' },
     'seo': { label: 'SEO YÖNETİMİ', icon: 'fa-magnifying-glass-chart', description: 'Arama motoru optimizasyonu ayarları' },
-    'media': { label: 'MEDYA KÜTÜPHANESİ', icon: 'fa-photo-film', description: 'Tüm görseller' },
-    'coupons': { label: 'KUPONLAR', icon: 'fa-ticket', description: 'İndirim ve promosyon kodları' },
-    'drivers': { label: 'SÜRÜCÜLER', icon: 'fa-id-card', description: 'Sürücü yönetimi' },
-    'activity': { label: 'AKTİVİTE GÜNLÜĞÜ', icon: 'fa-clock-rotate-left', description: 'Son işlemler ve değişiklikler' },
   };
 
   const commandItems = useMemo(() => {
@@ -665,7 +658,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
       fullName: saved?.fullName ?? INITIAL_SITE_CONTENT.adminAccount!.fullName,
       email: saved?.email ?? INITIAL_SITE_CONTENT.adminAccount!.email,
       phone: saved?.phone ?? INITIAL_SITE_CONTENT.adminAccount!.phone,
-      avatar: saved?.avatar ?? 'https://api.dicebear.com/7.x/adventurer/svg?seed=Nour&backgroundColor=1e3a5f',
       currentPassword: '',
       newPassword: '',
       confirmPassword: '',
@@ -684,7 +676,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
       fullName: saved.fullName ?? prev.fullName,
       email: saved.email ?? prev.email,
       phone: saved.phone ?? prev.phone,
-      avatar: saved.avatar ?? prev.avatar,
       notifyEmail: saved.notifyEmail ?? prev.notifyEmail,
       notifySms: saved.notifySms ?? prev.notifySms,
       notifySystem: saved.notifySystem ?? prev.notifySystem,
@@ -695,7 +686,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     siteContent.adminAccount?.fullName,
     siteContent.adminAccount?.email,
     siteContent.adminAccount?.phone,
-    siteContent.adminAccount?.avatar,
     siteContent.adminAccount?.notifyEmail,
     siteContent.adminAccount?.notifySms,
     siteContent.adminAccount?.notifySystem,
@@ -817,19 +807,12 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     setNewUserForm({ name: '', email: '', role: 'Editör', password: '', confirmPassword: '' });
   };
 
-  // ── ACTIVITY LOG ──
-  const [activityLog, setActivityLog] = useState<{ id: string; action: string; detail: string; time: Date }[]>([]);
-  const addActivity = (action: string, detail: string) => {
-    setActivityLog(prev => [{ id: Date.now().toString(), action, detail, time: new Date() }, ...prev.slice(0, 49)]);
-  };
-
   // ── SKELETON LOADING ──
   const [isPageTransitioning, setIsPageTransitioning] = useState(false);
   const prevViewRef = useRef(activeView);
   useEffect(() => {
     if (prevViewRef.current !== activeView) {
       setIsPageTransitioning(true);
-      addActivity('Sayfa Değiştirildi', VIEW_LABELS[activeView]?.label || activeView);
       const t = setTimeout(() => setIsPageTransitioning(false), 400);
       prevViewRef.current = activeView;
       return () => clearTimeout(t);
@@ -1435,8 +1418,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                   <SidebarNavItem id="blog" label="Blog Yönetimi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>} />
                   <SidebarNavItem id="regions" label="Bölge & Fiyat" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>} />
                   <SidebarNavItem id="fleet" label="Araçlar" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>} />
-                  <SidebarNavItem id="drivers" label="Sürücüler" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="14" x="3" y="5" rx="2"/><path d="M21 8H3"/><circle cx="12" cy="14" r="2"/><path d="M12 12v-1"/></svg>} />
-                  <SidebarNavItem id="coupons" label="Kuponlar" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>} />
                 </div>
 
                 <div className={`${isSidebarOpen ? 'mx-4' : 'mx-3'} my-2.5 h-px bg-white/[0.05]`} />
@@ -1494,8 +1475,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                     )}
                   </div>
 
-                  <SidebarNavItem id="media" label="Medya Kütüphanesi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>} />
-                  <SidebarNavItem id="activity" label="Aktivite Günlüğü" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>} />
                   <div className={`${isSidebarOpen ? 'mx-2' : 'mx-1'} my-2 h-px bg-white/[0.05]`} />
                   <SidebarNavItem id="account" label="Hesap Ayarları" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>} />
                 </div>
@@ -1508,8 +1487,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
           {isSidebarOpen && (
             <div className="px-3 pt-3 pb-1 animate-in fade-in duration-300">
               <button onClick={() => setActiveView('account')} className="w-full flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.05] hover:border-[var(--color-primary)]/25 transition-all group text-left">
-                <div className="w-8 h-8 rounded-xl overflow-hidden ring-1 ring-[var(--color-primary)]/30 shrink-0">
-                  <img src={accountForm.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                <div className="w-8 h-8 rounded-xl bg-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/30 flex items-center justify-center shrink-0">
+                  <span className="text-[#0f172a] font-black text-sm">{(accountForm.fullName || 'A').charAt(0).toUpperCase()}</span>
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-outfit text-[12.5px] font-[650] text-white truncate leading-tight group-hover:text-[var(--color-primary)] transition-colors">{accountForm.fullName || 'Admin'}</p>
@@ -1777,9 +1756,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
             <div className="relative group z-50">
               <button className="flex items-center gap-2 pl-2 md:pl-4 border-l border-white/10 outline-none">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-amber-600 p-[2px] shadow-lg shadow-black/20 group-hover:shadow-[var(--color-primary)]/30 transition-shadow">
-                  <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center border-2 border-[var(--color-darker)] relative overflow-hidden">
-                    <img src={accountForm.avatar} alt="Admin Profil" className="w-full h-full object-cover" />
-                    <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors"></div>
+                  <div className="w-full h-full rounded-full bg-[var(--color-primary)] flex items-center justify-center border-2 border-[var(--color-darker)] relative">
+                    <span className="text-[#0f172a] font-black text-base">{(accountForm.fullName || 'A').charAt(0).toUpperCase()}</span>
+                    <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors rounded-full"></div>
                   </div>
                 </div>
               </button>
@@ -1791,7 +1770,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
                   <div className="px-4 py-3 border-b border-white/5 bg-white/[0.02]">
                     <p className="text-white text-xs font-bold truncate">{accountForm.fullName || 'Admin'}</p>
-                    <p className="text-slate-400 text-[10px] truncate">{accountForm.email || 'ataflugtransfer@gmail.com'}</p>
+                    <p className="text-slate-400 text-[10px] truncate">{accountForm.email || ''}</p>
                   </div>
                   <div className="p-1.5">
                     <button
@@ -2800,41 +2779,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               <SEOView
                 editContent={editContent}
                 setEditContent={updateContent}
-              />
-            )
-          }
-          {
-            activeView === 'media' && (
-              <MediaLibraryView
-                siteContent={editContent}
-                blogPosts={blogPosts}
-                showToast={showToast}
-              />
-            )
-          }
-          {
-            activeView === 'activity' && (
-              <ActivityLogView
-                showToast={showToast}
-              />
-            )
-          }
-          {
-            activeView === 'coupons' && (
-              <CouponsView
-                showToast={showToast}
-                editContent={editContent}
-                setEditContent={setEditContent}
-              />
-            )
-          }
-          {
-            activeView === 'drivers' && (
-              <DriversView
-                vehicles={editContent.vehicles}
-                showToast={showToast}
-                editContent={editContent}
-                setEditContent={setEditContent}
               />
             )
           }

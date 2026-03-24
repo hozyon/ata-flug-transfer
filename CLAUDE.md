@@ -22,7 +22,7 @@ cp .env.example .env.local
 # Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
 ```
 
-Without env vars the app runs in **localStorage fallback mode** — fully functional for development.
+Without env vars the app starts with **empty state** — no data shown. Supabase credentials required for development.
 
 Dev admin login: Supabase Auth ile `ataflugtransfer@gmail.com` (gerçek credentials .env.local'da)
 
@@ -38,27 +38,26 @@ Dev admin login: Supabase Auth ile `ataflugtransfer@gmail.com` (gerçek credenti
 
 Single Zustand store at `src/store/useAppStore.ts` owns all runtime state (bookings, siteContent, isAdmin).
 
-- Initializes from Supabase when `isSupabaseConfigured === true`, otherwise from localStorage
-- All mutations (addBooking, updateSiteContent, etc.) write to Supabase first, **throw on error** (no silent fallback)
+- Initializes **only from Supabase**. If not configured → empty state (`[]`, `INITIAL_SITE_CONTENT` with blank contact fields)
+- All mutations write to Supabase first, **throw on error** (no silent fallback, no localStorage fallback)
 - `src/lib/supabase.ts` — Supabase client + `isSupabaseConfigured` flag
 
 **Supabase tables:** `bookings`, `site_content` (singleton `id=1`), `blog_posts`, `reviews`
 
-**localStorage keys (fallback mode only — not used when Supabase is configured):**
-- `ata_bookings_v6` — bookings
-- `ata_site_content_v10` — site content (also updated on every successful Supabase write as offline cache)
-- `ata_blog_posts_v1` — blog posts
-- `ata_user_reviews_v1` — pending reviews
+**localStorage — business data is NEVER stored here. Only UI preferences:**
 - `ata_language` — language preference
-- `ata_admin_theme` — light/dark
+- `ata_admin_theme` — light/dark theme
+- `ata_ai_api_key` — Claude AI API key (intentional client-only, not sent to server)
+- `ata_blog_draft_v1` — unsaved blog post draft (editor cache, cleared on save)
+
+**Do NOT add localStorage reads/writes for business data (bookings, site content, blog posts, reviews).** Supabase is the single source of truth.
 
 ### mergeContent() — Critical Function
 
-`mergeContent()` in `src/store/useAppStore.ts` merges Supabase-persisted data with `INITIAL_SITE_CONTENT` defaults. **This function has a strict contract — do not break it:**
+`mergeContent()` in `src/store/mergeContent.ts` merges Supabase-persisted data with `INITIAL_SITE_CONTENT` defaults. **This function has a strict contract — do not break it:**
 
 - **`parsed.regions`** is the **source of truth** for which regions are active. INITIAL defaults are only used to fill in missing fields on existing regions. A region not present in `parsed.regions` must **never** be re-added (user may have deactivated it).
 - Exception: if `parsed.regions === undefined` (first-time init, no saved data), fall back to all INITIAL defaults.
-- Same rule applies to `pricingRules`, `drivers`, `coupons` — use `parsed` arrays as-is, never add back from defaults.
 - `blogPosts` are stored separately in the `blog_posts` Supabase table, **not** inside `site_content`. If Supabase returns 0 blog posts, return `[]` — do **not** fall back to the `BLOG_POSTS` constant.
 
 ### SiteContent — Extended Fields
@@ -66,12 +65,9 @@ Single Zustand store at `src/store/useAppStore.ts` owns all runtime state (booki
 `SiteContent` in `src/types.ts` includes these fields beyond the obvious UI content:
 
 - `regions[]` — active transfer destinations with prices (`price` field per region)
-- `pricingRules[]` — seasonal add/subtract rules (percent or fixed)
-- `drivers[]` — driver roster with vehicle assignments
-- `coupons[]` — discount codes with usage tracking
 - `adminAccount` — admin profile, notification prefs, password history
 
-All of these are persisted inside the `site_content` JSONB column in Supabase and flow through the AdminPanel auto-save mechanism (800ms debounce).
+All of these are persisted inside the `site_content` JSONB column in Supabase and flow through the AdminPanel auto-save mechanism (300ms debounce).
 
 ### Admin Panel
 
@@ -79,18 +75,20 @@ All of these are persisted inside the `site_content` JSONB column in Supabase an
 
 **Auto-save flow:**
 1. Any `setEditContent(...)` call in a view updates `editContent` state
-2. `useEffect([editContent])` in AdminPanel fires (debounced 800ms)
+2. `useEffect([editContent])` in AdminPanel fires (debounced 300ms)
 3. `editContentRef.current` (not stale `editContent`) is read inside the timer
 4. `onUpdateSiteContent(toSave)` is awaited — error shows toast, does not silently swallow
-5. On success, localStorage is also updated as offline cache
+5. **No localStorage write on success** — Supabase is the only persistence target
 
 **Error boundary:** `AdminViewErrorBoundary` wraps the `<Suspense>` block. A crash in any lazy view shows a "Tekrar Dene" button instead of taking down the whole panel. The error state resets automatically when the user navigates to a different view.
 
-**Views that use editContent directly (Supabase-backed via auto-save):**
-- `PricingView` — reads/writes `editContent.pricingRules`
-- `DriversView` — reads/writes `editContent.drivers`
-- `CouponsView` — reads/writes `editContent.coupons`
-- `RegionsView` — reads/writes `editContent.regions`
+**Active views and their editContent fields:**
+- `RegionsView` — reads/writes `editContent.regions` (bölgeler + fiyatlar)
+- `BusinessSettingsView` — reads/writes `editContent.business`
+- `FleetView` — reads/writes `editContent.vehicles`
+- `FAQView` — reads/writes `editContent.faq`
+- `SEOView` — reads/writes `editContent.seo`
+- `AboutView`, `VisionMissionView`, `HeroImagesView` — respective fields
 
 ### i18n
 
@@ -173,11 +171,23 @@ These bugs were fixed and must not be reintroduced:
 **Root cause:** These views wrote directly to localStorage instead of going through `editContent` → auto-save → Supabase.
 **Rule:** All admin data must flow through `editContent`/`setEditContent` → AdminPanel auto-save → Supabase.
 
+### Hardcoded Business Data in Public UI (fixed 2026-03-25)
+
+**Symptom:** BookingForm showed hardcoded WhatsApp number and hardcoded region list even when DB had different data. Navbar showed hardcoded business name.
+**Root cause:** `BUSINESS_INFO` and `DESTINATIONS` constants exported from `constants.ts` were used directly in `BookingForm.tsx` and `Navbar.tsx` instead of reading from the store.
+**Rule:** Never use `BUSINESS_INFO`, `DESTINATIONS`, or any business-data constants in components. Always read from `siteContent` (store state). These exports have been deleted from `constants.ts`.
+
+### localStorage as Business Data Cache (fixed 2026-03-25)
+
+**Symptom:** Business data (bookings, site content, blog posts, reviews) survived in localStorage after Supabase data was changed from another device.
+**Root cause:** Store mutations wrote to localStorage as "offline cache" after every Supabase write. `loadXxxFromLS()` functions were used as fallback on init.
+**Rule:** localStorage must never store business data. All 8 LS helper functions (`loadBookingsFromLS`, `saveBookingsToLS`, etc.) have been deleted. Supabase is the only persistence layer.
+
 ## Blog Post System
 
 Blog posts are stored in the `blog_posts` Supabase table. The `BLOG_POSTS` constant in `src/constants.ts` is **not used at runtime** — it exists only as a reference/seed source.
 
-- Admin panel has a "Tümünü Sil" button in BlogView (requires confirmation, deletes from Supabase + localStorage)
+- Admin panel has a "Tümünü Sil" button in BlogView (requires confirmation, deletes from Supabase)
 - `clearAllBlogPosts()` in the store handles bulk deletion
 - Supabase RLS: delete requires authenticated session (anon key cannot delete)
 

@@ -23,7 +23,7 @@ export function mergeContent(parsed: SiteContent): SiteContent {
             // field is absent from the parsed object, letting def.price win normally,
             // but this guard catches any remaining edge case).
             if (typeof merged.price !== 'number' || isNaN(merged.price)) {
-                merged.price = def?.price ?? 50;
+                merged.price = def?.price ?? 0;
             }
             return merged;
         });
@@ -47,8 +47,6 @@ export function mergeContent(parsed: SiteContent): SiteContent {
         adminAccount: parsed.adminAccount
             ? { ...INITIAL_SITE_CONTENT.adminAccount, ...parsed.adminAccount }
             : INITIAL_SITE_CONTENT.adminAccount,
-        drivers: Array.isArray(parsed.drivers) ? parsed.drivers : [],
-        coupons: Array.isArray(parsed.coupons) ? parsed.coupons : [],
     };
 
     if (!Array.isArray(merged.hero.backgrounds) || merged.hero.backgrounds.length === 0) {

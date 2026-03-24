@@ -145,7 +145,6 @@ export interface SiteContent {
     fullName: string;
     email: string;
     phone: string;
-    avatar: string;
     notifyEmail: boolean;
     notifySms: boolean;
     notifySystem: boolean;
@@ -153,34 +152,6 @@ export interface SiteContent {
     passwordHistory?: string[];
     activeSessionToken?: string;
   };
-  drivers?: Driver[];
-  coupons?: Coupon[];
-}
-
-export interface Driver {
-  id: string;
-  name: string;
-  phone: string;
-  email?: string;
-  vehicleId?: string;
-  licenseNo?: string;
-  isActive: boolean;
-  notes?: string;
-  createdAt: string;
-}
-
-export interface Coupon {
-  id: string;
-  code: string;
-  type: 'percent' | 'fixed';
-  value: number;
-  minAmount?: number;
-  usageLimit?: number;
-  usedCount: number;
-  expiresAt?: string;
-  isActive: boolean;
-  description?: string;
-  createdAt: string;
 }
 
 export interface Region {

@@ -7,10 +7,11 @@ import BookingForm from './components/BookingForm';
 import TextureBackground from './components/TextureBackground';
 import { useLanguage } from './i18n/LanguageContext';
 const AdminPanel = React.lazy(() => import('./components/AdminPanel'));
-import { REVIEWS } from './constants';
 import { SiteProvider } from './SiteContext';
 import { useAppStore } from './store/useAppStore';
 import { supabase, isSupabaseConfigured } from './lib/supabase';
+import { mergeContent } from './store/mergeContent';
+import { SiteContent } from './types';
 import { useScrollReveal } from './hooks/useScrollReveal';
 
 // Page imports
@@ -98,17 +99,27 @@ const App: React.FC = () => {
   // Generate and persist a session token (single-session enforcement)
   const applySessionToken = async () => {
     if (!isSupabaseConfigured) return;
-    // Wait for real Supabase data to load before reading siteContent from store.
-    // Without this await, applySessionToken reads INITIAL_SITE_CONTENT and
-    // overwrites Supabase with default prices (50€) on every page refresh.
     if (initStoreRef.current) await initStoreRef.current;
+
+    // Supabase'den taze içerik çek — store'da INITIAL_SITE_CONTENT (50€) olsa bile
+    // gerçek kayıtlı fiyatlar korunur. Store'dan okumak ağ kesintisinde fiyatları ezer.
+    const { data: freshData } = await supabase
+      .from('site_content')
+      .select('content')
+      .eq('id', 1)
+      .single();
+
     const token = crypto.randomUUID();
     sessionStorage.setItem('ata_session_token', token);
-    // Update in-memory store immediately (sync)
-    const { siteContent: sc } = useAppStore.getState();
-    const newContent = { ...sc, adminAccount: { ...sc.adminAccount!, activeSessionToken: token } };
+
+    // Taze DB verisi varsa onu kullan, yoksa store'dan al (ilk kurulum case'i)
+    const baseContent = freshData?.content
+      ? mergeContent(freshData.content as SiteContent)
+      : useAppStore.getState().siteContent;
+
+    const newContent = { ...baseContent, adminAccount: { ...baseContent.adminAccount!, activeSessionToken: token } };
     useAppStore.getState().setSiteContent(newContent);
-    // Write directly to Supabase — if it fails, clear sessionStorage so checks won't false-kick
+
     const { error } = await supabase
       .from('site_content')
       .upsert({ id: 1, content: newContent as unknown as Record<string, unknown> });
@@ -951,11 +962,9 @@ const App: React.FC = () => {
                     {/* Dual-Row Kayan Yorumlar — GPU Accelerated */}
                     {(() => {
                       const approvedUserReviews = userReviews.filter(r => r.status === 'approved');
-                      const allMarquee = [...approvedUserReviews, ...REVIEWS];
-                      const row1 = allMarquee.slice(0, Math.max(15, approvedUserReviews.length + 8));
-                      const row2 = allMarquee.slice(row1.length, row1.length + 15).length >= 5
-                        ? allMarquee.slice(row1.length, row1.length + 15)
-                        : REVIEWS.slice(35, 50);
+                      const allMarquee = approvedUserReviews;
+                      const row1 = allMarquee.slice(0, Math.ceil(allMarquee.length / 2));
+                      const row2 = allMarquee.slice(row1.length);
                       return (
                     <div className="relative space-y-4">
                       {/* Fade edges */}
@@ -1104,18 +1113,18 @@ const App: React.FC = () => {
                 <div>
                   <h4 className="text-[var(--color-primary)] font-bold text-xs uppercase tracking-widest mb-3">{t('footer.contact')}</h4>
                   <ul className="space-y-3 md:space-y-2 text-sm text-slate-300">
-                    <li><a href={`tel:${siteContent.business.phone}`} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-primary)] transition-colors inline-flex items-center min-h-[44px] md:min-h-0"><i className="fa-solid fa-phone mr-3 text-[var(--color-primary)]"></i>{siteContent.business.phone}</a></li>
-                    <li><a href={`mailto:${siteContent.business.email}`} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-primary)] transition-colors inline-flex items-center min-h-[44px] md:min-h-0"><i className="fa-solid fa-envelope mr-3 text-[var(--color-primary)]"></i>{siteContent.business.email}</a></li>
-                    <li className="inline-flex items-center"><i className="fa-solid fa-location-dot mr-3 text-[var(--color-primary)]"></i>{siteContent.business.address}</li>
+                    {siteContent.business.phone && <li><a href={`tel:${siteContent.business.phone}`} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-primary)] transition-colors inline-flex items-center min-h-[44px] md:min-h-0"><i className="fa-solid fa-phone mr-3 text-[var(--color-primary)]"></i>{siteContent.business.phone}</a></li>}
+                    {siteContent.business.email && <li><a href={`mailto:${siteContent.business.email}`} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-primary)] transition-colors inline-flex items-center min-h-[44px] md:min-h-0"><i className="fa-solid fa-envelope mr-3 text-[var(--color-primary)]"></i>{siteContent.business.email}</a></li>}
+                    {siteContent.business.address && <li className="inline-flex items-center"><i className="fa-solid fa-location-dot mr-3 text-[var(--color-primary)]"></i>{siteContent.business.address}</li>}
                   </ul>
                 </div>
                 <div>
                   <h4 className="text-[var(--color-primary)] font-bold text-xs uppercase tracking-widest mb-3">{t('footer.quickSupport')}</h4>
                   <div className="flex justify-center md:justify-start space-x-3">
-                    <a href={`https://wa.me/${siteContent.business.whatsapp}`} target="_blank" rel="noopener noreferrer" className="w-12 h-12 md:w-11 md:h-11 bg-emerald-500 rounded-full flex items-center justify-center text-white text-xl md:text-lg hover:scale-110 active:scale-95 transition-transform shadow-lg"><i className="fa-brands fa-whatsapp"></i></a>
-                    <a href={siteContent.business.telegram} target="_blank" rel="noopener noreferrer" className="w-12 h-12 md:w-11 md:h-11 bg-sky-500 rounded-full flex items-center justify-center text-white text-xl md:text-lg hover:scale-110 active:scale-95 transition-transform shadow-lg"><i className="fa-brands fa-telegram"></i></a>
-                    <a href={siteContent.business.instagram} target="_blank" rel="noopener noreferrer" className="w-12 h-12 md:w-11 md:h-11 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-xl md:text-lg hover:scale-110 active:scale-95 transition-transform shadow-lg"><i className="fa-brands fa-instagram"></i></a>
-                    <a href={siteContent.business.facebook} target="_blank" rel="noopener noreferrer" className="w-12 h-12 md:w-11 md:h-11 bg-blue-600 rounded-full flex items-center justify-center text-white text-xl md:text-lg hover:scale-110 active:scale-95 transition-transform shadow-lg"><i className="fa-brands fa-facebook-f"></i></a>
+                    {siteContent.business.whatsapp && <a href={`https://wa.me/${siteContent.business.whatsapp}`} target="_blank" rel="noopener noreferrer" className="w-12 h-12 md:w-11 md:h-11 bg-emerald-500 rounded-full flex items-center justify-center text-white text-xl md:text-lg hover:scale-110 active:scale-95 transition-transform shadow-lg"><i className="fa-brands fa-whatsapp"></i></a>}
+                    {siteContent.business.telegram && <a href={siteContent.business.telegram} target="_blank" rel="noopener noreferrer" className="w-12 h-12 md:w-11 md:h-11 bg-sky-500 rounded-full flex items-center justify-center text-white text-xl md:text-lg hover:scale-110 active:scale-95 transition-transform shadow-lg"><i className="fa-brands fa-telegram"></i></a>}
+                    {siteContent.business.instagram && <a href={siteContent.business.instagram} target="_blank" rel="noopener noreferrer" className="w-12 h-12 md:w-11 md:h-11 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-xl md:text-lg hover:scale-110 active:scale-95 transition-transform shadow-lg"><i className="fa-brands fa-instagram"></i></a>}
+                    {siteContent.business.facebook && <a href={siteContent.business.facebook} target="_blank" rel="noopener noreferrer" className="w-12 h-12 md:w-11 md:h-11 bg-blue-600 rounded-full flex items-center justify-center text-white text-xl md:text-lg hover:scale-110 active:scale-95 transition-transform shadow-lg"><i className="fa-brands fa-facebook-f"></i></a>}
                   </div>
                 </div>
               </div>

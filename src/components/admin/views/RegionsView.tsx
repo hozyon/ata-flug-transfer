@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { RichTextEditor } from '../RichTextEditor';
 import { SiteContent, Region } from '../../../types';
-import { SCRAPED_REGIONS, INITIAL_SITE_CONTENT } from '../../../constants';
+import { SCRAPED_REGIONS } from '../../../constants';
 import { useAppStore } from '../../../store/useAppStore';
 import { useDragAndDrop } from '../../../hooks/useDragAndDrop';
 import { useViewMode } from '../../../hooks/useViewMode';
@@ -30,7 +30,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
     const [newRegion, setNewRegion] = useState<Region>({
         id: '', name: '', desc: '',
         image: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800',
-        icon: 'fa-location-dot', price: 50
+        icon: 'fa-location-dot', price: 0
     });
 
     const { viewMode, toggleViewMode } = useViewMode();
@@ -68,12 +68,14 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                 desc: scraped?.desc || '',
                 image: scraped?.image || 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=600',
                 icon: 'fa-location-dot',
-                // Use INITIAL default price so JSON serialization never omits the field.
-                // price: undefined → JSON.stringify omits key → mergeContent fills 50 from default.
-                price: INITIAL_SITE_CONTENT.regions.find(r => r.name === regionName)?.price ?? 50
+                price: 0
             };
             setEditContent({ ...editContent, regions: [...regions, newR] });
-            showToast(`${regionName} eklendi`, 'success');
+            // Hemen fiyat girişi için drawer'ı aç
+            setNewRegion(newR);
+            setEditingRegion(newR);
+            setIsAddRegionModalOpen(true);
+            showToast(`${regionName} eklendi — fiyatı girin`, 'success');
         } else {
             setEditContent({ ...editContent, regions: regions.filter(r => r.name !== regionName) });
             showToast(`${regionName} kaldırıldı`, 'delete');
@@ -176,7 +178,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                         </div>
                         <MobileViewToggle viewMode={viewMode} onToggle={toggleViewMode} />
                         {/* Add Custom */}
-                        <button onClick={() => { setNewRegion({ id: '', name: '', desc: '', image: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800', icon: 'fa-location-dot', price: undefined }); setEditingRegion(null); setIsAddRegionModalOpen(true); }}
+                        <button onClick={() => { setNewRegion({ id: '', name: '', desc: '', image: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800', icon: 'fa-location-dot', price: 0 }); setEditingRegion(null); setIsAddRegionModalOpen(true); }}
                             className="px-4 py-2.5 bg-[var(--color-primary)] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 shrink-0">
                             <i className="fa-solid fa-plus text-[10px]"></i> Yeni Bölge
                         </button>
@@ -435,7 +437,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                                     </div>
                                 </div>
 
-                                {/* Distance + Price notice */}
+                                {/* Distance + Price */}
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="space-y-1.5">
                                         <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
@@ -451,15 +453,19 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                                     </div>
                                     <div className="space-y-1.5">
                                         <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                                            <i className="fa-solid fa-tag text-[8px] text-[var(--color-primary)]"></i> Fiyat
+                                            <i className="fa-solid fa-tag text-[8px] text-[var(--color-primary)]"></i> Fiyat ({editContent.currency?.symbol || '€'}) *
                                         </label>
-                                        <div className="w-full bg-white/[0.02] border border-white/[0.06] rounded-xl px-4 py-3 flex items-center gap-2">
-                                            {newRegion.price ? (
-                                                <span className="text-sm font-black text-[var(--color-primary)]">{editContent.currency?.symbol || '€'}{newRegion.price}</span>
-                                            ) : (
-                                                <span className="text-xs text-amber-400">Fiyat yok</span>
-                                            )}
-                                            <span className="text-[9px] text-slate-600 ml-auto">Fiyatlar'dan</span>
+                                        <div className="relative">
+                                            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-primary)] font-black text-sm pointer-events-none">{editContent.currency?.symbol || '€'}</span>
+                                            <input
+                                                type="number"
+                                                min="1"
+                                                step="1"
+                                                className="w-full bg-white/5 border border-white/[0.06] rounded-xl pl-8 pr-4 py-3 text-sm font-black text-white focus:border-[var(--color-primary)]/60 outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                value={newRegion.price || ''}
+                                                onChange={e => setNewRegion({ ...newRegion, price: parseInt(e.target.value) || 0 })}
+                                                placeholder="0"
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -546,7 +552,8 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                         {/* Footer */}
                         <div className="p-4 border-t border-white/[0.06] flex gap-3 shrink-0 bg-white/[0.01]">
                             <button onClick={() => {
-                                if (!newRegion.name?.trim()) { alert('Lütfen bölge adını girin!'); return; }
+                                if (!newRegion.name?.trim()) { showToast('Lütfen bölge adını girin!', 'delete'); return; }
+                                if (!newRegion.price || newRegion.price <= 0) { showToast('Lütfen geçerli bir fiyat girin!', 'delete'); return; }
                                 if (editingRegion) {
                                     setEditContent({ ...editContent, regions: regions.map(r => r.id === editingRegion.id ? { ...r, ...newRegion } : r) });
                                     showToast('Bölge güncellendi', 'success');

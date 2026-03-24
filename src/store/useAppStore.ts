@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { Booking, SiteContent, BlogPost, UserReview } from '../types';
-import { INITIAL_SITE_CONTENT, MOCK_BOOKINGS } from '../constants';
+import { INITIAL_SITE_CONTENT } from '../constants';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { mergeContent } from './mergeContent';
 
@@ -38,56 +38,6 @@ interface AppStore {
     deleteReview: (id: string) => Promise<void>;
 }
 
-// ─── localStorage helpers (fallback when Supabase not configured) ───────────
-const LS_BOOKINGS = 'ata_bookings_v6';
-const LS_CONTENT = 'ata_site_content_v10';
-const LS_BLOG = 'ata_blog_posts_v1';
-const LS_REVIEWS = 'ata_user_reviews_v1';
-
-function loadBookingsFromLS(): Booking[] {
-    try {
-        const saved = localStorage.getItem(LS_BOOKINGS);
-        return saved ? JSON.parse(saved) : MOCK_BOOKINGS;
-    } catch { return MOCK_BOOKINGS; }
-}
-
-function saveBookingsToLS(bookings: Booking[]) {
-    localStorage.setItem(LS_BOOKINGS, JSON.stringify(bookings));
-}
-
-function loadContentFromLS(): SiteContent {
-    try {
-        const saved = localStorage.getItem(LS_CONTENT);
-        if (!saved) return INITIAL_SITE_CONTENT;
-        return mergeContent(JSON.parse(saved));
-    } catch { return INITIAL_SITE_CONTENT; }
-}
-
-function saveContentToLS(content: SiteContent) {
-    localStorage.setItem(LS_CONTENT, JSON.stringify(content));
-}
-
-function loadBlogFromLS(): BlogPost[] {
-    try {
-        const saved = localStorage.getItem(LS_BLOG);
-        return saved ? JSON.parse(saved) : [];
-    } catch { return []; }
-}
-
-function saveBlogToLS(posts: BlogPost[]) {
-    localStorage.setItem(LS_BLOG, JSON.stringify(posts));
-}
-
-function loadReviewsFromLS(): UserReview[] {
-    try {
-        const saved = localStorage.getItem(LS_REVIEWS);
-        return saved ? JSON.parse(saved) : [];
-    } catch { return []; }
-}
-
-function saveReviewsToLS(reviews: UserReview[]) {
-    localStorage.setItem(LS_REVIEWS, JSON.stringify(reviews));
-}
 
 // ─── Map Supabase row → BlogPost ─────────────────────────────────────────────
 function rowToBlogPost(row: Record<string, unknown>): BlogPost {
@@ -218,25 +168,26 @@ export const useAppStore = create<AppStore>((set, get) => ({
                 set({
                     bookings: (!bookingsRes.error && bookingsRes.data) ? bookingsRes.data.map(rowToBooking) : [],
                     siteContent: (!contentRes.error && contentRes.data?.content) ? mergeContent(contentRes.data.content as SiteContent) : INITIAL_SITE_CONTENT,
-                    blogPosts: (!blogRes.error && blogRes.data) ? blogRes.data.map(rowToBlogPost) : loadBlogFromLS(),
+                    blogPosts: (!blogRes.error && blogRes.data) ? blogRes.data.map(rowToBlogPost) : [],
                     userReviews: (!reviewsRes.error && reviewsRes.data) ? reviewsRes.data.map(rowToReview) : [],
                 });
             } catch (err) {
-                console.error('Supabase init error, falling back to localStorage:', err);
+                console.error('Supabase init error:', err);
+                // Supabase configured ama hata aldık → boş state, localStorage'dan veri alma
                 set({
-                    bookings: loadBookingsFromLS(),
-                    siteContent: loadContentFromLS(),
-                    blogPosts: loadBlogFromLS(),
-                    userReviews: loadReviewsFromLS(),
+                    bookings: [],
+                    siteContent: INITIAL_SITE_CONTENT,
+                    blogPosts: [],
+                    userReviews: [],
                 });
             }
         } else {
-            // ── localStorage fallback ───────────────────────────────────────
+            // Supabase yapılandırılmadıysa boş state — veri yok
             set({
-                bookings: loadBookingsFromLS(),
-                siteContent: loadContentFromLS(),
-                blogPosts: loadBlogFromLS(),
-                userReviews: loadReviewsFromLS(),
+                bookings: [],
+                siteContent: INITIAL_SITE_CONTENT,
+                blogPosts: [],
+                userReviews: [],
             });
         }
 
@@ -254,13 +205,8 @@ export const useAppStore = create<AppStore>((set, get) => ({
                 .upsert({ id: 1, content: newContent as unknown as Record<string, unknown> });
             if (error) {
                 console.error('Failed to save site content to Supabase:', error);
-                saveContentToLS(newContent);
                 throw new Error(error.message); // AdminPanel'in catch bloğu çalışsın
             }
-            // Supabase başarılıysa localStorage'ı da güncelle (offline fallback)
-            saveContentToLS(newContent);
-        } else {
-            saveContentToLS(newContent);
         }
     },
 
@@ -304,14 +250,10 @@ export const useAppStore = create<AppStore>((set, get) => ({
                 set({ bookings: [saved, ...bookings] });
             } catch (err) {
                 console.error('Failed to save booking to Supabase:', err);
-                const updated = [newBooking, ...bookings];
-                set({ bookings: updated });
-                saveBookingsToLS(updated);
+                set({ bookings: [newBooking, ...bookings] });
             }
         } else {
-            const updated = [newBooking, ...bookings];
-            set({ bookings: updated });
-            saveBookingsToLS(updated);
+            set({ bookings: [newBooking, ...bookings] });
         }
     },
 
@@ -329,10 +271,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
                 if (error) throw error;
             } catch (err) {
                 console.error('Failed to update booking status in Supabase:', err);
-                saveBookingsToLS(updated);
             }
-        } else {
-            saveBookingsToLS(updated);
         }
     },
 
@@ -347,8 +286,6 @@ export const useAppStore = create<AppStore>((set, get) => ({
                 set({ bookings }); // restore optimistic update
                 throw new Error(error.message);
             }
-        } else {
-            saveBookingsToLS(updated);
         }
     },
 
@@ -362,11 +299,8 @@ export const useAppStore = create<AppStore>((set, get) => ({
             const { error } = await supabase.from('blog_posts').insert(blogPostToRow(post));
             if (error) {
                 console.error('Failed to save blog post to Supabase:', error);
-                saveBlogToLS(updated);
                 throw new Error(error.message);
             }
-        } else {
-            saveBlogToLS(updated);
         }
     },
 
@@ -379,24 +313,19 @@ export const useAppStore = create<AppStore>((set, get) => ({
             const { error } = await supabase.from('blog_posts').upsert(blogPostToRow(post));
             if (error) {
                 console.error('Failed to update blog post in Supabase:', error);
-                saveBlogToLS(updated);
                 throw new Error(error.message);
             }
-        } else {
-            saveBlogToLS(updated);
         }
     },
 
     clearAllBlogPosts: async () => {
         const { blogPosts } = get();
         set({ blogPosts: [] });
-        localStorage.removeItem('ata_blog_posts_v1');
         if (isSupabaseConfigured) {
             // Supabase RLS requires authenticated user — this runs inside admin session
             const { error } = await supabase.from('blog_posts').delete().neq('id', '00000000-0000-0000-0000-000000000000');
             if (error) {
                 set({ blogPosts }); // restore
-                saveBlogToLS(blogPosts);
                 throw new Error(error.message);
             }
         }
@@ -413,8 +342,6 @@ export const useAppStore = create<AppStore>((set, get) => ({
                 set({ blogPosts }); // restore optimistic update
                 throw new Error(error.message);
             }
-        } else {
-            saveBlogToLS(updated);
         }
     },
 
@@ -444,10 +371,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
                 if (error) throw error;
             } catch (err) {
                 console.error('Failed to add review to Supabase:', err);
-                saveReviewsToLS(updated);
             }
-        } else {
-            saveReviewsToLS(updated);
         }
     },
 
@@ -462,10 +386,7 @@ export const useAppStore = create<AppStore>((set, get) => ({
                 if (error) throw error;
             } catch (err) {
                 console.error('Failed to update review status in Supabase:', err);
-                saveReviewsToLS(updated);
             }
-        } else {
-            saveReviewsToLS(updated);
         }
     },
 
@@ -480,8 +401,6 @@ export const useAppStore = create<AppStore>((set, get) => ({
                 set({ userReviews }); // restore optimistic update
                 throw new Error(error.message);
             }
-        } else {
-            saveReviewsToLS(updated);
         }
     },
 }));
