@@ -39,19 +39,21 @@ const Blog: React.FC = () => {
         <div className="min-h-screen" style={{ background: '#f8f7f4' }}>
             <Helmet>
                 <title>{t('blogPage.title')} | {businessName}</title>
-                <meta name="description" content="Antalya havalimanı transfer rehberi, gezilecek yerler, tatil ipuçları ve daha fazlası. Antalya'nın en güncel gezi blogu." />
-                <meta name="robots" content="index, follow" />
+                <meta name="description" content={siteContent.seo?.pagesSeo?.blog?.description || 'Antalya havalimanı transfer rehberi, gezilecek yerler, tatil ipuçları ve daha fazlası.'} />
+                <meta name="keywords" content={siteContent.seo?.pagesSeo?.blog?.keywords || siteContent.seo?.siteKeywords || ''} />
+                <meta name="robots" content={siteContent.seo?.robotsDirective || 'index, follow'} />
                 <link rel="canonical" href={`${canonicalBase}/blog`} />
                 <meta property="og:title" content={`${t('blogPage.title')} | ${businessName}`} />
-                <meta property="og:description" content="Antalya havalimanı transfer rehberi, gezilecek yerler, tatil ipuçları ve daha fazlası." />
+                <meta property="og:description" content={siteContent.seo?.pagesSeo?.blog?.description || 'Antalya havalimanı transfer rehberi, gezilecek yerler, tatil ipuçları ve daha fazlası.'} />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content={`${canonicalBase}/blog`} />
+                <meta property="og:image" content={siteContent.seo?.ogImage || ''} />
                 <meta property="og:locale" content="tr_TR" />
                 <meta property="og:site_name" content={businessName} />
                 <meta name="twitter:card" content="summary_large_image" />
                 <meta name="twitter:site" content={siteContent.seo?.twitterHandle || ''} />
                 <meta name="twitter:title" content={`${t('blogPage.title')} | ${businessName}`} />
-                <meta name="twitter:description" content="Antalya transfer rehberi ve gezi blogu." />
+                <meta name="twitter:description" content={siteContent.seo?.pagesSeo?.blog?.description || 'Antalya transfer rehberi ve gezi blogu.'} />
             </Helmet>
 
             {/* Premium Header */}

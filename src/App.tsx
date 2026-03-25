@@ -374,7 +374,7 @@ const App: React.FC = () => {
                     <link rel="apple-touch-icon" href={siteContent.business.logo || '/favicon.ico'} />
                     <script type="application/ld+json">{JSON.stringify({
                       "@context": "https://schema.org",
-                      "@type": "LocalBusiness",
+                      "@type": siteContent.seo?.structuredData?.businessType || "TravelAgency",
                       "name": siteContent.business.name,
                       "url": siteContent.seo?.canonicalUrl || '',
                       "telephone": siteContent.business.phone,
@@ -397,7 +397,6 @@ const App: React.FC = () => {
                       "priceRange": siteContent.seo?.structuredData?.priceRange || "€€",
                       "openingHours": siteContent.seo?.structuredData?.openingHours || "Mo-Su 00:00-24:00",
                       "areaServed": ["Antalya", "Kemer", "Belek", "Side", "Alanya", "Manavgat", "Marmaris", "Fethiye", "Bodrum"],
-                      "servesCuisine": null,
                       "currenciesAccepted": "EUR, USD, TRY, GBP, RUB",
                       "paymentAccepted": "Cash, Credit Card",
                       "hasMap": siteContent.business.mapEmbedUrl || '',

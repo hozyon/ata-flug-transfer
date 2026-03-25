@@ -16,6 +16,8 @@ dist/
 *.py
 *.cjs
 *.mjs
+# Exception: build scripts needed by Vercel
+!scripts/*.mjs
 
 # Editor
 .vscode/

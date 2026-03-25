@@ -1,4 +1,5 @@
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useSiteContent } from '../SiteContext';
 import { useLanguage } from '../i18n/LanguageContext';
 
@@ -7,8 +8,33 @@ const VizyonMisyon: React.FC = () => {
     const { t } = useLanguage();
     const vm = siteContent.visionMission;
 
+    const seo = siteContent.seo;
+    const canonical = seo?.canonicalUrl || 'https://www.ataflugtransfer.com';
+    const pageTitle = `Vizyon & Misyon | ${siteContent.business.name}`;
+    const pageDesc = seo?.pagesSeo?.about?.description
+        ? `${siteContent.business.name} vizyon ve misyonu. ${seo.pagesSeo.about.description}`
+        : 'Ata Flug Transfer vizyon ve misyonu. Antalya\'da güvenilir VIP transfer hizmeti sunma amacımız ve değerlerimiz.';
+
     return (
         <div className="min-h-screen" style={{ background: '#f8f7f4' }}>
+            <Helmet>
+                <title>{pageTitle}</title>
+                <meta name="description" content={pageDesc} />
+                <meta name="keywords" content={seo?.siteKeywords || 'antalya vip transfer, vizyon misyon, ata flug transfer'} />
+                <meta name="robots" content={seo?.robotsDirective || 'index, follow'} />
+                <link rel="canonical" href={`${canonical}/vizyon-misyon`} />
+                <meta property="og:title" content={pageTitle} />
+                <meta property="og:description" content={pageDesc} />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content={`${canonical}/vizyon-misyon`} />
+                <meta property="og:image" content={seo?.ogImage || ''} />
+                <meta property="og:locale" content="tr_TR" />
+                <meta property="og:site_name" content={siteContent.business.name} />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:site" content={seo?.twitterHandle || ''} />
+                <meta name="twitter:title" content={pageTitle} />
+                <meta name="twitter:description" content={pageDesc} />
+            </Helmet>
             <section className="relative pt-28 pb-14 flex items-center justify-center overflow-hidden border-b border-white/5">
                 <div className="absolute inset-0 z-0">
                     <img src={vm?.hero?.bannerImage || "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=2000"} alt="Antalya Luxury" className="w-full h-full object-cover" />

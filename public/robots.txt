@@ -3,7 +3,7 @@ Allow: /
 Disallow: /admin/
 Disallow: /login
 
-Sitemap: https://ataflugtransfer.com/sitemap.xml
+Sitemap: https://www.ataflugtransfer.com/sitemap.xml
 
 # Block AI training bots
 User-agent: GPTBot
