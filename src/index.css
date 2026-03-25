@@ -350,6 +350,53 @@
   }
 }
 
+/* ── Review Marquee ──────────────────────────────────────── */
+.review-card-2026 {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+@keyframes marquee-ltr {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes marquee-rtl {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+.marquee-row-1 { animation: marquee-ltr 40s linear infinite; }
+.marquee-row-2 { animation: marquee-rtl 45s linear infinite; }
+.marquee-row-1:hover,
+.marquee-row-2:hover { animation-play-state: paused; }
+
+/* ── Skeleton Loading ────────────────────────────────────── */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0.04) 25%,
+    rgba(255,255,255,0.08) 50%,
+    rgba(255,255,255,0.04) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-wave 1.5s ease-in-out infinite;
+}
+@keyframes skeleton-wave {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Gold CTA Button ─────────────────────────────────────── */
+.btn-gold {
+  background: #c5a059;
+  color: #0f172a;
+  font-weight: 700;
+  border-radius: 1rem;
+  transition: filter 0.2s ease, transform 0.15s ease;
+}
+.btn-gold:hover  { filter: brightness(1.1); }
+.btn-gold:active { transform: scale(0.98); }
+
 @keyframes shimmer {
   100% { transform: translateX(100%); }
 }

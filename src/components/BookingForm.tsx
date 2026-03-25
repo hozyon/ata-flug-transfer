@@ -182,34 +182,23 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
 
       {/* ── Step Indicator ── */}
       <div className="px-4 pb-4">
-        <div className="flex items-center gap-0">
+        <div className="flex items-center justify-between mb-2">
           {STEPS.map((label, i) => (
-            <React.Fragment key={label}>
-              <button
-                type="button"
-                onClick={() => i < step && goToStep(i)}
-                className={`flex flex-col items-center gap-1 transition-all duration-300 ${i <= step ? 'cursor-pointer' : 'cursor-default'}`}
-              >
-                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold transition-all duration-300 border
-                  ${i < step ? 'bg-[var(--color-primary)] border-[var(--color-primary)] text-[#0a0a0e]' :
-                    i === step ? 'bg-transparent border-[var(--color-primary)] text-[var(--color-primary)]' :
-                    'bg-transparent border-white/10 text-white/20'}`}
-                >
-                  {i < step
-                    ? <i className="fa-solid fa-check text-[9px]" />
-                    : <span>{i + 1}</span>}
-                </div>
-                <span className={`text-[9px] font-bold uppercase tracking-widest transition-colors duration-300
-                  ${i === step ? 'text-[var(--color-primary)]' : i < step ? 'text-white/40' : 'text-white/15'}`}>
-                  {t(label)}
-                </span>
-              </button>
-              {i < STEPS.length - 1 && (
-                <div className="flex-1 h-px mx-1 mb-4 transition-colors duration-500"
-                  style={{ background: i < step ? 'var(--color-primary)' : 'rgba(255,255,255,0.08)' }} />
-              )}
-            </React.Fragment>
+            <button
+              key={label}
+              type="button"
+              onClick={() => i < step && goToStep(i)}
+              className={`text-[10px] font-black uppercase tracking-wider transition-colors duration-300 ${i <= step ? 'cursor-pointer' : 'cursor-default'} ${i < step ? 'text-[#c5a059]/60' : i === step ? 'text-[#c5a059]' : 'text-white/20'}`}
+            >
+              {t(label)}
+            </button>
           ))}
+        </div>
+        <div className="h-0.5 bg-white/[0.08] rounded-full overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-[#c5a059] to-[#e0c07a] rounded-full transition-all duration-500 ease-out"
+            style={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
+          />
         </div>
       </div>
 
@@ -339,25 +328,25 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
                     key={v.id}
                     type="button"
                     onClick={() => setFormData(prev => ({ ...prev, vehicleId: v.id }))}
-                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl border transition-all duration-200 text-left ${
+                    className={`group flex items-center gap-3 px-4 py-3 rounded-xl border transition-all duration-200 text-left ${
                       formData.vehicleId === v.id
-                        ? 'border-[var(--color-primary)]/50 bg-[var(--color-primary)]/[0.07]'
-                        : 'border-white/[0.08] bg-white/[0.03] hover:border-white/20'
+                        ? 'border-[#c5a059]/60 bg-[#c5a059]/[0.07] shadow-[0_0_20px_rgba(197,160,89,0.08)]'
+                        : 'border-white/[0.08] bg-white/[0.02] hover:border-white/[0.15] hover:bg-white/[0.04]'
                     }`}
                   >
-                    <div className={`w-7 h-7 rounded-full border flex items-center justify-center flex-shrink-0 transition-colors duration-200 ${
-                      formData.vehicleId === v.id ? 'border-[var(--color-primary)] bg-[var(--color-primary)]' : 'border-white/20'
+                    <div className={`w-8 h-8 rounded-full border flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
+                      formData.vehicleId === v.id ? 'border-[#c5a059] bg-[#c5a059]' : 'border-white/20 group-hover:border-white/30'
                     }`}>
                       {formData.vehicleId === v.id
-                        ? <i className="fa-solid fa-check text-[#0a0a0e] text-[9px]" />
-                        : <i className="fa-solid fa-car-side text-white/30 text-[9px]" />}
+                        ? <i className="fa-solid fa-check text-[#0a0a0e] text-[10px]" />
+                        : <i className="fa-solid fa-car-side text-white/30 text-[10px]" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-white text-[12px] font-semibold truncate">{v.name}</div>
-                      {v.capacity && <div className="text-white/30 text-[10px]">{t('Kapasite')}: {v.capacity} {t('kişi')}</div>}
+                      <div className={`text-[13px] font-semibold truncate transition-colors duration-200 ${formData.vehicleId === v.id ? 'text-white' : 'text-white/70'}`}>{v.name}</div>
+                      {v.capacity && <div className="text-white/30 text-[10px] mt-0.5">{t('Kapasite')}: {v.capacity} {t('kişi')}</div>}
                     </div>
                     {formData.vehicleId === v.id && (
-                      <i className="fa-solid fa-circle-check text-[var(--color-primary)] text-sm flex-shrink-0" />
+                      <i className="fa-solid fa-circle-check text-[#c5a059] text-sm flex-shrink-0" />
                     )}
                   </button>
                 ))}

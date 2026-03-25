@@ -394,7 +394,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                   border: 'none',
                   padding: '5px 5px',
                   cursor: 'default',
-                  opacity: isAdmin ? 0.45 : 0.07,
+                  opacity: isAdmin ? 0.45 : 0.12,
                   transition: 'opacity 0.5s ease',
                   fontFamily: "'Outfit', monospace",
                   fontSize: '8.5px',
@@ -407,7 +407,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                   flexShrink: 0,
                 }}
                 onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.opacity = isAdmin ? '0.65' : '0.18'; (e.currentTarget as HTMLButtonElement).style.cursor = 'pointer'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = isAdmin ? '0.45' : '0.07'; (e.currentTarget as HTMLButtonElement).style.cursor = 'default'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.opacity = isAdmin ? '0.45' : '0.12'; (e.currentTarget as HTMLButtonElement).style.cursor = 'default'; }}
               >
                 v2
               </button>

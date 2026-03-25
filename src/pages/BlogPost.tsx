@@ -109,7 +109,7 @@ const BlogPost: React.FC = () => {
             {/* Immersive Hero */}
             <div className="relative h-[50vh] min-h-[280px] sm:min-h-[360px] md:min-h-[400px] w-full overflow-hidden">
                 <div className="absolute inset-0">
-                    <img src={post.featuredImage} alt={post.title} className="w-full h-full object-cover" />
+                    <img src={post.featuredImage} alt={post.title} loading="lazy" className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-slate-900/30"></div>
                 </div>
 
@@ -238,11 +238,11 @@ const BlogPost: React.FC = () => {
                         <Link to="/blog" className="text-[var(--color-primary)] font-bold hover:underline">{t('blogPost.viewAll')}</Link>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {otherPosts.map(p => (
-                            <Link to={`/blog/${p.slug}`} key={p.id} className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 stagger-children">
+                        {otherPosts.map((p, i) => (
+                            <Link to={`/blog/${p.slug}`} key={p.id} className="reveal group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300" style={{ transitionDelay: `${i * 80}ms` }}>
                                 <div className="h-48 overflow-hidden relative">
-                                    <img src={p.featuredImage} alt={p.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                    <img src={p.featuredImage} alt={p.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                     <div className="absolute top-4 left-4">
                                         <span className="bg-white/90 backdrop-blur-md text-slate-800 text-[10px] font-bold px-3 py-1 rounded-full">{p.category}</span>
                                     </div>
