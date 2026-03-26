@@ -274,6 +274,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const el = regionsCarouselRef.current;
     if (!el) return;
+
     const update = () => {
       const center = el.scrollLeft + el.clientWidth / 2;
       el.querySelectorAll<HTMLElement>('[data-rc]').forEach(card => {
@@ -284,11 +285,42 @@ const App: React.FC = () => {
         card.style.opacity = String(0.6 + p * 0.4);
       });
     };
+
     update();
     let raf: number;
     const onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(update); };
     el.addEventListener('scroll', onScroll, { passive: true });
-    return () => { el.removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); };
+
+    // Drag-to-scroll (desktop)
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+    const onMouseDown = (e: MouseEvent) => {
+      isDown = true;
+      el.style.cursor = 'grabbing';
+      startX = e.pageX - el.offsetLeft;
+      scrollLeft = el.scrollLeft;
+    };
+    const onMouseUp = () => { isDown = false; el.style.cursor = 'grab'; };
+    const onMouseMove = (e: MouseEvent) => {
+      if (!isDown) return;
+      e.preventDefault();
+      el.scrollLeft = scrollLeft - (e.pageX - el.offsetLeft - startX) * 1.5;
+    };
+    el.style.cursor = 'grab';
+    el.addEventListener('mousedown', onMouseDown);
+    el.addEventListener('mouseup', onMouseUp);
+    el.addEventListener('mouseleave', onMouseUp);
+    el.addEventListener('mousemove', onMouseMove);
+
+    return () => {
+      el.removeEventListener('scroll', onScroll);
+      cancelAnimationFrame(raf);
+      el.removeEventListener('mousedown', onMouseDown);
+      el.removeEventListener('mouseup', onMouseUp);
+      el.removeEventListener('mouseleave', onMouseUp);
+      el.removeEventListener('mousemove', onMouseMove);
+    };
   }, [siteContent.regions]);
 
   if (authChecking) {
@@ -787,15 +819,15 @@ const App: React.FC = () => {
                     <div className="w-full h-px" style={{ background: 'linear-gradient(90deg, transparent 0%, #c5a059 30%, #e0c07a 50%, #c5a059 70%, transparent 100%)', opacity: 0.25 }} />
                   </section>
 
-                  <section id="regions" className="scroll-mt-20 py-12 md:py-16" style={{ background: '#080c16' }}>
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <section id="regions" className="scroll-mt-20 py-12 md:py-16 overflow-hidden" style={{ background: '#080c16' }}>
 
-                      {/* Header */}
+                    {/* Header */}
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                       <div className="flex items-center gap-3 mb-3">
                         <span className="h-px w-8" style={{ background: '#c5a059' }} />
                         <span className="text-[10px] font-black uppercase tracking-[0.35em]" style={{ color: '#c5a059' }}>{t('regions.eyebrow')}</span>
                       </div>
-                      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
+                      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
                         <h2 className="font-playfair font-bold text-white leading-tight" style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)' }}>
                           {t('regions.title')}{' '}
                           <span className="bg-gradient-to-r from-[#c5a059] via-[#e0c07a] to-[#c5a059] bg-clip-text text-transparent">{t('regions.titleAccent')}</span>
@@ -804,65 +836,63 @@ const App: React.FC = () => {
                           {t('regions.viewAll') || 'Tüm Bölgeler'} <i className="fa-solid fa-arrow-right text-[9px]" />
                         </Link>
                       </div>
-
-                      {/* Carousel */}
-                      <div className="-mx-4 sm:-mx-6 lg:-mx-8">
-                        <div
-                          ref={regionsCarouselRef}
-                          className="flex carousel-container pb-6"
-                          style={{
-                            overflowX: 'auto',
-                            scrollSnapType: 'x mandatory',
-                            scrollbarWidth: 'none',
-                            gap: '14px',
-                            paddingLeft: 'calc(50vw - 110px)',
-                            paddingRight: 'calc(50vw - 110px)',
-                          }}
-                        >
-                          {siteContent.regions.map((region) => {
-                            const slug = region.name.toLowerCase()
-                              .replace(/ /g,'-').replace(/[ğĞ]/g,'g').replace(/[üÜ]/g,'u')
-                              .replace(/[şŞ]/g,'s').replace(/[ıİ]/g,'i').replace(/[öÖ]/g,'o')
-                              .replace(/[çÇ]/g,'c').replace(/[^a-z0-9-]/g,'');
-                            const sym = siteContent.currency?.symbol || '€';
-                            return (
-                              <Link
-                                key={region.id}
-                                to={`/${slug}-transfer`}
-                                data-rc=""
-                                className="group relative block overflow-hidden rounded-2xl shrink-0"
-                                style={{
-                                  width: 'min(220px, 62vw)',
-                                  height: '300px',
-                                  scrollSnapAlign: 'center',
-                                  transition: 'transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.35s ease',
-                                  willChange: 'transform, opacity',
-                                }}
-                              >
-                                <img
-                                  src={region.image}
-                                  alt={region.name}
-                                  loading="lazy"
-                                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                />
-                                <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(5,8,15,0.95) 0%, rgba(5,8,15,0.35) 55%, transparent 100%)' }} />
-                                {region.price && (
-                                  <div className="absolute top-2.5 right-2.5 rounded-md px-2 py-1 text-[11px] font-black" style={{ background: 'rgba(5,8,15,0.75)', color: '#c5a059', border: '1px solid rgba(197,160,89,0.35)', backdropFilter: 'blur(8px)' }}>
-                                    {sym}{region.price}
-                                  </div>
-                                )}
-                                <div className="absolute bottom-0 left-0 right-0 p-3">
-                                  <p className="text-[9px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: 'rgba(197,160,89,0.65)' }}>Transfer</p>
-                                  <h3 className="font-bold text-white text-sm leading-tight group-hover:text-[#e0c07a] transition-colors duration-200">{region.name}</h3>
-                                </div>
-                                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: 'inset 0 0 0 1.5px rgba(197,160,89,0.5)' }} />
-                              </Link>
-                            );
-                          })}
-                        </div>
-                      </div>
-
                     </div>
+
+                    {/* Carousel — full-bleed, direkt section içinde */}
+                    <div
+                      ref={regionsCarouselRef}
+                      className="flex carousel-container pb-4"
+                      style={{
+                        overflowX: 'auto',
+                        scrollSnapType: 'x mandatory',
+                        scrollbarWidth: 'none',
+                        gap: '14px',
+                        paddingLeft: 'calc(50vw - 110px)',
+                        paddingRight: 'calc(50vw - 110px)',
+                      }}
+                    >
+                      {siteContent.regions.map((region) => {
+                        const slug = region.name.toLowerCase()
+                          .replace(/ /g,'-').replace(/[ğĞ]/g,'g').replace(/[üÜ]/g,'u')
+                          .replace(/[şŞ]/g,'s').replace(/[ıİ]/g,'i').replace(/[öÖ]/g,'o')
+                          .replace(/[çÇ]/g,'c').replace(/[^a-z0-9-]/g,'');
+                        const sym = siteContent.currency?.symbol || '€';
+                        return (
+                          <Link
+                            key={region.id}
+                            to={`/${slug}-transfer`}
+                            data-rc=""
+                            className="group relative block overflow-hidden rounded-2xl shrink-0"
+                            style={{
+                              width: 'min(220px, 62vw)',
+                              height: '300px',
+                              scrollSnapAlign: 'center',
+                              transition: 'transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.35s ease',
+                              willChange: 'transform, opacity',
+                            }}
+                          >
+                            <img
+                              src={region.image}
+                              alt={region.name}
+                              loading="lazy"
+                              className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(5,8,15,0.95) 0%, rgba(5,8,15,0.35) 55%, transparent 100%)' }} />
+                            {region.price && (
+                              <div className="absolute top-2.5 right-2.5 rounded-md px-2 py-1 text-[11px] font-black" style={{ background: 'rgba(5,8,15,0.75)', color: '#c5a059', border: '1px solid rgba(197,160,89,0.35)', backdropFilter: 'blur(8px)' }}>
+                                {sym}{region.price}
+                              </div>
+                            )}
+                            <div className="absolute bottom-0 left-0 right-0 p-3">
+                              <p className="text-[9px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: 'rgba(197,160,89,0.65)' }}>Transfer</p>
+                              <h3 className="font-bold text-white text-sm leading-tight group-hover:text-[#e0c07a] transition-colors duration-200">{region.name}</h3>
+                            </div>
+                            <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: 'inset 0 0 0 1.5px rgba(197,160,89,0.5)' }} />
+                          </Link>
+                        );
+                      })}
+                    </div>
+
                   </section>
 
                   {randomBlogPosts.length > 0 && (
