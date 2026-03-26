@@ -14,16 +14,16 @@ import { mergeContent } from './store/mergeContent';
 import { SiteContent } from './types';
 import { useScrollReveal } from './hooks/useScrollReveal';
 
-// Page imports
-import Blog from './pages/Blog';
-import BlogPost from './pages/BlogPost';
-import Hakkimizda from './pages/Hakkimizda';
-import VizyonMisyon from './pages/VizyonMisyon';
-import Bolgeler from './pages/Bolgeler';
-import SSS from './pages/SSS';
-import Iletisim from './pages/Iletisim';
-import AdminLogin from './pages/AdminLogin';
-import TransferDestination from './pages/TransferDestination';
+// Page imports — lazy-loaded for better LCP
+const Blog = React.lazy(() => import('./pages/Blog'));
+const BlogPost = React.lazy(() => import('./pages/BlogPost'));
+const Hakkimizda = React.lazy(() => import('./pages/Hakkimizda'));
+const VizyonMisyon = React.lazy(() => import('./pages/VizyonMisyon'));
+const Bolgeler = React.lazy(() => import('./pages/Bolgeler'));
+const SSS = React.lazy(() => import('./pages/SSS'));
+const Iletisim = React.lazy(() => import('./pages/Iletisim'));
+const AdminLogin = React.lazy(() => import('./pages/AdminLogin'));
+const TransferDestination = React.lazy(() => import('./pages/TransferDestination'));
 import ErrorBoundary from './components/ErrorBoundary';
 
 
@@ -246,7 +246,7 @@ const App: React.FC = () => {
   // Hero Background Slider
   const heroBgs = siteContent.hero?.backgrounds?.length > 0
     ? siteContent.hero.backgrounds
-    : ['/bg1.png', '/bg2.png', '/bg3.png'];
+    : ['/bg1.webp', '/bg2.webp', '/bg3.webp'];
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
 
   useEffect(() => {
@@ -324,6 +324,7 @@ const App: React.FC = () => {
               </React.Suspense>
             </ErrorBoundary>
           ) : (
+            <React.Suspense fallback={null}>
             <Routes location={location} key={location.pathname}>
               <Route path="/blog" element={<div className="page-enter"><Blog /></div>} />
               <Route path="/blog/:slug" element={<div className="page-enter"><BlogPost /></div>} />
@@ -344,13 +345,13 @@ const App: React.FC = () => {
                     <meta name="description" content={siteContent.seo?.pagesSeo?.home?.description || siteContent.seo?.siteDescription || siteContent.hero.desc} />
                     <meta name="keywords" content={siteContent.seo?.pagesSeo?.home?.keywords || siteContent.seo?.siteKeywords || ''} />
                     <meta name="robots" content={siteContent.seo?.robotsDirective || 'index, follow'} />
-                    <link rel="canonical" href={siteContent.seo?.canonicalUrl || 'https://ataflugtransfer.com'} />
+                    <link rel="canonical" href={siteContent.seo?.canonicalUrl || 'https://www.ataflugtransfer.com'} />
                     {/* Hreflang for multi-language SEO */}
-                    <link rel="alternate" hrefLang="tr" href={`${siteContent.seo?.canonicalUrl || 'https://ataflugtransfer.com'}`} />
-                    <link rel="alternate" hrefLang="en" href={`${siteContent.seo?.canonicalUrl || 'https://ataflugtransfer.com'}`} />
-                    <link rel="alternate" hrefLang="de" href={`${siteContent.seo?.canonicalUrl || 'https://ataflugtransfer.com'}`} />
-                    <link rel="alternate" hrefLang="ru" href={`${siteContent.seo?.canonicalUrl || 'https://ataflugtransfer.com'}`} />
-                    <link rel="alternate" hrefLang="x-default" href={`${siteContent.seo?.canonicalUrl || 'https://ataflugtransfer.com'}`} />
+                    <link rel="alternate" hrefLang="tr" href={`${siteContent.seo?.canonicalUrl || 'https://www.ataflugtransfer.com'}`} />
+                    <link rel="alternate" hrefLang="en" href={`${siteContent.seo?.canonicalUrl || 'https://www.ataflugtransfer.com'}`} />
+                    <link rel="alternate" hrefLang="de" href={`${siteContent.seo?.canonicalUrl || 'https://www.ataflugtransfer.com'}`} />
+                    <link rel="alternate" hrefLang="ru" href={`${siteContent.seo?.canonicalUrl || 'https://www.ataflugtransfer.com'}`} />
+                    <link rel="alternate" hrefLang="x-default" href={`${siteContent.seo?.canonicalUrl || 'https://www.ataflugtransfer.com'}`} />
                     <meta property="og:title" content={siteContent.seo?.pagesSeo?.home?.title || siteContent.hero.title} />
                     <meta property="og:description" content={siteContent.seo?.pagesSeo?.home?.description || siteContent.seo?.siteDescription || siteContent.hero.desc} />
                     <meta property="og:type" content="website" />
@@ -419,7 +420,9 @@ const App: React.FC = () => {
                         <img
                           key={bg}
                           src={bg}
-                          alt={`Hero BG ${idx + 1}`}
+                          alt=""
+                          loading={idx === 0 ? 'eager' : 'lazy'}
+                          fetchPriority={idx === 0 ? 'high' : 'auto'}
                           className={`absolute inset-0 w-full h-full object-cover object-top lg:object-center transition-opacity duration-[2000ms] ease-in-out ${idx === currentBgIndex ? 'opacity-100' : 'opacity-0'}`}
                         />
                       ))}
@@ -936,6 +939,7 @@ const App: React.FC = () => {
                             <div className="flex gap-0.5 shrink-0">
                               {[1, 2, 3, 4, 5].map(star => (
                                 <button key={star} onClick={() => setReviewRating(star)}
+                                  aria-label={`${star} yıldız`}
                                   className={`text-sm transition-colors ${star <= reviewRating ? 'text-amber-400' : 'text-slate-600 hover:text-amber-400'}`}>
                                   <i className="fa-solid fa-star"></i>
                                 </button>
@@ -1063,6 +1067,7 @@ const App: React.FC = () => {
                 </>
               } />
             </Routes>
+            </React.Suspense>
           )}
         </main>
 
@@ -1131,10 +1136,10 @@ const App: React.FC = () => {
                 <div>
                   <h4 className="text-[var(--color-primary)] font-bold text-xs uppercase tracking-widest mb-3">{t('footer.quickSupport')}</h4>
                   <div className="flex justify-center md:justify-start space-x-3">
-                    {siteContent.business.whatsapp && <a href={`https://wa.me/${siteContent.business.whatsapp}`} target="_blank" rel="noopener noreferrer" className="w-12 h-12 md:w-11 md:h-11 bg-emerald-500 rounded-full flex items-center justify-center text-white text-xl md:text-lg hover:scale-110 active:scale-95 transition-transform shadow-lg"><i className="fa-brands fa-whatsapp"></i></a>}
-                    {siteContent.business.telegram && <a href={siteContent.business.telegram} target="_blank" rel="noopener noreferrer" className="w-12 h-12 md:w-11 md:h-11 bg-sky-500 rounded-full flex items-center justify-center text-white text-xl md:text-lg hover:scale-110 active:scale-95 transition-transform shadow-lg"><i className="fa-brands fa-telegram"></i></a>}
-                    {siteContent.business.instagram && <a href={siteContent.business.instagram} target="_blank" rel="noopener noreferrer" className="w-12 h-12 md:w-11 md:h-11 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-xl md:text-lg hover:scale-110 active:scale-95 transition-transform shadow-lg"><i className="fa-brands fa-instagram"></i></a>}
-                    {siteContent.business.facebook && <a href={siteContent.business.facebook} target="_blank" rel="noopener noreferrer" className="w-12 h-12 md:w-11 md:h-11 bg-blue-600 rounded-full flex items-center justify-center text-white text-xl md:text-lg hover:scale-110 active:scale-95 transition-transform shadow-lg"><i className="fa-brands fa-facebook-f"></i></a>}
+                    {siteContent.business.whatsapp && <a href={`https://wa.me/${siteContent.business.whatsapp}`} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp ile iletişime geçin" className="w-12 h-12 md:w-11 md:h-11 bg-emerald-500 rounded-full flex items-center justify-center text-white text-xl md:text-lg hover:scale-110 active:scale-95 transition-transform shadow-lg"><i className="fa-brands fa-whatsapp"></i></a>}
+                    {siteContent.business.telegram && <a href={siteContent.business.telegram} target="_blank" rel="noopener noreferrer" aria-label="Telegram ile iletişime geçin" className="w-12 h-12 md:w-11 md:h-11 bg-sky-500 rounded-full flex items-center justify-center text-white text-xl md:text-lg hover:scale-110 active:scale-95 transition-transform shadow-lg"><i className="fa-brands fa-telegram"></i></a>}
+                    {siteContent.business.instagram && <a href={siteContent.business.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram sayfamız" className="w-12 h-12 md:w-11 md:h-11 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-xl md:text-lg hover:scale-110 active:scale-95 transition-transform shadow-lg"><i className="fa-brands fa-instagram"></i></a>}
+                    {siteContent.business.facebook && <a href={siteContent.business.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook sayfamız" className="w-12 h-12 md:w-11 md:h-11 bg-blue-600 rounded-full flex items-center justify-center text-white text-xl md:text-lg hover:scale-110 active:scale-95 transition-transform shadow-lg"><i className="fa-brands fa-facebook-f"></i></a>}
                   </div>
                 </div>
               </div>
@@ -1166,6 +1171,7 @@ const App: React.FC = () => {
             href={`https://wa.me/${siteContent.business.whatsapp}`}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="WhatsApp ile iletişime geçin"
             className="fixed left-6 z-[90] lg:left-8 group"
             style={{ bottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}
           >

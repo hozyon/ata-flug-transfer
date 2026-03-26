@@ -29,7 +29,7 @@ const TransferDestination: React.FC = () => {
   const meta = DESTINATION_META[regionSlug];
   const seo = siteContent.seo;
   const business = siteContent.business;
-  const canonical = seo?.canonicalUrl || 'https://ataflugtransfer.com';
+  const canonical = seo?.canonicalUrl || 'https://www.ataflugtransfer.com';
   const sym = siteContent.currency?.symbol || '€';
 
   const pageTitle = `${region.name} Transfer | Antalya Havalimanı'ndan ${region.name} VIP Transfer`;

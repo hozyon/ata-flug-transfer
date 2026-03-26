@@ -56,7 +56,7 @@ const SSS: React.FC = () => {
                     "@context": "https://schema.org",
                     "@type": "BreadcrumbList",
                     "itemListElement": [
-                        { "@type": "ListItem", "position": 1, "name": "Ana Sayfa", "item": canonical || "https://ataflugtransfer.com" },
+                        { "@type": "ListItem", "position": 1, "name": "Ana Sayfa", "item": canonical || "https://www.ataflugtransfer.com" },
                         { "@type": "ListItem", "position": 2, "name": "Sıkça Sorulan Sorular", "item": `${canonical}/sss` }
                     ]
                 })}</script>

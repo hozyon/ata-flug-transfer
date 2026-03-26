@@ -107,7 +107,7 @@ export const INITIAL_SITE_CONTENT: SiteContent = {
     titleAccent: "Yeni Tanımı",
     desc: "Antalya Havalimanı'ndan dilediğiniz her noktaya modern araç filomuz ve profesyonel ekibimizle eşsiz bir VIP deneyimi yaşayın.",
     bgImage: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&q=80&w=2000",
-    backgrounds: ['/bg1.png', '/bg2.png', '/bg3.png']
+    backgrounds: ['/bg1.webp', '/bg2.webp', '/bg3.webp']
   },
   about: {
     title: "Antalya'nın En Prestijli VIP Transfer Hizmeti",
