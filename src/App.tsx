@@ -275,6 +275,7 @@ const App: React.FC = () => {
     const el = regionsCarouselRef.current;
     if (!el) return;
 
+    // Center-scale update
     const update = () => {
       const center = el.scrollLeft + el.clientWidth / 2;
       el.querySelectorAll<HTMLElement>('[data-rc]').forEach(card => {
@@ -285,41 +286,76 @@ const App: React.FC = () => {
         card.style.opacity = String(0.6 + p * 0.4);
       });
     };
-
     update();
     let raf: number;
     const onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(update); };
     el.addEventListener('scroll', onScroll, { passive: true });
 
+    // Auto-advance helpers
+    const getCards = () => Array.from(el.querySelectorAll<HTMLElement>('[data-rc]'));
+    const getCurrentIdx = () => {
+      const center = el.scrollLeft + el.clientWidth / 2;
+      let closest = 0, minDist = Infinity;
+      getCards().forEach((card, i) => {
+        const d = Math.abs((card.offsetLeft + card.offsetWidth / 2) - center);
+        if (d < minDist) { minDist = d; closest = i; }
+      });
+      return closest;
+    };
+    const scrollToIdx = (idx: number) => {
+      const cards = getCards();
+      if (!cards[idx]) return;
+      el.scrollTo({ left: cards[idx].offsetLeft + cards[idx].offsetWidth / 2 - el.clientWidth / 2, behavior: 'smooth' });
+    };
+
+    // Auto-scroll: one card every 2.5s, loops back to first
+    let userPaused = false;
+    let resumeTimer: ReturnType<typeof setTimeout>;
+    const pause = () => {
+      userPaused = true;
+      clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(() => { userPaused = false; }, 2500);
+    };
+    const autoTimer = setInterval(() => {
+      if (userPaused) return;
+      const cards = getCards();
+      if (!cards.length) return;
+      scrollToIdx((getCurrentIdx() + 1) % cards.length);
+    }, 2500);
+
     // Drag-to-scroll (desktop)
-    let isDown = false;
-    let startX = 0;
-    let scrollLeft = 0;
+    el.style.cursor = 'grab';
+    let isDown = false, startX = 0, dragScrollLeft = 0;
     const onMouseDown = (e: MouseEvent) => {
-      isDown = true;
+      isDown = true; pause();
       el.style.cursor = 'grabbing';
       startX = e.pageX - el.offsetLeft;
-      scrollLeft = el.scrollLeft;
+      dragScrollLeft = el.scrollLeft;
     };
     const onMouseUp = () => { isDown = false; el.style.cursor = 'grab'; };
     const onMouseMove = (e: MouseEvent) => {
       if (!isDown) return;
       e.preventDefault();
-      el.scrollLeft = scrollLeft - (e.pageX - el.offsetLeft - startX) * 1.5;
+      el.scrollLeft = dragScrollLeft - (e.pageX - el.offsetLeft - startX) * 1.5;
     };
-    el.style.cursor = 'grab';
     el.addEventListener('mousedown', onMouseDown);
     el.addEventListener('mouseup', onMouseUp);
     el.addEventListener('mouseleave', onMouseUp);
     el.addEventListener('mousemove', onMouseMove);
 
+    // Touch: pause auto on swipe
+    el.addEventListener('touchstart', pause, { passive: true });
+
     return () => {
-      el.removeEventListener('scroll', onScroll);
+      clearInterval(autoTimer);
+      clearTimeout(resumeTimer);
       cancelAnimationFrame(raf);
+      el.removeEventListener('scroll', onScroll);
       el.removeEventListener('mousedown', onMouseDown);
       el.removeEventListener('mouseup', onMouseUp);
       el.removeEventListener('mouseleave', onMouseUp);
       el.removeEventListener('mousemove', onMouseMove);
+      el.removeEventListener('touchstart', pause);
     };
   }, [siteContent.regions]);
 
