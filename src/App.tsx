@@ -84,6 +84,7 @@ const App: React.FC = () => {
 
   // Ref to block isAdmin=true when PASSWORD_RECOVERY token is in URL
   const isRecoveryModeRef = useRef(false);
+  const regionsCarouselRef = useRef<HTMLDivElement>(null);
   const { t, language } = useLanguage();
 
   // Store the initializeStore() promise so applySessionToken can await it.
@@ -269,8 +270,26 @@ const App: React.FC = () => {
     return () => clearInterval(interval);
   }, [siteContent.regions]);
 
-
-
+  // Regions carousel — center-scale effect (direct DOM, no re-render)
+  useEffect(() => {
+    const el = regionsCarouselRef.current;
+    if (!el) return;
+    const update = () => {
+      const center = el.scrollLeft + el.clientWidth / 2;
+      el.querySelectorAll<HTMLElement>('[data-rc]').forEach(card => {
+        const dist = Math.abs((card.offsetLeft + card.offsetWidth / 2) - center);
+        const maxD = el.clientWidth * 0.75;
+        const p = Math.max(0, 1 - dist / maxD);
+        card.style.transform = `scale(${0.88 + p * 0.14}) translateZ(0)`;
+        card.style.opacity = String(0.6 + p * 0.4);
+      });
+    };
+    update();
+    let raf: number;
+    const onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(update); };
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => { el.removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); };
+  }, [siteContent.regions]);
 
   if (authChecking) {
     return (
@@ -768,7 +787,7 @@ const App: React.FC = () => {
                     <div className="w-full h-px" style={{ background: 'linear-gradient(90deg, transparent 0%, #c5a059 30%, #e0c07a 50%, #c5a059 70%, transparent 100%)', opacity: 0.25 }} />
                   </section>
 
-                  <section id="regions" className="scroll-mt-20 py-16 md:py-24" style={{ background: '#080c16' }}>
+                  <section id="regions" className="scroll-mt-20 py-12 md:py-16" style={{ background: '#080c16' }}>
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                       {/* Header */}
@@ -786,41 +805,61 @@ const App: React.FC = () => {
                         </Link>
                       </div>
 
-                      {/* Grid */}
-                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-4">
-                        {siteContent.regions.map((region, i) => {
-                          const slug = region.name.toLowerCase()
-                            .replace(/ /g,'-').replace(/[ğĞ]/g,'g').replace(/[üÜ]/g,'u')
-                            .replace(/[şŞ]/g,'s').replace(/[ıİ]/g,'i').replace(/[öÖ]/g,'o')
-                            .replace(/[çÇ]/g,'c').replace(/[^a-z0-9-]/g,'');
-                          const sym = siteContent.currency?.symbol || '€';
-                          return (
-                            <Link
-                              key={region.id}
-                              to={`/${slug}-transfer`}
-                              className="reveal group relative block overflow-hidden rounded-xl"
-                              style={{ aspectRatio: '3/4', transitionDelay: `${Math.min(i, 9) * 60}ms` }}
-                            >
-                              <img
-                                src={region.image}
-                                alt={region.name}
-                                loading="lazy"
-                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                              />
-                              <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(5,8,15,0.95) 0%, rgba(5,8,15,0.4) 50%, transparent 100%)' }} />
-                              {region.price && (
-                                <div className="absolute top-2.5 right-2.5 rounded-md px-2 py-1 text-[11px] font-black" style={{ background: 'rgba(5,8,15,0.75)', color: '#c5a059', border: '1px solid rgba(197,160,89,0.35)', backdropFilter: 'blur(8px)' }}>
-                                  {sym}{region.price}
+                      {/* Carousel */}
+                      <div className="-mx-4 sm:-mx-6 lg:-mx-8">
+                        <div
+                          ref={regionsCarouselRef}
+                          className="flex carousel-container pb-6"
+                          style={{
+                            overflowX: 'auto',
+                            scrollSnapType: 'x mandatory',
+                            scrollbarWidth: 'none',
+                            gap: '14px',
+                            paddingLeft: 'calc(50vw - 110px)',
+                            paddingRight: 'calc(50vw - 110px)',
+                          }}
+                        >
+                          {siteContent.regions.map((region) => {
+                            const slug = region.name.toLowerCase()
+                              .replace(/ /g,'-').replace(/[ğĞ]/g,'g').replace(/[üÜ]/g,'u')
+                              .replace(/[şŞ]/g,'s').replace(/[ıİ]/g,'i').replace(/[öÖ]/g,'o')
+                              .replace(/[çÇ]/g,'c').replace(/[^a-z0-9-]/g,'');
+                            const sym = siteContent.currency?.symbol || '€';
+                            return (
+                              <Link
+                                key={region.id}
+                                to={`/${slug}-transfer`}
+                                data-rc=""
+                                className="group relative block overflow-hidden rounded-2xl shrink-0"
+                                style={{
+                                  width: 'min(220px, 62vw)',
+                                  height: '300px',
+                                  scrollSnapAlign: 'center',
+                                  transition: 'transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.35s ease',
+                                  willChange: 'transform, opacity',
+                                }}
+                              >
+                                <img
+                                  src={region.image}
+                                  alt={region.name}
+                                  loading="lazy"
+                                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                />
+                                <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(5,8,15,0.95) 0%, rgba(5,8,15,0.35) 55%, transparent 100%)' }} />
+                                {region.price && (
+                                  <div className="absolute top-2.5 right-2.5 rounded-md px-2 py-1 text-[11px] font-black" style={{ background: 'rgba(5,8,15,0.75)', color: '#c5a059', border: '1px solid rgba(197,160,89,0.35)', backdropFilter: 'blur(8px)' }}>
+                                    {sym}{region.price}
+                                  </div>
+                                )}
+                                <div className="absolute bottom-0 left-0 right-0 p-3">
+                                  <p className="text-[9px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: 'rgba(197,160,89,0.65)' }}>Transfer</p>
+                                  <h3 className="font-bold text-white text-sm leading-tight group-hover:text-[#e0c07a] transition-colors duration-200">{region.name}</h3>
                                 </div>
-                              )}
-                              <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4">
-                                <p className="text-[9px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: 'rgba(197,160,89,0.65)' }}>Transfer</p>
-                                <h3 className="font-bold text-white text-sm md:text-base leading-tight group-hover:text-[#e0c07a] transition-colors duration-200">{region.name}</h3>
-                              </div>
-                              <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: 'inset 0 0 0 1.5px rgba(197,160,89,0.5)' }} />
-                            </Link>
-                          );
-                        })}
+                                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: 'inset 0 0 0 1.5px rgba(197,160,89,0.5)' }} />
+                              </Link>
+                            );
+                          })}
+                        </div>
                       </div>
 
                     </div>
