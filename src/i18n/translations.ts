@@ -50,6 +50,8 @@ const sourceTexts: Record<string, string> = {
 
     // Services
     'services.eyebrow': 'Premium Deneyim',
+    'services.title': 'VIP Transfer', 'services.titleAccent': 'Hizmetleri',
+    'services.subtitle': 'Antalya havalimanı ve çevresi için premium transfer deneyimi',
     'services.card1.title': 'Havalimanı Transferi', 'services.card1.desc': 'Lüks Mercedes Vito araçlarımızla kesintisiz karşılama. Uçuş durumunuzu takip ediyor, rötarlarda bekliyoruz.',
     'services.card2.title': 'Özel Şehir Turları', 'services.card2.desc': 'Antalya ve çevresini kendi hızınızda keşfedin. Yerel şoförlerimiz eşliğinde gizli kalmış güzellikleri görün.',
     'services.card3.title': 'VIP Transfer', 'services.card3.desc': 'Kişisel ihtiyaçlarınıza göre uyarlanmış rotalarla mükemmel konforu tasarlayın. Eğlence veya tatil odaklı VIP seyahat.',
