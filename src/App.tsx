@@ -291,37 +291,28 @@ const App: React.FC = () => {
     const onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(update); };
     el.addEventListener('scroll', onScroll, { passive: true });
 
-    // Auto-advance helpers
-    const getCards = () => Array.from(el.querySelectorAll<HTMLElement>('[data-rc]'));
-    const getCurrentIdx = () => {
-      const center = el.scrollLeft + el.clientWidth / 2;
-      let closest = 0, minDist = Infinity;
-      getCards().forEach((card, i) => {
-        const d = Math.abs((card.offsetLeft + card.offsetWidth / 2) - center);
-        if (d < minDist) { minDist = d; closest = i; }
-      });
-      return closest;
-    };
-    const scrollToIdx = (idx: number) => {
-      const cards = getCards();
-      if (!cards[idx]) return;
-      el.scrollTo({ left: cards[idx].offsetLeft + cards[idx].offsetWidth / 2 - el.clientWidth / 2, behavior: 'smooth' });
-    };
-
-    // Auto-scroll: one card every 2.5s, loops back to first
+    // Smooth auto-scroll via rAF — ping-pong sağ→sol→sağ
     let userPaused = false;
     let resumeTimer: ReturnType<typeof setTimeout>;
+    let direction = 1; // 1 = sola, -1 = sağa
+    let autoRafId: number;
+
+    const autoLoop = () => {
+      if (!userPaused) {
+        const maxScroll = el.scrollWidth - el.clientWidth;
+        if (direction === 1 && el.scrollLeft >= maxScroll - 1) direction = -1;
+        else if (direction === -1 && el.scrollLeft <= 1) direction = 1;
+        el.scrollLeft += direction * 0.6;
+      }
+      autoRafId = requestAnimationFrame(autoLoop);
+    };
+    autoRafId = requestAnimationFrame(autoLoop);
+
     const pause = () => {
       userPaused = true;
       clearTimeout(resumeTimer);
-      resumeTimer = setTimeout(() => { userPaused = false; }, 2500);
+      resumeTimer = setTimeout(() => { userPaused = false; }, 2000);
     };
-    const autoTimer = setInterval(() => {
-      if (userPaused) return;
-      const cards = getCards();
-      if (!cards.length) return;
-      scrollToIdx((getCurrentIdx() + 1) % cards.length);
-    }, 2500);
 
     // Drag-to-scroll (desktop)
     el.style.cursor = 'grab';
@@ -342,14 +333,12 @@ const App: React.FC = () => {
     el.addEventListener('mouseup', onMouseUp);
     el.addEventListener('mouseleave', onMouseUp);
     el.addEventListener('mousemove', onMouseMove);
-
-    // Touch: pause auto on swipe
     el.addEventListener('touchstart', pause, { passive: true });
 
     return () => {
-      clearInterval(autoTimer);
-      clearTimeout(resumeTimer);
+      cancelAnimationFrame(autoRafId);
       cancelAnimationFrame(raf);
+      clearTimeout(resumeTimer);
       el.removeEventListener('scroll', onScroll);
       el.removeEventListener('mousedown', onMouseDown);
       el.removeEventListener('mouseup', onMouseUp);
