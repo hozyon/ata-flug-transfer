@@ -84,7 +84,6 @@ const App: React.FC = () => {
 
   // Ref to block isAdmin=true when PASSWORD_RECOVERY token is in URL
   const isRecoveryModeRef = useRef(false);
-  const regionsCarouselRef = useRef<HTMLDivElement>(null);
   const { t, language } = useLanguage();
 
   // Store the initializeStore() promise so applySessionToken can await it.
@@ -270,91 +269,6 @@ const App: React.FC = () => {
     return () => clearInterval(interval);
   }, [siteContent.regions]);
 
-  // Regions carousel — center-scale effect (direct DOM, no re-render)
-  useEffect(() => {
-    const el = regionsCarouselRef.current;
-    if (!el) return;
-
-    // Center-scale update
-    const update = () => {
-      const center = el.scrollLeft + el.clientWidth / 2;
-      el.querySelectorAll<HTMLElement>('[data-rc]').forEach(card => {
-        const dist = Math.abs((card.offsetLeft + card.offsetWidth / 2) - center);
-        const maxD = el.clientWidth * 0.75;
-        const p = Math.max(0, 1 - dist / maxD);
-        card.style.transform = `scale(${0.88 + p * 0.14}) translateZ(0)`;
-        card.style.opacity = String(0.6 + p * 0.4);
-      });
-    };
-    update();
-    let raf: number;
-    const onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(update); };
-    el.addEventListener('scroll', onScroll, { passive: true });
-
-    // IntersectionObserver — carousel görünür olunca entered class ekle (CSS slide-in tetikler)
-    const revealObserver = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) el.classList.add('entered'); },
-      { threshold: 0.15 }
-    );
-    revealObserver.observe(el);
-
-    // Smooth auto-scroll via rAF — ping-pong sağ→sol→sağ
-    let userPaused = false;
-    let resumeTimer: ReturnType<typeof setTimeout>;
-    let direction = 1; // 1 = sola, -1 = sağa
-    let autoRafId: number;
-
-    const autoLoop = () => {
-      if (!userPaused) {
-        const maxScroll = el.scrollWidth - el.clientWidth;
-        if (direction === 1 && el.scrollLeft >= maxScroll - 1) direction = -1;
-        else if (direction === -1 && el.scrollLeft <= 1) direction = 1;
-        el.scrollLeft += direction * 0.6;
-      }
-      autoRafId = requestAnimationFrame(autoLoop);
-    };
-    autoRafId = requestAnimationFrame(autoLoop);
-
-    const pause = () => {
-      userPaused = true;
-      clearTimeout(resumeTimer);
-      resumeTimer = setTimeout(() => { userPaused = false; }, 2000);
-    };
-
-    // Drag-to-scroll (desktop)
-    el.style.cursor = 'grab';
-    let isDown = false, startX = 0, dragScrollLeft = 0;
-    const onMouseDown = (e: MouseEvent) => {
-      isDown = true; pause();
-      el.style.cursor = 'grabbing';
-      startX = e.pageX - el.offsetLeft;
-      dragScrollLeft = el.scrollLeft;
-    };
-    const onMouseUp = () => { isDown = false; el.style.cursor = 'grab'; };
-    const onMouseMove = (e: MouseEvent) => {
-      if (!isDown) return;
-      e.preventDefault();
-      el.scrollLeft = dragScrollLeft - (e.pageX - el.offsetLeft - startX) * 1.5;
-    };
-    el.addEventListener('mousedown', onMouseDown);
-    el.addEventListener('mouseup', onMouseUp);
-    el.addEventListener('mouseleave', onMouseUp);
-    el.addEventListener('mousemove', onMouseMove);
-    el.addEventListener('touchstart', pause, { passive: true });
-
-    return () => {
-      cancelAnimationFrame(autoRafId);
-      cancelAnimationFrame(raf);
-      clearTimeout(resumeTimer);
-      revealObserver.disconnect();
-      el.removeEventListener('scroll', onScroll);
-      el.removeEventListener('mousedown', onMouseDown);
-      el.removeEventListener('mouseup', onMouseUp);
-      el.removeEventListener('mouseleave', onMouseUp);
-      el.removeEventListener('mousemove', onMouseMove);
-      el.removeEventListener('touchstart', pause);
-    };
-  }, [siteContent.regions]);
 
   if (authChecking) {
     return (
@@ -852,85 +766,81 @@ const App: React.FC = () => {
                     <div className="w-full h-px" style={{ background: 'linear-gradient(90deg, transparent 0%, #c5a059 30%, #e0c07a 50%, #c5a059 70%, transparent 100%)', opacity: 0.25 }} />
                   </section>
 
-                  <section id="regions" className="scroll-mt-20 py-12 md:py-16 overflow-hidden" style={{ background: '#080c16' }}>
+                  {/* ── Regions — Departure Tape ─────────────────────── */}
+                  {siteContent.regions.length > 0 && (() => {
+                    const sym = siteContent.currency?.symbol || '€';
+                    const toSlug = (name: string) => name.toLowerCase()
+                      .replace(/ /g,'-').replace(/[ğĞ]/g,'g').replace(/[üÜ]/g,'u')
+                      .replace(/[şŞ]/g,'s').replace(/[ıİ]/g,'i').replace(/[öÖ]/g,'o')
+                      .replace(/[çÇ]/g,'c').replace(/[^a-z0-9-]/g,'');
+                    const row1 = [...siteContent.regions, ...siteContent.regions];
+                    const row2 = [...siteContent.regions].reverse().concat([...siteContent.regions].reverse());
+                    const Card = ({ region, idx }: { region: typeof siteContent.regions[0]; idx: number }) => (
+                      <Link
+                        key={`${region.id}-${idx}`}
+                        to={`/${toSlug(region.name)}-transfer`}
+                        className="rg-card group shrink-0"
+                      >
+                        <p className="rg-card-eyebrow">TRANSFER</p>
+                        <p className="rg-card-name">{region.name}</p>
+                        {region.price ? (
+                          <p className="rg-card-price">{sym}{region.price}</p>
+                        ) : (
+                          <p className="rg-card-price rg-card-price--contact">—</p>
+                        )}
+                      </Link>
+                    );
+                    return (
+                      <section id="regions" className="scroll-mt-20 py-14 md:py-20 overflow-hidden relative" style={{ background: 'linear-gradient(180deg, #060a14 0%, #080c16 100%)' }}>
+                        {/* Ambient glow */}
+                        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(197,160,89,0.04) 0%, transparent 70%)' }} />
 
-                    {/* Header */}
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                      <div className="flex items-center gap-3 mb-3">
-                        <span className="h-px w-8" style={{ background: '#c5a059' }} />
-                        <span className="text-[10px] font-black uppercase tracking-[0.35em]" style={{ color: '#c5a059' }}>{t('regions.eyebrow')}</span>
-                      </div>
-                      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
-                        <h2 className="font-playfair font-bold text-white leading-tight" style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)' }}>
-                          {t('regions.title')}{' '}
-                          <span className="bg-gradient-to-r from-[#c5a059] via-[#e0c07a] to-[#c5a059] bg-clip-text text-transparent">{t('regions.titleAccent')}</span>
-                        </h2>
-                        <Link to="/bolgeler" className="shrink-0 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest transition-colors hover:text-[#e0c07a]" style={{ color: '#c5a059' }}>
-                          {t('regions.viewAll') || 'Tüm Bölgeler'} <i className="fa-solid fa-arrow-right text-[9px]" />
-                        </Link>
-                      </div>
-                    </div>
-
-                    {/* Carousel — full-bleed, direkt section içinde */}
-                    <div
-                      ref={regionsCarouselRef}
-                      className="flex carousel-container pb-4"
-                      style={{
-                        overflowX: 'auto',
-                        scrollSnapType: 'x mandatory',
-                        scrollbarWidth: 'none',
-                        gap: '14px',
-                        paddingLeft: 'calc(50vw - 110px)',
-                        paddingRight: 'calc(50vw - 110px)',
-                      }}
-                    >
-                      {siteContent.regions.map((region) => {
-                        const slug = region.name.toLowerCase()
-                          .replace(/ /g,'-').replace(/[ğĞ]/g,'g').replace(/[üÜ]/g,'u')
-                          .replace(/[şŞ]/g,'s').replace(/[ıİ]/g,'i').replace(/[öÖ]/g,'o')
-                          .replace(/[çÇ]/g,'c').replace(/[^a-z0-9-]/g,'');
-                        const sym = siteContent.currency?.symbol || '€';
-                        return (
-                          <div
-                            key={region.id}
-                            className="rc-wrap shrink-0"
-                            style={{ width: 'min(220px, 62vw)', scrollSnapAlign: 'center' }}
-                          >
-                            <Link
-                              to={`/${slug}-transfer`}
-                              data-rc=""
-                              className="group relative block overflow-hidden rounded-2xl"
-                              style={{
-                                width: '100%',
-                                height: '300px',
-                                transition: 'transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.35s ease',
-                                willChange: 'transform, opacity',
-                              }}
-                            >
-                              <img
-                                src={region.image}
-                                alt={region.name}
-                                loading="lazy"
-                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                              />
-                              <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(5,8,15,0.95) 0%, rgba(5,8,15,0.35) 55%, transparent 100%)' }} />
-                              {region.price && (
-                                <div className="absolute top-2.5 right-2.5 rounded-md px-2 py-1 text-[11px] font-black" style={{ background: 'rgba(5,8,15,0.75)', color: '#c5a059', border: '1px solid rgba(197,160,89,0.35)', backdropFilter: 'blur(8px)' }}>
-                                  {sym}{region.price}
-                                </div>
-                              )}
-                              <div className="absolute bottom-0 left-0 right-0 p-3">
-                                <p className="text-[9px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: 'rgba(197,160,89,0.65)' }}>Transfer</p>
-                                <h3 className="font-bold text-white text-sm leading-tight group-hover:text-[#e0c07a] transition-colors duration-200">{region.name}</h3>
+                        {/* Header */}
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 reveal">
+                          <div className="flex items-end justify-between gap-4">
+                            <div>
+                              <div className="flex items-center gap-3 mb-3">
+                                <span className="h-px w-6" style={{ background: '#c5a059' }} />
+                                <span className="text-[9px] font-black uppercase tracking-[0.4em]" style={{ color: '#c5a059' }}>{t('regions.eyebrow')}</span>
                               </div>
-                              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: 'inset 0 0 0 1.5px rgba(197,160,89,0.5)' }} />
+                              <h2 className="font-playfair font-bold text-white leading-tight" style={{ fontSize: 'clamp(1.7rem, 3vw, 2.75rem)' }}>
+                                {t('regions.title')}{' '}
+                                <span className="bg-gradient-to-r from-[#c5a059] via-[#e0c07a] to-[#c5a059] bg-clip-text text-transparent">{t('regions.titleAccent')}</span>
+                              </h2>
+                            </div>
+                            <Link to="/bolgeler" className="shrink-0 hidden sm:inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest transition-colors hover:text-[#e0c07a] mb-1" style={{ color: 'rgba(197,160,89,0.6)' }}>
+                              {t('regions.viewAll') || 'Tüm Bölgeler'} <i className="fa-solid fa-arrow-right text-[9px]" />
                             </Link>
                           </div>
-                        );
-                      })}
-                    </div>
+                        </div>
 
-                  </section>
+                        {/* Left/right fade masks */}
+                        <div className="pointer-events-none absolute inset-y-0 left-0 w-24 z-10" style={{ background: 'linear-gradient(90deg, #080c16 0%, transparent 100%)' }} />
+                        <div className="pointer-events-none absolute inset-y-0 right-0 w-24 z-10" style={{ background: 'linear-gradient(270deg, #080c16 0%, transparent 100%)' }} />
+
+                        {/* Row 1 — left */}
+                        <div className="overflow-hidden mb-3">
+                          <div className="rg-row-1 flex gap-3" style={{ width: 'max-content' }}>
+                            {row1.map((region, idx) => <Card key={idx} region={region} idx={idx} />)}
+                          </div>
+                        </div>
+
+                        {/* Row 2 — right */}
+                        <div className="overflow-hidden">
+                          <div className="rg-row-2 flex gap-3" style={{ width: 'max-content' }}>
+                            {row2.map((region, idx) => <Card key={idx} region={region} idx={idx} />)}
+                          </div>
+                        </div>
+
+                        {/* Mobile "Tüm Bölgeler" */}
+                        <div className="flex justify-center mt-8 sm:hidden">
+                          <Link to="/bolgeler" className="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest" style={{ color: '#c5a059' }}>
+                            {t('regions.viewAll') || 'Tüm Bölgeler'} <i className="fa-solid fa-arrow-right text-[9px]" />
+                          </Link>
+                        </div>
+                      </section>
+                    );
+                  })()}
 
                   {randomBlogPosts.length > 0 && (
                   <section id="blog-highlights" className="scroll-mt-20 relative overflow-hidden py-16 md:py-24" style={{ background: 'linear-gradient(180deg, #080c16 0%, #0a0f1c 100%)' }}>
