@@ -801,7 +801,7 @@ const App: React.FC = () => {
                       </div>
 
                       {/* 4 Service Cards */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 stagger-children">
                         {[
                           { num: '01', icon: 'fa-plane-arrival', titleKey: 'services.card1.title', descKey: 'services.card1.desc' },
                           { num: '02', icon: 'fa-map',           titleKey: 'services.card2.title', descKey: 'services.card2.desc' },
@@ -810,7 +810,7 @@ const App: React.FC = () => {
                         ].map((s, i) => (
                           <div
                             key={i}
-                            className="group relative flex flex-col px-6 py-8 md:px-8 md:py-10 border-t border-white/[0.06] sm:border-t-0 first:border-t-0 sm:border-l sm:first:border-l-0 transition-all duration-300 hover:bg-white/[0.025]"
+                            className="reveal group relative flex flex-col px-6 py-8 md:px-8 md:py-10 border-t border-white/[0.06] sm:border-t-0 first:border-t-0 sm:border-l sm:first:border-l-0 transition-all duration-300 hover:bg-white/[0.025]"
                           >
                             {/* Number */}
                             <span className="text-[42px] md:text-[56px] font-black leading-none mb-6 select-none" style={{ color: 'rgba(197,160,89,0.12)', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.02em' }}>
