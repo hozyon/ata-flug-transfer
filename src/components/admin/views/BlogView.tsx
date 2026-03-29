@@ -178,27 +178,26 @@ Kurallar:
 {"seoTitle": "...", "seoDescription": "...", "tags": ["tag1", "tag2"]}`;
 }
 
-async function callClaudeAPI(apiKey: string, prompt: string): Promise<string> {
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify({
-      model: 'claude-opus-4-6',
-      max_tokens: 4096,
-      messages: [{ role: 'user', content: prompt }],
-    }),
-  });
+async function callGeminiAPI(apiKey: string, prompt: string): Promise<string> {
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+    {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+      }),
+    }
+  );
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error((err as { error?: { message?: string } }).error?.message || `API Hatası: ${res.status}`);
   }
-  const data = await res.json() as { content: { type: string; text: string }[] };
-  return data.content?.[0]?.text || '';
+  const data = await res.json() as {
+    candidates?: { content: { parts: { text: string }[] } }[];
+    error?: { message?: string };
+  };
+  return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 }
 
 function buildPrompt(topic: string, keyword: string, region: string, tone: string, articleType: string, businessName = 'Ata Flug Transfer'): string {
@@ -468,7 +467,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
         prompt = buildMetaPrompt(newBlogPost.title, newBlogPost.content, aiKeyword);
       }
 
-      const raw = await callClaudeAPI(key, prompt);
+      const raw = await callGeminiAPI(key, prompt);
       const jsonMatch = raw.match(/\{[\s\S]*\}/);
       if (!jsonMatch) throw new Error('Yanıt JSON formatında değil. Tekrar deneyin.');
       const parsed = JSON.parse(jsonMatch[0]) as {
@@ -606,7 +605,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
               )}
             </div>
             {aiApiKey ? (
-              <p className="text-[11px] text-slate-400 mt-0.5">Claude API bağlı · Tam makale, SEO meta, SSS, içerik iyileştirme</p>
+              <p className="text-[11px] text-slate-400 mt-0.5">Gemini API bağlı · Tam makale, SEO meta, SSS, içerik iyileştirme</p>
             ) : (
               <p className="text-[11px] text-slate-500 mt-0.5">
                 API anahtarınızı ekleyin →{' '}
@@ -659,7 +658,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
         {aiApiKey && (
           <div className="flex items-center gap-4 px-5 py-2.5 border-t border-violet-500/10 bg-violet-500/[0.03]">
             <span className="text-[10px] text-slate-600">Desteklenen modeller:</span>
-            <span className="text-[10px] text-violet-300 font-mono">claude-opus-4-6 · claude-sonnet-4-6 · claude-haiku-4-5</span>
+            <span className="text-[10px] text-violet-300 font-mono">gemini-2.0-flash · gemini-1.5-pro · gemini-1.5-flash</span>
           </div>
         )}
       </div>
@@ -1161,14 +1160,14 @@ export const BlogView: React.FC<BlogViewProps> = ({
                       </div>
                       <h4 className="text-white font-bold text-[15px] mb-1.5 font-outfit">AI Asistan Hazır</h4>
                       <p className="text-slate-500 text-[12px] leading-relaxed mb-7 max-w-[260px]">
-                        SEO, AEO ve GEO uyumlu blog içeriği üretmek için Anthropic API anahtarınızı ekleyin.
+                        SEO, AEO ve GEO uyumlu blog içeriği üretmek için Google Gemini API anahtarınızı ekleyin.
                       </p>
                       {/* Steps */}
                       <div className="w-full max-w-[280px] rounded-2xl bg-violet-500/[0.06] border border-violet-500/[0.12] p-4 text-left space-y-2.5 mb-8">
                         {[
                           { step: '1', text: 'Admin Paneli → Hesap Ayarları' },
                           { step: '2', text: 'AI Entegrasyonu bölümünü aç' },
-                          { step: '3', text: 'Anthropic API anahtarını yapıştır' },
+                          { step: '3', text: 'Google Gemini API anahtarını yapıştır' },
                         ].map(s => (
                           <div key={s.step} className="flex items-center gap-3">
                             <span className="w-5 h-5 rounded-full bg-violet-500/20 text-violet-400 text-[9px] font-black flex items-center justify-center shrink-0">{s.step}</span>
@@ -1196,7 +1195,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
                     <div className="p-5 space-y-4">
                     <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></div>
-                      <p className="text-[11px] text-emerald-400 font-medium">Claude AI bağlı — üretmeye hazır</p>
+                      <p className="text-[11px] text-emerald-400 font-medium">Gemini AI bağlı — üretmeye hazır</p>
                       <div className="ml-auto flex gap-1">
                         <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400">SEO</span>
                         <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400">AEO</span>

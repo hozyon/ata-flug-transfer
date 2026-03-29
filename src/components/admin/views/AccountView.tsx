@@ -300,7 +300,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                             </div>
                             <div className="flex-1">
                                 <h3 className="text-sm font-black font-outfit text-white tracking-wide">AI ENTEGRASYONU</h3>
-                                <p className="text-[10px] text-violet-400/70">Claude API · SEO / AEO / GEO</p>
+                                <p className="text-[10px] text-violet-400/70">Google Gemini · SEO / AEO / GEO</p>
                             </div>
                             {aiApiKey && (
                                 <span className="flex items-center gap-1.5 text-[9px] font-black text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-1 rounded-full">
@@ -331,14 +331,14 @@ export const AccountView: React.FC<AccountViewProps> = ({
                                 </ul>
                                 <p className="text-[10px] text-slate-600 leading-relaxed border-t border-white/[0.04] pt-2 mt-1">
                                     API anahtarı yalnızca tarayıcınızda saklanır, sunucuya gönderilmez.
-                                    <span className="text-violet-400"> console.anthropic.com</span> adresinden edinebilirsiniz.
+                                    <span className="text-violet-400"> aistudio.google.com</span> adresinden edinebilirsiniz.
                                 </p>
                             </div>
 
                             {/* API Key input */}
                             <div className="space-y-2">
                                 <label className={LABEL + ' flex items-center justify-between'}>
-                                    <span>Anthropic API Anahtarı</span>
+                                    <span>Google Gemini API Anahtarı</span>
                                     {aiKeySaved && <span className="text-emerald-400 normal-case font-semibold tracking-normal flex items-center gap-1"><i className="fa-solid fa-check text-[9px]"></i> Kaydedildi</span>}
                                 </label>
                                 <div className="relative">
@@ -347,7 +347,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                                         type={showAiKey ? 'text' : 'password'}
                                         value={aiApiKey}
                                         onChange={e => handleAiKeyChange(e.target.value)}
-                                        placeholder="sk-ant-api03-..."
+                                        placeholder="AIza..."
                                         className={`${INPUT} pl-10 pr-20 font-mono text-[12px] border-violet-500/20 focus:border-violet-500/50`}
                                     />
                                     <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
