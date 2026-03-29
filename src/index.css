@@ -262,6 +262,27 @@
 /* Dark form input placeholder color */
 .iletisim-input::placeholder { color: rgba(255,255,255,0.2); }
 
+/* ── Region Carousel Entrance Animation ──────────────────── */
+.rc-wrap {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.carousel-container.entered .rc-wrap                { opacity: 1; transform: translateY(0); }
+.carousel-container.entered .rc-wrap:nth-child(1)   { transition-delay: 0ms; }
+.carousel-container.entered .rc-wrap:nth-child(2)   { transition-delay: 55ms; }
+.carousel-container.entered .rc-wrap:nth-child(3)   { transition-delay: 110ms; }
+.carousel-container.entered .rc-wrap:nth-child(4)   { transition-delay: 165ms; }
+.carousel-container.entered .rc-wrap:nth-child(5)   { transition-delay: 220ms; }
+.carousel-container.entered .rc-wrap:nth-child(6)   { transition-delay: 275ms; }
+.carousel-container.entered .rc-wrap:nth-child(7)   { transition-delay: 330ms; }
+.carousel-container.entered .rc-wrap:nth-child(8)   { transition-delay: 385ms; }
+.carousel-container.entered .rc-wrap:nth-child(9)   { transition-delay: 440ms; }
+.carousel-container.entered .rc-wrap:nth-child(10)  { transition-delay: 495ms; }
+.carousel-container.entered .rc-wrap:nth-child(11)  { transition-delay: 550ms; }
+.carousel-container.entered .rc-wrap:nth-child(12)  { transition-delay: 605ms; }
+
 @keyframes hozyonPulse {
   0%, 100% { text-shadow: 0 0 6px rgba(197,160,89,0.6), 0 0 16px rgba(197,160,89,0.3); opacity: 0.85; }
   50%       { text-shadow: 0 0 12px rgba(197,160,89,0.95), 0 0 32px rgba(197,160,89,0.55), 0 0 60px rgba(197,160,89,0.2); opacity: 1; }

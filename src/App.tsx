@@ -275,35 +275,15 @@ const App: React.FC = () => {
     const el = regionsCarouselRef.current;
     if (!el) return;
 
-    // Entrance animation state
-    let entryTime = 0;
-    const SLIDE_MS = 550;
-    const STAGGER_MS = 55;
-
-    // Center-scale update + entrance slide-in
+    // Center-scale update
     const update = () => {
-      const now = performance.now();
       const center = el.scrollLeft + el.clientWidth / 2;
-      el.querySelectorAll<HTMLElement>('[data-rc]').forEach((card, idx) => {
+      el.querySelectorAll<HTMLElement>('[data-rc]').forEach(card => {
         const dist = Math.abs((card.offsetLeft + card.offsetWidth / 2) - center);
         const maxD = el.clientWidth * 0.75;
         const p = Math.max(0, 1 - dist / maxD);
-        const scaleVal = 0.88 + p * 0.14;
-        const scaleOpacity = 0.6 + p * 0.4;
-
-        if (entryTime === 0) {
-          card.style.transform = `translateY(20px) scale(${scaleVal}) translateZ(0)`;
-          card.style.opacity = '0';
-          return;
-        }
-
-        const elapsed = now - entryTime - idx * STAGGER_MS;
-        const t = Math.min(1, Math.max(0, elapsed / SLIDE_MS));
-        const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
-        const ty = (20 * (1 - eased)).toFixed(2);
-
-        card.style.transform = `translateY(${ty}px) scale(${scaleVal}) translateZ(0)`;
-        card.style.opacity = String(scaleOpacity * eased);
+        card.style.transform = `scale(${0.88 + p * 0.14}) translateZ(0)`;
+        card.style.opacity = String(0.6 + p * 0.4);
       });
     };
     update();
@@ -311,9 +291,9 @@ const App: React.FC = () => {
     const onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(update); };
     el.addEventListener('scroll', onScroll, { passive: true });
 
-    // IntersectionObserver — entrance animasyonunu tetikler
+    // IntersectionObserver — carousel görünür olunca entered class ekle (CSS slide-in tetikler)
     const revealObserver = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting && entryTime === 0) entryTime = performance.now(); },
+      ([entry]) => { if (entry.isIntersecting) el.classList.add('entered'); },
       { threshold: 0.15 }
     );
     revealObserver.observe(el);
@@ -331,7 +311,6 @@ const App: React.FC = () => {
         else if (direction === -1 && el.scrollLeft <= 1) direction = 1;
         el.scrollLeft += direction * 0.6;
       }
-      update(); // entrance animation için her frame güncelle
       autoRafId = requestAnimationFrame(autoLoop);
     };
     autoRafId = requestAnimationFrame(autoLoop);
@@ -912,37 +891,41 @@ const App: React.FC = () => {
                           .replace(/[çÇ]/g,'c').replace(/[^a-z0-9-]/g,'');
                         const sym = siteContent.currency?.symbol || '€';
                         return (
-                          <Link
+                          <div
                             key={region.id}
-                            to={`/${slug}-transfer`}
-                            data-rc=""
-                            className="group relative block overflow-hidden rounded-2xl shrink-0"
-                            style={{
-                              width: 'min(220px, 62vw)',
-                              height: '300px',
-                              scrollSnapAlign: 'center',
-                              transition: 'transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.35s ease',
-                              willChange: 'transform, opacity',
-                            }}
+                            className="rc-wrap shrink-0"
+                            style={{ width: 'min(220px, 62vw)', scrollSnapAlign: 'center' }}
                           >
-                            <img
-                              src={region.image}
-                              alt={region.name}
-                              loading="lazy"
-                              className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                            />
-                            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(5,8,15,0.95) 0%, rgba(5,8,15,0.35) 55%, transparent 100%)' }} />
-                            {region.price && (
-                              <div className="absolute top-2.5 right-2.5 rounded-md px-2 py-1 text-[11px] font-black" style={{ background: 'rgba(5,8,15,0.75)', color: '#c5a059', border: '1px solid rgba(197,160,89,0.35)', backdropFilter: 'blur(8px)' }}>
-                                {sym}{region.price}
+                            <Link
+                              to={`/${slug}-transfer`}
+                              data-rc=""
+                              className="group relative block overflow-hidden rounded-2xl"
+                              style={{
+                                width: '100%',
+                                height: '300px',
+                                transition: 'transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.35s ease',
+                                willChange: 'transform, opacity',
+                              }}
+                            >
+                              <img
+                                src={region.image}
+                                alt={region.name}
+                                loading="lazy"
+                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              />
+                              <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(5,8,15,0.95) 0%, rgba(5,8,15,0.35) 55%, transparent 100%)' }} />
+                              {region.price && (
+                                <div className="absolute top-2.5 right-2.5 rounded-md px-2 py-1 text-[11px] font-black" style={{ background: 'rgba(5,8,15,0.75)', color: '#c5a059', border: '1px solid rgba(197,160,89,0.35)', backdropFilter: 'blur(8px)' }}>
+                                  {sym}{region.price}
+                                </div>
+                              )}
+                              <div className="absolute bottom-0 left-0 right-0 p-3">
+                                <p className="text-[9px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: 'rgba(197,160,89,0.65)' }}>Transfer</p>
+                                <h3 className="font-bold text-white text-sm leading-tight group-hover:text-[#e0c07a] transition-colors duration-200">{region.name}</h3>
                               </div>
-                            )}
-                            <div className="absolute bottom-0 left-0 right-0 p-3">
-                              <p className="text-[9px] font-bold uppercase tracking-[0.2em] mb-1" style={{ color: 'rgba(197,160,89,0.65)' }}>Transfer</p>
-                              <h3 className="font-bold text-white text-sm leading-tight group-hover:text-[#e0c07a] transition-colors duration-200">{region.name}</h3>
-                            </div>
-                            <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: 'inset 0 0 0 1.5px rgba(197,160,89,0.5)' }} />
-                          </Link>
+                              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ boxShadow: 'inset 0 0 0 1.5px rgba(197,160,89,0.5)' }} />
+                            </Link>
+                          </div>
                         );
                       })}
                     </div>
