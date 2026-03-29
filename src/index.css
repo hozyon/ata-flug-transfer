@@ -271,8 +271,8 @@
   from { transform: translateX(-50%); }
   to   { transform: translateX(0); }
 }
-.rg-row-1 { animation: rg-ltr 90s linear infinite; }
-.rg-row-2 { animation: rg-rtl 105s linear infinite; }
+.rg-row-1 { animation: rg-ltr 130s linear infinite; }
+.rg-row-2 { animation: rg-rtl 135s linear infinite; }
 .rg-row-1:hover,
 .rg-row-2:hover { animation-play-state: paused; }
 

@@ -567,7 +567,7 @@ const App: React.FC = () => {
                     const activeGroups = priceSearch.trim() ? filteredGroups : groups;
 
                     return (
-                      <section className="relative overflow-hidden py-16 md:py-24" style={{ background: 'linear-gradient(160deg, #080c16 0%, #0c1220 50%, #080c16 100%)' }}>
+                      <section className="relative overflow-hidden py-16 md:py-24" style={{ background: 'linear-gradient(180deg, #080c16 0%, #0a0f1c 100%)' }}>
 
                         {/* Gold radial glow */}
                         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[220px] opacity-[0.18]" style={{ background: 'radial-gradient(ellipse, #c5a059 0%, transparent 70%)' }} />
@@ -906,7 +906,7 @@ const App: React.FC = () => {
                   )}
 
                   {/* Müşteri Yorumları — 2026 UI */}
-                  <section id="reviews" className="py-16 md:py-24 bg-[var(--color-dark)] overflow-hidden relative">
+                  <section id="reviews" className="py-16 md:py-24 overflow-hidden relative" style={{ background: 'linear-gradient(180deg, #0a0f1c 0%, #080c16 100%)' }}>
                     {/* Ambient glow */}
                     <div className="absolute top-0 left-1/4 w-[500px] h-[300px] bg-[var(--color-primary)]/[0.03] rounded-full blur-[100px] pointer-events-none"></div>
                     <div className="absolute bottom-0 right-1/4 w-[400px] h-[200px] bg-[var(--color-primary)]/[0.02] rounded-full blur-[80px] pointer-events-none"></div>

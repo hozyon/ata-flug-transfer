@@ -36,7 +36,7 @@ const Blog: React.FC = () => {
     );
 
     return (
-        <div className="min-h-screen" style={{ background: '#f8f7f4' }}>
+        <div className="min-h-screen" style={{ background: '#020617' }}>
             <Helmet>
                 <title>{t('blogPage.title')} | {businessName}</title>
                 <meta name="description" content={siteContent.seo?.pagesSeo?.blog?.description || 'Antalya havalimanı transfer rehberi, gezilecek yerler, tatil ipuçları ve daha fazlası.'} />
@@ -84,7 +84,7 @@ const Blog: React.FC = () => {
             </div>
 
             {/* Blog Grid */}
-            <section className="py-12 md:py-16 relative z-10" style={{ background: '#f8f7f4' }}>
+            <section className="py-12 md:py-16 relative z-10" style={{ background: 'linear-gradient(180deg, #060a14 0%, #080c16 100%)' }}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
                         {currentPosts.map((post) => {
@@ -93,11 +93,12 @@ const Blog: React.FC = () => {
                                 <Link
                                     to={`/blog/${post.slug}`}
                                     key={post.id}
-                                    className="group flex flex-col h-full bg-white rounded-2xl overflow-hidden border border-slate-100 hover:shadow-md hover:border-slate-200 transition-all duration-300 transform hover:-translate-y-0.5"
+                                    className="group flex flex-col h-full rounded-2xl overflow-hidden transition-all duration-300 transform hover:-translate-y-0.5"
+                                    style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}
                                 >
                                     {/* Image Container */}
-                                    <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
-                                        <div className="absolute inset-0 bg-slate-900/5 group-hover:bg-transparent transition-colors duration-300 z-10"></div>
+                                    <div className="relative aspect-[4/3] overflow-hidden" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                                        <div className="absolute inset-0 bg-white/[0.03] group-hover:bg-transparent transition-colors duration-300 z-10"></div>
                                         <img
                                             src={post.featuredImage}
                                             alt={tp.title}
@@ -106,7 +107,7 @@ const Blog: React.FC = () => {
                                             onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/images/placeholder-blog.jpg'; }}
                                         />
                                         <div className="absolute top-4 left-4 z-20">
-                                            <span className="inline-block px-3 py-1 bg-white text-[var(--color-dark)] text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm">
+                                            <span className="inline-block px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full" style={{ background: 'rgba(197,160,89,0.15)', color: '#c5a059' }}>
                                                 {tp.category}
                                             </span>
                                         </div>
@@ -114,15 +115,15 @@ const Blog: React.FC = () => {
 
                                     {/* Content */}
                                     <div className="flex-1 p-5 flex flex-col">
-                                        <h2 className="text-lg font-playfair font-bold text-slate-800 mb-2 group-hover:text-[var(--color-primary)] transition-colors leading-snug line-clamp-2">
+                                        <h2 className="text-lg font-playfair font-bold text-white mb-2 group-hover:text-[var(--color-primary)] transition-colors leading-snug line-clamp-2">
                                             {tp.title}
                                         </h2>
-                                        <p className="text-slate-500 text-xs leading-relaxed mb-4 line-clamp-3">
+                                        <p className="text-white/50 text-xs leading-relaxed mb-4 line-clamp-3">
                                             {tp.excerpt}
                                         </p>
 
-                                        <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-100">
-                                            <div className="flex items-center gap-2 text-slate-400 text-[10px] font-medium">
+                                        <div className="mt-auto flex items-center justify-between pt-4 border-t border-white/[0.07]">
+                                            <div className="flex items-center gap-2 text-white/40 text-[10px] font-medium">
                                                 <i className="fa-regular fa-calendar"></i>
                                                 <span>{new Date(post.publishedAt).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                                             </div>
@@ -143,7 +144,7 @@ const Blog: React.FC = () => {
                             <button
                                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                                 disabled={currentPage === 1}
-                                className="w-11 h-11 rounded-full flex items-center justify-center border border-slate-200 text-slate-500 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] disabled:opacity-50 disabled:hover:border-slate-200 disabled:hover:text-slate-500 transition-colors"
+                                className="w-11 h-11 rounded-full flex items-center justify-center border border-white/10 text-white/50 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] disabled:opacity-30 disabled:hover:border-white/10 disabled:hover:text-white/50 transition-colors"
                             >
                                 <i className="fa-solid fa-chevron-left"></i>
                             </button>
@@ -154,8 +155,9 @@ const Blog: React.FC = () => {
                                     onClick={() => setCurrentPage(page)}
                                     className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${currentPage === page
                                         ? 'bg-[var(--color-primary)] text-white shadow-lg shadow-[var(--color-primary)]/30 scale-110'
-                                        : 'bg-white border border-slate-200 text-slate-600 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]'
+                                        : 'border border-white/10 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]'
                                         }`}
+                                    style={currentPage !== page ? { background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.7)' } : {}}
                                 >
                                     {page}
                                 </button>
@@ -164,7 +166,7 @@ const Blog: React.FC = () => {
                             <button
                                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                                 disabled={currentPage === totalPages}
-                                className="w-11 h-11 rounded-full flex items-center justify-center border border-slate-200 text-slate-500 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] disabled:opacity-50 disabled:hover:border-slate-200 disabled:hover:text-slate-500 transition-colors"
+                                className="w-11 h-11 rounded-full flex items-center justify-center border border-white/10 text-white/50 hover:border-[var(--color-primary)] hover:text-[var(--color-primary)] disabled:opacity-30 disabled:hover:border-white/10 disabled:hover:text-white/50 transition-colors"
                             >
                                 <i className="fa-solid fa-chevron-right"></i>
                             </button>

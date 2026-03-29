@@ -24,7 +24,7 @@ const Hakkimizda: React.FC = () => {
     const pageDesc = seo?.pagesSeo?.about?.description || 'Ata Flug Transfer olarak Antalya\'da güvenilir VIP transfer hizmeti sunuyoruz.';
 
     return (
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen" style={{ background: '#020617' }}>
             <Helmet>
                 <title>{pageTitle} | {business.name}</title>
                 <meta name="description" content={pageDesc} />
@@ -62,12 +62,12 @@ const Hakkimizda: React.FC = () => {
                 </div>
             </section>
 
-            <section className="py-16 md:py-24 relative z-20 overflow-hidden" style={{ background: '#f8f7f4' }}>
+            <section className="py-16 md:py-24 relative z-20 overflow-hidden" style={{ background: 'linear-gradient(180deg, #060a14 0%, #080c16 100%)' }}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
                         <div className="pt-2 reveal-left">
-                            <h2 className="font-playfair font-bold text-slate-900 leading-tight mb-6" style={{ fontSize: 'clamp(1.6rem, 3vw, 2.5rem)' }}>{t(about.title)}</h2>
-                            <div className="text-slate-600 text-base leading-relaxed space-y-5 whitespace-pre-line border-l-2 pl-6" style={{ borderColor: 'rgba(197,160,89,0.4)' }}>
+                            <h2 className="font-playfair font-bold text-white leading-tight mb-6" style={{ fontSize: 'clamp(1.6rem, 3vw, 2.5rem)' }}>{t(about.title)}</h2>
+                            <div className="text-white/60 text-base leading-relaxed space-y-5 whitespace-pre-line border-l-2 pl-6" style={{ borderColor: 'rgba(197,160,89,0.4)' }}>
                                 {t(about.content)}
                             </div>
                             <div className="mt-8">
@@ -78,12 +78,12 @@ const Hakkimizda: React.FC = () => {
                             </div>
                         </div>
                         <div className="relative reveal">
-                            <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl border border-slate-200">
+                            <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl border border-white/[0.1]">
                                 <img src={about.image || '/images/about-custom.jpg'} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" alt="About Us Feature" />
                             </div>
-                            <div className="absolute -bottom-8 -left-8 w-2/3 bg-white p-6 rounded-2xl hidden md:block shadow-lg border border-slate-100">
+                            <div className="absolute -bottom-8 -left-8 w-2/3 p-6 rounded-2xl hidden md:block" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
                                 <div className="font-playfair font-bold mb-1" style={{ color: '#c5a059', fontSize: '2rem' }}>VIP</div>
-                                <div className="text-slate-700 font-semibold uppercase tracking-widest text-xs">{t('about.transferService')}</div>
+                                <div className="text-white/70 font-semibold uppercase tracking-widest text-xs">{t('about.transferService')}</div>
                             </div>
                         </div>
                     </div>
