@@ -275,21 +275,48 @@ const App: React.FC = () => {
     const el = regionsCarouselRef.current;
     if (!el) return;
 
-    // Center-scale update
+    // Entrance animation state
+    let entryTime = 0;
+    const SLIDE_MS = 550;
+    const STAGGER_MS = 55;
+
+    // Center-scale update + entrance slide-in
     const update = () => {
+      const now = performance.now();
       const center = el.scrollLeft + el.clientWidth / 2;
-      el.querySelectorAll<HTMLElement>('[data-rc]').forEach(card => {
+      el.querySelectorAll<HTMLElement>('[data-rc]').forEach((card, idx) => {
         const dist = Math.abs((card.offsetLeft + card.offsetWidth / 2) - center);
         const maxD = el.clientWidth * 0.75;
         const p = Math.max(0, 1 - dist / maxD);
-        card.style.transform = `scale(${0.88 + p * 0.14}) translateZ(0)`;
-        card.style.opacity = String(0.6 + p * 0.4);
+        const scaleVal = 0.88 + p * 0.14;
+        const scaleOpacity = 0.6 + p * 0.4;
+
+        if (entryTime === 0) {
+          card.style.transform = `translateY(20px) scale(${scaleVal}) translateZ(0)`;
+          card.style.opacity = '0';
+          return;
+        }
+
+        const elapsed = now - entryTime - idx * STAGGER_MS;
+        const t = Math.min(1, Math.max(0, elapsed / SLIDE_MS));
+        const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
+        const ty = (20 * (1 - eased)).toFixed(2);
+
+        card.style.transform = `translateY(${ty}px) scale(${scaleVal}) translateZ(0)`;
+        card.style.opacity = String(scaleOpacity * eased);
       });
     };
     update();
     let raf: number;
     const onScroll = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(update); };
     el.addEventListener('scroll', onScroll, { passive: true });
+
+    // IntersectionObserver — entrance animasyonunu tetikler
+    const revealObserver = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting && entryTime === 0) entryTime = performance.now(); },
+      { threshold: 0.15 }
+    );
+    revealObserver.observe(el);
 
     // Smooth auto-scroll via rAF — ping-pong sağ→sol→sağ
     let userPaused = false;
@@ -304,6 +331,7 @@ const App: React.FC = () => {
         else if (direction === -1 && el.scrollLeft <= 1) direction = 1;
         el.scrollLeft += direction * 0.6;
       }
+      update(); // entrance animation için her frame güncelle
       autoRafId = requestAnimationFrame(autoLoop);
     };
     autoRafId = requestAnimationFrame(autoLoop);
@@ -339,6 +367,7 @@ const App: React.FC = () => {
       cancelAnimationFrame(autoRafId);
       cancelAnimationFrame(raf);
       clearTimeout(resumeTimer);
+      revealObserver.disconnect();
       el.removeEventListener('scroll', onScroll);
       el.removeEventListener('mousedown', onMouseDown);
       el.removeEventListener('mouseup', onMouseUp);
