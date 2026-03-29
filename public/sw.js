@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ata-flug-v2';
+const CACHE_NAME = 'ata-flug-v3';
 const SUPABASE_HOST = 'rnymtrtbhvkyvgzweswi.supabase.co';
 
 const STATIC_ASSETS = [
