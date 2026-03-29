@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ata-flug-v3';
+const CACHE_NAME = 'ata-flug-v4';
 const SUPABASE_HOST = 'rnymtrtbhvkyvgzweswi.supabase.co';
 
 const STATIC_ASSETS = [
@@ -39,21 +39,20 @@ self.addEventListener('fetch', event => {
         return;
     }
 
-    // Strategy A: Cache-first for immutable hashed Vite assets + all images
+    // Strategy A: Network-first for hashed Vite assets + images (ensures fresh JS on deploy)
     const isHashedAsset = url.pathname.startsWith('/assets/');
     const isImage = /\.(webp|png|jpg|jpeg|svg|ico|gif)$/.test(url.pathname);
     if (isHashedAsset || isImage) {
         event.respondWith(
-            caches.match(request).then(cached => {
-                if (cached) return cached;
-                return fetch(request).then(response => {
+            fetch(request)
+                .then(response => {
                     if (response.ok && url.origin === self.location.origin) {
                         const clone = response.clone();
                         caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
                     }
                     return response;
-                });
-            })
+                })
+                .catch(() => caches.match(request))
         );
         return;
     }
