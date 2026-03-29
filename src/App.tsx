@@ -790,6 +790,11 @@ const App: React.FC = () => {
                         )}
                       </Link>
                     );
+                    const Separator = () => (
+                      <svg className="shrink-0 self-center" width="24" height="14" viewBox="0 0 24 14" fill="none" aria-hidden="true">
+                        <path d="M6 5L4 7l2 2M4 7h16M18 5l2 2-2 2" stroke="rgba(197,160,89,0.28)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    );
                     return (
                       <section id="regions" className="scroll-mt-20 py-14 md:py-20 overflow-hidden relative" style={{ background: 'linear-gradient(180deg, #060a14 0%, #080c16 100%)' }}>
                         {/* Ambient glow */}
@@ -820,15 +825,25 @@ const App: React.FC = () => {
 
                         {/* Row 1 — left */}
                         <div className="overflow-hidden mb-3">
-                          <div className="rg-row-1 flex gap-3" style={{ width: 'max-content' }}>
-                            {row1.map((region, idx) => <Card key={idx} region={region} idx={idx} />)}
+                          <div className="rg-row-1 flex gap-3 items-center" style={{ width: 'max-content' }}>
+                            {row1.map((region, idx) => (
+                              <React.Fragment key={idx}>
+                                <Card region={region} idx={idx} />
+                                <Separator />
+                              </React.Fragment>
+                            ))}
                           </div>
                         </div>
 
                         {/* Row 2 — right */}
                         <div className="overflow-hidden">
-                          <div className="rg-row-2 flex gap-3" style={{ width: 'max-content' }}>
-                            {row2.map((region, idx) => <Card key={idx} region={region} idx={idx} />)}
+                          <div className="rg-row-2 flex gap-3 items-center" style={{ width: 'max-content' }}>
+                            {row2.map((region, idx) => (
+                              <React.Fragment key={idx}>
+                                <Card region={region} idx={idx} />
+                                <Separator />
+                              </React.Fragment>
+                            ))}
                           </div>
                         </div>
 
