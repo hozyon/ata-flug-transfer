@@ -180,7 +180,7 @@ Kurallar:
 
 async function callGeminiAPI(apiKey: string, prompt: string): Promise<string> {
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`,
     {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
