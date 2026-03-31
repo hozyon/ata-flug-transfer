@@ -2,15 +2,15 @@ const GEMINI_URL =
   'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent';
 
 // ── Core API caller ───────────────────────────────────────────────────────────
-// responseMimeType: "application/json" forces Gemini to return valid JSON
-// without markdown wrappers or explanatory text — eliminating JSON parse errors.
+// v1 API does not support responseMimeType. Instead, prompts explicitly
+// instruct Gemini to return only a raw JSON object. Parsing is done with
+// a two-step strategy: direct JSON.parse first, then regex fallback.
 async function callGemini<T>(apiKey: string, prompt: string): Promise<T> {
   const res = await fetch(`${GEMINI_URL}?key=${apiKey}`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify({
       contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { responseMimeType: 'application/json' },
     }),
   });
 
@@ -23,8 +23,17 @@ async function callGemini<T>(apiKey: string, prompt: string): Promise<T> {
     candidates?: { content: { parts: { text: string }[] } }[];
   };
 
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
-  return JSON.parse(text) as T;
+  const text = (data.candidates?.[0]?.content?.parts?.[0]?.text ?? '').trim();
+
+  // Strategy 1: direct parse (model returned clean JSON)
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    // Strategy 2: extract JSON object from surrounding text/markdown
+    const match = text.match(/\{[\s\S]*\}/);
+    if (!match) throw new Error('Yanıt JSON formatında değil. Tekrar deneyin.');
+    return JSON.parse(match[0]) as T;
+  }
 }
 
 // ── Return types ──────────────────────────────────────────────────────────────
@@ -90,15 +99,8 @@ YAZI TÜRÜ: ${articleType}
 - ${businessName} markasını doğal biçimde 3–5 kez geçir
 - Yapılandırılmış ve alıntılanabilir bilgiler sun
 
-Aşağıdaki JSON şemasını döndür. content alanında satır sonları için \\n kullan, içerikte çift tırnak karakteri kullanma:
-{
-  "title": "Tam makale başlığı (H1 için)",
-  "seoTitle": "SEO başlığı (max 60 karakter)",
-  "seoDescription": "Meta açıklama (120-155 karakter)",
-  "excerpt": "Blog listesinde görünecek özet (2-3 cümle)",
-  "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
-  "content": "Tam markdown içerik (800+ kelime, satır sonları \\n ile)"
-}`;
+YANIT KURALI: Sadece aşağıdaki JSON nesnesini döndür. Markdown kullanma, açıklama yazma, kod bloğu açma. İlk karakter { son karakter } olsun. content alanında satır sonu için \\n kullan, çift tırnak kullanma:
+{"title":"...","seoTitle":"...","seoDescription":"...","excerpt":"...","tags":["tag1","tag2"],"content":"..."}`;
 }
 
 function buildImprovePrompt(content: string, title: string): string {
@@ -118,8 +120,8 @@ Yapılacaklar:
 - Antalya Havalimanı, Ata Flug Transfer gibi entiteleri doğal kullan
 - İçeriği minimum 800 kelimeye tamamla
 
-Aşağıdaki JSON şemasını döndür. content alanında satır sonları için \\n kullan, içerikte çift tırnak karakteri kullanma:
-{"content": "geliştirilmiş markdown içerik"}`;
+YANIT KURALI: Sadece aşağıdaki JSON nesnesini döndür. Markdown kullanma, açıklama yazma, kod bloğu açma. content alanında satır sonu için \\n kullan, çift tırnak kullanma:
+{"content":"..."}`;
 }
 
 function buildFaqPrompt(title: string, region: string): string {
@@ -132,8 +134,8 @@ Kurallar:
 - Fiyat, süre, hizmet kalitesi, güvenlik, rezervasyon konularını kapsasın
 - Ata Flug Transfer markasını doğal kullan
 
-Aşağıdaki JSON şemasını döndür. faq alanında satır sonları için \\n kullan:
-{"faq": "## Sıkça Sorulan Sorular\\n\\n**Soru 1?**\\nCevap...\\n\\n**Soru 2?**\\nCevap..."}`;
+YANIT KURALI: Sadece aşağıdaki JSON nesnesini döndür. Markdown kullanma, açıklama yazma, kod bloğu açma. faq alanında satır sonu için \\n kullan:
+{"faq":"## Sıkça Sorulan Sorular\\n\\n**Soru 1?**\\nCevap...\\n\\n**Soru 2?**\\nCevap..."}`;
 }
 
 function buildMetaPrompt(title: string, content: string, keyword: string): string {
@@ -148,8 +150,8 @@ Kurallar:
 - Meta description: 120-155 karakter arası, call-to-action içermeli
 - 6-8 SEO etiketi öner
 
-Aşağıdaki JSON şemasını döndür:
-{"seoTitle": "...", "seoDescription": "...", "tags": ["tag1", "tag2"]}`;
+YANIT KURALI: Sadece aşağıdaki JSON nesnesini döndür. Markdown kullanma, açıklama yazma, kod bloğu açma:
+{"seoTitle":"...","seoDescription":"...","tags":["tag1","tag2"]}`;
 }
 
 // ── Public API ────────────────────────────────────────────────────────────────
