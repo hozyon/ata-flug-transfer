@@ -5,6 +5,10 @@ import { Routes, Route, useLocation, Link, useNavigate, Navigate } from 'react-r
 import Navbar from './components/Navbar';
 import BookingForm from './components/BookingForm';
 import TextureBackground from './components/TextureBackground';
+import HowItWorks from './components/HowItWorks';
+import VehicleFleet from './components/VehicleFleet';
+import TrustLogos from './components/TrustLogos';
+import CookieConsent from './components/CookieConsent';
 import { useLanguage } from './i18n/LanguageContext';
 const AdminPanel = React.lazy(() => import('./components/AdminPanel'));
 import { SiteProvider } from './SiteContext';
@@ -24,6 +28,8 @@ const SSS = React.lazy(() => import('./pages/SSS'));
 const Iletisim = React.lazy(() => import('./pages/Iletisim'));
 const AdminLogin = React.lazy(() => import('./pages/AdminLogin'));
 const TransferDestination = React.lazy(() => import('./pages/TransferDestination'));
+const Fiyatlar = React.lazy(() => import('./pages/Fiyatlar'));
+const NotFound = React.lazy(() => import('./pages/NotFound'));
 import ErrorBoundary from './components/ErrorBoundary';
 
 
@@ -333,8 +339,9 @@ const App: React.FC = () => {
               <Route path="/iletisim" element={<div className="page-enter"><Iletisim /></div>} />
               <Route path="/login" element={<div className="page-enter"><AdminLogin onLogin={handleLoginSuccess} /></div>} />
               <Route path="/admin/*" element={<Navigate to="/login" replace />} />
+              <Route path="/fiyatlar" element={<div className="page-enter"><Fiyatlar /></div>} />
               <Route path="/:transferSlug" element={<div className="page-enter"><TransferDestination /></div>} />
-              <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="*" element={<div className="page-enter"><NotFound /></div>} />
               <Route path="/" element={
                 <>
 
@@ -523,6 +530,9 @@ const App: React.FC = () => {
                       </div>
                     </div>
                   </section>
+
+                  {/* ── How It Works ── */}
+                  <HowItWorks />
 
                   {/* ── Pricing Section ── */}
                   {(() => {
@@ -857,6 +867,9 @@ const App: React.FC = () => {
                     );
                   })()}
 
+                  {/* ── Vehicle Fleet ── */}
+                  <VehicleFleet onSelectVehicle={() => setIsBookingFormOpen(true)} />
+
                   {randomBlogPosts.length > 0 && (
                   <section id="blog-highlights" className="scroll-mt-20 relative overflow-hidden py-16 md:py-24" style={{ background: 'linear-gradient(180deg, #080c16 0%, #0a0f1c 100%)' }}>
                     {/* Ambient glow */}
@@ -899,6 +912,62 @@ const App: React.FC = () => {
                           onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.08)'; (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; }}>
                           <span>{t('blog.viewAll')}</span>
                           <i className="fa-solid fa-arrow-right text-[9px]"></i>
+                        </Link>
+                      </div>
+                    </div>
+                  </section>
+                  )}
+
+                  {/* ── SSS Preview ── */}
+                  {siteContent.faq && siteContent.faq.filter(f => !f.hidden).length > 0 && (
+                  <section className="py-16 md:py-20 relative overflow-hidden" style={{ background: 'linear-gradient(180deg, #080c16 0%, #0a0f1c 100%)' }}>
+                    <div className="max-w-3xl mx-auto px-4 sm:px-6">
+                      <div className="text-center mb-10 reveal">
+                        <div className="flex items-center justify-center gap-4 mb-4">
+                          <span className="flex-1 max-w-[72px] h-px" style={{ background: 'linear-gradient(90deg, transparent, #c5a059)' }} />
+                          <span className="text-[10px] font-black tracking-[0.35em] uppercase" style={{ color: '#c5a059' }}>
+                            {t('faq.eyebrow') || 'SSS'}
+                          </span>
+                          <span className="flex-1 max-w-[72px] h-px" style={{ background: 'linear-gradient(270deg, transparent, #c5a059)' }} />
+                        </div>
+                        <h2 className="font-playfair font-bold text-white leading-tight" style={{ fontSize: 'clamp(1.8rem, 3.5vw, 2.8rem)' }}>
+                          {t('faq.title') || 'Sıkça Sorulan'}{' '}
+                          <span className="bg-gradient-to-r from-[#c5a059] via-[#e0c07a] to-[#c5a059] bg-clip-text text-transparent">
+                            {t('faq.titleAccent') || 'Sorular'}
+                          </span>
+                        </h2>
+                      </div>
+                      {(() => {
+                        const FaqPreviewList = () => {
+                          const [openIdx, setOpenIdx] = React.useState<number | null>(null);
+                          const items = siteContent.faq.filter(f => !f.hidden).slice(0, 4);
+                          return (
+                            <div className="space-y-2.5 stagger-children">
+                              {items.map((faq, i) => (
+                                <div key={faq.id} className="reveal rounded-2xl overflow-hidden transition-all duration-200"
+                                  style={{ border: `1px solid ${openIdx === i ? 'rgba(197,160,89,0.3)' : 'rgba(255,255,255,0.07)'}`, background: openIdx === i ? 'rgba(197,160,89,0.04)' : 'rgba(255,255,255,0.02)' }}>
+                                  <button onClick={() => setOpenIdx(openIdx === i ? null : i)}
+                                    className="w-full flex items-center justify-between px-5 py-4 text-left min-h-[56px] hover:bg-white/[0.02] transition-colors">
+                                    <span className="font-semibold text-white/85 text-sm pr-4 leading-snug">{t(faq.q)}</span>
+                                    <i className={`fa-solid fa-chevron-down text-sm shrink-0 transition-transform duration-300 ${openIdx === i ? 'rotate-180' : ''}`} style={{ color: '#c5a059' }} />
+                                  </button>
+                                  <div className={`overflow-hidden transition-all duration-300 ${openIdx === i ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'}`}>
+                                    <p className="px-5 pb-5 pt-1 text-white/45 text-sm leading-relaxed" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>{t(faq.a)}</p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          );
+                        };
+                        return <FaqPreviewList />;
+                      })()}
+                      <div className="text-center mt-8">
+                        <Link to="/sss" className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all duration-200 hover:text-[#c5a059]"
+                          style={{ color: 'rgba(255,255,255,0.4)', border: '1px solid rgba(255,255,255,0.08)' }}
+                          onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(197,160,89,0.35)'; (e.currentTarget as HTMLAnchorElement).style.background = 'rgba(197,160,89,0.05)'; }}
+                          onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = 'rgba(255,255,255,0.08)'; (e.currentTarget as HTMLAnchorElement).style.background = 'transparent'; }}>
+                          <span>{t('faq.viewAll') || 'Tüm Soruları Gör'}</span>
+                          <i className="fa-solid fa-arrow-right text-[9px]" />
                         </Link>
                       </div>
                     </div>
@@ -1095,6 +1164,9 @@ const App: React.FC = () => {
                       );
                     })()}
                   </section>
+
+                  {/* ── Trust Logos ── */}
+                  <TrustLogos />
                 </>
               } />
             </Routes>
@@ -1213,10 +1285,19 @@ const App: React.FC = () => {
               <div className="relative w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lg shadow-[#25D366]/30 hover:shadow-xl hover:shadow-[#25D366]/40 hover:scale-110 active:scale-95 transition-all duration-200">
                 <i className="fa-brands fa-whatsapp text-2xl"></i>
               </div>
+              {/* Tooltip */}
+              <span className="absolute left-16 bottom-1/2 translate-y-1/2 whitespace-nowrap text-[11px] font-bold px-2.5 py-1 rounded-lg pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                style={{ background: 'rgba(15,23,42,0.95)', color: '#25D366', border: '1px solid rgba(37,211,102,0.2)' }}>
+                7/24 WhatsApp
+              </span>
             </div>
           </a>
         )}
       </div>
+
+      {/* ── GDPR Cookie Consent Banner ── */}
+      {(!isAdmin || isPublicBrowse) && <CookieConsent />}
+
       {/* ── Şifre Sıfırlama Modal ── */}
       {showResetModal && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">

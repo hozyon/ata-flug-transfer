@@ -59,12 +59,20 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
     notes: '',
   };
 
+  // Transfer direction: airport→hotel, hotel→airport, round-trip
+  type TripType = 'arrival' | 'departure' | 'roundtrip';
+  const [tripType, setTripType] = useState<TripType>('arrival');
+
   const [formData, setFormData] = useState(initialState);
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState<'forward' | 'back'>('forward');
   const [animating, setAnimating] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Instant price preview based on selected destination
+  const selectedRegion = siteContent.regions.find(r => r.name === formData.destination || r.name === formData.pickup);
+  const estimatedPrice = selectedRegion?.price;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -211,6 +219,26 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
         {/* STEP 0 — Rota */}
         {step === 0 && (
           <>
+            {/* Transfer yönü toggle */}
+            <div className="grid grid-cols-3 gap-1 rounded-xl p-1" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
+              {([
+                { key: 'arrival', label: t('form.arrival') || 'Havalimanından', icon: 'fa-plane-arrival' },
+                { key: 'departure', label: t('form.departure') || 'Havalimanına', icon: 'fa-plane-departure' },
+                { key: 'roundtrip', label: t('form.roundtrip') || 'Gidiş-Dönüş', icon: 'fa-rotate' },
+              ] as { key: TripType; label: string; icon: string }[]).map(opt => (
+                <button key={opt.key} type="button" onClick={() => setTripType(opt.key)}
+                  className="flex flex-col items-center gap-1 py-2 px-1 rounded-lg text-[10px] font-bold transition-all duration-200"
+                  style={{
+                    background: tripType === opt.key ? 'rgba(197,160,89,0.2)' : 'transparent',
+                    color: tripType === opt.key ? '#c5a059' : 'rgba(255,255,255,0.35)',
+                    border: tripType === opt.key ? '1px solid rgba(197,160,89,0.35)' : '1px solid transparent',
+                  }}>
+                  <i className={`fa-solid ${opt.icon} text-xs`} />
+                  <span className="leading-tight text-center" style={{ fontSize: '9px' }}>{opt.label}</span>
+                </button>
+              ))}
+            </div>
+
             <div className="relative">
               <div className="flex flex-col gap-0 rounded-xl border border-white/[0.08] bg-white/[0.03] overflow-hidden focus-within:border-[var(--color-primary)]/40 transition-colors">
                 <div className="px-3 py-2.5">
@@ -262,6 +290,24 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
                 {errors.time && <p className="text-rose-400 text-[9px] mt-1">{errors.time}</p>}
               </div>
             </div>
+
+            {/* Anlık fiyat preview */}
+            {estimatedPrice != null && (
+              <div className="rounded-xl px-4 py-3 flex items-center justify-between" style={{ background: 'rgba(197,160,89,0.08)', border: '1px solid rgba(197,160,89,0.2)' }}>
+                <div className="flex items-center gap-2 text-[11px]" style={{ color: 'rgba(197,160,89,0.8)' }}>
+                  <i className="fa-solid fa-tag text-[9px]" />
+                  <span>{t('form.estimatedPrice') || 'Tahmini Fiyat'}</span>
+                  {tripType === 'roundtrip' && <span className="text-emerald-400 font-bold">(-10%)</span>}
+                </div>
+                <span className="font-black text-lg" style={{ color: '#c5a059' }}>
+                  {whatsappNumber ? (
+                    tripType === 'roundtrip'
+                      ? `${siteContent.currency?.symbol || '€'}${Math.round(estimatedPrice * 2 * 0.9)}`
+                      : `${siteContent.currency?.symbol || '€'}${estimatedPrice}`
+                  ) : null}
+                </span>
+              </div>
+            )}
           </>
         )}
 
