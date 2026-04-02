@@ -35,7 +35,12 @@ self.addEventListener('fetch', event => {
 
     // Strategy B: Network-only for Supabase — never cache dynamic booking/auth data
     if (url.hostname === SUPABASE_HOST) {
-        event.respondWith(fetch(request));
+        event.respondWith(
+            fetch(request).catch(() => new Response(JSON.stringify({ error: 'Network error' }), {
+                status: 503,
+                headers: { 'Content-Type': 'application/json' }
+            }))
+        );
         return;
     }
 
@@ -77,6 +82,9 @@ self.addEventListener('fetch', event => {
     }
 
     // Strategy D: Network-first with cache fallback for everything else
+    // Skip cross-origin requests that aren't Supabase (extensions, analytics, etc.)
+    if (url.origin !== self.location.origin) return;
+
     event.respondWith(
         fetch(request)
             .then(response => {
@@ -86,6 +94,10 @@ self.addEventListener('fetch', event => {
                 }
                 return response;
             })
-            .catch(() => caches.match(request))
+            .catch(() =>
+                caches.match(request).then(cached =>
+                    cached || new Response('', { status: 503 })
+                )
+            )
     );
 });
