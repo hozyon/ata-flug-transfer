@@ -1,469 +1,436 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ata Flug Transfer — Coming Soon</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg:       #07080a;
-      --text:     #f0ece4;
-      --muted:    rgba(240,236,228,0.4);
-      --border:   rgba(240,236,228,0.08);
-      --surface:  rgba(240,236,228,0.04);
-      --gold:     #c8a96e;
-      --gold-dim: rgba(200,169,110,0.18);
-    }
-
-    html, body {
-      height: 100%;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', system-ui, sans-serif;
-      height: 100vh;
-      overflow: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ─── BG ─── */
-    .bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
-    .orb {
-      position: absolute; border-radius: 50%;
-      filter: blur(140px); opacity: 0.4; will-change: transform;
-    }
-    .orb-1 {
-      width: 800px; height: 800px;
-      background: radial-gradient(circle, #2a1a06, transparent 65%);
-      top: -260px; left: -260px;
-      animation: f1 20s ease-in-out infinite;
-    }
-    .orb-2 {
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, #0d1a2a, transparent 65%);
-      bottom: -180px; right: -180px;
-      animation: f2 25s ease-in-out infinite;
-    }
-    .orb-3 {
-      width: 500px; height: 500px;
-      background: radial-gradient(circle, #c8a96e18, transparent 65%);
-      top: 40%; left: 55%;
-      animation: f3 18s ease-in-out infinite;
-    }
-    @keyframes f1 {
-      0%,100%{ transform:translate(0,0)scale(1); }
-      50%{ transform:translate(60px,80px)scale(1.1); }
-    }
-    @keyframes f2 {
-      0%,100%{ transform:translate(0,0)scale(1); }
-      50%{ transform:translate(-60px,-60px)scale(1.08); }
-    }
-    @keyframes f3 {
-      0%,100%{ transform:translate(0,0)scale(1); opacity:.4; }
-      50%{ transform:translate(-40px,30px)scale(1.2); opacity:.2; }
-    }
-    .bg::after {
-      content:''; position:absolute; inset:0;
-      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-      opacity:.18; pointer-events:none;
-    }
-
-    /* ─── LAYOUT ─── */
-    .page {
-      position: relative; z-index: 1;
-      height: 100vh;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-    }
-
-    /* ─── HEADER ─── */
-    header {
-      padding: 1.6rem 3rem;
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .logo { display: flex; align-items: center; gap: 13px; }
-
-    .logo-icon {
-      width: 38px; height: 38px;
-      border: 1px solid var(--gold);
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 15px; color: var(--gold);
-      background: var(--gold-dim);
-      flex-shrink: 0;
-    }
-
-    .logo-text { display: flex; flex-direction: column; gap: 2px; }
-
-    .logo-main {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 17px; font-weight: 600;
-      letter-spacing: 0.16em; text-transform: uppercase;
-      color: var(--text);
-      line-height: 1;
-    }
-
-    .logo-sub {
-      font-size: 8.5px; font-weight: 500;
-      letter-spacing: 0.26em; text-transform: uppercase;
-      color: var(--gold);
-      line-height: 1;
-    }
-
-    .status-pill {
-      display: flex; align-items: center; gap: 7px;
-      font-size: 10px; font-weight: 500;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--muted);
-      border: 1px solid var(--border);
-      padding: 6px 14px; border-radius: 999px;
-      background: var(--surface);
-      backdrop-filter: blur(12px);
-    }
-    .pulse {
-      width: 5px; height: 5px;
-      background: var(--gold); border-radius: 50%;
-      animation: pulse 2.5s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0%,100%{ opacity:1; box-shadow:0 0 0 0 rgba(200,169,110,.5); }
-      50%{ opacity:.5; box-shadow:0 0 0 6px rgba(200,169,110,0); }
-    }
-
-    /* ─── HERO ─── */
-    main {
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      padding: 2rem;
-      text-align: center;
-      gap: 0;
-    }
-
-    .eyebrow {
-      display: inline-flex; align-items: center; gap: 10px;
-      font-size: 10px; font-weight: 500;
-      letter-spacing: 0.22em; text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 1.4rem;
-    }
-    .eyebrow::before, .eyebrow::after {
-      content: ''; display: block;
-      width: 28px; height: 1px; background: var(--gold); opacity: .45;
-    }
-
-    h1 {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2.6rem, 8vw, 6.5rem);
-      font-weight: 300;
-      letter-spacing: -0.01em;
-      line-height: 1.0;
-      margin-bottom: 0.65rem;
-      background: linear-gradient(160deg, #f0ece4 30%, rgba(240,236,228,0.45));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    h1 em {
-      font-style: italic;
-      background: linear-gradient(120deg, #c8a96e, #e8d5a3, #c8a96e);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .tagline {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(0.95rem, 2vw, 1.2rem);
-      font-weight: 300; font-style: italic;
-      color: var(--muted);
-      margin-bottom: 2.5rem;
-      letter-spacing: 0.02em;
-    }
-
-    /* ─── COUNTDOWN ─── */
-    .countdown {
-      display: flex; gap: 1.1rem;
-      margin-bottom: 2.5rem;
-      flex-wrap: wrap; justify-content: center;
-    }
-    .cd-item {
-      display: flex; flex-direction: column;
-      align-items: center; gap: 7px;
-    }
-    .cd-box {
-      width: 72px; height: 72px;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.2rem; font-weight: 400;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      backdrop-filter: blur(16px);
-      position: relative; overflow: hidden;
-      color: var(--text);
-    }
-    .cd-box::before {
-      content:''; position:absolute; inset:0;
-      background: linear-gradient(160deg, rgba(200,169,110,0.07), transparent);
-    }
-    .cd-label {
-      font-size: 8.5px; font-weight: 500;
-      letter-spacing: 0.16em; text-transform: uppercase;
-      color: var(--gold);
-    }
-
-    /* ─── DIVIDER ─── */
-    .gold-line {
-      width: 42px; height: 1px;
-      background: linear-gradient(90deg, transparent, var(--gold), transparent);
-      margin-bottom: 2.5rem;
-    }
-
-    /* ─── EMAIL FORM ─── */
-    .form-wrap { width: 100%; max-width: 400px; }
-    .notify-form { display: flex; gap: 8px; }
-    .notify-form input {
-      flex: 1;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 12px 16px;
-      border-radius: 10px;
-      font-size: 13px; font-family: inherit;
-      outline: none;
-      backdrop-filter: blur(12px);
-      transition: border-color .2s;
-    }
-    .notify-form input::placeholder { color: var(--muted); }
-    .notify-form input:focus { border-color: rgba(200,169,110,.35); }
-    .notify-form button {
-      background: linear-gradient(135deg, #a07840, #c8a96e);
-      color: #07080a;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 10px;
-      font-size: 13px; font-weight: 600;
-      font-family: inherit; cursor: pointer;
-      transition: opacity .15s, transform .15s;
-      white-space: nowrap; letter-spacing: 0.04em;
-    }
-    .notify-form button:hover { opacity:.85; transform:translateY(-1px); }
-    .form-note {
-      font-size: 11px; color: var(--muted);
-      margin-top: 9px; text-align: center;
-    }
-    .success-msg {
-      display: none;
-      font-size: 13px; color: var(--gold);
-      padding: 11px 18px;
-      background: var(--gold-dim);
-      border: 1px solid rgba(200,169,110,0.25);
-      border-radius: 10px; margin-top: 8px;
-      text-align: center;
-    }
-
-    /* ─── FOOTER ─── */
-    footer {
-      padding: 1.25rem 3rem;
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 0.75rem;
-      border-top: 1px solid var(--border);
-    }
-    .footer-copy { font-size: 11px; color: var(--muted); }
-    .socials { display: flex; gap: 1.5rem; }
-    .socials a {
-      font-size: 11px; color: var(--muted);
-      text-decoration: none; letter-spacing: 0.06em;
-      text-transform: uppercase; transition: color .15s;
-    }
-    .socials a:hover { color: var(--gold); }
-
-    /* ─── FADE IN ─── */
-    .fi { opacity:0; transform:translateY(16px); animation: fu .85s ease forwards; }
-    @keyframes fu { to { opacity:1; transform:translateY(0); } }
-    .fi:nth-child(1){animation-delay:.08s}
-    .fi:nth-child(2){animation-delay:.20s}
-    .fi:nth-child(3){animation-delay:.32s}
-    .fi:nth-child(4){animation-delay:.44s}
-    .fi:nth-child(5){animation-delay:.56s}
-    .fi:nth-child(6){animation-delay:.68s}
-
-    /* ─── WHATSAPP BUTTON ─── */
-    .wa-btn {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      gap: 0;
-      cursor: pointer;
-      text-decoration: none;
-    }
-
-    .wa-label {
-      background: #111;
-      border: 1px solid rgba(255,255,255,0.08);
-      color: #f0ece4;
-      font-size: 12px;
-      font-weight: 500;
-      padding: 9px 16px 9px 18px;
-      border-radius: 999px 0 0 999px;
-      white-space: nowrap;
-      letter-spacing: 0.02em;
-      max-width: 0;
-      overflow: hidden;
-      opacity: 0;
-      transition: max-width .4s cubic-bezier(0.16,1,0.3,1),
-                  opacity .3s ease,
-                  padding .4s ease;
-      padding-left: 0;
-      padding-right: 0;
-      backdrop-filter: blur(8px);
-    }
-
-    .wa-btn:hover .wa-label {
-      max-width: 260px;
-      opacity: 1;
-      padding: 9px 16px 9px 18px;
-    }
-
-    .wa-circle {
-      width: 54px; height: 54px;
-      background: #25d366;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 24px rgba(37,211,102,0.45);
-      transition: transform .2s ease, box-shadow .2s ease;
-      flex-shrink: 0;
-      position: relative;
-    }
-
-    .wa-circle::before {
-      content: '';
-      position: absolute;
-      inset: -4px;
-      border-radius: 50%;
-      border: 2px solid rgba(37,211,102,0.35);
-      animation: wa-ring 2.5s ease-in-out infinite;
-    }
-
-    @keyframes wa-ring {
-      0%   { transform: scale(1);   opacity: .7; }
-      70%  { transform: scale(1.35); opacity: 0; }
-      100% { transform: scale(1.35); opacity: 0; }
-    }
-
-    .wa-btn:hover .wa-circle {
-      transform: scale(1.08);
-      box-shadow: 0 6px 30px rgba(37,211,102,0.6);
-    }
-
-    .wa-circle svg {
-      width: 26px; height: 26px;
-      fill: #fff;
-    }
-
-    @media(max-width:600px){
-      header, footer { padding: 1.1rem 1.5rem; }
-      .logo-main { font-size: 14px; }
-      .cd-box { width:60px; height:60px; font-size:1.8rem; }
-      .countdown { gap:.7rem; }
-      body { overflow-y: auto; }
-      .wa-btn { bottom: 1.5rem; right: 1.5rem; }
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Antalya Havalimanı VIP Transfer | Ata Flug Transfer</title>
+  <meta name="description" content="Antalya havalimanı transfer hizmeti. Belek, Kemer, Side, Alanya, Kaş ve tüm bölgelere özel VIP araçlarla konforlu, güvenli ve sabit fiyatlı transfer. 7/24 hizmet.">
+  <meta name="keywords" content="antalya transfer, antalya havalimanı transfer, vip transfer antalya, belek transfer, kemer transfer, side transfer, alanya transfer">
+  <link rel="canonical" href="https://www.ataflugtransfer.com/">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.ataflugtransfer.com/">
+  <meta property="og:title" content="Antalya Havalimanı VIP Transfer | Ata Flug Transfer">
+  <meta property="og:description" content="Antalya havalimanı transfer hizmeti. Belek, Kemer, Side, Alanya, Kaş ve tüm bölgelere özel VIP araçlarla konforlu transfer.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Antalya Havalimanı VIP Transfer | Ata Flug Transfer">
+  <meta name="geo.region" content="TR-07">
+  <meta name="geo.placename" content="Antalya">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&amp;display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link rel="stylesheet" href="assets/css/main.css">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Ata Flug Transfer",
+    "description": "Antalya havalimanı VIP transfer hizmeti. Belek, Kemer, Side, Alanya ve tüm bölgelere özel araçlarla transfer.",
+    "url": "https://www.ataflugtransfer.com",
+    "telephone": "+905052281596",
+    "address": {"@type": "PostalAddress", "addressLocality": "Antalya", "addressCountry": "TR"},
+    "geo": {"@type": "GeoCoordinates", "latitude": 36.8969, "longitude": 30.7133},
+    "areaServed": ["Antalya","Belek","Kemer","Side","Alanya","Kas","Kalkan","Manavgat","Lara","Konyaalti"],
+    "priceRange": "2983",
+    "openingHours": "Mo-Su 00:00-23:59"
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {"@type": "Question", "name": "Rezervasyonu nasıl yapabilirim?", "acceptedAnswer": {"@type": "Answer", "text": "Web sitemiz üzerinden online rezervasyon formunu doldurabilir veya +90 505 228 15 96 numaralı WhatsApp hattımızdan iletişime geçebilirsiniz."}},
+      {"@type": "Question", "name": "Transfer ücretleri ne kadar?", "acceptedAnswer": {"@type": "Answer", "text": "Transfer ücretlerimiz sabit fiyat politikasıyla belirlenmektedir. Mesafeye ve araç tipine göre değişen fiyatlarımız için rezervasyon sayfamızı ziyaret edebilirsiniz."}},
+      {"@type": "Question", "name": "Hangi bölgelere hizmet veriyorsunuz?", "acceptedAnswer": {"@type": "Answer", "text": "Antalya Havalimanı'''ndan Lara, Belek, Kemer, Side, Alanya, Kaş, Kalkan ve 25'ten fazla bölgeye transfer hizmeti sunuyoruz."}},
+      {"@type": "Question", "name": "Uçuşum gecikirse ne olur?", "acceptedAnswer": {"@type": "Answer", "text": "Uçuşunuzu gerçek zamanlı takip ediyoruz. Uçuş gecikmeleri ücretsiz olarak bekleme süresine yansıtılır."}},
+      {"@type": "Question", "name": "Ödemeyi nasıl yapabilirim?", "acceptedAnswer": {"@type": "Answer", "text": "Nakit (TL/EUR/USD/GBP) ve kredi kartı ile ödeme kabul edilmektedir. Önceden ödeme zorunluluğu bulunmamaktadır."}}
+    ]
+  }
+  </script>
 </head>
 <body>
 
-<div class="bg">
+<div class="bg-orbs">
   <div class="orb orb-1"></div>
   <div class="orb orb-2"></div>
   <div class="orb orb-3"></div>
 </div>
 
-<div class="page">
-
-  <!-- HEADER -->
-  <header>
-    <div class="logo">
-      <div class="logo-icon">✦</div>
+<!-- NAVIGATION -->
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <div class="logo-icon">&#10022;</div>
       <div class="logo-text">
         <span class="logo-main">Ata Flug Transfer</span>
-        <span class="logo-sub">Luxury Airport Service · Antalya</span>
+        <span class="logo-sub">Luxury Airport Service &middot; Antalya</span>
       </div>
+    </a>
+    <div class="nav-links">
+      <a href="/" class="active">Ana Sayfa</a>
+      <a href="bolgeler">Bölgeler</a>
+      <a href="hakkimizda">Hakkımızda</a>
+      <a href="iletisim">İletişim</a>
+      <a href="tel:+905052281596" class="nav-cta">&#128222; Hemen Ara</a>
     </div>
-    <div class="status-pill"><span class="pulse"></span> Launching Soon</div>
-  </header>
+    <button class="hamburger" id="hamburger" aria-label="Menü">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
 
-  <!-- HERO -->
-  <main>
-    <div class="eyebrow fi">Luxury Antalya Airport Transfer</div>
-
-    <h1 class="fi">Premium<br /><em>Transfers,</em><br />Redefined.</h1>
-
-    <p class="tagline fi">First-class comfort from the runway to your destination.</p>
-
-    <div class="countdown fi">
-      <div class="cd-item">
-        <div class="cd-box" id="cd-days">00</div>
-        <div class="cd-label">Days</div>
-      </div>
-      <div class="cd-item">
-        <div class="cd-box" id="cd-hours">00</div>
-        <div class="cd-label">Hours</div>
-      </div>
-      <div class="cd-item">
-        <div class="cd-box" id="cd-mins">00</div>
-        <div class="cd-label">Minutes</div>
-      </div>
-      <div class="cd-item">
-        <div class="cd-box" id="cd-secs">00</div>
-        <div class="cd-label">Seconds</div>
-      </div>
-    </div>
-
-    <div class="gold-line fi"></div>
-
-    <div class="form-wrap fi">
-      <form class="notify-form" id="notify-form" onsubmit="handleSubmit(event)">
-        <input type="email" placeholder="Your email address" required />
-        <button type="submit">Notify Me</button>
-      </form>
-      <p class="form-note">Be the first to book. No spam, ever.</p>
-      <div class="success-msg" id="success-msg">
-        Thank you — we'll reach out the moment we launch.
-      </div>
-    </div>
-  </main>
-
-  <!-- FOOTER -->
-  <footer>
-    <span class="footer-copy">&copy; <span id="year"></span> Ata Flug Transfer. All rights reserved.</span>
-    <nav class="socials">
-      <a href="#">Instagram</a>
-      <a href="#">WhatsApp</a>
-      <a href="#">Contact</a>
-    </nav>
-  </footer>
-
+<!-- MOBILE OVERLAY -->
+<div class="mobile-overlay" id="mobile-overlay">
+  <button class="mobile-close" id="mobile-close">&times;</button>
+  <a href="/">Ana Sayfa</a>
+  <a href="bolgeler">Bölgeler</a>
+  <a href="hakkimizda">Hakkımızda</a>
+  <a href="iletisim">İletişim</a>
+  <a href="rezervasyon" style="color:var(--gold)">Rezervasyon Yap</a>
+  <a href="tel:+905052281596" style="color:var(--gold)">&#128222; +90 505 228 15 96</a>
 </div>
 
+<!-- HERO -->
+<section class="hero">
+  <div class="eyebrow fi fi-d1">Antalya Havalimanı Transfer</div>
+  <h1 class="fi fi-d2">Konforlu <em>Transferin</em><br>Yeni Adresi</h1>
+  <p class="subtitle fi fi-d3">Antalya Havalimanı'ndan tüm otellere ve bölgelere özel VIP araçlarla güvenli, konforlu ve sabit fiyatlı transfer.</p>
+
+  <form class="booking-mini fi fi-d4" id="mini-booking" action="rezervasyon" method="get">
+    <div class="field">
+      <label>Alış Noktası</label>
+      <select name="mini-pickup">
+        <option value="">Seçiniz...</option>
+        <option value="Antalya Havalimanı T1">Antalya Havalimanı T1</option>
+        <option value="Antalya Havalimanı T2">Antalya Havalimanı T2</option>
+        <option value="Antalya Şehir Merkezi">Antalya Şehir Merkezi</option>
+        <option value="Otel">Otel / Konaklama</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Bırakış Bölgesi</label>
+      <select name="mini-dropoff">
+        <option value="">Seçiniz...</option>
+        <option>Lara</option><option>Kundu</option><option>Konyaaltı</option>
+        <option>Merkez Antalya</option><option>Belek</option><option>Serik</option>
+        <option>Side</option><option>Manavgat</option><option>Kemer</option>
+        <option>Göynük</option><option>Beldibi</option><option>Çamyuva</option>
+        <option>Tekirova</option><option>Alanya</option><option>Kaş</option>
+        <option>Kalkan</option><option>Avsallar</option><option>Türkler</option>
+        <option>Konaklı</option><option>Kızılağaç</option><option>Okurcalar</option>
+        <option>Çolaklı</option><option>Evrenseki</option><option>Kümköy</option>
+        <option>Titreyen Göl</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Tarih</label>
+      <input type="date" name="mini-date" min="2026-04-05">
+    </div>
+    <div class="field">
+      <label>Yolcu</label>
+      <select name="mini-passengers">
+        <option value="1">1 Yolcu</option><option value="2">2 Yolcu</option>
+        <option value="3">3 Yolcu</option><option value="4">4 Yolcu</option>
+        <option value="5">5 Yolcu</option><option value="6">6 Yolcu</option>
+        <option value="7+">7+ Yolcu</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>&nbsp;</label>
+      <button type="submit" class="btn btn-gold" style="width:100%">Rezervasyon Yap &#8594;</button>
+    </div>
+  </form>
+</section>
+
+<!-- TRUST BAR -->
+<section style="position:relative;z-index:1">
+  <div class="container">
+    <div class="trust-bar">
+      <div class="trust-item">
+        <div class="trust-icon">&#128339;</div>
+        <div class="trust-label">7/24 Hizmet</div>
+        <div class="trust-desc">Gece gündüz kesintisiz transfer hizmeti</div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">&#9989;</div>
+        <div class="trust-label">Sabit Fiyat</div>
+        <div class="trust-desc">Gizli ücret yok, önceden belirlenen fiyat</div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">&#9992;</div>
+        <div class="trust-label">Uçuş Takibi</div>
+        <div class="trust-desc">Uçuş gecikmelerinde ücretsiz bekleme</div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">&#127942;</div>
+        <div class="trust-label">Profesyonel Şoför</div>
+        <div class="trust-desc">Deneyimli, güler yüzlü şoförler</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POPULAR REGIONS -->
+<section class="section">
+  <div class="container">
+    <div class="eyebrow">Hizmet Bölgelerimiz</div>
+    <h2 class="section-title">Popüler Transfer Bölgeleri</h2>
+    <p class="section-sub">Antalya Havalimanı'ndan Türkiye'nin en güzel tatil destinasyonlarına VIP transfer</p>
+    <div class="card-grid">
+      <a href="rezervasyon?bolge=Belek" class="region-card">
+        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=300&fit=crop&auto=format" alt="Belek Transfer" loading="lazy">
+        <div class="region-overlay">
+          <div class="region-name">Belek</div>
+          <div class="region-info">35 km &bull; ~30 dakika</div>
+        </div>
+      </a>
+      <a href="rezervasyon?bolge=Kemer" class="region-card">
+        <img src="https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=600&h=300&fit=crop&auto=format" alt="Kemer Transfer" loading="lazy">
+        <div class="region-overlay">
+          <div class="region-name">Kemer</div>
+          <div class="region-info">45 km &bull; ~40 dakika</div>
+        </div>
+      </a>
+      <a href="rezervasyon?bolge=Side" class="region-card">
+        <img src="https://images.unsplash.com/photo-1548574505-5e239809ee19?w=600&h=300&fit=crop&auto=format" alt="Side Transfer" loading="lazy">
+        <div class="region-overlay">
+          <div class="region-name">Side</div>
+          <div class="region-info">65 km &bull; ~55 dakika</div>
+        </div>
+      </a>
+      <a href="rezervasyon?bolge=Alanya" class="region-card">
+        <img src="https://images.unsplash.com/photo-1502481851512-e9e2529bfbf9?w=600&h=300&fit=crop&auto=format" alt="Alanya Transfer" loading="lazy">
+        <div class="region-overlay">
+          <div class="region-name">Alanya</div>
+          <div class="region-info">125 km &bull; ~2 saat</div>
+        </div>
+      </a>
+      <a href="rezervasyon?bolge=Lara" class="region-card">
+        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&h=300&fit=crop&auto=format" alt="Lara Transfer" loading="lazy">
+        <div class="region-overlay">
+          <div class="region-name">Lara</div>
+          <div class="region-info">12 km &bull; ~15 dakika</div>
+        </div>
+      </a>
+      <a href="bolgeler" class="region-card" style="background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;text-decoration:none">
+        <div style="text-align:center;padding:2rem">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--gold);margin-bottom:0.5rem">+20 Bölge</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:1rem">Tüm bölgeleri görüntüle</div>
+          <span class="btn btn-outline" style="font-size:12px;padding:8px 20px">Tüm Bölgeler &#8594;</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- VEHICLE FLEET -->
+<section class="section" style="background:var(--bg-alt)">
+  <div class="container">
+    <div class="eyebrow">Araç Filomuz</div>
+    <h2 class="section-title">Konfor Sınıfınızı Seçin</h2>
+    <p class="section-sub">Tüm araçlarımız klimalı, bakımlı ve sigortaltındadır</p>
+    <div class="card-grid">
+      <div class="vehicle-card">
+        <div class="vehicle-icon">&#128663;</div>
+        <div class="vehicle-name">Sedan VIP</div>
+        <div class="vehicle-cap">1-3 Yolcu &bull; 2 Bavul</div>
+        <div class="vehicle-features">
+          Mercedes E-Class veya muadili<br>
+          Deri koltuk &bull; WiFi<br>
+          İklimlendirme<br>
+          Su ve ikram dahil
+        </div>
+      </div>
+      <div class="vehicle-card" style="border-color:rgba(200,169,110,0.3)">
+        <div class="vehicle-icon">&#128656;</div>
+        <div class="vehicle-name">Minivan VIP</div>
+        <div class="vehicle-cap">4-7 Yolcu &bull; 6 Bavul</div>
+        <div class="vehicle-features">
+          Mercedes Vito / V-Class<br>
+          Geniş iç mekan &bull; WiFi<br>
+          Bireysel koltuk kontrolü<br>
+          Su ve ikram dahil
+        </div>
+      </div>
+      <div class="vehicle-card">
+        <div class="vehicle-icon">&#128661;</div>
+        <div class="vehicle-name">Minibüs</div>
+        <div class="vehicle-cap">8-16 Yolcu &bull; 10 Bavul</div>
+        <div class="vehicle-features">
+          Mercedes Sprinter<br>
+          Grup transferleri<br>
+          Klima &bull; USB şarj<br>
+          Bagaj kapasitesi yüksek
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:2rem">
+      <a href="rezervasyon" class="btn btn-gold">Hemen Rezervasyon Yap</a>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="container">
+    <div class="eyebrow">Nasıl Çalışır</div>
+    <h2 class="section-title">3 Adımda Transfer</h2>
+    <p class="section-sub">Hızlı, kolay ve güvenilir</p>
+    <div class="gold-line"></div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Rezervasyon Yapın</div>
+        <div class="step-desc">Web formunu doldurun veya WhatsApp üzerinden ulaşın. Anında onay alın.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">Havalimanında Karşılama</div>
+        <div class="step-desc">Profesyonel şoförünüz isim tabelasıyla kapıda bekler. Uçuş takibi yapılır.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Konforlu Yolculuk</div>
+        <div class="step-desc">VIP aracınızla sabit fiyatla, trafik stresi olmadan otelinize ulaşın.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section" style="background:var(--bg-alt)">
+  <div class="container">
+    <div class="eyebrow">Müşteri Yorumları</div>
+    <h2 class="section-title">Misafirlerimiz Ne Diyor?</h2>
+    <p class="section-sub">Binlerce mutlu yolcunun güvenilir transfer partneri</p>
+    <div class="testimonial-grid">
+      <div class="testimonial">
+        <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testimonial-text">&ldquo;Belek'e transferimiz mükemmeldi. Şoför zamanında bekliyordu, araç tertemizdi. Kesinlikle tekrar kullanacağız.&rdquo;</p>
+        <div class="testimonial-author">Ayşe K.</div>
+        <div class="testimonial-meta">İstanbul &bull; Belek Transferi</div>
+      </div>
+      <div class="testimonial">
+        <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testimonial-text">&ldquo;Uçuşumuz 2 saat gecikti, bizi bekledi ve ek ücret almadı. Profesyonellik böyle olur!&rdquo;</p>
+        <div class="testimonial-author">Thomas M.</div>
+        <div class="testimonial-meta">Almanya &bull; Kemer Transferi</div>
+      </div>
+      <div class="testimonial">
+        <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p class="testimonial-text">&ldquo;Alanya'ya gidiş-dönüş her ikisinde de harika bir hizmet aldık. Fiyatlar çok uygundu, güler yüzlü şoförler.&rdquo;</p>
+        <div class="testimonial-author">Fatma T.</div>
+        <div class="testimonial-meta">Ankara &bull; Alanya Transferi</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section">
+  <div class="container">
+    <div class="eyebrow">Sıkça Sorulan Sorular</div>
+    <h2 class="section-title">Merak Ettikleriniz</h2>
+    <p class="section-sub" style="margin-bottom:2.5rem">Aklınızdaki soruların cevapları</p>
+    <div class="faq-list">
+      <details>
+        <summary>Rezervasyonu nasıl yapabilirim?</summary>
+        <div class="faq-answer">Web sitemiz üzerinden online rezervasyon formunu doldurabilir veya +90 505 228 15 96 numaralı WhatsApp hattımızdan 7/24 iletişime geçebilirsiniz. Rezervasyonunuz anında onaylanır.</div>
+      </details>
+      <details>
+        <summary>Uçuşum gecikirse ne olur?</summary>
+        <div class="faq-answer">Uçuşunuzu gerçek zamanlı olarak takip ediyoruz. Uçuş gecikmelerinde şoförümüz ek ücret talep etmeksizin sizi beklemeye devam eder. Herhangi bir gecikme durumunda sizi arayıp bilgilendiririz.</div>
+      </details>
+      <details>
+        <summary>Transfer ücretleri nasıl belirleniyor?</summary>
+        <div class="faq-answer">Ücretlerimiz sabit fiyat politikasıyla belirlenmektedir. Mesafe, araç tipi ve yolcu sayısına göre önceden hesaplanır. Gizli ücret veya sürpriz fatura bulunmamaktadır.</div>
+      </details>
+      <details>
+        <summary>Hangi ödeme yöntemlerini kabul ediyorsunuz?</summary>
+        <div class="faq-answer">Nakit (TL, EUR, USD, GBP) ve kredi kartı ile ödeme kabul edilmektedir. Transfer sırasında şoföre ödeme yapabilirsiniz. Önceden ödeme zorunluluğu bulunmamaktadır.</div>
+      </details>
+      <details>
+        <summary>Çocuk koltuğu sağlıyor musunuz?</summary>
+        <div class="faq-answer">Evet, bebek koltuğu ve çocuk güvenlik koltuğu ücretsiz olarak sağlanmaktadır. Rezervasyon sırasında çocuk sayısını ve yaşlarını belirtmeniz yeterlidir.</div>
+      </details>
+      <details>
+        <summary>Hangi saatlerde hizmet veriyorsunuz?</summary>
+        <div class="faq-answer">7 gün 24 saat hizmet vermekteyiz. Gece varışları, sabah erken saatler veya tatil günleri dahil tüm zamanlarda transfer hizmeti sunuyoruz.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="section" style="padding-top:0">
+  <div class="container">
+    <div class="cta-banner">
+      <h2>Hemen Rezervasyon Yapın</h2>
+      <p>Konforlu, güvenilir ve sabit fiyatlı transfer için bize ulaşın</p>
+      <div class="cta-buttons">
+        <a href="rezervasyon" class="btn btn-gold">Online Rezervasyon</a>
+        <a href="https://wa.me/905052281596?text=Merhaba%2C%20transfer%20rezervasyonu%20yapmak%20istiyorum." target="_blank" rel="noopener" class="btn btn-outline">&#128242; WhatsApp</a>
+        <a href="tel:+905052281596" class="btn btn-outline">&#128222; +90 505 228 15 96</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="/" class="logo" style="margin-bottom:1rem;display:inline-flex">
+          <div class="logo-icon">&#10022;</div>
+          <div class="logo-text">
+            <span class="logo-main">Ata Flug Transfer</span>
+            <span class="logo-sub">Luxury Airport Service &middot; Antalya</span>
+          </div>
+        </a>
+        <p>Antalya Havalimanı'ndan tüm bölgelere güvenli, konforlu ve sabit fiyatlı VIP transfer hizmeti. Profesyonel şoförlerimiz ve modern araç filomuzla hizmetinizdeyiz.</p>
+      </div>
+      <div>
+        <div class="footer-heading">Sayfalar</div>
+        <div class="footer-links">
+          <a href="/">Ana Sayfa</a>
+          <a href="bolgeler">Transfer Bölgeleri</a>
+          <a href="rezervasyon">Rezervasyon Yap</a>
+          <a href="hakkimizda">Hakkımızda</a>
+          <a href="iletisim">İletişim</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">İletişim</div>
+        <div class="footer-contact-item">
+          <span>&#128222;</span>
+          <div><a href="tel:+905052281596" style="color:var(--muted);transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">+90 505 228 15 96</a></div>
+        </div>
+        <div class="footer-contact-item">
+          <span>&#128242;</span>
+          <div><a href="https://wa.me/905052281596" target="_blank" rel="noopener" style="color:var(--muted);transition:color .2s" onmouseover="this.style.color='var(--gold)'" onmouseout="this.style.color='var(--muted)'">WhatsApp</a></div>
+        </div>
+        <div class="footer-contact-item">
+          <span>&#128205;</span>
+          <div>Antalya, Türkiye</div>
+        </div>
+        <div class="footer-contact-item">
+          <span>&#128337;</span>
+          <div>7/24 Hizmet</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">&copy; <span id="year"></span> Ata Flug Transfer. Tüm hakları saklıdır.</span>
+      <span class="footer-copy">Antalya Havalimanı VIP Transfer Hizmeti</span>
+    </div>
+  </div>
+</footer>
+
 <!-- WHATSAPP BUTTON -->
-<a class="wa-btn"
-   href="https://wa.me/905052281596?text=Hello%2C%20I%20would%20like%20to%20make%20a%20transfer%20reservation.%20Could%20you%20please%20share%20the%20available%20vehicles%20and%20prices%3F"
-   target="_blank"
-   rel="noopener noreferrer"
-   aria-label="Contact us on WhatsApp">
-  <span class="wa-label">Reserve via WhatsApp</span>
+<a class="wa-btn" href="https://wa.me/905052281596?text=Merhaba%2C%20transfer%20rezervasyonu%20yapmak%20istiyorum.%20Bilgi%20alabilir%20miyim%3F" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp ile iletişim">
+  <span class="wa-label">WhatsApp ile Rezervasyon</span>
   <div class="wa-circle">
     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
@@ -471,31 +438,7 @@
   </div>
 </a>
 
-<script>
-  document.getElementById('year').textContent = new Date().getFullYear();
-
-  const target = new Date('2026-03-23T00:00:00');
-  function pad(n){ return String(n).padStart(2,'0'); }
-  function tick(){
-    const diff = target - Date.now();
-    if(diff <= 0){
-      ['cd-days','cd-hours','cd-mins','cd-secs'].forEach(id=>{
-        document.getElementById(id).textContent='00';
-      });
-      return;
-    }
-    document.getElementById('cd-days').textContent  = pad(Math.floor(diff/86400000));
-    document.getElementById('cd-hours').textContent = pad(Math.floor((diff%86400000)/3600000));
-    document.getElementById('cd-mins').textContent  = pad(Math.floor((diff%3600000)/60000));
-    document.getElementById('cd-secs').textContent  = pad(Math.floor((diff%60000)/1000));
-  }
-  tick(); setInterval(tick, 1000);
-
-  function handleSubmit(e){
-    e.preventDefault();
-    document.getElementById('notify-form').style.display='none';
-    document.getElementById('success-msg').style.display='block';
-  }
-</script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/booking.js"></script>
 </body>
 </html>
