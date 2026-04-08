@@ -1,8 +1,7 @@
-const CACHE_NAME = 'ata-flug-v3';
+const CACHE_NAME = 'ata-flug-v4';
 const SUPABASE_HOST = 'rnymtrtbhvkyvgzweswi.supabase.co';
 
 const STATIC_ASSETS = [
-    '/',
     '/logo.png',
     '/manifest.json',
     '/bg1.webp',
@@ -73,15 +72,20 @@ self.addEventListener('fetch', event => {
         request.headers.get('Accept')?.includes('text/html');
     if (isNavigation) {
         event.respondWith(
-            fetch(request)
+            // redirect:'manual' — pass redirect responses to the browser so it updates
+            // the URL bar (e.g. / → /tr). Without this, the SW follows the redirect
+            // internally, stores /tr HTML under /, and Next.js hydrates with wrong URL.
+            fetch(request, { redirect: 'manual' })
                 .then(response => {
+                    // Opaque redirect (301/302) — let the browser handle it
+                    if (response.type === 'opaqueredirect') return response;
                     if (response.ok) {
                         const clone = response.clone();
                         caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
                     }
                     return response;
                 })
-                .catch(() => caches.match(request).then(cached => cached || caches.match('/')))
+                .catch(() => caches.match(request).then(cached => cached || caches.match('/tr')))
         );
         return;
     }
