@@ -26,9 +26,10 @@ function BrandColorSync() {
 
 function ServiceWorkerRegistrar() {
     useEffect(() => {
+        // SW disabled — unregister any existing registrations
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').catch(() => {
-                // SW registration failure is non-fatal — app works without it
+            navigator.serviceWorker.getRegistrations().then(regs => {
+                regs.forEach(reg => reg.unregister());
             });
         }
     }, []);
