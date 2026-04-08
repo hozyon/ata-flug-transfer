@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from 'next';
-import '../index.css';
 
 export const viewport: Viewport = {
     themeColor: '#c5a059',

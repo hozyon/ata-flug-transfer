@@ -13,6 +13,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [language, setLanguageState] = useState<Language>(() => {
+        if (typeof window === 'undefined') return DEFAULT_LANGUAGE;
         const saved = localStorage.getItem('ata_language');
         if (saved && saved in LANGUAGE_LABELS) return saved as Language;
         return DEFAULT_LANGUAGE;
