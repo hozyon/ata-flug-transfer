@@ -33,6 +33,14 @@ export default async function LocaleLayout({ children, params }: Props) {
             className={`${montserrat.variable} ${outfit.variable} ${playfair.variable}`}
             suppressHydrationWarning
         >
+            <head>
+                <link
+                    rel="stylesheet"
+                    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+                    crossOrigin="anonymous"
+                    referrerPolicy="no-referrer"
+                />
+            </head>
             <body suppressHydrationWarning>
                 <NextIntlClientProvider messages={messages} locale={locale}>
                     <AppProviders locale={locale as Locale}>
