@@ -4,17 +4,7 @@ import { MobileViewToggle } from '../MobileViewToggle';
 import { SwipeableCard } from '../SwipeableCard';
 import { EmptyState } from '../EmptyState';
 import { haptic } from '../../../utils/haptic';
-
-interface Review {
-    id: string;
-    name: string;
-    country: string;
-    rating: number;
-    text: string;
-    status: 'pending' | 'approved' | 'rejected' | 'deleted';
-    createdAt?: string;
-    source?: 'user' | 'site';
-}
+import type { UserReview as Review } from '../../../types';
 
 interface SiteReview {
     name: string;

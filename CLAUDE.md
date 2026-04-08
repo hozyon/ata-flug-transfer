@@ -1,25 +1,27 @@
 # ATA FLUG TRANSFER — Developer Guide
 
-VIP airport transfer booking SPA for Antalya, Turkey. React 18 + TypeScript + Vite 6 + Tailwind CSS v4 + Zustand + Supabase.
+VIP airport transfer booking for Antalya, Turkey. **Next.js 15 App Router** + TypeScript + Tailwind CSS v4 + Zustand + Supabase. Fully SSR/SSG with i18n (TR/EN/DE via next-intl).
 
 **GitHub:** https://github.com/hozyon/ata-flug-transfer
 
 ## Commands
 
 ```bash
-npm run dev      # Vite dev server (port 3000)
-npm run build    # Production build → /dist
-npm run preview  # Preview production build locally
-npm run lint     # ESLint (TypeScript + React hooks)
+npm run dev      # Next.js dev server (port 3000)
+npm run build    # Production build (SSG + SSR)
+npm run start    # Serve production build locally
+npm run lint     # ESLint (0 warnings/errors expected)
+npm test         # Vitest — 26 unit tests (mergeContent + store)
+npm run test:watch  # Vitest watch mode
 ```
-
-No test runner is configured (Vitest kurulu ama aktif script yok).
 
 ## Environment Setup
 
 ```bash
 cp .env.example .env.local
-# Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
+# Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY
+# Optional: NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX  (GA4 — omit to disable)
+# Optional: NEXT_PUBLIC_SITE_URL=https://...
 ```
 
 Without env vars the app starts with **empty state** — no data shown. Supabase credentials required for development.
@@ -28,11 +30,30 @@ Dev admin login: Supabase Auth ile `ataflugtransfer@gmail.com` (gerçek credenti
 
 ## Architecture
 
-### Routing & Auth
+### Routing & i18n
 
-- React Router v7 with path-based routes: `/login`, `/blog/:slug`, `/admin/*`, etc.
-- `isAdmin` in Zustand controls rendering: `true` → `<AdminPanel>`, `false` → public `<Routes>`
-- `App.tsx` sets `isAdmin` via Supabase `onAuthStateChange`; dev mode falls back to hardcoded credential check
+- **Next.js App Router** under `src/app/[locale]/` — locale is always in the URL (`/tr/`, `/en/`, `/de/`)
+- Middleware (`middleware.ts`) auto-detects browser language and redirects to correct locale prefix
+- All page routes are SSG (`generateStaticParams`) — static HTML per locale
+- Region landing pages: `/[locale]/transfer/[region-slug]-transfer` (141+ pages × 3 locales, SSG)
+- `isAdmin` in Zustand controls admin access; `AdminPageClient.tsx` redirects non-admins to `/[locale]/login`
+- Auth state is set by `AppProviders` via Supabase `onAuthStateChange`
+
+### Key File Locations
+
+| Concern | Location |
+|---|---|
+| Page routes | `src/app/[locale]/*/page.tsx` |
+| Shared layouts | `src/app/layout.tsx` (root) · `src/app/[locale]/layout.tsx` (locale, renders `<html lang>`) |
+| Public components | `src/components/` |
+| Page view components | `src/views/` |
+| Admin panel views | `src/components/admin/views/` |
+| i18n messages | `messages/tr.json`, `en.json`, `de.json` |
+| Supabase client | `src/lib/supabase.ts` |
+| Fonts | `src/lib/fonts.ts` |
+| GA4 helpers | `src/lib/gtag.ts` |
+| Sitemap | `src/app/sitemap.ts` (dynamic, all locales) |
+| Robots | `src/app/robots.ts` |
 
 ### State Layer
 
@@ -94,8 +115,9 @@ All of these are persisted inside the `site_content` JSONB column in Supabase an
 
 Turkish is the source language. All other languages are auto-translated via Google Translate API.
 
-- `t('key')` resolves through `src/i18n/translations.ts` → Turkish text → translated text
-- Add new UI strings to `src/i18n/translations.ts` only — no per-language files needed
+- `useTranslations('namespace')` from `next-intl` — message files in `messages/*.json`
+- `t('key')` for server components; client components also use `useTranslations()`
+- Legacy `src/i18n/translations.ts` still used by some client components that haven't migrated to next-intl yet — do NOT delete it
 - `LanguageSwitcher` supports both hover (desktop) and click/tap (mobile) — `onClick` toggle + `pointerdown` outside-click handler
 - Mobile menu sheet (`Navbar.tsx`) contains an inline language selector row (flat buttons, no dropdown) for easy language switching on touch devices
 - **Never use `onMouseEnter/onMouseLeave` as the sole interaction** for interactive UI — always add `onClick` or `active:` Tailwind class for touch support
@@ -133,8 +155,9 @@ git push   # Vercel auto-deploys from GitHub (linked via vercel link --repo)
 
 - Vercel project linked to `git@github.com:hozyon/ata-flug-transfer.git` under `hasanozyon-8289s-projects`
 - Every push to `main` triggers a production deployment automatically
-- `vercel.json` includes SPA rewrites — no extra config needed
-- Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` in Vercel project environment variables
+- **Required Vercel env vars:** `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- **Optional Vercel env vars:** `NEXT_PUBLIC_GA_ID` (GA4 measurement ID), `NEXT_PUBLIC_SITE_URL`
+- Framework preset: **Next.js** (Vercel detects automatically; no `vercel.json` SPA rewrites needed)
 - Before first deploy, run `supabase/migrations/001_initial_schema.sql` in the Supabase SQL editor
 
 ## Known Bug History — Do Not Reintroduce

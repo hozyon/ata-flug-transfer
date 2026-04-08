@@ -13,14 +13,16 @@ export const MobileBookingItem: React.FC<MobileBookingItemProps> = ({ booking: b
     const longPressProps = useLongPress(
         (e) => {
             let x = 0, y = 0;
-            if (e.touches && e.touches.length > 0) {
-                x = e.touches[0].clientX;
-                y = e.touches[0].clientY;
-            } else if (e.clientX && e.clientY) {
-                x = e.clientX;
-                y = e.clientY;
+            const te = e as React.TouchEvent;
+            const me = e as React.MouseEvent;
+            if (te.touches && te.touches.length > 0) {
+                x = te.touches[0].clientX;
+                y = te.touches[0].clientY;
+            } else if (me.clientX && me.clientY) {
+                x = me.clientX;
+                y = me.clientY;
             } else {
-                const rect = e.target.getBoundingClientRect();
+                const rect = (e.target as Element).getBoundingClientRect();
                 x = rect.left + rect.width / 2;
                 y = rect.top + rect.height / 2;
             }
@@ -57,7 +59,8 @@ export const MobileBookingItem: React.FC<MobileBookingItemProps> = ({ booking: b
                         'Confirmed': 'Onaylı',
                         'Completed': 'Tamamlandı',
                         'Cancelled': 'İptal',
-                        'Rejected': 'Reddedildi'
+                        'Rejected': 'Reddedildi',
+                        'Deleted': 'Silindi',
                     }[b.status] || b.status}
                 </span>
             </div>

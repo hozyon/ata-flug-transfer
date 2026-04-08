@@ -1,8 +1,8 @@
 {
-  "name": "Ata Flug Transfer - Admin",
-  "short_name": "ATA Admin",
-  "description": "VIP Airport Transfer Admin Panel",
-  "start_url": "/",
+  "name": "Ata Flug Transfer - VIP Antalya Transfer",
+  "short_name": "Ata Flug",
+  "description": "Antalya Havalimanı VIP Transfer Hizmeti",
+  "start_url": "/tr",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#c5a059",

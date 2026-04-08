@@ -63,7 +63,8 @@ export const AccountView: React.FC<AccountViewProps> = ({
             setTimeout(() => setProfileSaveStatus('idle'), 2000);
         }, 2000);
         return () => { if (profileSaveTimer.current) clearTimeout(profileSaveTimer.current); };
-    }, [accountForm.email, accountForm.phone]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [accountForm.email, accountForm.phone]); // onSaveAccount excluded — adding unstable prop would cause infinite re-registration
 
     const pwStrength = (pw: string) => {
         if (!pw) return { level: 0, label: '' };

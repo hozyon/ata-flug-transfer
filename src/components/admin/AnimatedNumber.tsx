@@ -36,7 +36,8 @@ export const AnimatedNumber: React.FC<AnimatedNumberProps> = ({ value, duration 
 
         const reqId = requestAnimationFrame(animate);
         return () => cancelAnimationFrame(reqId);
-    }, [value, duration]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [value, duration]); // displayValue intentionally excluded — adding it would restart animation on each frame
 
     return <>{format ? format(displayValue) : Math.round(displayValue)}</>;
 };

@@ -26,7 +26,7 @@ const LABEL_CLS = 'block text-[10px] font-bold font-outfit uppercase tracking-wi
 
 const isValidEmail = (v: string) => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const isValidPhone = (v: string) => !v || /^\+?[\d\s\-()]{7,20}$/.test(v);
-const isValidUrl = (v: string) => { if (!v) return true; try { new URL(v); return true; } catch { return false; } };
+const _isValidUrl = (v: string) => { if (!v) return true; try { new URL(v); return true; } catch { return false; } };
 
 export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ editContent, setEditContent }) => {
     const [logoDragOver, setLogoDragOver] = useState(false);

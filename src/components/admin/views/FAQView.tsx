@@ -33,7 +33,8 @@ export const FAQView: React.FC<FAQViewProps> = ({
             setTimeout(() => faqEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
         }
         prevFaqLength.current = editContent.faq.length;
-    }, [editContent.faq.length]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [editContent.faq.length]); // editContent.faq excluded — .length is the only reactive dep needed here
 
     const allFaq = editContent.faq || [];
     const counts = {

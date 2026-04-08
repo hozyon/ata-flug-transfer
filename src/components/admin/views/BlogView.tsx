@@ -1,25 +1,7 @@
 import React, { useState, useRef, useEffect, Dispatch, SetStateAction } from 'react';
 import DOMPurify from 'dompurify';
 import { EmptyState } from '../EmptyState';
-
-interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  category: string;
-  featuredImage: string;
-  isPublished: boolean;
-  publishedAt?: string;
-  updatedAt?: string;
-  tags?: string[];
-  author?: string;
-  seoTitle?: string;
-  seoDescription?: string;
-  viewCount?: number;
-  scheduledAt?: string;
-}
+import type { BlogPost } from '../../../types';
 
 const BLOG_DRAFT_KEY = 'ata_blog_draft_v1';
 const BLOG_PER_PAGE = 10;
@@ -539,7 +521,8 @@ export const BlogView: React.FC<BlogViewProps> = ({
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [isDrawerOpen, newBlogPost]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDrawerOpen, newBlogPost]); // handleSave excluded — unstable prop; adding it causes infinite re-registration
 
   const tb = (label: string, icon: string, title: string, onClick: () => void) => (
     <button type="button" onClick={onClick} title={title}

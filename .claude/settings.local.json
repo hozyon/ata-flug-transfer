@@ -23,7 +23,12 @@
       "Bash(grep -v \"✖\\\\|✓\\\\|problems\\\\|^$\")",
       "Read(//private/tmp/**)",
       "Bash(python3 -:*)",
-      "Bash(npx vercel:*)"
+      "Bash(npx vercel:*)",
+      "Bash(npm test:*)",
+      "Bash(cat /Users/hozyon/ata-flug-transfer/src/app/[locale]/error.tsx)",
+      "Bash(cat /Users/hozyon/ata-flug-transfer/src/app/[locale]/loading.tsx)",
+      "Bash(ls -lh /Users/hozyon/ata-flug-transfer/public/bg*.png)",
+      "Bash(perl -i -pe ':*)"
     ]
   }
 }

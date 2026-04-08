@@ -1,8 +1,8 @@
 /**
- * Store action tests — localStorage mode (isSupabaseConfigured = false)
+ * Store action tests — Supabase not configured (isSupabaseConfigured = false)
  *
- * These tests verify that the Zustand store correctly manages state
- * and persists to localStorage when Supabase is not configured.
+ * When Supabase is not configured the store still updates in-memory state.
+ * Business data is never written to localStorage (removed 2026-03-25).
  */
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
@@ -29,29 +29,21 @@ function resetStore() {
 
 beforeEach(() => {
     resetStore();
-    localStorage.clear();
 });
 
 // ── updateSiteContent ─────────────────────────────────────────────────────────
 
-describe('updateSiteContent (localStorage mode)', () => {
+describe('updateSiteContent (no Supabase)', () => {
     it('updates siteContent in store', async () => {
         const updated = { ...INITIAL_SITE_CONTENT, mapBgImage: 'custom.jpg' };
         await useAppStore.getState().updateSiteContent(updated);
         expect(useAppStore.getState().siteContent.mapBgImage).toBe('custom.jpg');
     });
-
-    it('persists to localStorage', async () => {
-        const updated = { ...INITIAL_SITE_CONTENT, mapBgImage: 'persisted.jpg' };
-        await useAppStore.getState().updateSiteContent(updated);
-        const saved = JSON.parse(localStorage.getItem('ata_site_content_v10') || '{}');
-        expect(saved.mapBgImage).toBe('persisted.jpg');
-    });
 });
 
 // ── deleteBlogPost ────────────────────────────────────────────────────────────
 
-describe('deleteBlogPost (localStorage mode)', () => {
+describe('deleteBlogPost (no Supabase)', () => {
     it('removes the post from store state', async () => {
         const post = {
             id: 'post-1',
@@ -92,7 +84,7 @@ describe('deleteBlogPost (localStorage mode)', () => {
 
 // ── deleteBooking ─────────────────────────────────────────────────────────────
 
-describe('deleteBooking (localStorage mode)', () => {
+describe('deleteBooking (no Supabase)', () => {
     it('removes the booking from store state', async () => {
         const booking = {
             id: 'TR-11111',
@@ -118,7 +110,7 @@ describe('deleteBooking (localStorage mode)', () => {
 
 // ── deleteReview ──────────────────────────────────────────────────────────────
 
-describe('deleteReview (localStorage mode)', () => {
+describe('deleteReview (no Supabase)', () => {
     it('removes the review from store state', async () => {
         const review = {
             id: 'rev-1',
@@ -140,7 +132,7 @@ describe('deleteReview (localStorage mode)', () => {
 
 // ── clearAllBlogPosts ─────────────────────────────────────────────────────────
 
-describe('clearAllBlogPosts (localStorage mode)', () => {
+describe('clearAllBlogPosts (no Supabase)', () => {
     it('empties blogPosts in store', async () => {
         const post = { id: 'p1', slug: 's1', title: 'X', excerpt: '', content: '', featuredImage: '', category: '', tags: [], author: '', publishedAt: '', updatedAt: '', seoTitle: '', seoDescription: '', isPublished: true, viewCount: 0 };
         useAppStore.setState({ blogPosts: [post] });
@@ -148,13 +140,5 @@ describe('clearAllBlogPosts (localStorage mode)', () => {
         await useAppStore.getState().clearAllBlogPosts();
 
         expect(useAppStore.getState().blogPosts).toHaveLength(0);
-    });
-
-    it('removes ata_blog_posts_v1 from localStorage', async () => {
-        localStorage.setItem('ata_blog_posts_v1', JSON.stringify([{ id: 'x' }]));
-
-        await useAppStore.getState().clearAllBlogPosts();
-
-        expect(localStorage.getItem('ata_blog_posts_v1')).toBeNull();
     });
 });

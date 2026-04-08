@@ -32,7 +32,6 @@ describe('mergeContent — regions', () => {
 
     it('fills in missing fields from INITIAL defaults for existing regions', () => {
         const regionWithoutIcon = { ...INITIAL_SITE_CONTENT.regions[0] };
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         delete (regionWithoutIcon as any).icon;
         const input = base({ regions: [regionWithoutIcon] });
         const result = mergeContent(input);

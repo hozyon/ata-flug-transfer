@@ -33,6 +33,24 @@ const SEOView = lazy(() => import('./admin/views/SEOView').then(m => ({ default:
 
 import { INITIAL_SITE_CONTENT } from '../constants';
 
+// Static mapping — defined at module level to avoid useMemo dependency warning
+const VIEW_LABELS: Record<string, { label: string; icon: string; description: string }> = {
+  'overview':      { label: 'DASHBOARD',          icon: 'fa-chart-pie',               description: 'Genel bakış ve istatistikler' },
+  'bookings':      { label: 'REZERVASYONLAR',      icon: 'fa-calendar-check',          description: 'Rezervasyon yönetimi' },
+  'blog':          { label: 'BLOG YÖNETİMİ',       icon: 'fa-newspaper',               description: 'Blog yazıları' },
+  'reviews':       { label: 'YORUMLAR',            icon: 'fa-star',                    description: 'Yorum moderasyonu' },
+  'hero-images':   { label: 'ANASAYFA BANNER',     icon: 'fa-images',                  description: 'Slider görselleri' },
+  'site-settings': { label: 'MENÜ YÖNETİMİ',       icon: 'fa-bars',                    description: 'Site menü yapısı' },
+  'regions':       { label: 'BÖLGE & FİYAT',       icon: 'fa-map-location-dot',        description: 'Transfer bölgeleri ve fiyatları' },
+  'fleet':         { label: 'ARAÇLAR',             icon: 'fa-car-side',                description: 'Araç filosu' },
+  'faq':           { label: 'S.S.S',               icon: 'fa-circle-question',         description: 'Sıkça sorulan sorular' },
+  'business':      { label: 'İŞLETME BİLGİLERİ',  icon: 'fa-building',                description: 'İşletme bilgileri' },
+  'about':         { label: 'HAKKIMIZDA',          icon: 'fa-info-circle',             description: 'Hakkımızda sayfası içeriği' },
+  'visionMission': { label: 'VİZYON & MİSYON',    icon: 'fa-bullseye',                description: 'Vizyon ve misyon sayfası' },
+  'account':       { label: 'HESAP AYARLARI',      icon: 'fa-user',                    description: 'Profil ve güvenlik tercihlerinizi merkezden yönetin.' },
+  'seo':           { label: 'SEO YÖNETİMİ',        icon: 'fa-magnifying-glass-chart',  description: 'Arama motoru optimizasyonu ayarları' },
+};
+
 // ─── Error Boundary for lazy-loaded admin views ───────────────────────────────
 interface EBState { hasError: boolean; error: Error | null; }
 class AdminViewErrorBoundary extends React.Component<{ activeView: string; children: React.ReactNode }, EBState> {
@@ -479,7 +497,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
       vehicleOccupancy,
       monthlyTrendData, statusData, vehicleRevenue
     };
-  }, [bookings, editContent.vehicles, userReviews]);
+  }, [bookings, editContent.vehicles, userReviews, siteReviews]);
 
 
   // Keyboard Shortcuts
@@ -552,7 +570,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
       }
     }, 300);
     return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
-  }, [editContent]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editContent]); // onUpdateSiteContent is stable (Supabase fn); adding it would not change behavior
 
   // ── UNDO / REDO ──
   const undoStackRef = useRef<SiteContent[]>([]);
@@ -598,23 +617,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [commandSearch, setCommandSearch] = useState('');
   const commandInputRef = useRef<HTMLInputElement>(null);
-
-  const VIEW_LABELS: Record<string, { label: string; icon: string; description: string }> = {
-    'overview': { label: 'DASHBOARD', icon: 'fa-chart-pie', description: 'Genel bakış ve istatistikler' },
-    'bookings': { label: 'REZERVASYONLAR', icon: 'fa-calendar-check', description: 'Rezervasyon yönetimi' },
-    'blog': { label: 'BLOG YÖNETİMİ', icon: 'fa-newspaper', description: 'Blog yazıları' },
-    'reviews': { label: 'YORUMLAR', icon: 'fa-star', description: 'Yorum moderasyonu' },
-    'hero-images': { label: 'ANASAYFA BANNER', icon: 'fa-images', description: 'Slider görselleri' },
-    'site-settings': { label: 'MENÜ YÖNETİMİ', icon: 'fa-bars', description: 'Site menü yapısı' },
-    'regions': { label: 'BÖLGE & FİYAT', icon: 'fa-map-location-dot', description: 'Transfer bölgeleri ve fiyatları' },
-    'fleet': { label: 'ARAÇLAR', icon: 'fa-car-side', description: 'Araç filosu' },
-    'faq': { label: 'S.S.S', icon: 'fa-circle-question', description: 'Sıkça sorulan sorular' },
-    'business': { label: 'İŞLETME BİLGİLERİ', icon: 'fa-building', description: 'İşletme bilgileri' },
-    'about': { label: 'HAKKIMIZDA', icon: 'fa-info-circle', description: 'Hakkımızda sayfası içeriği' },
-    'visionMission': { label: 'VİZYON & MİSYON', icon: 'fa-bullseye', description: 'Vizyon ve misyon sayfası' },
-    'account': { label: 'HESAP AYARLARI', icon: 'fa-user', description: 'Profil ve güvenlik tercihlerinizi merkezden yönetin.' },
-    'seo': { label: 'SEO YÖNETİMİ', icon: 'fa-magnifying-glass-chart', description: 'Arama motoru optimizasyonu ayarları' },
-  };
 
   const commandItems = useMemo(() => {
     const pages = Object.entries(VIEW_LABELS).map(([id, v]) => ({ id, type: 'page' as const, ...v }));
@@ -682,6 +684,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
       twoFa: saved.twoFa ?? prev.twoFa,
     }));
   // Use individual primitive fields as deps (not the object ref) to reliably detect changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     siteContent.adminAccount?.fullName,
     siteContent.adminAccount?.email,
@@ -872,7 +875,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [activeView, editContent, isCommandPaletteOpen, showShortcutsHelp]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeView, editContent, isCommandPaletteOpen, showShortcutsHelp]); // handleRedo/handleUndo/updateContent are stable inline fns
 
   // Image Upload
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, callback: (base64: string) => void) => {
@@ -938,8 +942,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     setNewBookingData({
       customerName: '',
       phone: '',
-      pickup: DESTINATIONS[0],
-      destination: DESTINATIONS[1],
+      pickup: siteContent.regions[0]?.name || 'Antalya Havalimanı',
+      destination: siteContent.regions[1]?.name || '',
       date: new Date().toISOString().split('T')[0],
       time: '12:00',
       passengers: 1,
@@ -2208,7 +2212,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                                       'Confirmed': 'Onaylı',
                                       'Completed': 'Tamamlandı',
                                       'Cancelled': 'İptal',
-                                      'Rejected': 'Reddedildi'
+                                      'Rejected': 'Reddedildi',
+                                      'Deleted': 'Silindi',
                                     }[b.status] || b.status}
                                   </span>
                                 </td>

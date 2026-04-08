@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ata-flug-v2';
+const CACHE_NAME = 'ata-flug-v3';
 const SUPABASE_HOST = 'rnymtrtbhvkyvgzweswi.supabase.co';
 
 const STATIC_ASSETS = [
@@ -44,15 +44,20 @@ self.addEventListener('fetch', event => {
         return;
     }
 
-    // Strategy A: Cache-first for immutable hashed Vite assets + all images
-    const isHashedAsset = url.pathname.startsWith('/assets/');
+    // Strategy A: Cache-first for immutable hashed Next.js static assets + all images
+    const isHashedAsset = url.pathname.startsWith('/_next/static/');
     const isImage = /\.(webp|png|jpg|jpeg|svg|ico|gif)$/.test(url.pathname);
     if (isHashedAsset || isImage) {
         event.respondWith(
             caches.match(request).then(cached => {
                 if (cached) return cached;
                 return fetch(request).then(response => {
-                    if (response.ok && url.origin === self.location.origin) {
+                    // Never cache HTML responses for JS/asset URLs.
+                    // Vercel's SPA rewrite returns index.html (200) for missing chunks,
+                    // which would poison the cache and cause "text/html is not a valid
+                    // JavaScript MIME type" errors on subsequent loads.
+                    const ct = response.headers.get('content-type') || '';
+                    if (response.ok && url.origin === self.location.origin && !ct.startsWith('text/html')) {
                         const clone = response.clone();
                         caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
                     }

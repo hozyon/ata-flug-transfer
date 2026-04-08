@@ -212,13 +212,11 @@ export const useAppStore = create<AppStore>((set, get) => ({
 
     addBooking: async (partialBooking) => {
         const { siteContent, bookings } = get();
-        const vehicle = siteContent.vehicles.find(v => v.id === partialBooking.vehicleId);
-
-        // Calculate price: use region price if available, otherwise vehicle basePrice
+        // Calculate price from region price
         const region = siteContent.regions.find(
             r => r.name === partialBooking.destination || r.name === partialBooking.pickup
         );
-        const totalPrice = region?.price ?? vehicle?.basePrice ?? 40;
+        const totalPrice = region?.price ?? 0;
 
         const newBooking: Booking = {
             id: generateBookingId(),

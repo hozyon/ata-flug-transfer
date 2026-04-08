@@ -1,0 +1,363 @@
+{
+  "nav": {
+    "home": "ANA SAYFA",
+    "corporate": "KURUMSAL",
+    "about": "Hakkımızda",
+    "vision": "Vizyon & Misyon",
+    "regions": "BÖLGELER",
+    "faq": "S.S.S",
+    "blog": "BLOG",
+    "contact": "İLETİŞİM",
+    "search": "Ne aramıştınız?",
+    "menu": "Menü",
+    "noResults": "Sonuç bulunamadı",
+    "call": "Ara",
+    "admin": "Yönetici"
+  },
+  "hero": {
+    "eyebrow": "Premium VIP Transfer",
+    "title": "Lüks Ve Konforun",
+    "titleAccent": "Yeni Tanımı",
+    "subtitle": "Antalya Havalimanı'ndan dilediğiniz noktaya, profesyonel şoförler ve son model Mercedes araçlarla.",
+    "cta": "Rezervasyon Yap",
+    "whatsapp": "Hızlı Bilgi Al",
+    "trust": {
+      "247": "7/24",
+      "tracking": "Anlık Takip",
+      "vehicle": "Mercedes Vito"
+    }
+  },
+  "form": {
+    "eyebrow": "Online Rezervasyon",
+    "title": "Transfer Talebi",
+    "from": "Nereden",
+    "to": "Nereye",
+    "date": "Tarih",
+    "time": "Saat",
+    "passengers": "Yolcu",
+    "vehicle": "Araç Tipi",
+    "name": "Ad Soyad",
+    "namePlaceholder": "Adınız Soyadınız",
+    "phone": "Telefon",
+    "phonePlaceholder": "05...",
+    "submit": "Teklif Al & WhatsApp'a Gönder",
+    "swap": "Yönü Değiştir",
+    "person": "Kişi",
+    "trustSecure": "Güvenli",
+    "trustFast": "Hızlı Onay",
+    "trustWhatsapp": "WhatsApp Bildirim",
+    "successMsg": "Talebiniz sisteme kaydedildi ve WhatsApp'a yönlendiriliyorsunuz.",
+    "waMessage": "Merhaba, web sitenizden transfer rezervasyonu yapmak istiyorum.",
+    "waDetails": "📝 *REZERVASYON AÇIKLAMASI*",
+    "waName": "👤 *İsim:*",
+    "waPhone": "📱 *Tel:*",
+    "waFrom": "📍 *Nereden:*",
+    "waTo": "🏁 *Nereye:*",
+    "waDate": "📅 *Tarih:*",
+    "waTime": "⏰ *Saat:*",
+    "waPassengers": "👥 *Kişi Sayısı:*",
+    "waVehicle": "🚐 *Araç:*",
+    "waAvailability": "Müsaitlik durumu hakkında bilgi alabilir miyim?"
+  },
+  "services": {
+    "eyebrow": "Premium Deneyim",
+    "title": "VIP Transfer",
+    "titleAccent": "Hizmetleri",
+    "subtitle": "Antalya havalimanı ve çevresi için premium transfer deneyimi",
+    "card1": {
+      "title": "Havalimanı Transferi",
+      "desc": "Lüks Mercedes Vito araçlarımızla kesintisiz karşılama. Uçuş durumunuzu takip ediyor, rötarlarda bekliyoruz."
+    },
+    "card2": {
+      "title": "Özel Şehir Turları",
+      "desc": "Antalya ve çevresini kendi hızınızda keşfedin. Yerel şoförlerimiz eşliğinde gizli kalmış güzellikleri görün."
+    },
+    "card3": {
+      "title": "VIP Transfer",
+      "desc": "Kişisel ihtiyaçlarınıza göre uyarlanmış rotalarla mükemmel konforu tasarlayın. Eğlence veya tatil odaklı VIP seyahat."
+    },
+    "card4": {
+      "title": "Şehirlerarası Transfer",
+      "desc": "Antalya'dan dilediğiniz şehre, lüks araçlarımızla stressiz ve konforlu uzun yolculuk deneyimi."
+    }
+  },
+  "regions": {
+    "eyebrow": "Premium Transfer",
+    "title": "Hizmet",
+    "titleAccent": "Bölgelerimiz",
+    "desc": "Antalya'nın dört bir yanındaki tatil merkezlerine profesyonel ve konforlu ulaşım.",
+    "airportLabel": "Antalya Airport"
+  },
+  "blog": {
+    "eyebrow": "Blog",
+    "title": "Sizin İçin",
+    "titleAccent": "Seçtiklerimiz",
+    "readMore": "Devamını Oku",
+    "viewAll": "Tüm Yazıları Gör"
+  },
+  "reviews": {
+    "eyebrow": "Müşteri Yorumları",
+    "count": "Mutlu Müşteri",
+    "avgScore": "ortalama puan",
+    "verified": "Doğrulanmış",
+    "addReview": "Sen de yorum ekle",
+    "firstName": "Adınız",
+    "lastName": "Soyadınız",
+    "yourReview": "Yorumunuz...",
+    "submit": "Yorum Gönder",
+    "send": "Gönder"
+  },
+  "footer": {
+    "tagline": "Premium VIP Transfer Hizmetleri",
+    "contact": "İletişim",
+    "quickSupport": "Hızlı Destek"
+  },
+  "page": {
+    "about": {
+      "title": "Hakkımızda"
+    },
+    "vision": {
+      "title": "Vizyon & Misyon"
+    },
+    "faq": {
+      "title": "Sıkça Sorulan Sorular"
+    },
+    "contact": {
+      "title": "İletişim"
+    },
+    "regions": {
+      "title": "Bölgelerimiz"
+    },
+    "blog": {
+      "title": "Blog"
+    }
+  },
+  "about": {
+    "eyebrow": "KURUMSAL",
+    "subtitle": "Antalya'nın En Prestijli VIP Transfer Hizmeti",
+    "contactCta": "İletişime Geç",
+    "transferService": "Transfer Hizmeti",
+    "feat1": {
+      "title": "Güven ve Kalite",
+      "desc": "Uçuş takibi, zamanında karşılama ve güvenli seyahat garantisi."
+    },
+    "feat2": {
+      "title": "Premium Filo",
+      "desc": "Mercedes-Benz Vito ve Sprinter araçlarla konforun tadını çıkarın."
+    },
+    "feat3": {
+      "title": "7/24 Destek",
+      "desc": "İhtiyaç duyduğunuz her an WhatsApp üzerinden anında iletişim."
+    }
+  },
+  "vision": {
+    "eyebrow": "KURUMSAL",
+    "heroDesc": "Geleceğe bakışımız ve değerlerimiz.",
+    "valuesEyebrow": "HİZMET İLKELERİMİZ"
+  },
+  "faq": {
+    "eyebrow": "DESTEK",
+    "subtitle": "Transfer hizmetimiz hakkında merak ettiğiniz her şey.",
+    "moreQ": "Başka Sorunuz mu Var?",
+    "moreQDesc": "WhatsApp üzerinden anında cevap alabilirsiniz.",
+    "askWhatsapp": "WhatsApp ile Soru Sor",
+    "phone": "Telefon",
+    "email": "E-posta",
+    "workHours": "Çalışma Saatleri",
+    "service247": "7/24 Hizmet"
+  },
+  "contact": {
+    "eyebrow": "İLETİŞİM",
+    "title": "Bize Ulaşın",
+    "subtitle": "Sorularınız için 7/24 buradayız. Hemen iletişime geçin.",
+    "formTitle": "İletişim Formu",
+    "namePh": "Adınız",
+    "emailPh": "E-posta",
+    "msgPh": "Mesajınız",
+    "send": "Gönder",
+    "waMsg": "Merhaba, web sitesinden yazıyorum."
+  },
+  "regionsPage": {
+    "eyebrow": "Hizmet Bölgeleri",
+    "title": "Transfer Bölgelerimiz",
+    "subtitle": "Antalya Havalimanı'ndan tüm popüler tatil bölgelerine VIP transfer.",
+    "search": "Gitmek istediğiniz bölgeyi arayın...",
+    "noResult": "Sonuç Bulunamadı",
+    "noResultDesc": "Aramanızla eşleşen transfer bölgesi bulunamadı.",
+    "startingFrom": "Başlayan",
+    "getPrice": "Fiyat Al",
+    "ctaTitle": "Özel Fiyat Teklifi Alın",
+    "ctaDesc": "Listede olmayan bir bölge için veya grup transferi için özel fiyat teklifi alın.",
+    "ctaBtn": "WhatsApp ile Fiyat Al",
+    "waMsg": "Merhaba, transfer için fiyat almak istiyorum:"
+  },
+  "region": {
+    "descTemplate": "{name} bölgesine konforlu ve güvenli VIP transfer hizmeti.",
+    "airportDesc": "{name} transfer hizmeti."
+  },
+  "pricing": {
+    "eyebrow": "Antalya Havalimanı → Tüm Bölgeler",
+    "title": "Transfer",
+    "titleAccent": "Fiyatları",
+    "subtitle": "Tek yön, araç başı — kişi sayısından bağımsız sabit fiyat",
+    "near": "Yakın Mesafe",
+    "mid": "Orta Mesafe",
+    "far": "Uzak Mesafe",
+    "legendNear": "Yakın mesafe",
+    "legendMid": "Orta mesafe",
+    "legendFar": "Uzak mesafe",
+    "note": "Fiyatlar araç başıdır. Gece transferi (00:00–06:00) ve ekstra bagaj için fiyat değişmez. Listede olmayan bölge için WhatsApp'tan fiyat alın.",
+    "allRegions": "Tüm Bölgeler",
+    "search": "Bölge adı veya fiyat ara...",
+    "regionsLabel": "bölge"
+  },
+  "blogPage": {
+    "eyebrow": "Seyahat & Yaşam",
+    "title": "Antalya Keşif Rehberi",
+    "subtitle": "Antalya'nın gizli kalmış koylarından en lezzetli restoranlarına, tarihi rotalardan gece hayatına kapsamlı bir yolculuk.",
+    "read": "Oku",
+    "ctaTitle": "Tatilinizi Planlamaya Başlayın",
+    "ctaDesc": "Gideceğiniz yere karar verdiniz mi? Hemen WhatsApp üzerinden iletişime geçin, size özel VIP transfer planınızı oluşturalım.",
+    "ctaBtn": "WhatsApp Rezervasyon"
+  },
+  "blogPost": {
+    "notFound": "Aradığınız içerik bulunamadı veya kaldırılmış olabilir.",
+    "backToBlog": "Blog'a Dön",
+    "allPosts": "Tüm Yazılar",
+    "author": "Yazar",
+    "readTime": "Okuma Süresi",
+    "readMin": "~3 Dakika",
+    "sidebarTitle": "Hemen Rezervasyon Yapın",
+    "sidebarDesc": "Size özel VIP araçlarımızla konforlu transferin keyfini çıkarın.",
+    "liveSupport": "7/24 Canlı Destek",
+    "liveSupportDesc": "Her an yanınızdayız",
+    "license": "Resmi Belge & İzinler",
+    "licenseDesc": "TÜRSAB Onaylı A Grubu",
+    "waContact": "WhatsApp ile Ulaşın",
+    "waMsg": "Merhaba, yazınızı okudum. Transfer için bilgi almak istiyorum.",
+    "avgResponse": "Ortalama yanıt süresi: ~2 dakika",
+    "readAlso": "Bunları da Okuyun",
+    "viewAll": "Tümünü Gör"
+  },
+  "blogContent": {
+    "category": "Gezi ve Transfer Rehberi",
+    "titleTemplate": "{name}: Transfer ve Gezi Rehberi",
+    "excerptTemplate": "Antalya Havalimanı'ndan {name} bölgesine VIP transfer ve gezi rehberi. {name} gezilecek yerler, en iyi restoranlar ve aktiviteler hakkında detaylı bilgiler."
+  },
+  "seo": {
+    "title": "Ata Flug Transfer | VIP Havalimanı Transfer Antalya",
+    "desc": "Antalya Havalimanı'ndan premium VIP transfer hizmeti. Profesyonel şoförler, lüks Mercedes araçlar, 7/24 hizmet."
+  },
+  "common": {
+    "loading": "Yükleniyor...",
+    "error": "Bir hata oluştu",
+    "tryAgain": "Tekrar Dene",
+    "confirm": "Onayla",
+    "delete": "Sil",
+    "search": "Ara",
+    "close": "Kapat",
+    "skipNav": "İçeriğe geç",
+    "contactWhatsApp": "WhatsApp ile iletişime geçin"
+  },
+  "admin": {
+    "settings": "Ayarlar",
+    "bookings": "Rezervasyonlar",
+    "regions": "Bölgeler",
+    "fleet": "Araçlar",
+    "blog": "Blog",
+    "reviews": "Yorumlar",
+    "seo": "SEO"
+  },
+  "cookie": {
+    "message": "Bu site, en iyi deneyimi sunmak için çerezler kullanmaktadır.",
+    "accept": "Kabul Et",
+    "reject": "Reddet",
+    "learnMore": "Daha Fazla Bilgi"
+  },
+  "NotFoundPage": {
+    "title": "Sayfa Bulunamadı",
+    "description": "Aradığınız sayfa mevcut değil veya taşınmış olabilir.",
+    "backHome": "Ana Sayfaya Dön"
+  },
+  "pricingPage": {
+    "eyebrow": "Şeffaf Fiyatlandırma",
+    "title": "Transfer Fiyatları",
+    "subtitle": "Antalya Havalimanı'ndan tüm bölgelere sabit fiyatlar. Gizli ücret yok.",
+    "perVehicle": "Araç başı",
+    "oneWay": "Tek yön",
+    "fixedPrice": "Sabit fiyat",
+    "searchPlaceholder": "Bölge ara...",
+    "noResults": "Sonuç bulunamadı",
+    "startingFrom": "Başlangıç fiyatı",
+    "details": "Detaylar",
+    "ctaTitle": "Özel Fiyat Teklifi İster misiniz?",
+    "ctaDesc": "Gruba özel, dönüş transferi veya uzun mesafe için özel fiyat alın.",
+    "ctaBtn": "WhatsApp'tan Fiyat Al"
+  },
+  "privacy": {
+    "title": "Gizlilik Politikası",
+    "lastUpdated": "Son Güncelleme",
+    "section1": {
+      "title": "1. Giriş",
+      "body": "{name} olarak kişisel verilerinizin gizliliğini korumayı taahhüt ediyoruz. Bu politika, hizmetlerimizi kullanırken toplanan verilerin nasıl işlendiğini açıklamaktadır."
+    },
+    "section2": {
+      "title": "2. Toplanan Veriler",
+      "item1": "Ad, soyad ve iletişim bilgileri",
+      "item2": "Transfer rezervasyon detayları (tarih, saat, konum)",
+      "item3": "Uçuş bilgileri",
+      "item4": "Mesaj ve talep içerikleri"
+    },
+    "section3": {
+      "title": "3. Verilerin Kullanımı",
+      "body": "Toplanan veriler yalnızca rezervasyon işlemleri, müşteri desteği ve hizmet kalitesinin iyileştirilmesi amacıyla kullanılmaktadır. Verileriniz üçüncü taraflarla paylaşılmamaktadır."
+    },
+    "section4": {
+      "title": "4. Veri Güvenliği",
+      "body": "Verileriniz güvenli sunucularda şifrelenmiş biçimde saklanmaktadır. Yetkisiz erişime karşı endüstri standardı güvenlik önlemleri uygulanmaktadır."
+    },
+    "section5": {
+      "title": "5. İletişim",
+      "body": "Kişisel verilerinizle ilgili talepleriniz için bize ulaşın:"
+    }
+  },
+  "td": {
+    "from": "İtibaren",
+    "distance": "Havalimanına Mesafe",
+    "duration": "Transfer Süresi",
+    "service": "Hizmet",
+    "bookNow": "Hemen Rezervasyon Yap"
+  },
+  "booking": {
+    "route": "Rota",
+    "info": "Bilgiler",
+    "details": "Detaylar",
+    "summary": "Özet",
+    "from": "Nereden",
+    "to": "Nereye",
+    "date": "Tarih",
+    "time": "Saat",
+    "passengers": "Yolcu",
+    "vehicle": "Araç",
+    "firstName": "Ad",
+    "lastName": "Soyad",
+    "phone": "Telefon",
+    "email": "E-posta",
+    "flightNo": "Uçuş No",
+    "note": "Not / Ek Bilgi",
+    "notePlaceholder": "Bebek koltuğu, extra bagaj vb. (opsiyonel)",
+    "fullName": "Ad Soyad",
+    "capacity": "Kapasite",
+    "continue": "Devam",
+    "back": "Geri",
+    "person": "kişi",
+    "newRequest": "YENİ REZERVASYON TALEBİ",
+    "requestTitle": "Transfer Fiyat Talebi",
+    "errorRoute": "Nereden ve Nereye aynı olamaz. Lütfen farklı bir rota seçin.",
+    "errorDate": "Lütfen tarih seçin.",
+    "errorTime": "Lütfen saat seçin.",
+    "errorName": "Ad gerekli.",
+    "errorPhone": "Telefon gerekli.",
+    "availability": "Müsaitlik durumu hakkında bilgi bekliyorum."
+  }
+}

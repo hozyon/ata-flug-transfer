@@ -5,9 +5,11 @@ interface LongPressOptions {
     delay?: number;
 }
 
+type AnyEvent = MouseEvent | TouchEvent | React.MouseEvent | React.TouchEvent;
+
 export const useLongPress = (
-    onLongPress: (e: any) => void,
-    onClick?: (e: any) => void,
+    onLongPress: (e: AnyEvent) => void,
+    onClick?: (e: AnyEvent) => void,
     { shouldPreventDefault = true, delay = 500 }: LongPressOptions = {}
 ) => {
     const [longPressTriggered, setLongPressTriggered] = useState(false);
@@ -15,7 +17,7 @@ export const useLongPress = (
     const target = useRef<EventTarget | null>(null);
 
     const start = useCallback(
-        (event: any) => {
+        (event: AnyEvent) => {
             if (shouldPreventDefault && event.target) {
                 event.target.addEventListener('touchend', preventDefault as EventListener, {
                     passive: false
@@ -31,7 +33,7 @@ export const useLongPress = (
     );
 
     const clear = useCallback(
-        (event: any, shouldTriggerClick = true) => {
+        (event: AnyEvent, shouldTriggerClick = true) => {
             if (timeout.current) clearTimeout(timeout.current);
             if (shouldTriggerClick && !longPressTriggered && onClick) onClick(event);
             setLongPressTriggered(false);
@@ -43,18 +45,18 @@ export const useLongPress = (
     );
 
     return {
-        onMouseDown: (e: any) => start(e),
-        onTouchStart: (e: any) => start(e),
-        onMouseUp: (e: any) => clear(e),
-        onMouseLeave: (e: any) => clear(e, false),
-        onTouchEnd: (e: any) => clear(e)
+        onMouseDown: (e: React.MouseEvent) => start(e),
+        onTouchStart: (e: React.TouchEvent) => start(e),
+        onMouseUp: (e: React.MouseEvent) => clear(e),
+        onMouseLeave: (e: React.MouseEvent) => clear(e, false),
+        onTouchEnd: (e: React.TouchEvent) => clear(e)
     };
 };
 
 const preventDefault = (event: Event) => {
     if (!('touches' in event)) return;
 
-    if ((event as any).touches.length < 2 && event.preventDefault) {
+    if ((event as TouchEvent).touches.length < 2 && event.preventDefault) {
         event.preventDefault();
     }
 };

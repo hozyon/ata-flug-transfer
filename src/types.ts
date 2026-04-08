@@ -1,14 +1,14 @@
 
 export interface BrandingSettings {
-  primaryColor: string;
-  darkBg: string;
-  darkBgDeep: string;
+  primaryColor?: string;
+  darkBg?: string;
+  darkBgDeep?: string;
   favicon?: string;
 }
 
 export interface CurrencySettings {
-  symbol: string;
-  code: string;
+  symbol?: string;
+  code?: string;
 }
 
 export interface Vehicle {
@@ -141,6 +141,8 @@ export interface SiteContent {
   seo: SeoSettings;
   branding?: BrandingSettings;
   currency?: CurrencySettings;
+  drivers?: Record<string, unknown>[];
+  coupons?: Record<string, unknown>[];
   adminAccount?: {
     fullName: string;
     email: string;
@@ -161,6 +163,7 @@ export interface Region {
   image: string;
   icon: string;
   price?: number;
+  isActive?: boolean;
 }
 
 // Blog Post Interface
@@ -174,12 +177,13 @@ export interface BlogPost {
   category: string;
   tags: string[];
   author: string;
-  publishedAt: string;
-  updatedAt: string;
-  seoTitle: string;
-  seoDescription: string;
+  publishedAt?: string;
+  updatedAt?: string;
+  seoTitle?: string;
+  seoDescription?: string;
   isPublished: boolean;
-  viewCount: number;
+  scheduledAt?: string;
+  viewCount?: number;
 }
 
 // User Review Interface (yorum onay sistemi için)
@@ -187,9 +191,10 @@ export interface UserReview {
   id: string;
   name: string;
   country: string;
-  lang: string;
+  lang?: string;
   rating: number;
   text: string;
   status: 'pending' | 'approved' | 'rejected' | 'deleted';
-  createdAt: string;
+  createdAt?: string;
+  source?: 'user' | 'site';
 }

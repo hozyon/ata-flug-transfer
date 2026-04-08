@@ -18,13 +18,12 @@ export function mergeContent(parsed: SiteContent): SiteContent {
         : parsed.regions.map(savedRegion => {
             const def = defaultRegionMap.get(savedRegion.id);
             const merged = def ? { ...def, ...savedRegion } : savedRegion;
-            // Safety net: if price ended up undefined/NaN after merge (happens when
-            // price:undefined was saved — JSON.stringify omits undefined keys so the
-            // field is absent from the parsed object, letting def.price win normally,
-            // but this guard catches any remaining edge case).
-            if (typeof merged.price !== 'number' || isNaN(merged.price)) {
-                merged.price = def?.price ?? 0;
-            }
+            // Price MUST always come from savedRegion — never from INITIAL defaults.
+            // def.price = 50 is an arbitrary placeholder, not a meaningful default.
+            // If savedRegion has no price field (old DB data) or it's invalid, use 0.
+            merged.price = (typeof savedRegion.price === 'number' && !isNaN(savedRegion.price))
+                ? savedRegion.price
+                : 0;
             return merged;
         });
 
@@ -32,6 +31,8 @@ export function mergeContent(parsed: SiteContent): SiteContent {
         ...INITIAL_SITE_CONTENT,
         ...parsed,
         regions: mergedRegions,
+        drivers: Array.isArray(parsed.drivers) ? parsed.drivers : [],
+        coupons: Array.isArray(parsed.coupons) ? parsed.coupons : [],
         hero: { ...INITIAL_SITE_CONTENT.hero, ...(parsed.hero || {}) },
         about: { ...INITIAL_SITE_CONTENT.about, ...(parsed.about || {}) },
         business: { ...INITIAL_SITE_CONTENT.business, ...(parsed.business || {}) },

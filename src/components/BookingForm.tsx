@@ -214,10 +214,10 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
             <div className="relative">
               <div className="flex flex-col gap-0 rounded-xl border border-white/[0.08] bg-white/[0.03] overflow-hidden focus-within:border-[var(--color-primary)]/40 transition-colors">
                 <div className="px-3 py-2.5">
-                  <label className={lbl}>{t('Nereden')}</label>
+                  <label htmlFor="bf-pickup" className={lbl}>{t('Nereden')}</label>
                   <div className="flex items-center gap-2">
                     <i className="fa-solid fa-circle-dot text-[var(--color-primary)] text-[9px] flex-shrink-0" />
-                    <select name="pickup" value={formData.pickup} onChange={handleChange}
+                    <select id="bf-pickup" name="pickup" value={formData.pickup} onChange={handleChange}
                       className="w-full bg-transparent outline-none text-[12px] text-white font-medium appearance-none cursor-pointer truncate">
                       {siteContent.regions.map(r => <option key={r.id} value={r.name} className="bg-[#0a0a0e] text-white">{r.name}</option>)}
                     </select>
@@ -225,38 +225,38 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
                 </div>
                 <div className="border-t border-white/[0.06] mx-3" />
                 <div className="px-3 py-2.5">
-                  <label className={lbl}>{t('Nereye')}</label>
+                  <label htmlFor="bf-destination" className={lbl}>{t('Nereye')}</label>
                   <div className="flex items-center gap-2">
                     <i className="fa-solid fa-location-dot text-[var(--color-primary)] text-[9px] flex-shrink-0" />
-                    <select name="destination" value={formData.destination} onChange={handleChange}
+                    <select id="bf-destination" name="destination" value={formData.destination} onChange={handleChange}
                       className="w-full bg-transparent outline-none text-[12px] text-white font-medium appearance-none cursor-pointer truncate">
                       {siteContent.regions.map(r => <option key={r.id} value={r.name} className="bg-[#0a0a0e] text-white">{r.name}</option>)}
                     </select>
                   </div>
                 </div>
               </div>
-              <button type="button" onClick={handleSwapLocations}
+              <button type="button" onClick={handleSwapLocations} aria-label="Kalkış ve varış noktalarını değiştir"
                 className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-[#0a0a0e] border border-white/[0.1] hover:border-[var(--color-primary)]/40 flex items-center justify-center text-white/40 hover:text-[var(--color-primary)] transition-all active:scale-90 z-10">
-                <i className="fa-solid fa-arrow-right-arrow-left text-[9px] rotate-90" />
+                <i className="fa-solid fa-arrow-right-arrow-left text-[9px] rotate-90" aria-hidden="true" />
               </button>
             </div>
             {errors.route && <p className={errTxt}><i className="fa-solid fa-triangle-exclamation text-[9px]" />{errors.route}</p>}
 
             <div className="grid grid-cols-2 gap-2">
               <div className={card}>
-                <label className={lbl}>{t('Tarih')}</label>
+                <label htmlFor="bf-date" className={lbl}>{t('Tarih')}</label>
                 <div className="flex items-center gap-2">
                   <i className="fa-regular fa-calendar text-[var(--color-primary)] text-[9px] flex-shrink-0" />
-                  <input required type="date" name="date" value={formData.date} onChange={handleChange}
+                  <input id="bf-date" required type="date" name="date" value={formData.date} onChange={handleChange}
                     min={today} className={inp + ' cursor-pointer [color-scheme:dark]'} />
                 </div>
                 {errors.date && <p className="text-rose-400 text-[9px] mt-1">{errors.date}</p>}
               </div>
               <div className={card}>
-                <label className={lbl}>{t('Saat')}</label>
+                <label htmlFor="bf-time" className={lbl}>{t('Saat')}</label>
                 <div className="flex items-center gap-2">
                   <i className="fa-regular fa-clock text-[var(--color-primary)] text-[9px] flex-shrink-0" />
-                  <input required type="time" name="time" value={formData.time} onChange={handleChange}
+                  <input id="bf-time" required type="time" name="time" value={formData.time} onChange={handleChange}
                     className={inp + ' cursor-pointer [color-scheme:dark]'} />
                 </div>
                 {errors.time && <p className="text-rose-400 text-[9px] mt-1">{errors.time}</p>}
@@ -270,46 +270,46 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
           <>
             <div className="grid grid-cols-2 gap-2">
               <div className={card}>
-                <label className={lbl}>{t('Ad')}</label>
+                <label htmlFor="bf-firstName" className={lbl}>{t('Ad')}</label>
                 <div className="flex items-center gap-2">
                   <i className="fa-regular fa-user text-[var(--color-primary)] text-[9px] flex-shrink-0" />
-                  <input required type="text" name="firstName" value={formData.firstName} onChange={handleChange}
+                  <input id="bf-firstName" required type="text" name="firstName" value={formData.firstName} onChange={handleChange}
                     className={inp} placeholder={t('Adınız')} autoComplete="given-name" />
                 </div>
                 {errors.firstName && <p className="text-rose-400 text-[9px] mt-1">{errors.firstName}</p>}
               </div>
               <div className={card}>
-                <label className={lbl}>{t('Soyad')}</label>
+                <label htmlFor="bf-lastName" className={lbl}>{t('Soyad')}</label>
                 <div className="flex items-center gap-2">
                   <i className="fa-regular fa-user text-[var(--color-primary)] text-[9px] flex-shrink-0" />
-                  <input type="text" name="lastName" value={formData.lastName} onChange={handleChange}
+                  <input id="bf-lastName" type="text" name="lastName" value={formData.lastName} onChange={handleChange}
                     className={inp} placeholder={t('Soyadınız')} autoComplete="family-name" />
                 </div>
               </div>
             </div>
 
             <div className={card}>
-              <label className={lbl}>{t('Telefon')}</label>
+              <label htmlFor="bf-phone" className={lbl}>{t('Telefon')}</label>
               <div className="flex items-center gap-1.5">
                 <i className="fa-solid fa-phone text-[var(--color-primary)] text-[9px] flex-shrink-0" />
-                <select name="countryCode" value={formData.countryCode} onChange={handleChange}
+                <select aria-label="Ülke kodu" name="countryCode" value={formData.countryCode} onChange={handleChange}
                   className="w-[72px] bg-transparent outline-none text-[12px] text-white font-medium appearance-none cursor-pointer shrink-0">
                   {COUNTRY_CODES.map(cc => (
                     <option key={cc.code} value={cc.code} className="bg-[#0a0a0e] text-white">{cc.flag} {cc.code}</option>
                   ))}
                 </select>
                 <div className="w-px h-4 bg-white/10 flex-shrink-0" />
-                <input required type="tel" name="phone" value={formData.phone} onChange={handleChange}
+                <input id="bf-phone" required type="tel" name="phone" value={formData.phone} onChange={handleChange}
                   className={inp + ' flex-1'} placeholder="555 123 4567" autoComplete="tel" />
               </div>
               {errors.phone && <p className="text-rose-400 text-[9px] mt-1">{errors.phone}</p>}
             </div>
 
             <div className={card}>
-              <label className={lbl}>{t('E-posta')}</label>
+              <label htmlFor="bf-email" className={lbl}>{t('E-posta')}</label>
               <div className="flex items-center gap-2">
                 <i className="fa-regular fa-envelope text-[var(--color-primary)] text-[9px] flex-shrink-0" />
-                <input type="email" name="email" value={formData.email} onChange={handleChange}
+                <input id="bf-email" type="email" name="email" value={formData.email} onChange={handleChange}
                   className={inp} placeholder="ornek@email.com" autoComplete="email" />
               </div>
             </div>
@@ -355,10 +355,10 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
 
             <div className="grid grid-cols-2 gap-2">
               <div className={card}>
-                <label className={lbl}>{t('Yolcu')}</label>
+                <label htmlFor="bf-passengers" className={lbl}>{t('Yolcu')}</label>
                 <div className="flex items-center gap-1.5">
                   <i className="fa-solid fa-user-group text-[var(--color-primary)] text-[9px] flex-shrink-0" />
-                  <select name="passengers" value={formData.passengers} onChange={handleChange}
+                  <select id="bf-passengers" name="passengers" value={formData.passengers} onChange={handleChange}
                     className="w-full bg-transparent outline-none text-[12px] text-white font-medium appearance-none cursor-pointer">
                     {[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16].map(n => (
                       <option key={n} value={n} className="bg-[#0a0a0e] text-white">{n}</option>
@@ -367,20 +367,20 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
                 </div>
               </div>
               <div className={card}>
-                <label className={lbl}>{t('Uçuş No')}</label>
+                <label htmlFor="bf-flightNumber" className={lbl}>{t('Uçuş No')}</label>
                 <div className="flex items-center gap-1.5">
                   <i className="fa-solid fa-plane text-[var(--color-primary)] text-[9px] flex-shrink-0" />
-                  <input type="text" name="flightNumber" value={formData.flightNumber} onChange={handleChange}
+                  <input id="bf-flightNumber" type="text" name="flightNumber" value={formData.flightNumber} onChange={handleChange}
                     className={inp} placeholder="TK2414" />
                 </div>
               </div>
             </div>
 
             <div className={card}>
-              <label className={lbl}>{t('Not / Ek Bilgi')}</label>
+              <label htmlFor="bf-notes" className={lbl}>{t('Not / Ek Bilgi')}</label>
               <div className="flex items-start gap-2">
                 <i className="fa-regular fa-comment text-[var(--color-primary)] text-[9px] flex-shrink-0 mt-0.5" />
-                <input type="text" name="notes" value={formData.notes} onChange={handleChange}
+                <input id="bf-notes" type="text" name="notes" value={formData.notes} onChange={handleChange}
                   className={inp} placeholder={t('Bebek koltuğu, extra bagaj vb. (opsiyonel)')} />
               </div>
             </div>
@@ -466,9 +466,10 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
           <button
             type="button"
             onClick={() => goToStep(step - 1)}
+            aria-label={t('Geri')}
             className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-white/10 hover:border-white/20 text-white/50 hover:text-white text-sm font-semibold transition-all duration-200 active:scale-[0.97] min-h-[48px]"
           >
-            <i className="fa-solid fa-arrow-left text-xs" />
+            <i className="fa-solid fa-arrow-left text-xs" aria-hidden="true" />
           </button>
         )}
         {step < STEPS.length - 1 ? (

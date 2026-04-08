@@ -1,8 +1,12 @@
+'use client';
+
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { useSiteContent } from '../SiteContext';
 import type { NavMenuItem } from '../types';
 import LanguageSwitcher from './LanguageSwitcher';
+import { useTranslations } from 'next-intl';
 import { useLanguage, LANGUAGE_LABELS, type Language } from '../i18n/LanguageContext';
 import { useAppStore } from '../store/useAppStore';
 
@@ -27,13 +31,21 @@ const HamburgerIcon: React.FC<{ isOpen: boolean }> = ({ isOpen }) => (
 /* ─── Main component ─────────────────────────────────────────── */
 const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
   const { siteContent } = useSiteContent();
-  const { t, language, setLanguage } = useLanguage();
+  const { language, setLanguage } = useLanguage();
+  const tCommon = useTranslations('common');
+  const tNav = useTranslations('nav');
+  const tHero = useTranslations('hero');
+  const tFaq = useTranslations('faq');
   const { setBookingFormOpen, blogPosts } = useAppStore();
-  const location = useLocation();
+  const pathname = usePathname();
+  const router = useRouter();
 
-  const navigate = useNavigate();
   const adminTapCount = useRef(0);
   const adminTapTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Extract locale from pathname
+  const localeMatch = pathname?.match(/^\/([a-z]{2})(\/|$)/);
+  const locale = localeMatch ? localeMatch[1] : 'tr';
 
   const handleAdminTap = () => {
     if (isAdmin) { onAdminToggle(); close(); return; }
@@ -42,7 +54,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
     if (adminTapCount.current >= 5) {
       adminTapCount.current = 0;
       close();
-      navigate('/login');
+      router.push(`/${locale}/login`);
       return;
     }
     adminTapTimer.current = setTimeout(() => { adminTapCount.current = 0; }, 1500);
@@ -77,22 +89,22 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
   useEffect(() => {
     const id = setTimeout(() => setIsMobileMenuOpen(false), 0);
     return () => clearTimeout(id);
-  }, [location.pathname]);
+  }, [pathname]);
 
   const toggleSubmenu = (id: string) =>
     setExpandedItems(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
 
   const close = () => setIsMobileMenuOpen(false);
 
-  const NAV_KEY_MAP: Record<string, string> = {
-    '/': 'nav.home', '/hakkimizda': 'nav.about', '/vizyon-misyon': 'nav.vision',
-    '/bolgeler': 'nav.regions', '/sss': 'nav.faq', '/blog': 'nav.blog', '/iletisim': 'nav.contact',
+  const NAV_KEY_MAP: Record<string, Parameters<typeof tNav>[0]> = {
+    '/': 'home', '/hakkimizda': 'about', '/vizyon-misyon': 'vision',
+    '/bolgeler': 'regions', '/sss': 'faq', '/blog': 'blog', '/iletisim': 'contact',
   };
 
   const translateNav = (item: NavMenuItem) => {
-    if (NAV_KEY_MAP[item.url]) return t(NAV_KEY_MAP[item.url]);
+    if (NAV_KEY_MAP[item.url]) return tNav(NAV_KEY_MAP[item.url]);
     const l = item.label.toLowerCase();
-    if (l.includes('kurumsal') || l === 'corporate' || l === 'unternehmen') return t('nav.corporate');
+    if (l.includes('kurumsal') || l === 'corporate' || l === 'unternehmen') return tNav('corporate');
     return item.label;
   };
 
@@ -262,8 +274,9 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
           <div className="flex items-center justify-between h-full gap-4">
 
             {/* ── Logo ── */}
-            <Link to="/" className="flex items-center gap-3 shrink-0 group">
+            <Link href={`/${locale}`} className="flex items-center gap-3 shrink-0 group">
               <div className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={siteContent.business.logo || '/logo.png'}
                   alt={siteContent.business.name || 'Logo'}
@@ -273,7 +286,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
               </div>
               <div className="block">
                 <div className="hidden xs:block text-[10px] font-bold text-white/30 uppercase tracking-[0.25em] leading-none">
-                  {t('hero.eyebrow') || 'VIP Transfer'}
+                  {tHero('eyebrow') || 'VIP Transfer'}
                 </div>
                 <div className="text-[12px] sm:text-[15px] font-extrabold text-white leading-tight tracking-tight"
                   style={{ fontFamily: "'Outfit', sans-serif" }}>
@@ -286,16 +299,16 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
             <div className="hidden lg:flex items-center gap-1 h-full flex-1 justify-center">
               {menuItems.map(item => {
                 const hasSubMenu = !!(item.subMenus && item.subMenus.length > 0 && item.url !== '/bolgeler');
-                const isActive = location.pathname === item.url || (item.url !== '/' && location.pathname.startsWith(item.url));
+                const isActive = pathname === item.url || (item.url !== '/' && (pathname ?? '').startsWith(item.url));
                 return (
                   <div
                     key={item.id}
                     className="relative h-full flex items-center"
-                    onMouseEnter={() => hasSubMenu && setActiveDropdown(item.id)}
+                    onMouseEnter={() => hasSubMenu && item.id && setActiveDropdown(item.id)}
                     onMouseLeave={() => setActiveDropdown(null)}
                   >
                     <Link
-                      to={item.url}
+                      href={`/${locale}${item.url}`}
                       className={`nav-link-desktop ${isActive ? 'active' : ''}`}
                     >
                       {translateNav(item)}
@@ -314,11 +327,11 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                         {/* Arrow */}
                         <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 rounded-sm border-t border-l border-white/[0.10]"
                           style={{ background: 'rgba(10,12,24,0.95)' }} />
-                        {item.subMenus.map(sub => (
-                          <Link key={sub.id} to={sub.url}
+                        {(item.subMenus ?? []).map(sub => (
+                          <Link key={sub.id} href={`/${locale}${sub.url}`}
                             className="flex items-center gap-2.5 px-4 py-2.5 text-[12.5px] font-semibold text-white/55 hover:text-white hover:bg-white/[0.06] transition-all mx-1 rounded-xl">
                             <span className="w-1 h-1 rounded-full bg-[var(--color-primary)]/50 shrink-0" />
-                            {NAV_KEY_MAP[sub.url] ? t(NAV_KEY_MAP[sub.url]) : sub.label}
+                            {NAV_KEY_MAP[sub.url] ? tNav(NAV_KEY_MAP[sub.url]) : sub.label}
                           </Link>
                         ))}
                       </div>
@@ -364,7 +377,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                 }}
               >
                 <i className="fa-solid fa-car-side text-[11px] shrink-0" />
-                <span>{t('hero.cta')}</span>
+                <span>{tHero('cta')}</span>
                 {/* Shine sweep */}
                 <span style={{
                   position: 'absolute', inset: 0,
@@ -485,13 +498,14 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
           <div className="px-5 pt-2 pb-4 flex items-center justify-between shrink-0">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl overflow-hidden bg-white/[0.07] flex items-center justify-center shrink-0 border border-white/[0.08]">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={siteContent.business.logo || '/logo.png'} alt="Logo"
                   className="w-full h-full object-contain scale-90"
                   onError={e => (e.currentTarget.src = '/logo.png')} />
               </div>
               <div>
                 <p className="text-[10px] font-bold text-[var(--color-primary)]/50 uppercase tracking-[0.22em] leading-none mb-0.5">
-                  {t('hero.eyebrow') || 'VIP Transfer'}
+                  {tHero('eyebrow') || 'VIP Transfer'}
                 </p>
                 <p className="text-[15px] font-extrabold text-white leading-none tracking-tight"
                   style={{ fontFamily: "'Outfit', sans-serif" }}>
@@ -501,7 +515,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
             </div>
             <button onClick={close}
               className="w-10 h-10 rounded-full flex items-center justify-center bg-white/[0.06] text-white/40 hover:text-white border border-white/[0.07] active:scale-90 transition-all"
-              aria-label="Kapat">
+              aria-label={tCommon('close')}>
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                 <line x1="1" y1="1" x2="11" y2="11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
                 <line x1="11" y1="1" x2="1" y2="11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
@@ -517,7 +531,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
               style={{ background: 'linear-gradient(135deg, #dfc380, var(--color-primary))' }}
             >
               <i className="fa-solid fa-calendar-check text-sm" />
-              <span className="tracking-wide">{t('hero.cta')}</span>
+              <span className="tracking-wide">{tHero('cta')}</span>
             </button>
             <a
               href={`https://wa.me/${siteContent.business.whatsapp}`}
@@ -545,12 +559,12 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                 onChange={e => setSearchQuery(e.target.value)}
                 onFocus={() => setSearchFocused(true)}
                 onBlur={() => setSearchFocused(false)}
-                placeholder={t('nav.search')}
+                placeholder={tNav('search')}
                 className="flex-1 bg-transparent outline-none text-[14px] text-white placeholder-white/25 font-medium"
               />
               {searchQuery && (
-                <button onClick={() => setSearchQuery('')} className="text-white/30 hover:text-white/60 transition-colors active:scale-90 p-1">
-                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+                <button onClick={() => setSearchQuery('')} aria-label={tCommon('close')} className="text-white/30 hover:text-white/60 transition-colors active:scale-90 p-1">
+                  <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
                     <line x1="1" y1="1" x2="9" y2="9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                     <line x1="9" y1="1" x2="1" y2="9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                   </svg>
@@ -567,10 +581,10 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                 {searchResults.length === 0 ? (
                   <div className="flex flex-col items-center py-10 gap-3 text-white/25">
                     <i className="fa-solid fa-magnifying-glass text-3xl" />
-                    <p className="text-sm font-medium">{t('nav.noResults')}</p>
+                    <p className="text-sm font-medium">{tNav('noResults')}</p>
                   </div>
                 ) : searchResults.map((r, i) => (
-                  <Link key={i} to={r.url} onClick={close}
+                  <Link key={i} href={`/${locale}${r.url}`} onClick={close}
                     className="flex items-center gap-3.5 px-3 py-3.5 rounded-2xl hover:bg-white/[0.06] active:bg-white/[0.09] transition-colors group">
                     <div className="w-9 h-9 rounded-xl bg-white/[0.07] text-white/40 group-hover:bg-[var(--color-primary)]/15 group-hover:text-[var(--color-primary)] flex items-center justify-center text-sm shrink-0 transition-colors border border-white/[0.06]">
                       <i className={`fa-solid ${r.icon}`} />
@@ -585,14 +599,14 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
               </div>
             ) : (
               <>
-                <p className="text-[9px] font-black text-white/20 uppercase tracking-[0.25em] px-2 pb-2 pt-1">{t('nav.menu')}</p>
+                <p className="text-[9px] font-black text-white/20 uppercase tracking-[0.25em] px-2 pb-2 pt-1">{tNav('menu')}</p>
 
                 <div className="space-y-0.5">
                   {menuItems.map((item, idx) => {
                     const hasSubMenu = !!(item.subMenus && item.subMenus.length > 0 && item.url !== '/bolgeler');
-                    const isActive = location.pathname === item.url ||
-                      (hasSubMenu && item.subMenus?.some(s => location.pathname === s.url));
-                    const isExpanded = expandedItems.includes(item.id);
+                    const isActive = pathname === item.url ||
+                      (hasSubMenu && item.subMenus?.some(s => pathname === s.url));
+                    const isExpanded = item.id ? expandedItems.includes(item.id) : false;
                     const icon = getIcon(item.label);
 
                     return (
@@ -604,7 +618,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                         <div className={`rounded-2xl overflow-hidden transition-colors ${isActive ? 'active-pill' : ''}`}>
                           <div className="flex items-center">
                             <Link
-                              to={item.url}
+                              href={`/${locale}${item.url}`}
                               onClick={() => !hasSubMenu && close()}
                               className="flex items-center gap-4 flex-1 px-4 py-[15px] active:bg-white/[0.04] transition-colors"
                             >
@@ -625,11 +639,12 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
 
                             {hasSubMenu && (
                               <button
-                                onClick={() => toggleSubmenu(item.id)}
+                                onClick={() => item.id && toggleSubmenu(item.id)}
                                 className="px-4 py-[15px] flex items-center justify-center text-white/25 hover:text-white/60 active:bg-white/[0.04] transition-colors"
                                 aria-expanded={isExpanded}
+                                aria-label={isExpanded ? tCommon('close') : item.label}
                               >
-                                <i className={`fa-solid fa-chevron-down text-[10px] transition-transform duration-300 ${isExpanded ? 'rotate-180 text-[var(--color-primary)]' : ''}`} />
+                                <i className={`fa-solid fa-chevron-down text-[10px] transition-transform duration-300 ${isExpanded ? 'rotate-180 text-[var(--color-primary)]' : ''}`} aria-hidden="true" />
                               </button>
                             )}
                             {!hasSubMenu && !isActive && (
@@ -640,11 +655,11 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                           <div className={`transition-all duration-300 ease-in-out overflow-hidden ${isExpanded && hasSubMenu ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}>
                             <div className="ml-[3.25rem] mr-3 mb-2 border-l-2 border-[var(--color-primary)]/10 pl-4 space-y-0.5">
                               {hasSubMenu && item.subMenus?.map(sub => (
-                                <Link key={sub.id} to={sub.url} onClick={close}
+                                <Link key={sub.id} href={`/${locale}${sub.url}`} onClick={close}
                                   className={`flex items-center gap-2 py-2.5 px-2 text-[13px] font-semibold rounded-xl transition-colors active:bg-white/[0.06]
-                                    ${location.pathname === sub.url ? 'text-[var(--color-primary)]' : 'text-white/35 hover:text-white/70'}`}>
+                                    ${pathname === sub.url ? 'text-[var(--color-primary)]' : 'text-white/35 hover:text-white/70'}`}>
                                   <span className="w-1.5 h-1.5 rounded-full bg-current opacity-50 shrink-0" />
-                                  {NAV_KEY_MAP[sub.url] ? t(NAV_KEY_MAP[sub.url]) : sub.label}
+                                  {NAV_KEY_MAP[sub.url] ? tNav(NAV_KEY_MAP[sub.url]) : sub.label}
                                 </Link>
                               ))}
                             </div>
@@ -685,7 +700,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                       <i className="fa-solid fa-phone text-emerald-400 text-xs" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-[9px] font-bold text-white/25 uppercase tracking-wider">{t('nav.call')}</p>
+                      <p className="text-[9px] font-bold text-white/25 uppercase tracking-wider">{tNav('call')}</p>
                       <p className="text-[11px] font-bold text-white/55 truncate">{siteContent.business.phone}</p>
                     </div>
                   </a>
@@ -696,7 +711,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
                       <i className="fa-solid fa-envelope text-[var(--color-primary)] text-xs" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-[9px] font-bold text-white/25 uppercase tracking-wider">{t('faq.email')}</p>
+                      <p className="text-[9px] font-bold text-white/25 uppercase tracking-wider">{tFaq('email')}</p>
                       <p className="text-[11px] font-bold text-white/55 truncate">{siteContent.business.email}</p>
                     </div>
                   </a>
@@ -737,7 +752,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
               title={isAdmin ? 'Panel' : 'v2.4'}
             >
               <i className={`fa-solid ${isAdmin ? 'fa-user-gear' : 'fa-gear'} text-[10px]`} />
-              <span>{t('nav.admin')}</span>
+              <span>{tNav('admin')}</span>
             </button>
           </div>
         </div>
