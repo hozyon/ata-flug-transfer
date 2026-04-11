@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { SiteContent } from '../../../types';
 import { useDragAndDrop } from '../../../hooks/useDragAndDrop';
 import { useViewMode } from '../../../hooks/useViewMode';
 import { MobileViewToggle } from '../MobileViewToggle';
 import { SwipeableCard } from '../SwipeableCard';
 import { EmptyState } from '../EmptyState';
 import { haptic } from '../../../utils/haptic';
+import { SiteContent, Vehicle } from '../../../types';
 
 interface FleetViewProps {
     editContent: SiteContent;
     setEditContent: (content: SiteContent) => void;
-    setVehicleForm: (form: any) => void;
+    setVehicleForm: (form: Vehicle) => void;
     setIsVehicleModalOpen: (isOpen: boolean) => void;
     moveItem: <T>(list: T[], index: number, direction: 'up' | 'down') => T[];
 }
@@ -88,7 +88,7 @@ export const FleetView: React.FC<FleetViewProps> = ({
                                 className="w-full pl-9 pr-4 py-2.5 bg-white/5 border border-white/[0.06] rounded-xl text-sm text-white placeholder-slate-600 focus:border-[var(--color-primary)]/50 outline-none transition-all" />
                         </div>
                         {/* Add */}
-                        <button onClick={() => { setVehicleForm({ id: '', name: '', category: 'VIP', capacity: 4, luggage: 4, image: 'https://images.unsplash.com/photo-1632245889029-e406faaa34cd?auto=format&fit=crop&q=80&w=800', features: [] }); setIsVehicleModalOpen(true); }}
+                        <button onClick={() => { setVehicleForm({ id: '', name: '', category: 'VIP', capacity: 4, luggage: 4, basePrice: 30, image: 'https://images.unsplash.com/photo-1632245889029-e406faaa34cd?auto=format&fit=crop&q=80&w=800', features: [] }); setIsVehicleModalOpen(true); }}
                             className="px-4 py-2.5 bg-[var(--color-primary)] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 shrink-0">
                             <i className="fa-solid fa-plus text-[10px]"></i> Yeni Araç
                         </button>

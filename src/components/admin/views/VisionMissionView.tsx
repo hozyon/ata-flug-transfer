@@ -1,14 +1,15 @@
 import React from 'react';
 import { RichTextEditor } from '../RichTextEditor';
+import { SiteContent } from '../../../types';
 
 interface VisionMissionViewProps {
-    editContent: any;
-    setEditContent: (content: any) => void;
+    editContent: SiteContent;
+    setEditContent: (content: SiteContent) => void;
 }
 
 export const VisionMissionView: React.FC<VisionMissionViewProps> = ({ editContent, setEditContent }) => {
     const vm = editContent.visionMission || {};
-    const update = (path: string, value: any) => {
+    const update = (path: string, value: unknown) => {
         const parts = path.split('.');
         const newVm = JSON.parse(JSON.stringify(vm));
         let obj = newVm;
@@ -194,7 +195,7 @@ export const VisionMissionView: React.FC<VisionMissionViewProps> = ({ editConten
                                 </tr>
                             </thead>
                             <tbody>
-                                {vm.values?.items?.map((item: any, idx: number) => (
+                                {vm.values?.items?.map((item: { icon: string; title: string; desc: string }, idx: number) => (
                                     <tr key={idx} className="border-b border-white/[0.03] hover:bg-white/[0.03] transition-all">
                                         <td className="px-3 py-3.5">
                                             <div className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center"><span className="text-[10px] font-mono font-bold text-slate-500">{idx + 1}</span></div>

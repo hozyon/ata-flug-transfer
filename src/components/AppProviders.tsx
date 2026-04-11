@@ -36,13 +36,14 @@ function ServiceWorkerRegistrar() {
     return null;
 }
 
+import { updateSiteContent } from '../app/actions/siteContent';
+
 export default function AppProviders({ children, locale: _locale }: AppProvidersProps) {
     const siteContent = useAppStore(s => s.siteContent);
-    const updateSiteContent = useAppStore(s => s.updateSiteContent);
 
     return (
         <LanguageProvider>
-            <SiteProvider value={{ siteContent, updateSiteContent }}>
+            <SiteProvider value={{ siteContent, updateSiteContent: async (content) => { await updateSiteContent(content); } }}>
                 <AuthProvider>
                     <BrandColorSync />
                     <ServiceWorkerRegistrar />

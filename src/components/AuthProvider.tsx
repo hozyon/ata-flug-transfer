@@ -2,7 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { createClient } from '../utils/supabase/client';
+import { isSupabaseConfigured } from '../lib/supabase';
 import { useAppStore } from '../store/useAppStore';
 import { INITIAL_SITE_CONTENT } from '../constants';
 
@@ -14,18 +15,12 @@ import { INITIAL_SITE_CONTENT } from '../constants';
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const pathname = usePathname();
-    const { setIsAdmin, isAdmin, initializeStore } = useAppStore();
-    const initStoreRef = useRef<Promise<void> | null>(null);
+    const { setIsAdmin, isAdmin } = useAppStore();
     const isRecoveryModeRef = useRef(false);
-
-    // Initialize store once
-    if (initStoreRef.current === null) {
-        initStoreRef.current = initializeStore();
-    }
+    const supabase = createClient();
 
     const applySessionToken = async () => {
         if (!isSupabaseConfigured) return;
-        if (initStoreRef.current) await initStoreRef.current;
 
         const baseContent = useAppStore.getState().siteContent;
         if (baseContent === INITIAL_SITE_CONTENT) return;
@@ -101,7 +96,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         }, 30000);
 
         return () => clearInterval(interval);
-    }, [isAdmin]);
+    }, [isAdmin, supabase]);
 
     // Redirect admin to /admin if logged in and on login page
     useEffect(() => {

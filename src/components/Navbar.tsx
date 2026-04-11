@@ -9,6 +9,9 @@ import LanguageSwitcher from './LanguageSwitcher';
 import { useTranslations } from 'next-intl';
 import { useLanguage, LANGUAGE_LABELS, type Language } from '../i18n/LanguageContext';
 import { useAppStore } from '../store/useAppStore';
+import useSWR from 'swr';
+import { fetcher } from '../utils/supabase/fetcher';
+import { BlogPost } from '../types';
 
 interface NavbarProps {
   onAdminToggle: () => void;
@@ -36,7 +39,27 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
   const tNav = useTranslations('nav');
   const tHero = useTranslations('hero');
   const tFaq = useTranslations('faq');
-  const { setBookingFormOpen, blogPosts } = useAppStore();
+  const { setBookingFormOpen } = useAppStore();
+  const { data: blogPostsRaw } = useSWR('blog_posts', fetcher);
+  
+  const blogPosts: BlogPost[] = blogPostsRaw?.map((row: any) => ({
+    id: row.id,
+    slug: row.slug,
+    title: row.title,
+    excerpt: row.excerpt || '',
+    content: row.content || '',
+    featuredImage: row.featured_image || '',
+    category: row.category || '',
+    tags: row.tags || [],
+    author: row.author || 'Ata Flug Transfer',
+    publishedAt: row.published_at,
+    updatedAt: row.updated_at,
+    seoTitle: row.seo_title || '',
+    seoDescription: row.seo_description || '',
+    isPublished: row.is_published,
+    viewCount: row.view_count || 0,
+  })) || [];
+
   const pathname = usePathname();
   const router = useRouter();
 

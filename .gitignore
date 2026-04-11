@@ -2,7 +2,9 @@
 node_modules/
 
 # Build output
+.next/
 dist/
+tsconfig.tsbuildinfo
 
 # Environment variables
 .env

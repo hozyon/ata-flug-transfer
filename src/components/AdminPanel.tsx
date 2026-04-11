@@ -1578,21 +1578,21 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
               <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.15em] px-1 mb-2">Ana Modüller</p>
               <div className="grid grid-cols-4 gap-2 mb-4">
-                {[
-                  { id: 'overview', label: 'Dashboard', icon: 'fa-chart-pie', color: 'text-blue-400' },
-                  { id: 'bookings', label: 'Rezervasyon', icon: 'fa-calendar-check', color: 'text-emerald-400', badge: pendingCount },
-                  { id: 'reviews', label: 'Yorumlar', icon: 'fa-star', color: 'text-amber-400', badge: pendingReviews },
-                  { id: 'regions', label: 'Bölge & Fiyat', icon: 'fa-map-location-dot', color: 'text-teal-400' },
-                ].map(item => (
-                  <button key={item.id} onClick={() => { setActiveView(item.id as DashboardView); setIsMobileMenuOpen(false); }}
-                    className={`flex flex-col items-center gap-1.5 py-3 px-1 rounded-2xl transition-all active:scale-95 ${activeView === item.id ? 'bg-[var(--color-primary)]/10 ring-1 ring-[var(--color-primary)]/20' : 'bg-white/[0.03]'}`}>
-                    <div className="relative">
-                      <i className={`fa-solid ${item.icon} ${activeView === item.id ? 'text-[var(--color-primary)]' : item.color} text-[17px]`}></i>
-                      {(item as any).badge > 0 && <span className="absolute -top-1 -right-2.5 w-[13px] h-[13px] flex items-center justify-center text-[7px] font-black rounded-full bg-red-500 text-white">{(item as any).badge}</span>}
-                    </div>
-                    <span className={`text-[9px] font-bold leading-tight text-center ${activeView === item.id ? 'text-[var(--color-primary)]' : 'text-slate-500'}`}>{item.label}</span>
-                  </button>
-                ))}
+                    {([
+                      { id: 'overview', label: 'Dashboard', icon: 'fa-chart-pie', color: 'text-blue-400' },
+                      { id: 'bookings', label: 'Rezervasyon', icon: 'fa-calendar-check', color: 'text-emerald-400', badge: pendingCount },
+                      { id: 'reviews', label: 'Yorumlar', icon: 'fa-star', color: 'text-amber-400', badge: pendingReviews },
+                      { id: 'regions', label: 'Bölge & Fiyat', icon: 'fa-map-location-dot', color: 'text-teal-400' },
+                    ] as const).map(item => (
+                      <button key={item.id} onClick={() => { setActiveView(item.id as DashboardView); setIsMobileMenuOpen(false); }}
+                        className={`flex flex-col items-center gap-1.5 py-3 px-1 rounded-2xl transition-all active:scale-95 ${activeView === item.id ? 'bg-[var(--color-primary)]/10 ring-1 ring-[var(--color-primary)]/20' : 'bg-white/[0.03]'}`}>
+                        <div className="relative">
+                          <i className={`fa-solid ${item.icon} ${activeView === item.id ? 'text-[var(--color-primary)]' : item.color} text-[17px]`}></i>
+                          {('badge' in item && item.badge > 0) && <span className="absolute -top-1 -right-2.5 w-[13px] h-[13px] flex items-center justify-center text-[7px] font-black rounded-full bg-red-500 text-white">{item.badge}</span>}
+                        </div>
+                        <span className={`text-[9px] font-bold leading-tight text-center ${activeView === item.id ? 'text-[var(--color-primary)]' : 'text-slate-500'}`}>{item.label}</span>
+                      </button>
+                    ))}
               </div>
 
               <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.15em] px-1 mb-2">İçerik Yönetimi</p>
@@ -2605,8 +2605,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
           {
             activeView === 'regions' && (
               <RegionsView
+                bookings={bookings}
                 editContent={editContent}
                 setEditContent={setEditContent}
+
                 showToast={showToast}
                 moveItem={moveItem}
                 isDarkTheme={isDarkTheme}
@@ -2834,7 +2836,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                       <label className="text-[10px] font-bold font-outfit text-slate-500 uppercase tracking-wider">Kategori</label>
                       <select
                         className="w-full bg-white/[0.04] border border-white/[0.07] rounded-xl px-3 py-2.5 text-sm text-white focus:border-[var(--color-primary)]/50 outline-none transition-colors"
-                        value={vehicleForm.category || 'VIP'} onChange={e => setVehicleForm({ ...vehicleForm, category: e.target.value as any })}>
+                        value={vehicleForm.category || 'VIP'} onChange={e => setVehicleForm({ ...vehicleForm, category: e.target.value as Vehicle['category'] })}>
+
                         <option value="VIP">VIP</option>
                         <option value="Business">Business</option>
                         <option value="Large Group">Grup</option>

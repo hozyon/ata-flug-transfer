@@ -349,7 +349,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
           setShowDraftBanner(true);
         }
       }
-    } catch { /* ignore */ }
+    } catch (e) { console.warn('Failed to load draft:', e); }
     setIsDrawerOpen(true);
   };
 
@@ -375,7 +375,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
           setShowDraftBanner(true);
         }
       }
-    } catch { /* ignore */ }
+    } catch (e) { console.warn('Failed to load draft:', e); }
     setIsDrawerOpen(true);
   };
 

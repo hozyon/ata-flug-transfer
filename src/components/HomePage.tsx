@@ -8,7 +8,10 @@ import { useSiteContent } from '../SiteContext';
 import { useTranslations } from 'next-intl';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useScrollReveal } from '../hooks/useScrollReveal';
-
+import useSWR from 'swr';
+import { fetcher } from '../utils/supabase/fetcher';
+import { addBooking } from '../app/actions/bookings';
+import { BlogPost, UserReview } from '../types';
 
 interface HomePageProps {
     locale: string;
@@ -23,8 +26,40 @@ export default function HomePage({ locale }: HomePageProps) {
     const tRegions = useTranslations('regions');
     const tBlog = useTranslations('blog');
     const tReviews = useTranslations('reviews');
-    const { setBookingFormOpen, addBooking, userReviews } = useAppStore();
-    const blogPosts = useAppStore(s => s.blogPosts);
+    const { setBookingFormOpen } = useAppStore();
+
+    const { data: blogRaw } = useSWR('blog_posts', fetcher);
+    const { data: reviewsRaw } = useSWR('reviews', fetcher);
+
+    const blogPosts: BlogPost[] = useMemo(() => blogRaw?.map((row: any) => ({
+        id: row.id,
+        slug: row.slug,
+        title: row.title,
+        excerpt: row.excerpt || '',
+        content: row.content || '',
+        featuredImage: row.featured_image || '',
+        category: row.category || '',
+        tags: row.tags || [],
+        author: row.author || 'Ata Flug Transfer',
+        publishedAt: row.published_at,
+        updatedAt: row.updated_at,
+        seoTitle: row.seo_title || '',
+        seoDescription: row.seo_description || '',
+        isPublished: row.is_published,
+        viewCount: row.view_count || 0,
+    })) || [], [blogRaw]);
+
+    const userReviews: UserReview[] = useMemo(() => reviewsRaw?.map((row: any) => ({
+        id: row.id,
+        name: row.name,
+        country: row.country || '',
+        lang: row.lang || 'tr',
+        rating: row.rating,
+        text: row.text,
+        status: row.status,
+        createdAt: row.created_at,
+    })) || [], [reviewsRaw]);
+
     const regionsCarouselRef = useRef<HTMLDivElement>(null);
 
     useScrollReveal();

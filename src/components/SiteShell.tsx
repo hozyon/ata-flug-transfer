@@ -6,7 +6,9 @@ import Navbar from './Navbar';
 import BookingForm from './BookingForm';
 import { useAppStore } from '../store/useAppStore';
 import { useTranslations } from 'next-intl';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { createClient } from '../utils/supabase/client';
+import { isSupabaseConfigured } from '../lib/supabase';
+import { addBooking } from '../app/actions/bookings';
 
 /**
  * SiteShell — wraps public pages with Navbar, Footer, WhatsApp button, BookingModal.
@@ -22,7 +24,6 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
         isAdmin, setIsAdmin,
         siteContent,
         isBookingFormOpen, setBookingFormOpen,
-        addBooking,
     } = useAppStore();
 
     const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -35,6 +36,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
         if (isLoggingOut) return;
         setIsLoggingOut(true);
         if (isSupabaseConfigured) {
+            const supabase = createClient();
             sessionStorage.removeItem('ata_session_token');
             await supabase.auth.signOut();
         }

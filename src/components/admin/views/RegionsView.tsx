@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { RichTextEditor } from '../RichTextEditor';
-import { SiteContent, Region } from '../../../types';
+import { SiteContent, Region, Booking } from '../../../types';
 import { SCRAPED_REGIONS } from '../../../constants';
-import { useAppStore } from '../../../store/useAppStore';
 import { useDragAndDrop } from '../../../hooks/useDragAndDrop';
 import { useViewMode } from '../../../hooks/useViewMode';
 import { MobileViewToggle } from '../MobileViewToggle';
@@ -11,6 +10,7 @@ import { EmptyState } from '../EmptyState';
 import { haptic } from '../../../utils/haptic';
 
 interface RegionsViewProps {
+    bookings: Booking[];
     editContent: SiteContent;
     setEditContent: (content: SiteContent) => void;
     showToast: (msg: string, type: 'success' | 'delete') => void;
@@ -19,9 +19,8 @@ interface RegionsViewProps {
 }
 
 export const RegionsView: React.FC<RegionsViewProps> = ({
-    editContent, setEditContent, showToast, moveItem
+    bookings, editContent, setEditContent, showToast, moveItem
 }) => {
-    const { bookings } = useAppStore();
     const [regionSearch, setRegionSearch] = useState('');
     const [quickSearch, setQuickSearch] = useState('');
     const [isAddRegionModalOpen, setIsAddRegionModalOpen] = useState(false);

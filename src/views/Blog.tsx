@@ -7,24 +7,46 @@ import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useSiteContent } from '../SiteContext';
-import { useAppStore } from '../store/useAppStore';
+import useSWR from 'swr';
+import { fetcher } from '../utils/supabase/fetcher';
+import { BlogPost } from '../types';
 
 const Blog: React.FC = () => {
     const t = useTranslations('blogPage');
     const { t: tCMS } = useLanguage();
     const { siteContent } = useSiteContent();
-    const blogPosts = useAppStore(s => s.blogPosts);
+    const { data: blogRaw } = useSWR('blog_posts', fetcher);
+    const blogPosts: BlogPost[] = blogRaw?.map((row: any) => ({
+        id: row.id,
+        slug: row.slug,
+        title: row.title,
+        excerpt: row.excerpt || '',
+        content: row.content || '',
+        featuredImage: row.featured_image || '',
+        category: row.category || '',
+        tags: row.tags || [],
+        author: row.author || 'Ata Flug Transfer',
+        publishedAt: row.published_at,
+        updatedAt: row.updated_at,
+        seoTitle: row.seo_title || '',
+        seoDescription: row.seo_description || '',
+        isPublished: row.is_published,
+        viewCount: row.view_count || 0,
+    })) || [];
+
     const pathname = usePathname();
     const localeMatch = pathname?.match(/^\/([a-z]{2})(\/|$)/);
     const locale = localeMatch ? localeMatch[1] : 'tr';
 
     // Auto-translate blog post fields
-    const translatePost = (post: typeof blogPosts[0]) => ({
+    const translatePost = (post: BlogPost) => ({
         title: tCMS(post.title),
         category: tCMS(post.category),
         excerpt: tCMS(post.excerpt),
     });
-    const publishedPosts = blogPosts.filter(post => post.isPublished);
+
+    const publishedPosts = blogPosts.filter((post: BlogPost) => post.isPublished);
+
 
     // Pagination
     const [currentPage, setCurrentPage] = React.useState(1);

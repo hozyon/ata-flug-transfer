@@ -8,7 +8,8 @@ import TextureBackground from '../components/TextureBackground';
 import { useTranslations } from 'next-intl';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useSiteContent } from '../SiteContext';
-import { useAppStore } from '../store/useAppStore';
+import useSWR from 'swr';
+import { fetcher } from '../utils/supabase/fetcher';
 import DOMPurify from 'dompurify';
 import type { BlogPost as BlogPostType } from '../types';
 
@@ -25,9 +26,28 @@ const BlogPost: React.FC<BlogPostProps> = ({ initialPost }) => {
     const t = useTranslations('blogPost');
     const { t: tCMS } = useLanguage();
     const { siteContent } = useSiteContent();
-    const blogPosts = useAppStore(s => s.blogPosts);
-    // Use server-fetched initialPost as fallback until the client store hydrates
-    const post = blogPosts.find(p => p.slug === slug) ?? initialPost;
+
+    const { data: blogRaw } = useSWR('blog_posts', fetcher);
+    const blogPosts: BlogPostType[] = blogRaw?.map((row: any) => ({
+        id: row.id,
+        slug: row.slug,
+        title: row.title,
+        excerpt: row.excerpt || '',
+        content: row.content || '',
+        featuredImage: row.featured_image || '',
+        category: row.category || '',
+        tags: row.tags || [],
+        author: row.author || 'Ata Flug Transfer',
+        publishedAt: row.published_at,
+        updatedAt: row.updated_at,
+        seoTitle: row.seo_title || '',
+        seoDescription: row.seo_description || '',
+        isPublished: row.is_published,
+        viewCount: row.view_count || 0,
+    })) || [];
+
+    // Use server-fetched initialPost as fallback until SWR hydrates
+    const post = blogPosts.find((p: BlogPostType) => p.slug === slug) ?? initialPost;
     useEffect(() => {
         window.scrollTo(0, 0);
     }, [slug]);

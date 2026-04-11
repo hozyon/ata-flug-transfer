@@ -3,13 +3,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { createClient } from '../utils/supabase/client';
+import { isSupabaseConfigured } from '../lib/supabase';
 
 interface AdminLoginProps {
     onLogin?: () => void;
 }
 
 const LOGIN_SLOGANS = [
+// ... (rest of the file)
     { title: "Yönetim", highlight: "Kontrol Merkezi", desc: "Operasyonel süreçlerinizi anlık takip edin, rezervasyonları yönetin ve işinizi büyütün." },
     { title: "Kusursuz", highlight: "Müşteri Deneyimi", desc: "Her transferi unutulmaz bir yolculuğa dönüştürmek için ihtiyacınız olan tüm araçlar burada." },
     { title: "Akıllı", highlight: "Filo Yönetimi", desc: "Araçlarınızın durumunu, konumunu ve performansını tek bir ekrandan zahmetsizce izleyin." },
@@ -57,6 +59,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
         setErrorMessage('');
 
         if (isSupabaseConfigured) {
+            const supabase = createClient();
             // Real Supabase authentication
             const { error } = await supabase.auth.signInWithPassword({ email, password });
 
@@ -105,6 +108,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
             setErrorMessage('Bu özellik için Supabase yapılandırması gereklidir.');
             return;
         }
+        const supabase = createClient();
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
             redirectTo: `${window.location.origin}/login`,
         });
