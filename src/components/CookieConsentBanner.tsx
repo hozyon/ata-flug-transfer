@@ -4,9 +4,16 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
-import { grantConsent, denyConsent } from '../lib/gtag';
-
 const STORAGE_KEY = 'ata_cookie_consent';
+
+const updateConsent = (granted: boolean) => {
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('consent', 'update', {
+            analytics_storage: granted ? 'granted' : 'denied',
+            ad_storage: granted ? 'granted' : 'denied',
+        });
+    }
+};
 
 export default function CookieConsentBanner() {
     const t = useTranslations('cookie');
@@ -19,20 +26,20 @@ export default function CookieConsentBanner() {
         if (!consent) {
             setVisible(true);
         } else if (consent === 'accepted') {
-            grantConsent();
+            updateConsent(true);
         }
     }, []);
 
     const accept = () => {
         localStorage.setItem(STORAGE_KEY, 'accepted');
         setVisible(false);
-        grantConsent();
+        updateConsent(true);
     };
 
     const reject = () => {
         localStorage.setItem(STORAGE_KEY, 'rejected');
         setVisible(false);
-        denyConsent();
+        updateConsent(false);
     };
 
     if (!visible) return null;

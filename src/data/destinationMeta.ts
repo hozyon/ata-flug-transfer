@@ -1,4 +1,4 @@
-export interface DestinationMeta {
+interface DestinationMeta {
   distanceKm: number;
   durationMin: number;
   highlights: string[];
