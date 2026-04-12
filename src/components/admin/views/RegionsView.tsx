@@ -26,6 +26,8 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
     const [isAddRegionModalOpen, setIsAddRegionModalOpen] = useState(false);
     const [editingRegion, setEditingRegion] = useState<Region | null>(null);
     const [showQuickAdd, setShowQuickAdd] = useState(false);
+    const [selectedFromPool, setSelectedFromPool] = useState<string[]>([]);
+    const [bulkPrices, setBulkPrices] = useState<Record<string, number>>({});
     const [newRegion, setNewRegion] = useState<Region>({
         id: '', name: '', desc: '',
         image: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800',
@@ -59,26 +61,68 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
 
     const toggleRegion = (regionName: string) => {
         const isAdded = regions.some(r => r.name === regionName);
-        if (!isAdded) {
-            const scraped = SCRAPED_REGIONS.find(r => r.name === regionName);
-            const newR: Region = {
-                id: regionName.toLowerCase().replace(/\s+/g, '-').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ç/g, 'c'),
-                name: regionName,
-                desc: scraped?.desc || '',
-                image: scraped?.image || 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=600',
-                icon: 'fa-location-dot',
-                price: 0
-            };
-            // Hemen kaydetmiyoruz, sadece formu doldurup modalı açıyoruz
-            setNewRegion(newR);
-            setEditingRegion(null); 
-            setIsAddRegionModalOpen(true);
-        } else {
+        if (isAdded) {
             if (confirm(`"${regionName}" bölgesini aktif listeden çıkarmak istediğinize emin misiniz?`)) {
                 setEditContent({ ...editContent, regions: regions.filter(r => r.name !== regionName) });
                 showToast(`${regionName} kaldırıldı`, 'delete');
             }
+        } else {
+            // Toggle selection in pool
+            setSelectedFromPool(prev => 
+                prev.includes(regionName) 
+                    ? prev.filter(n => n !== regionName) 
+                    : [...prev, regionName]
+            );
         }
+    };
+
+    const handleBulkAddOpen = () => {
+        if (selectedFromPool.length === 0) return;
+        setEditingRegion(null);
+        setBulkPrices({});
+        setIsAddRegionModalOpen(true);
+    };
+
+    const handleSave = () => {
+        if (selectedFromPool.length > 0) {
+            // Bulk Save
+            const newEntries: Region[] = selectedFromPool
+                .filter(name => bulkPrices[name] && bulkPrices[name] > 0)
+                .map(name => {
+                    const scraped = SCRAPED_REGIONS.find(r => r.name === name);
+                    return {
+                        id: name.toLowerCase().replace(/\s+/g, '-').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ç/g, 'c'),
+                        name: name,
+                        desc: scraped?.desc || '',
+                        image: scraped?.image || 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=600',
+                        icon: 'fa-location-dot',
+                        price: bulkPrices[name]
+                    };
+                });
+
+            if (newEntries.length === 0) {
+                showToast('Lütfen en az bir bölge için fiyat girin!', 'delete');
+                return;
+            }
+
+            setEditContent({ ...editContent, regions: [...regions, ...newEntries] });
+            setSelectedFromPool([]);
+            showToast(`${newEntries.length} bölge başarıyla eklendi`, 'success');
+        } else if (editingRegion) {
+            // Single Edit Save
+            if (!newRegion.name?.trim()) { showToast('Lütfen bölge adını girin!', 'delete'); return; }
+            if (!newRegion.price || newRegion.price <= 0) { showToast('Lütfen geçerli bir fiyat girin!', 'delete'); return; }
+            setEditContent({ ...editContent, regions: regions.map(r => r.id === editingRegion.id ? { ...r, ...newRegion } : r) });
+            showToast('Bölge güncellendi', 'success');
+        } else {
+            // Manual Single Add Save
+            if (!newRegion.name?.trim()) { showToast('Lütfen bölge adını girin!', 'delete'); return; }
+            if (!newRegion.price || newRegion.price <= 0) { showToast('Lütfen geçerli bir fiyat girin!', 'delete'); return; }
+            const regionId = newRegion.id || Date.now().toString();
+            setEditContent({ ...editContent, regions: [...regions, { ...newRegion, id: regionId }] });
+            showToast('Yeni bölge eklendi', 'success');
+        }
+        setIsAddRegionModalOpen(false);
     };
 
     return (
@@ -139,13 +183,16 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                         <div className="flex flex-wrap gap-2">
                             {quickFiltered.map((name, idx) => {
                                 const isAdded = regions.some(r => r.name === name);
+                                const isSelected = selectedFromPool.includes(name);
                                 return (
                                     <button key={idx} onClick={() => toggleRegion(name)}
                                         className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all border ${isAdded
-                                            ? 'bg-emerald-500/15 border-emerald-500/30 text-emerald-400 hover:bg-red-500/15 hover:border-red-500/30 hover:text-red-400'
-                                            : 'bg-white/[0.03] border-white/[0.06] text-slate-400 hover:bg-blue-500/10 hover:border-blue-500/30 hover:text-blue-400'
+                                            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-red-500/15 hover:border-red-500/30 hover:text-red-400'
+                                            : isSelected
+                                                ? 'bg-blue-500 border-blue-400 text-white shadow-lg shadow-blue-500/20 scale-[1.02]'
+                                                : 'bg-white/[0.03] border-white/[0.06] text-slate-400 hover:bg-blue-500/10 hover:border-blue-500/30 hover:text-blue-400'
                                             }`}>
-                                        {isAdded && <i className="fa-solid fa-check text-[8px]"></i>}
+                                        {isAdded ? <i className="fa-solid fa-check text-[8px]"></i> : isSelected ? <i className="fa-solid fa-plus-circle text-[8px]"></i> : null}
                                         {name}
                                     </button>
                                 );
@@ -153,6 +200,25 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                         </div>
                         {quickFiltered.length === 0 && (
                             <p className="text-center text-slate-600 text-sm py-4">"{quickSearch}" ile eşleşen bölge yok</p>
+                        )}
+
+                        {/* Selection Bar */}
+                        {selectedFromPool.length > 0 && (
+                            <div className="mt-6 p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex flex-col sm:flex-row items-center justify-between gap-4 animate-in slide-in-from-bottom-2 duration-300">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center text-white shadow-lg">
+                                        <span className="text-sm font-black">{selectedFromPool.length}</span>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-bold text-white">Bölge Seçildi</p>
+                                        <p className="text-[10px] text-blue-400 font-medium">Fiyatları girmek için butona tıklayın</p>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2 w-full sm:w-auto">
+                                    <button onClick={() => setSelectedFromPool([])} className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors">Seçimi Temizle</button>
+                                    <button onClick={handleBulkAddOpen} className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-blue-500 hover:bg-blue-600 text-white text-xs font-black shadow-lg shadow-blue-500/20 transition-all active:scale-95">Fiyatları Gir ve Ekle</button>
+                                </div>
+                            </div>
                         )}
                     </div>
                 )}
@@ -375,196 +441,193 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                         {/* Content */}
                         <div className="flex-1 overflow-y-auto overscroll-y-contain">
 
-                            {/* Live Preview */}
-                            <div className="relative h-44 shrink-0 overflow-hidden">
-                                <img
-                                    src={newRegion.image || 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800'}
-                                    className="w-full h-full object-cover transition-all duration-500"
-                                    alt="Preview"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f19] via-[#0b0f19]/50 to-transparent"></div>
-                                {/* Price badge */}
-                                <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10">
-                                    <span className="text-[var(--color-primary)] font-black text-lg font-outfit">{editContent.currency?.symbol || '€'}{newRegion.price || '—'}</span>
-                                </div>
-                                {/* Icon badge */}
-                                <div className="absolute top-3 left-3 w-9 h-9 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center">
-                                    <i className={`fa-solid ${newRegion.icon || 'fa-location-dot'} text-[var(--color-primary)] text-sm`}></i>
-                                </div>
-                                {/* Name overlay */}
-                                <div className="absolute bottom-3 left-4 right-4">
-                                    <p className="text-white font-bold text-base truncate font-outfit">
-                                        {newRegion.name || <span className="text-slate-500">Bölge Adı</span>}
-                                    </p>
-                                    <p className="text-slate-400 text-[11px] truncate mt-0.5">
-                                        {newRegion.desc ? newRegion.desc.replace(/[#*_`>]/g, '').slice(0, 60) : 'Açıklama...'}
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* Form */}
-                            <div className="p-5 space-y-5">
-
-                                {/* Name + Icon row */}
-                                <div className="grid grid-cols-[1fr_auto] gap-3 items-start">
-                                    <div className="space-y-1.5">
-                                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                                            <i className="fa-solid fa-location-dot text-[8px] text-red-400"></i> Bölge Adı *
-                                        </label>
-                                        <input
-                                            className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm font-bold text-white focus:border-[var(--color-primary)]/50 outline-none transition-all"
-                                            value={newRegion.name}
-                                            onChange={e => setNewRegion({ ...newRegion, name: e.target.value })}
-                                            placeholder="Örn: Belek, Kundu, Lara..."
-                                        />
-                                    </div>
-                                    <div className="space-y-1.5">
-                                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">İkon</label>
-                                        <div className="relative">
-                                            <div className="w-12 h-[46px] rounded-xl bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 flex items-center justify-center cursor-pointer group"
-                                                title={newRegion.icon}>
-                                                <i className={`fa-solid ${newRegion.icon || 'fa-location-dot'} text-[var(--color-primary)] text-base`}></i>
-                                            </div>
-                                            {/* Hidden icon input — visible on hover or tap */}
-                                            <input
-                                                className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-                                                value={newRegion.icon}
-                                                onChange={e => setNewRegion({ ...newRegion, icon: e.target.value })}
-                                                title="FontAwesome class girin (örn: fa-location-dot)"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Distance + Price */}
-                                <div className="grid grid-cols-2 gap-3">
-                                    <div className="space-y-1.5">
-                                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                                            <i className="fa-solid fa-route text-[8px] text-blue-400"></i> Mesafe (km)
-                                        </label>
-                                        <input
-                                            type="number"
-                                            className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500/50 outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                            value={(newRegion as any).distance || ''}
-                                            onChange={e => setNewRegion({ ...newRegion, distance: parseInt(e.target.value) || 0 } as any)}
-                                            placeholder="0"
-                                        />
-                                    </div>
-                                    <div className="space-y-1.5">
-                                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                                            <i className="fa-solid fa-tag text-[8px] text-[var(--color-primary)]"></i> Fiyat ({editContent.currency?.symbol || '€'}) *
-                                        </label>
-                                        <div className="relative">
-                                            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-primary)] font-black text-sm pointer-events-none">{editContent.currency?.symbol || '€'}</span>
-                                            <input
-                                                type="number"
-                                                min="1"
-                                                step="1"
-                                                className="w-full bg-white/5 border border-white/[0.06] rounded-xl pl-8 pr-4 py-3 text-sm font-black text-white focus:border-[var(--color-primary)]/60 outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                                                value={newRegion.price || ''}
-                                                onChange={e => setNewRegion({ ...newRegion, price: parseInt(e.target.value) || 0 })}
-                                                placeholder="0"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Description */}
-                                <RichTextEditor
-                                    label={<><i className="fa-solid fa-align-left text-[8px] text-violet-400"></i> Açıklama</>}
-                                    value={newRegion.desc}
-                                    onChange={v => setNewRegion({ ...newRegion, desc: v })}
-                                    placeholder="Bölge hakkında kısa açıklama..."
-                                    minRows={4}
-                                    compact
-                                />
-
-                                {/* Image section */}
-                                <div className="space-y-3">
-                                    <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-                                        <i className="fa-solid fa-images text-[8px] text-pink-400"></i> Görsel
-                                    </label>
-
-                                    {/* Drag-drop upload */}
-                                    <div
-                                        className="relative rounded-2xl border-2 border-dashed border-white/[0.08] hover:border-[var(--color-primary)]/40 transition-all cursor-pointer group p-5 text-center"
-                                        onDragOver={e => { e.preventDefault(); e.currentTarget.classList.add('border-[var(--color-primary)]', 'bg-[var(--color-primary)]/[0.03]'); }}
-                                        onDragLeave={e => { e.preventDefault(); e.currentTarget.classList.remove('border-[var(--color-primary)]', 'bg-[var(--color-primary)]/[0.03]'); }}
-                                        onDrop={e => {
-                                            e.preventDefault();
-                                            e.currentTarget.classList.remove('border-[var(--color-primary)]', 'bg-[var(--color-primary)]/[0.03]');
-                                            const f = e.dataTransfer.files?.[0];
-                                            if (f?.type.startsWith('image/')) {
-                                                if (f.size > 2 * 1024 * 1024) { alert('Maks 2MB!'); return; }
-                                                const r = new FileReader(); r.onloadend = () => setNewRegion({ ...newRegion, image: r.result as string }); r.readAsDataURL(f);
-                                            }
-                                        }}
-                                        onClick={() => document.getElementById('region-drawer-upload')?.click()}
-                                    >
-                                        <input type="file" id="region-drawer-upload" className="hidden" accept="image/*" onChange={e => {
-                                            const f = e.target.files?.[0];
-                                            if (f) { if (f.size > 2 * 1024 * 1024) { alert('Maks 2MB!'); return; } const r = new FileReader(); r.onloadend = () => setNewRegion({ ...newRegion, image: r.result as string }); r.readAsDataURL(f); }
-                                        }} />
-                                        <i className="fa-solid fa-cloud-arrow-up text-2xl text-slate-600 group-hover:text-[var(--color-primary)] transition-colors mb-2 block"></i>
-                                        <p className="text-xs font-bold text-slate-500">Sürükle & bırak veya tıkla</p>
-                                        <p className="text-[10px] text-slate-700 mt-0.5">PNG, JPG, WEBP · Maks 2MB</p>
+                            {selectedFromPool.length > 0 ? (
+                                /* ── BULK ADD MODE ── */
+                                <div className="p-5 space-y-6">
+                                    <div className="p-4 rounded-2xl bg-blue-500/5 border border-blue-500/10">
+                                        <p className="text-[11px] font-bold text-blue-400 uppercase tracking-widest mb-1">Toplu Ekleme</p>
+                                        <p className="text-xs text-slate-500 leading-relaxed">Seçtiğiniz bölgeler için fiyatları girin. Fiyatı boş bırakılan bölgeler eklenmeyecektir.</p>
                                     </div>
 
-                                    {/* URL input */}
-                                    <div className="relative">
-                                        <i className="fa-solid fa-link absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600 text-xs"></i>
-                                        <input
-                                            className="w-full bg-white/5 border border-white/[0.06] rounded-xl pl-9 pr-4 py-3 text-sm text-white focus:border-[var(--color-primary)]/50 outline-none transition-all"
-                                            value={newRegion.image}
-                                            onChange={e => setNewRegion({ ...newRegion, image: e.target.value })}
-                                            placeholder="veya görsel URL'si yapıştırın..."
-                                        />
-                                    </div>
-
-                                    {/* Quick gallery */}
-                                    <div className="grid grid-cols-4 gap-2">
-                                        {[
-                                            'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=400',
-                                            'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=400',
-                                            'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&q=80&w=400',
-                                            'https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&q=80&w=400',
-                                            'https://images.unsplash.com/photo-1530841377377-3ff06c0ca713?auto=format&fit=crop&q=80&w=400',
-                                            'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&q=80&w=400',
-                                            'https://images.unsplash.com/photo-1476673160081-cf065607f449?auto=format&fit=crop&q=80&w=400',
-                                            'https://images.unsplash.com/photo-1505142468610-359e7d316be0?auto=format&fit=crop&q=80&w=400',
-                                        ].map((img, i) => (
-                                            <button key={i} onClick={() => setNewRegion({ ...newRegion, image: img })}
-                                                className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all duration-200 ${newRegion.image === img ? 'border-[var(--color-primary)] scale-[1.04] shadow-lg shadow-[var(--color-primary)]/20' : 'border-transparent hover:border-white/30 hover:scale-[1.02]'}`}>
-                                                <img src={img} className="w-full h-full object-cover" alt="" />
-                                                {newRegion.image === img && (
-                                                    <div className="absolute inset-0 bg-[var(--color-primary)]/25 flex items-center justify-center">
-                                                        <i className="fa-solid fa-check text-white text-xs drop-shadow-lg"></i>
+                                    <div className="space-y-3">
+                                        {selectedFromPool.map((name, idx) => (
+                                            <div key={idx} className="flex items-center justify-between gap-4 p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.06] hover:border-blue-500/30 transition-all group">
+                                                <div className="flex items-center gap-3 min-w-0">
+                                                    <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400 text-xs font-black shrink-0">
+                                                        {idx + 1}
                                                     </div>
-                                                )}
-                                            </button>
+                                                    <span className="text-sm font-bold text-white truncate">{name}</span>
+                                                </div>
+                                                <div className="relative w-28 shrink-0">
+                                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-primary)] font-black text-xs pointer-events-none">{editContent.currency?.symbol || '€'}</span>
+                                                    <input
+                                                        type="number"
+                                                        className="w-full bg-black/40 border border-white/10 rounded-xl pl-7 pr-3 py-2 text-sm font-black text-white text-right focus:border-blue-500/50 outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                        placeholder="0"
+                                                        value={bulkPrices[name] || ''}
+                                                        onChange={e => setBulkPrices({ ...bulkPrices, [name]: parseInt(e.target.value) || 0 })}
+                                                    />
+                                                </div>
+                                            </div>
                                         ))}
                                     </div>
                                 </div>
-                            </div>
+                            ) : (
+                                /* ── SINGLE EDIT/ADD MODE ── */
+                                <>
+                                    {/* Live Preview */}
+                                    <div className="relative h-44 shrink-0 overflow-hidden">
+                                        <img
+                                            src={newRegion.image || 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800'}
+                                            className="w-full h-full object-cover transition-all duration-500"
+                                            alt="Preview"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-[#0b0f19] via-[#0b0f19]/50 to-transparent"></div>
+                                        {/* Price badge */}
+                                        <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10">
+                                            <span className="text-[var(--color-primary)] font-black text-lg font-outfit">{editContent.currency?.symbol || '€'}{newRegion.price || '—'}</span>
+                                        </div>
+                                        {/* Icon badge */}
+                                        <div className="absolute top-3 left-3 w-9 h-9 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center">
+                                            <i className={`fa-solid ${newRegion.icon || 'fa-location-dot'} text-[var(--color-primary)] text-sm`}></i>
+                                        </div>
+                                        {/* Name overlay */}
+                                        <div className="absolute bottom-3 left-4 right-4">
+                                            <p className="text-white font-bold text-base truncate font-outfit">
+                                                {newRegion.name || <span className="text-slate-500">Bölge Adı</span>}
+                                            </p>
+                                            <p className="text-slate-400 text-[11px] truncate mt-0.5">
+                                                {newRegion.desc ? newRegion.desc.replace(/[#*_`>]/g, '').slice(0, 60) : 'Açıklama...'}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Form */}
+                                    <div className="p-5 space-y-5">
+
+                                        {/* Name + Icon row */}
+                                        <div className="grid grid-cols-[1fr_auto] gap-3 items-start">
+                                            <div className="space-y-1.5">
+                                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                                                    <i className="fa-solid fa-location-dot text-[8px] text-red-400"></i> Bölge Adı *
+                                                </label>
+                                                <input
+                                                    className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm font-bold text-white focus:border-[var(--color-primary)]/50 outline-none transition-all"
+                                                    value={newRegion.name}
+                                                    onChange={e => setNewRegion({ ...newRegion, name: e.target.value })}
+                                                    placeholder="Örn: Belek, Kundu, Lara..."
+                                                />
+                                            </div>
+                                            <div className="space-y-1.5">
+                                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">İkon</label>
+                                                <div className="relative">
+                                                    <div className="w-12 h-[46px] rounded-xl bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/20 flex items-center justify-center cursor-pointer group"
+                                                        title={newRegion.icon}>
+                                                        <i className={`fa-solid ${newRegion.icon || 'fa-location-dot'} text-[var(--color-primary)] text-base`}></i>
+                                                    </div>
+                                                    <input
+                                                        className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                                                        value={newRegion.icon}
+                                                        onChange={e => setNewRegion({ ...newRegion, icon: e.target.value })}
+                                                        title="FontAwesome class girin (örn: fa-location-dot)"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Distance + Price */}
+                                        <div className="grid grid-cols-2 gap-3">
+                                            <div className="space-y-1.5">
+                                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                                                    <i className="fa-solid fa-route text-[8px] text-blue-400"></i> Mesafe (km)
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500/50 outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                    value={(newRegion as any).distance || ''}
+                                                    onChange={e => setNewRegion({ ...newRegion, distance: parseInt(e.target.value) || 0 } as any)}
+                                                    placeholder="0"
+                                                />
+                                            </div>
+                                            <div className="space-y-1.5">
+                                                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                                                    <i className="fa-solid fa-tag text-[8px] text-[var(--color-primary)]"></i> Fiyat ({editContent.currency?.symbol || '€'}) *
+                                                </label>
+                                                <div className="relative">
+                                                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-primary)] font-black text-sm pointer-events-none">{editContent.currency?.symbol || '€'}</span>
+                                                    <input
+                                                        type="number"
+                                                        min="1"
+                                                        step="1"
+                                                        className="w-full bg-white/5 border border-white/[0.06] rounded-xl pl-8 pr-4 py-3 text-sm font-black text-white focus:border-[var(--color-primary)]/60 outline-none transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                        value={newRegion.price || ''}
+                                                        onChange={e => setNewRegion({ ...newRegion, price: parseInt(e.target.value) || 0 })}
+                                                        placeholder="0"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Description */}
+                                        <RichTextEditor
+                                            label={<><i className="fa-solid fa-align-left text-[8px] text-violet-400"></i> Açıklama</>}
+                                            value={newRegion.desc}
+                                            onChange={v => setNewRegion({ ...newRegion, desc: v })}
+                                            placeholder="Bölge hakkında kısa açıklama..."
+                                            minRows={4}
+                                            compact
+                                        />
+
+                                        {/* Image section */}
+                                        <div className="space-y-3">
+                                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                                                <i className="fa-solid fa-images text-[8px] text-pink-400"></i> Görsel
+                                            </label>
+
+                                            <div
+                                                className="relative rounded-2xl border-2 border-dashed border-white/[0.08] hover:border-[var(--color-primary)]/40 transition-all cursor-pointer group p-5 text-center"
+                                                onDragOver={e => { e.preventDefault(); e.currentTarget.classList.add('border-[var(--color-primary)]', 'bg-[var(--color-primary)]/[0.03]'); }}
+                                                onDragLeave={e => { e.preventDefault(); e.currentTarget.classList.remove('border-[var(--color-primary)]', 'bg-[var(--color-primary)]/[0.03]'); }}
+                                                onDrop={e => {
+                                                    e.preventDefault();
+                                                    e.currentTarget.classList.remove('border-[var(--color-primary)]', 'bg-[var(--color-primary)]/[0.03]');
+                                                    const f = e.dataTransfer.files?.[0];
+                                                    if (f?.type.startsWith('image/')) {
+                                                        if (f.size > 2 * 1024 * 1024) { alert('Maks 2MB!'); return; }
+                                                        const r = new FileReader(); r.onloadend = () => setNewRegion({ ...newRegion, image: r.result as string }); r.readAsDataURL(f);
+                                                    }
+                                                }}
+                                                onClick={() => document.getElementById('region-drawer-upload')?.click()}
+                                            >
+                                                <input type="file" id="region-drawer-upload" className="hidden" accept="image/*" onChange={e => {
+                                                    const f = e.target.files?.[0];
+                                                    if (f) { if (f.size > 2 * 1024 * 1024) { alert('Maks 2MB!'); return; } const r = new FileReader(); r.onloadend = () => setNewRegion({ ...newRegion, image: r.result as string }); r.readAsDataURL(f); }
+                                                }} />
+                                                <i className="fa-solid fa-cloud-arrow-up text-2xl text-slate-600 group-hover:text-[var(--color-primary)] transition-colors mb-2 block"></i>
+                                                <p className="text-xs font-bold text-slate-500">Sürükle & bırak veya tıkla</p>
+                                                <p className="text-[10px] text-slate-700 mt-0.5">PNG, JPG, WEBP · Maks 2MB</p>
+                                            </div>
+
+                                            <div className="relative">
+                                                <i className="fa-solid fa-link absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600 text-xs"></i>
+                                                <input
+                                                    className="w-full bg-white/5 border border-white/[0.06] rounded-xl pl-9 pr-4 py-3 text-sm text-white focus:border-[var(--color-primary)]/50 outline-none transition-all"
+                                                    value={newRegion.image}
+                                                    onChange={e => setNewRegion({ ...newRegion, image: e.target.value })}
+                                                    placeholder="veya görsel URL'si yapıştırın..."
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </div>
 
                         {/* Footer */}
                         <div className="p-4 border-t border-white/[0.06] flex gap-3 shrink-0 bg-white/[0.01]">
-                            <button onClick={() => {
-                                if (!newRegion.name?.trim()) { showToast('Lütfen bölge adını girin!', 'delete'); return; }
-                                if (!newRegion.price || newRegion.price <= 0) { showToast('Lütfen geçerli bir fiyat girin!', 'delete'); return; }
-                                if (editingRegion) {
-                                    setEditContent({ ...editContent, regions: regions.map(r => r.id === editingRegion.id ? { ...r, ...newRegion } : r) });
-                                    showToast('Bölge güncellendi', 'success');
-                                } else {
-                                    const regionId = newRegion.id || Date.now().toString();
-                                    setEditContent({ ...editContent, regions: [...regions, { ...newRegion, id: regionId }] });
-                                    showToast('Yeni bölge eklendi', 'success');
-                                }
-                                setIsAddRegionModalOpen(false);
-                            }}
+                            <button onClick={handleSave}
                                 className="flex-1 bg-[var(--color-primary)] hover:bg-amber-600 text-white py-3.5 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-[var(--color-primary)]/20 transition-all active:scale-[0.98]">
-                                <i className="fa-solid fa-check text-xs"></i> {editingRegion ? 'Güncelle' : 'Bölge Ekle'}
+                                <i className="fa-solid fa-check text-xs"></i> {editingRegion ? 'Güncelle' : selectedFromPool.length > 0 ? 'Hepsini Ekle' : 'Bölgeyi Ekle'}
                             </button>
                             <button onClick={() => setIsAddRegionModalOpen(false)}
                                 className="px-5 py-3.5 rounded-2xl font-bold text-sm bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white transition-all active:scale-[0.98]">
