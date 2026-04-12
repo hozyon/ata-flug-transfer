@@ -18,6 +18,11 @@ tsconfig.tsbuildinfo
 *.py
 *.cjs
 *.mjs
+# Exceptions for config files
+!postcss.config.mjs
+!postcss.config.js
+!next.config.mjs
+!next.config.js
 # Exception: build scripts needed by Vercel
 !scripts/*.mjs
 
