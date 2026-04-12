@@ -7,6 +7,7 @@ import { routing } from '../../../i18n';
 import type { Locale } from '../../../i18n';
 import AppProviders from '../../components/AppProviders';
 import { montserrat, outfit, playfair } from '../../lib/fonts';
+import { fetchSiteContent } from '../../lib/supabase-server';
 
 type Props = {
     children: React.ReactNode;
@@ -26,7 +27,10 @@ export default async function LocaleLayout({ children, params }: Props) {
         notFound();
     }
 
-    const messages = await getMessages();
+    const [messages, siteContent] = await Promise.all([
+        getMessages(),
+        fetchSiteContent()
+    ]);
 
     return (
         <html
@@ -44,7 +48,7 @@ export default async function LocaleLayout({ children, params }: Props) {
             </head>
             <body suppressHydrationWarning>
                 <NextIntlClientProvider messages={messages} locale={locale}>
-                    <AppProviders locale={locale as Locale}>
+                    <AppProviders locale={locale as Locale} initialSiteContent={siteContent}>
                         {children}
                     </AppProviders>
                 </NextIntlClientProvider>

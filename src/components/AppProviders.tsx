@@ -1,16 +1,19 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { SiteProvider } from '../SiteContext';
 import { LanguageProvider } from '../i18n/LanguageContext';
 import { useAppStore } from '../store/useAppStore';
 import CookieConsentBanner from './CookieConsentBanner';
 import AuthProvider from './AuthProvider';
 import type { Locale } from '../../i18n';
+import type { SiteContent } from '../types';
+import { updateSiteContent } from '../app/actions/siteContent';
 
 interface AppProvidersProps {
     children: React.ReactNode;
     locale: Locale;
+    initialSiteContent: SiteContent;
 }
 
 function BrandColorSync() {
@@ -36,9 +39,14 @@ function ServiceWorkerRegistrar() {
     return null;
 }
 
-import { updateSiteContent } from '../app/actions/siteContent';
+export default function AppProviders({ children, locale: _locale, initialSiteContent }: AppProvidersProps) {
+    // Hydrate store with server data on initialization
+    const hasHydrated = useRef(false);
+    if (!hasHydrated.current) {
+        useAppStore.setState({ siteContent: initialSiteContent });
+        hasHydrated.current = true;
+    }
 
-export default function AppProviders({ children, locale: _locale }: AppProvidersProps) {
     const siteContent = useAppStore(s => s.siteContent);
 
     return (
