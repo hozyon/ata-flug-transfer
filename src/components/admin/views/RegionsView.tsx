@@ -83,8 +83,25 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
         setIsAddRegionModalOpen(true);
     };
 
+    const handleSingleAddOpen = () => {
+        setSelectedFromPool([]); // Clear pool to ensure single add mode shows
+        setEditingRegion(null);
+        setNewRegion({
+            id: '', name: '', desc: '',
+            image: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800',
+            icon: 'fa-location-dot', price: 0
+        });
+        setIsAddRegionModalOpen(true);
+    };
+
     const handleSave = () => {
-        if (selectedFromPool.length > 0) {
+        if (editingRegion) {
+            // Single Edit Save (Precedence over pool)
+            if (!newRegion.name?.trim()) { showToast('Lütfen bölge adını girin!', 'delete'); return; }
+            if (!newRegion.price || newRegion.price <= 0) { showToast('Lütfen geçerli bir fiyat girin!', 'delete'); return; }
+            setEditContent({ ...editContent, regions: regions.map(r => r.id === editingRegion.id ? { ...r, ...newRegion } : r) });
+            showToast('Bölge güncellendi', 'success');
+        } else if (selectedFromPool.length > 0) {
             // Bulk Save
             const newEntries: Region[] = selectedFromPool
                 .filter(name => bulkPrices[name] && bulkPrices[name] > 0)
@@ -108,12 +125,6 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
             setEditContent({ ...editContent, regions: [...regions, ...newEntries] });
             setSelectedFromPool([]);
             showToast(`${newEntries.length} bölge başarıyla eklendi`, 'success');
-        } else if (editingRegion) {
-            // Single Edit Save
-            if (!newRegion.name?.trim()) { showToast('Lütfen bölge adını girin!', 'delete'); return; }
-            if (!newRegion.price || newRegion.price <= 0) { showToast('Lütfen geçerli bir fiyat girin!', 'delete'); return; }
-            setEditContent({ ...editContent, regions: regions.map(r => r.id === editingRegion.id ? { ...r, ...newRegion } : r) });
-            showToast('Bölge güncellendi', 'success');
         } else {
             // Manual Single Add Save
             if (!newRegion.name?.trim()) { showToast('Lütfen bölge adını girin!', 'delete'); return; }
@@ -243,7 +254,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                         </div>
                         <MobileViewToggle viewMode={viewMode} onToggle={toggleViewMode} />
                         {/* Add Custom */}
-                        <button onClick={() => { setNewRegion({ id: '', name: '', desc: '', image: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800', icon: 'fa-location-dot', price: 0 }); setEditingRegion(null); setIsAddRegionModalOpen(true); }}
+                        <button onClick={handleSingleAddOpen}
                             className="px-4 py-2.5 bg-[var(--color-primary)] hover:bg-amber-600 text-white rounded-xl font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2 shrink-0">
                             <i className="fa-solid fa-plus text-[10px]"></i> Yeni Bölge
                         </button>
@@ -441,7 +452,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                         {/* Content */}
                         <div className="flex-1 overflow-y-auto overscroll-y-contain">
 
-                            {selectedFromPool.length > 0 ? (
+                            {(selectedFromPool.length > 0 && !editingRegion) ? (
                                 /* ── BULK ADD MODE ── */
                                 <div className="p-5 space-y-6">
                                     <div className="p-4 rounded-2xl bg-blue-500/5 border border-blue-500/10">
