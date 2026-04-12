@@ -60,27 +60,30 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
         : sortedNames;
 
     const toggleRegion = (regionName: string) => {
-        const isAdded = regions.some(r => r.name === regionName);
-        if (isAdded) {
-            if (confirm(`"${regionName}" bölgesini aktif listeden çıkarmak istediğinize emin misiniz?`)) {
-                setEditContent({ ...editContent, regions: regions.filter(r => r.name !== regionName) });
-                showToast(`${regionName} kaldırıldı`, 'delete');
-            }
-        } else {
-            // Toggle selection in pool
-            setSelectedFromPool(prev => 
-                prev.includes(regionName) 
-                    ? prev.filter(n => n !== regionName) 
-                    : [...prev, regionName]
-            );
-        }
+        setSelectedFromPool(prev =>
+            prev.includes(regionName)
+                ? prev.filter(n => n !== regionName)
+                : [...prev, regionName]
+        );
     };
 
+    const selectedForAdd = selectedFromPool.filter(name => !regions.some(r => r.name === name));
+    const selectedForRemove = selectedFromPool.filter(name => regions.some(r => r.name === name));
+
     const handleBulkAddOpen = () => {
-        if (selectedFromPool.length === 0) return;
+        if (selectedForAdd.length === 0) return;
         setEditingRegion(null);
         setBulkPrices({});
         setIsAddRegionModalOpen(true);
+    };
+
+    const handleBulkRemove = () => {
+        if (selectedForRemove.length === 0) return;
+        if (confirm(`Seçili ${selectedForRemove.length} bölgeyi aktif listeden çıkarmak istediğinize emin misiniz?`)) {
+            setEditContent({ ...editContent, regions: regions.filter(r => !selectedForRemove.includes(r.name)) });
+            setSelectedFromPool(prev => prev.filter(name => !selectedForRemove.includes(name)));
+            showToast(`${selectedForRemove.length} bölge kaldırıldı`, 'delete');
+        }
     };
 
     const handleSingleAddOpen = () => {
@@ -101,9 +104,9 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
             if (!newRegion.price || newRegion.price <= 0) { showToast('Lütfen geçerli bir fiyat girin!', 'delete'); return; }
             setEditContent({ ...editContent, regions: regions.map(r => r.id === editingRegion.id ? { ...r, ...newRegion } : r) });
             showToast('Bölge güncellendi', 'success');
-        } else if (selectedFromPool.length > 0) {
+        } else if (selectedForAdd.length > 0) {
             // Bulk Save
-            const newEntries: Region[] = selectedFromPool
+            const newEntries: Region[] = selectedForAdd
                 .filter(name => bulkPrices[name] && bulkPrices[name] > 0)
                 .map(name => {
                     const scraped = SCRAPED_REGIONS.find(r => r.name === name);
@@ -123,7 +126,7 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
             }
 
             setEditContent({ ...editContent, regions: [...regions, ...newEntries] });
-            setSelectedFromPool([]);
+            setSelectedFromPool(prev => prev.filter(name => !selectedForAdd.includes(name)));
             showToast(`${newEntries.length} bölge başarıyla eklendi`, 'success');
         } else {
             // Manual Single Add Save
@@ -197,13 +200,15 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                                 const isSelected = selectedFromPool.includes(name);
                                 return (
                                     <button key={idx} onClick={() => toggleRegion(name)}
-                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all border ${isAdded
-                                            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-red-500/15 hover:border-red-500/30 hover:text-red-400'
-                                            : isSelected
-                                                ? 'bg-blue-500 border-blue-400 text-white shadow-lg shadow-blue-500/20 scale-[1.02]'
-                                                : 'bg-white/[0.03] border-white/[0.06] text-slate-400 hover:bg-blue-500/10 hover:border-blue-500/30 hover:text-blue-400'
+                                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all border ${isAdded && isSelected
+                                            ? 'bg-red-500 border-red-400 text-white shadow-lg shadow-red-500/20 scale-[1.02]'
+                                            : isAdded
+                                                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 hover:bg-red-500/15 hover:border-red-500/30 hover:text-red-400'
+                                                : isSelected
+                                                    ? 'bg-blue-500 border-blue-400 text-white shadow-lg shadow-blue-500/20 scale-[1.02]'
+                                                    : 'bg-white/[0.03] border-white/[0.06] text-slate-400 hover:bg-blue-500/10 hover:border-blue-500/30 hover:text-blue-400'
                                             }`}>
-                                        {isAdded ? <i className="fa-solid fa-check text-[8px]"></i> : isSelected ? <i className="fa-solid fa-plus-circle text-[8px]"></i> : null}
+                                        {isAdded && isSelected ? <i className="fa-solid fa-trash-can text-[8px]"></i> : isAdded ? <i className="fa-solid fa-check text-[8px]"></i> : isSelected ? <i className="fa-solid fa-plus-circle text-[8px]"></i> : null}
                                         {name}
                                     </button>
                                 );
@@ -215,19 +220,30 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
 
                         {/* Selection Bar */}
                         {selectedFromPool.length > 0 && (
-                            <div className="mt-6 p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex flex-col sm:flex-row items-center justify-between gap-4 animate-in slide-in-from-bottom-2 duration-300">
+                            <div className="mt-6 p-4 rounded-2xl bg-slate-800/50 border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 animate-in slide-in-from-bottom-2 duration-300">
                                 <div className="flex items-center gap-3">
                                     <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center text-white shadow-lg">
                                         <span className="text-sm font-black">{selectedFromPool.length}</span>
                                     </div>
                                     <div>
                                         <p className="text-sm font-bold text-white">Bölge Seçildi</p>
-                                        <p className="text-[10px] text-blue-400 font-medium">Fiyatları girmek için butona tıklayın</p>
+                                        <p className="text-[10px] text-slate-400 font-medium">Yapılacak işlemi seçin</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2 w-full sm:w-auto">
-                                    <button onClick={() => setSelectedFromPool([])} className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors">Seçimi Temizle</button>
-                                    <button onClick={handleBulkAddOpen} className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-blue-500 hover:bg-blue-600 text-white text-xs font-black shadow-lg shadow-blue-500/20 transition-all active:scale-95">Fiyatları Gir ve Ekle</button>
+                                    <button onClick={() => setSelectedFromPool([])} className="flex-1 sm:flex-none px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-colors">Temizle</button>
+                                    
+                                    {selectedForRemove.length > 0 && (
+                                        <button onClick={handleBulkRemove} className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white text-xs font-black transition-all active:scale-95">
+                                            {selectedForRemove.length} Bölgeyi Kaldır
+                                        </button>
+                                    )}
+
+                                    {selectedForAdd.length > 0 && (
+                                        <button onClick={handleBulkAddOpen} className="flex-1 sm:flex-none px-6 py-2.5 rounded-xl bg-blue-500 hover:bg-blue-600 text-white text-xs font-black shadow-lg shadow-blue-500/20 transition-all active:scale-95">
+                                            {selectedForAdd.length} Bölge Fiyat Gir ve Ekle
+                                        </button>
+                                    )}
                                 </div>
                             </div>
                         )}
