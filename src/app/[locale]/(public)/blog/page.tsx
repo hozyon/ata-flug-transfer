@@ -72,7 +72,7 @@ export default async function BlogPage({ params }: Props) {
     return (
         <>
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-            <Blog />
+            <Blog blogPosts={posts} />
         </>
     );
 }

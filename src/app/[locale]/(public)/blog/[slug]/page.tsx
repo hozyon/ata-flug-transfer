@@ -58,7 +58,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function BlogPostPage({ params }: Props) {
     const { slug } = await params;
-    const [content, post] = await Promise.all([fetchSiteContent(), fetchPublishedBlogPost(slug)]);
+    const [content, post, blogPosts] = await Promise.all([
+        fetchSiteContent(),
+        fetchPublishedBlogPost(slug),
+        fetchBlogPosts()
+    ]);
     if (!post) notFound();
 
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ata-flug-transfer.vercel.app';
@@ -83,7 +87,7 @@ export default async function BlogPostPage({ params }: Props) {
     return (
         <>
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }} />
-            <BlogPost initialPost={post} />
+            <BlogPost initialPost={post} blogPosts={blogPosts} />
         </>
     );
 }

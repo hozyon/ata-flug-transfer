@@ -7,7 +7,7 @@
  */
 import { cache } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import { SiteContent, BlogPost } from '../types';
+import { SiteContent, BlogPost, UserReview } from '../types';
 import { INITIAL_SITE_CONTENT } from '../constants';
 import { mergeContent } from '../store/mergeContent';
 
@@ -78,4 +78,28 @@ export const fetchPublishedBlogPost = cache(async function (slug: string): Promi
 
     if (error || !data) return null;
     return mapRowToBlogPost(data as Record<string, unknown>);
+});
+
+export const fetchReviews = cache(async function (): Promise<UserReview[]> {
+    const client = getServerClient();
+    if (!client) return [];
+
+    const { data, error } = await client
+        .from('reviews')
+        .select('*')
+        .eq('status', 'approved')
+        .order('created_at', { ascending: false });
+
+    if (error || !data) return [];
+
+    return data.map((row: Record<string, unknown>) => ({
+        id: row.id as string,
+        name: row.name as string,
+        country: (row.country as string) || '',
+        lang: (row.lang as string) || 'tr',
+        rating: row.rating as number,
+        text: row.text as string,
+        status: row.status as UserReview['status'],
+        createdAt: row.created_at as string,
+    }));
 });
