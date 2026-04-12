@@ -39,7 +39,8 @@ const Bolgeler: React.FC = () => {
             `✈️ *${siteContent.business.name}*\n▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔\n\n${flag} *${translatedPriceReq}*\n\n🚐  *${translatedRegion}:* ${regionName}\n📩  ${translatedMsg}\n\n┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈\n\n🇹🇷 *Transfer Fiyat Talebi*\n\n🚐  *Bölge:* ${regionName}\n📩  ${trMsg}`
         );
     };
-    const [regions, setRegions] = React.useState(siteContent.regions || INITIAL_SITE_CONTENT.regions);
+    const pricedRegions = React.useMemo(() => (siteContent.regions || INITIAL_SITE_CONTENT.regions).filter(r => r.price && r.price > 0), [siteContent.regions]);
+    const [regions, setRegions] = React.useState(pricedRegions);
     const [searchTerm, setSearchTerm] = React.useState('');
     const [_isAnimating, setIsAnimating] = React.useState(false);
     const pathname = usePathname();
@@ -52,10 +53,8 @@ const Bolgeler: React.FC = () => {
     }, [searchParams]);
 
     React.useEffect(() => {
-        if (siteContent.regions && siteContent.regions.length > 0) {
-            setRegions(siteContent.regions);
-        }
-    }, [siteContent.regions]);
+        setRegions(pricedRegions);
+    }, [pricedRegions]);
 
     const [currentPage, setCurrentPage] = React.useState(1);
     const itemsPerPage = 8;

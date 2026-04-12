@@ -87,14 +87,16 @@ export default function HomePage({ locale }: HomePageProps) {
     const [currentRegionIndex, setCurrentRegionIndex] = useState(0);
     const [isFading, setIsFading] = useState(false);
 
+    const pricedRegions = useMemo(() => siteContent.regions.filter(r => r.price && r.price > 0), [siteContent.regions]);
+
     useEffect(() => {
-        if (siteContent.regions.length === 0) return;
+        if (pricedRegions.length === 0) return;
         const id = setInterval(() => {
             setIsFading(true);
-            setTimeout(() => { setCurrentRegionIndex(prev => (prev + 1) % siteContent.regions.length); setIsFading(false); }, 500);
+            setTimeout(() => { setCurrentRegionIndex(prev => (prev + 1) % pricedRegions.length); setIsFading(false); }, 500);
         }, 3000);
         return () => clearInterval(id);
-    }, [siteContent.regions]);
+    }, [pricedRegions]);
 
     // Price search
     const [priceSearch, setPriceSearch] = useState('');
@@ -187,7 +189,6 @@ export default function HomePage({ locale }: HomePageProps) {
     }, [siteContent.regions]);
 
     const sym = siteContent.currency?.symbol || '€';
-    const pricedRegions = siteContent.regions.filter(r => r.price && r.price > 0);
     const sortedRegions = [...pricedRegions].sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
 
     const groups = [
@@ -293,7 +294,7 @@ export default function HomePage({ locale }: HomePageProps) {
                                 <i className="fa-solid fa-location-dot text-[var(--color-primary)] text-sm"></i>
                                 <div className="w-[100px] sm:w-[140px] overflow-hidden">
                                     <span key={currentRegionIndex} className={`block whitespace-nowrap text-ellipsis overflow-hidden transition-all duration-300 ${isFading ? 'opacity-0 -translate-y-2' : 'opacity-100 translate-y-0'}`}>
-                                        {siteContent.regions[currentRegionIndex]?.name || 'Antalya'}
+                                        {pricedRegions[currentRegionIndex]?.name || 'Antalya'}
                                     </span>
                                 </div>
                             </div>
@@ -441,7 +442,7 @@ export default function HomePage({ locale }: HomePageProps) {
                             </div>
                         </div>
                         <div ref={regionsCarouselRef} className="flex carousel-container pb-4" style={{ overflowX: 'auto', scrollSnapType: 'x mandatory', scrollbarWidth: 'none', gap: '14px', paddingLeft: 'calc(50vw - 110px)', paddingRight: 'calc(50vw - 110px)' }}>
-                            {siteContent.regions.map((region) => {
+                            {pricedRegions.map((region) => {
                                 const slug = region.name.toLowerCase().replace(/ /g, '-').replace(/[ğĞ]/g, 'g').replace(/[üÜ]/g, 'u').replace(/[şŞ]/g, 's').replace(/[ıİ]/g, 'i').replace(/[öÖ]/g, 'o').replace(/[çÇ]/g, 'c').replace(/[^a-z0-9-]/g, '');
                                 return (
                                     <Link key={region.id} href={`/${locale}/transfer/${slug}-transfer`} data-rc="" className="group relative block overflow-hidden rounded-2xl shrink-0"

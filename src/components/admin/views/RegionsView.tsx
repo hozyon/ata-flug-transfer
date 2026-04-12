@@ -69,15 +69,15 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                 icon: 'fa-location-dot',
                 price: 0
             };
-            setEditContent({ ...editContent, regions: [...regions, newR] });
-            // Hemen fiyat girişi için drawer'ı aç
+            // Hemen kaydetmiyoruz, sadece formu doldurup modalı açıyoruz
             setNewRegion(newR);
-            setEditingRegion(newR);
+            setEditingRegion(null); 
             setIsAddRegionModalOpen(true);
-            showToast(`${regionName} eklendi — fiyatı girin`, 'success');
         } else {
-            setEditContent({ ...editContent, regions: regions.filter(r => r.name !== regionName) });
-            showToast(`${regionName} kaldırıldı`, 'delete');
+            if (confirm(`"${regionName}" bölgesini aktif listeden çıkarmak istediğinize emin misiniz?`)) {
+                setEditContent({ ...editContent, regions: regions.filter(r => r.name !== regionName) });
+                showToast(`${regionName} kaldırıldı`, 'delete');
+            }
         }
     };
 
@@ -557,7 +557,8 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                                     setEditContent({ ...editContent, regions: regions.map(r => r.id === editingRegion.id ? { ...r, ...newRegion } : r) });
                                     showToast('Bölge güncellendi', 'success');
                                 } else {
-                                    setEditContent({ ...editContent, regions: [...regions, { ...newRegion, id: Date.now().toString() }] });
+                                    const regionId = newRegion.id || Date.now().toString();
+                                    setEditContent({ ...editContent, regions: [...regions, { ...newRegion, id: regionId }] });
                                     showToast('Yeni bölge eklendi', 'success');
                                 }
                                 setIsAddRegionModalOpen(false);
