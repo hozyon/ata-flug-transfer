@@ -1,16 +1,4 @@
 @import "tailwindcss";
-@import './styles/admin.css';
-
-/* Admin panel light theme */
-[data-admin-theme="light"] {
-  filter: invert(1) hue-rotate(180deg);
-}
-/* Counter-invert images/videos so they look natural in light mode */
-[data-admin-theme="light"] img,
-[data-admin-theme="light"] video,
-[data-admin-theme="light"] iframe {
-  filter: invert(1) hue-rotate(180deg);
-}
 
 :root {
   --color-primary: #c5a059;
@@ -19,15 +7,17 @@
 }
 
 @theme {
-  --color-brand-gold: var(--color-primary);
-  --color-brand-dark: var(--color-dark);
-  --color-brand-darker: var(--color-darker);
+  --color-brand-gold: #c5a059;
+  --color-brand-dark: #0f172a;
+  --color-brand-darker: #020617;
   --backdrop-blur-3xl: 64px;
   --animate-gradient-xy: gradient-xy 15s ease infinite;
   --animate-heartbeat: heartbeat 1.5s ease-in-out infinite;
   --animate-ripple: ripple 3s linear infinite;
   --animate-shine: shine 1s linear infinite;
 }
+
+@import './styles/admin.css';
 
 @layer base {
   html {
