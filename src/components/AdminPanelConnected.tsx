@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useAppStore } from '../store/useAppStore';
 import AdminPanel from './AdminPanel';
 import { createClient } from '../utils/supabase/client';
@@ -10,6 +10,7 @@ import * as bookingActions from '../app/actions/bookings';
 import * as blogActions from '../app/actions/blog';
 import * as reviewActions from '../app/actions/reviews';
 import * as contentActions from '../app/actions/siteContent';
+import { Booking, BlogPost, UserReview, SiteContent } from '../types';
 
 const supabase = createClient();
 
@@ -23,10 +24,7 @@ const fetcher = async (table: string) => {
 };
 
 export default function AdminPanelConnected() {
-    const pathname = usePathname();
     const router = useRouter();
-    const localeMatch = pathname?.match(/^\/([a-z]{2})(\/|$)/);
-    const locale = localeMatch ? localeMatch[1] : 'tr';
 
     // Fetch data using SWR
     const { data: bookingsRaw, mutate: mutateBookings } = useSWR('bookings', fetcher);
@@ -40,11 +38,11 @@ export default function AdminPanelConnected() {
         setIsAdmin(false);
         const supabase = createClient();
         await supabase.auth.signOut();
-        router.push(`/${locale}`);
+        router.push(`/`);
     };
 
     // Helper to map SWR data to types
-    const bookings = bookingsRaw?.map(row => ({
+    const bookings: Booking[] = bookingsRaw?.map(row => ({
         id: row.id,
         customerName: row.customer_name,
         phone: row.phone,
@@ -62,9 +60,9 @@ export default function AdminPanelConnected() {
         flightNumber: row.flight_number || undefined,
     })) || [];
 
-    const siteContent = contentRaw?.[0]?.content || useAppStore.getState().siteContent;
+    const siteContent: SiteContent = contentRaw?.[0]?.content || useAppStore.getState().siteContent;
 
-    const blogPosts = blogRaw?.map(row => ({
+    const blogPosts: BlogPost[] = blogRaw?.map(row => ({
         id: row.id,
         slug: row.slug,
         title: row.title,
@@ -82,7 +80,7 @@ export default function AdminPanelConnected() {
         viewCount: row.view_count || 0,
     })) || [];
 
-    const userReviews = reviewsRaw?.map(row => ({
+    const userReviews: UserReview[] = reviewsRaw?.map(row => ({
         id: row.id,
         name: row.name,
         country: row.country || '',
@@ -93,13 +91,13 @@ export default function AdminPanelConnected() {
         createdAt: row.created_at,
     })) || [];
 
-    // Action wrappers that also update SWR cache
-    const onUpdateStatus = async (id: string, status: any) => {
+    // Action wrappers
+    const onUpdateStatus = async (id: string, status: Booking['status']) => {
         await bookingActions.updateBookingStatus(id, status);
         mutateBookings();
     };
 
-    const onAddBooking = async (b: any) => {
+    const onAddBooking = async (b: Partial<Booking>) => {
         await bookingActions.addBooking(b);
         mutateBookings();
     };
@@ -109,17 +107,17 @@ export default function AdminPanelConnected() {
         mutateBookings();
     };
 
-    const onUpdateSiteContent = async (content: any) => {
+    const onUpdateSiteContent = async (content: SiteContent) => {
         await contentActions.updateSiteContent(content);
         mutateContent();
     };
 
-    const onAddBlogPost = async (post: any) => {
+    const onAddBlogPost = async (post: BlogPost) => {
         await blogActions.addBlogPost(post);
         mutateBlog();
     };
 
-    const onUpdateBlogPost = async (post: any) => {
+    const onUpdateBlogPost = async (post: BlogPost) => {
         await blogActions.updateBlogPost(post);
         mutateBlog();
     };
@@ -134,7 +132,7 @@ export default function AdminPanelConnected() {
         mutateBlog();
     };
 
-    const onUpdateReviewStatus = async (id: string, status: any) => {
+    const onUpdateReviewStatus = async (id: string, status: UserReview['status']) => {
         await reviewActions.updateReviewStatus(id, status);
         mutateReviews();
     };

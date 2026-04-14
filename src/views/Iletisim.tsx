@@ -3,16 +3,11 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useSiteContent } from '../SiteContext';
-import { useTranslations } from 'next-intl';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 
 const Iletisim: React.FC = () => {
     useScrollReveal();
     const { siteContent } = useSiteContent();
-    const tContact = useTranslations('contact');
-    const tForm = useTranslations('form');
-    const tFaq = useTranslations('faq');
-    const tHero = useTranslations('hero');
     const business = siteContent.business;
 
     const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -21,7 +16,7 @@ const Iletisim: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        const msg = `${tContact('waMsg')}%0A%0A${tForm('name')}: ${formData.name}%0A${tFaq('email')}: ${formData.email}%0A%0A${formData.message}`;
+        const msg = `Merhaba, web sitesinden yazıyorum.%0A%0AAd Soyad: ${formData.name}%0AE-posta: ${formData.email}%0A%0A${formData.message}`;
         window.open(`https://wa.me/${business.whatsapp}?text=${msg}`, '_blank');
         setFormData({ name: '', email: '', message: '' });
         setSubmitted(true);
@@ -30,9 +25,7 @@ const Iletisim: React.FC = () => {
 
     return (
         <div className="min-h-screen flex flex-col" style={{ background: '#020617' }}>
-            {/* SEO handled by generateMetadata() in page.tsx */}
-
-            {/* ── BANNER ─────────────────────────────────────────── */}
+            {/* ── BANNER ── */}
             <section className="page-banner relative pt-28 pb-14 flex items-center justify-center overflow-hidden border-b border-white/5">
                 <div className="absolute inset-0 z-0">
                     <Image
@@ -48,18 +41,18 @@ const Iletisim: React.FC = () => {
                 <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border border-white/10 mb-4 shadow-lg animate-in fade-in slide-in-from-bottom-3 duration-700">
                         <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse" />
-                        <span>{tContact('eyebrow')}</span>
+                        <span>İLETİŞİM</span>
                     </div>
                     <h1 className="text-3xl sm:text-5xl md:text-7xl font-playfair font-medium text-white mb-6 tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 drop-shadow-2xl">
-                        {tContact('title')}
+                        Bize Ulaşın
                     </h1>
                     <p className="text-slate-300 text-lg md:text-xl font-light tracking-wide animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-                        {tContact('subtitle')}
+                        Sorularınız için 7/24 buradayız. Hemen iletişime geçin.
                     </p>
                 </div>
             </section>
 
-            {/* ── CHANNEL STRIP ──────────────────────────────────── */}
+            {/* ── CHANNEL STRIP ── */}
             <section style={{ background: 'rgba(197,160,89,0.04)', borderBottom: '1px solid rgba(197,160,89,0.12)' }}>
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 py-0">
                     <div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x" style={{ '--tw-divide-opacity': '0.05' } as React.CSSProperties}>
@@ -76,7 +69,7 @@ const Iletisim: React.FC = () => {
                                 <i className="fa-solid fa-phone text-sm" style={{ color: '#c5a059' }} aria-hidden="true" />
                             </div>
                             <div>
-                                <p className="text-[10px] font-black uppercase tracking-[0.28em] mb-1" style={{ color: 'rgba(197,160,89,0.6)' }}>{tFaq('phone')}</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.28em] mb-1" style={{ color: 'rgba(197,160,89,0.6)' }}>Telefon</p>
                                 <p className="text-white font-bold text-[15px]" style={{ fontFamily: "'Outfit', sans-serif" }}>{business.phone}</p>
                             </div>
                             <i className="fa-solid fa-arrow-right ml-auto text-[10px] opacity-0 group-hover:opacity-60 transition-opacity" style={{ color: '#c5a059' }} aria-hidden="true" />
@@ -95,7 +88,7 @@ const Iletisim: React.FC = () => {
                             </div>
                             <div>
                                 <p className="text-[10px] font-black uppercase tracking-[0.28em] mb-1" style={{ color: 'rgba(37,211,102,0.6)' }}>WhatsApp</p>
-                                <p className="text-white font-bold text-[15px]" style={{ fontFamily: "'Outfit', sans-serif" }}>{tHero('whatsapp')}</p>
+                                <p className="text-white font-bold text-[15px]" style={{ fontFamily: "'Outfit', sans-serif" }}>Hızlı Bilgi Al</p>
                             </div>
                             <i className="fa-solid fa-arrow-right ml-auto text-[10px] opacity-0 group-hover:opacity-60 transition-opacity" style={{ color: '#25D366' }} aria-hidden="true" />
                         </a>
@@ -111,7 +104,7 @@ const Iletisim: React.FC = () => {
                                 <i className="fa-solid fa-envelope text-sm" style={{ color: '#38bdf8' }} aria-hidden="true" />
                             </div>
                             <div className="min-w-0">
-                                <p className="text-[10px] font-black uppercase tracking-[0.28em] mb-1" style={{ color: 'rgba(56,189,248,0.6)' }}>{tFaq('email')}</p>
+                                <p className="text-[10px] font-black uppercase tracking-[0.28em] mb-1" style={{ color: 'rgba(56,189,248,0.6)' }}>E-POSTA</p>
                                 <p className="text-white font-bold text-[14px] truncate" style={{ fontFamily: "'Outfit', sans-serif" }}>{business.email}</p>
                             </div>
                             <i className="fa-solid fa-arrow-right ml-auto text-[10px] shrink-0 opacity-0 group-hover:opacity-60 transition-opacity" style={{ color: '#38bdf8' }} aria-hidden="true" />
@@ -121,7 +114,7 @@ const Iletisim: React.FC = () => {
                 </div>
             </section>
 
-            {/* ── MAIN: EDITORIAL DARK ───────────────────────────── */}
+            {/* ── MAIN ── */}
             <section className="flex-1 relative overflow-hidden">
 
                 {/* Background grid texture */}
@@ -146,7 +139,7 @@ const Iletisim: React.FC = () => {
                                 <div className="flex items-center gap-3 mb-6">
                                     <div className="h-px w-8" style={{ background: '#c5a059' }} />
                                     <span className="text-[10px] font-black tracking-[0.35em] uppercase" style={{ color: 'rgba(197,160,89,0.65)' }}>
-                                        {tContact('eyebrow')}
+                                        İLETİŞİM
                                     </span>
                                 </div>
                                 <h2 style={{
@@ -158,26 +151,26 @@ const Iletisim: React.FC = () => {
                                     letterSpacing: '-0.01em',
                                     marginBottom: '1.25rem',
                                 }}>
-                                    {tContact('formTitle')}
+                                    İletişim Formu
                                 </h2>
                                 <p style={{ color: 'rgba(255,255,255,0.38)', fontSize: 15, lineHeight: 1.75, fontFamily: "'Montserrat', sans-serif", maxWidth: 400 }}>
-                                    {tContact('subtitle')}
+                                    Sorularınız için 7/24 buradayız. Hemen iletişime geçin.
                                 </p>
                             </div>
 
-                            {/* Info items — editorial list */}
+                            {/* Info items */}
                             <div className="space-y-0" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                                 {[
                                     {
                                         icon: 'fa-location-dot',
-                                        label: tHero('trust.tracking'),
+                                        label: 'ANLIK TAKİP',
                                         value: business.address,
                                         color: '#c5a059',
                                     },
                                     {
                                         icon: 'fa-clock',
-                                        label: tFaq('workHours'),
-                                        value: `7/24 — ${tHero('trust.247')}`,
+                                        label: 'ÇALIŞMA SAATLERİ',
+                                        value: `7/24 — Hizmetinizdeyiz`,
                                         color: '#c5a059',
                                     },
                                 ].map((item, i) => (
@@ -244,7 +237,7 @@ const Iletisim: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* ── RIGHT: Form — dark glass ── */}
+                        {/* ── RIGHT: Form ── */}
                         <div className="reveal">
                             <div className="relative rounded-2xl overflow-hidden"
                                 style={{
@@ -266,7 +259,7 @@ const Iletisim: React.FC = () => {
                                         <div className="flex items-center gap-2">
                                             <div className="w-1.5 h-1.5 rounded-full" style={{ background: '#c5a059', boxShadow: '0 0 8px #c5a059' }} />
                                             <span className="text-[10px] font-black tracking-[0.28em] uppercase" style={{ color: 'rgba(197,160,89,0.6)', fontFamily: "'Outfit', sans-serif" }}>
-                                                {tContact('formTitle')}
+                                                İletişim Formu
                                             </span>
                                         </div>
                                         <div className="flex-1 h-px" style={{ background: 'rgba(197,160,89,0.12)' }} />
@@ -276,7 +269,7 @@ const Iletisim: React.FC = () => {
                                         {/* Name */}
                                         <div>
                                             <label htmlFor="ct-name" className="block text-[10px] font-black tracking-[0.2em] uppercase mb-2.5" style={{ color: 'rgba(255,255,255,0.3)', fontFamily: "'Outfit', sans-serif" }}>
-                                                {tContact('namePh')}
+                                                Adınız
                                             </label>
                                             <input
                                                 id="ct-name"
@@ -287,7 +280,7 @@ const Iletisim: React.FC = () => {
                                                 onChange={e => setFormData({ ...formData, name: e.target.value })}
                                                 onFocus={() => setFocused('name')}
                                                 onBlur={() => setFocused(null)}
-                                                placeholder={tContact('namePh')}
+                                                placeholder="Adınız"
                                                 className="iletisim-input w-full px-4 py-3.5 rounded-xl text-[14px] font-medium"
                                                 style={{
                                                     background: focused === 'name' ? 'rgba(197,160,89,0.05)' : 'rgba(255,255,255,0.03)',
@@ -302,7 +295,7 @@ const Iletisim: React.FC = () => {
                                         {/* Email */}
                                         <div>
                                             <label htmlFor="ct-email" className="block text-[10px] font-black tracking-[0.2em] uppercase mb-2.5" style={{ color: 'rgba(255,255,255,0.3)', fontFamily: "'Outfit', sans-serif" }}>
-                                                {tContact('emailPh')}
+                                                E-posta
                                             </label>
                                             <input
                                                 id="ct-email"
@@ -313,7 +306,7 @@ const Iletisim: React.FC = () => {
                                                 onChange={e => setFormData({ ...formData, email: e.target.value })}
                                                 onFocus={() => setFocused('email')}
                                                 onBlur={() => setFocused(null)}
-                                                placeholder={tContact('emailPh')}
+                                                placeholder="E-posta"
                                                 className="w-full px-4 py-3.5 rounded-xl text-[14px] font-medium"
                                                 style={{
                                                     background: focused === 'email' ? 'rgba(197,160,89,0.05)' : 'rgba(255,255,255,0.03)',
@@ -329,7 +322,7 @@ const Iletisim: React.FC = () => {
                                         {/* Message */}
                                         <div>
                                             <label htmlFor="ct-message" className="block text-[10px] font-black tracking-[0.2em] uppercase mb-2.5" style={{ color: 'rgba(255,255,255,0.3)', fontFamily: "'Outfit', sans-serif" }}>
-                                                {tContact('msgPh')}
+                                                Mesajınız
                                             </label>
                                             <textarea
                                                 id="ct-message"
@@ -339,7 +332,7 @@ const Iletisim: React.FC = () => {
                                                 onChange={e => setFormData({ ...formData, message: e.target.value })}
                                                 onFocus={() => setFocused('message')}
                                                 onBlur={() => setFocused(null)}
-                                                placeholder={tContact('msgPh')}
+                                                placeholder="Mesajınız"
                                                 className="w-full px-4 py-3.5 rounded-xl text-[14px] font-medium resize-none"
                                                 style={{
                                                     background: focused === 'message' ? 'rgba(197,160,89,0.05)' : 'rgba(255,255,255,0.03)',
@@ -364,7 +357,7 @@ const Iletisim: React.FC = () => {
                                             }}
                                         >
                                             <i className="fa-brands fa-whatsapp text-lg" aria-hidden="true" />
-                                            <span>{tContact('send')}</span>
+                                            <span>Gönder</span>
                                             <span style={{
                                                 position: 'absolute', inset: 0,
                                                 background: 'linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.2) 50%, transparent 60%)',
@@ -378,14 +371,14 @@ const Iletisim: React.FC = () => {
                                             <div className="flex items-center gap-1.5">
                                                 <i className="fa-solid fa-lock text-[9px]" style={{ color: '#34d399' }} aria-hidden="true" />
                                                 <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.25)', fontFamily: "'Montserrat', sans-serif" }}>
-                                                    {tForm('trustSecure')}
+                                                    Güvenli
                                                 </span>
                                             </div>
                                             <div className="w-px h-3" style={{ background: 'rgba(255,255,255,0.08)' }} />
                                             <div className="flex items-center gap-1.5">
                                                 <i className="fa-solid fa-bolt text-[9px]" style={{ color: '#fbbf24' }} aria-hidden="true" />
                                                 <span className="text-[10px]" style={{ color: 'rgba(255,255,255,0.25)', fontFamily: "'Montserrat', sans-serif" }}>
-                                                    {tForm('trustFast')}
+                                                    Hızlı Onay
                                                 </span>
                                             </div>
                                         </div>
@@ -408,7 +401,7 @@ const Iletisim: React.FC = () => {
                 </div>
             </section>
 
-            {/* ── MAP ────────────────────────────────────────────── */}
+            {/* ── MAP ── */}
             <section className="relative overflow-hidden" style={{ height: 'clamp(300px, 38vw, 440px)', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                 {business.mapEmbedUrl ? (
                     <iframe
@@ -470,8 +463,6 @@ const Iletisim: React.FC = () => {
                     </div>
                 </div>
             </section>
-
-
         </div>
     );
 };

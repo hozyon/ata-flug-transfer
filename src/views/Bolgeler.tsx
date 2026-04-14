@@ -2,49 +2,28 @@
 
 import React from 'react';
 import Image from 'next/image';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Fuse from 'fuse.js';
 import { INITIAL_SITE_CONTENT } from '../constants';
-import { useTranslations } from 'next-intl';
-import { useLanguage } from '../i18n/LanguageContext';
 import { useAppStore } from '../store/useAppStore';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 
 const Bolgeler: React.FC = () => {
     useScrollReveal();
-    const tUI = useTranslations('regionsPage');
-    const { t, language } = useLanguage();
     const { siteContent } = useAppStore();
-    // Language → flag mapping
-    const FLAGS: Record<string, string> = {
-        en: '🇬🇧', de: '🇩🇪', fr: '🇫🇷', ru: '🇷🇺', ar: '🇸🇦', tr: '🇹🇷'
-    };
 
-    // Build bilingual WhatsApp message (user's language + Turkish)
+    // Build WhatsApp message
     const buildWaMessage = (regionName: string) => {
         const trMsg = `Merhaba, *${regionName}* bölgesi için transfer fiyat bilgisi almak istiyorum.`;
-
-        if (language === 'tr') {
-            return encodeURIComponent(
-                `✈️ *${siteContent.business.name}*\n▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔\n\n🇹🇷 *Transfer Fiyat Talebi*\n\n🚐  *Bölge:* ${regionName}\n📩  ${trMsg}\n\n⏳ _Yanıt süresi: ~2 dakika_`
-            );
-        }
-
-        const flag = FLAGS[language] || '🌐';
-        const translatedMsg = t(`Merhaba, *${regionName}* bölgesi için transfer fiyat bilgisi almak istiyorum.`);
-        const translatedPriceReq = t('Transfer Fiyat Talebi');
-        const translatedRegion = t('Bölge');
-
         return encodeURIComponent(
-            `✈️ *${siteContent.business.name}*\n▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔\n\n${flag} *${translatedPriceReq}*\n\n🚐  *${translatedRegion}:* ${regionName}\n📩  ${translatedMsg}\n\n┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈\n\n🇹🇷 *Transfer Fiyat Talebi*\n\n🚐  *Bölge:* ${regionName}\n📩  ${trMsg}`
+            `✈️ *${siteContent.business.name}*\n▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔\n\n🇹🇷 *Transfer Fiyat Talebi*\n\n🚐  *Bölge:* ${regionName}\n📩  ${trMsg}\n\n⏳ _Yanıt süresi: ~2 dakika_`
         );
     };
+
     const pricedRegions = React.useMemo(() => (siteContent.regions || INITIAL_SITE_CONTENT.regions).filter(r => r.price && r.price > 0), [siteContent.regions]);
     const [regions, setRegions] = React.useState(pricedRegions);
     const [searchTerm, setSearchTerm] = React.useState('');
     const [_isAnimating, setIsAnimating] = React.useState(false);
-    const pathname = usePathname();
-    const _localeMatch = pathname?.match(/^\/([a-z]{2})(\/|$)/);
     const searchParams = useSearchParams();
 
     React.useEffect(() => {
@@ -63,7 +42,7 @@ const Bolgeler: React.FC = () => {
     const fuse = React.useMemo(() => {
         return new Fuse(regions, {
             keys: ['name'],
-            threshold: 0.2, // Stricter matching (was 0.4)
+            threshold: 0.2,
             distance: 100,
             includeScore: true
         });
@@ -72,8 +51,6 @@ const Bolgeler: React.FC = () => {
     // Advanced Filtering Logic
     const filteredRegions = React.useMemo(() => {
         if (!searchTerm.trim()) return regions;
-
-        // Use Fuse.js for fuzzy matching
         const results = fuse.search(searchTerm);
         return results.map(result => result.item);
     }, [searchTerm, regions, fuse]);
@@ -82,10 +59,10 @@ const Bolgeler: React.FC = () => {
     React.useEffect(() => {
         if (searchTerm) {
             setIsAnimating(true);
-            const timer = setTimeout(() => setIsAnimating(false), 500); // 0.5s blink
+            const timer = setTimeout(() => setIsAnimating(false), 500);
             return () => clearTimeout(timer);
         }
-    }, [searchTerm, filteredRegions]); // Trigger when results change
+    }, [searchTerm, filteredRegions]);
 
     // Pagination Logic
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -144,17 +121,14 @@ const Bolgeler: React.FC = () => {
         "Kadriye": { "dist": "27 km", "time": "30 dk" }
     };
 
-
     return (
         <div className="min-h-screen" style={{ background: '#f8f7f4' }}>
-            {/* SEO handled by generateMetadata() in page.tsx */}
             {/* BANNER SECTION */}
             <section className="relative pt-28 pb-14 overflow-hidden border-b border-white/5">
-                {/* ... existing hero code ... */}
                 <div className="absolute inset-0 z-0">
                     <Image
                         src="/images/antalya-map-safe.png"
-                        alt="Antalya Map Safe Zone"
+                        alt="Antalya Map"
                         fill
                         priority
                         className="object-cover"
@@ -165,13 +139,13 @@ const Bolgeler: React.FC = () => {
                 <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border border-white/10 mb-4 shadow-lg animate-in fade-in slide-in-from-bottom-3 duration-700">
                         <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse"></span>
-                        <span>{tUI('eyebrow')}</span>
+                        <span>HİZMET BÖLGELERİ</span>
                     </div>
                     <h1 className="text-4xl sm:text-5xl md:text-7xl font-playfair font-medium text-white mb-6 tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 drop-shadow-2xl">
-                        {tUI('title')}
+                        Transfer Bölgelerimiz
                     </h1>
                     <p className="text-slate-300 text-lg md:text-xl font-light tracking-wide animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-                        {tUI('subtitle')}
+                        Antalya Havalimanı'ndan tüm popüler tatil bölgelerine VIP transfer.
                     </p>
 
                     <div className="mt-8 max-w-lg mx-auto relative animate-in fade-in slide-in-from-bottom-5 duration-700 delay-300">
@@ -180,7 +154,7 @@ const Bolgeler: React.FC = () => {
                         </div>
                         <input
                             type="text"
-                            placeholder={tUI('search')}
+                            placeholder="Gitmek istediğiniz bölgeyi arayın..."
                             aria-label="Bölge ara"
                             className="block w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all shadow-2xl"
                             value={searchTerm}
@@ -208,7 +182,6 @@ const Bolgeler: React.FC = () => {
                                         className={shouldAnimate ? "animate-border-rotate" : "h-full"}
                                     >
                                         <div className="group flex flex-col h-full bg-white rounded-2xl overflow-hidden border border-slate-100 hover:shadow-lg hover:border-slate-200 transition-all duration-300 transform hover:-translate-y-0.5">
-                                            {/* Image Container */}
                                             <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
                                                 <div className="absolute inset-0 bg-slate-900/5 group-hover:bg-transparent transition-colors duration-300 z-10"></div>
                                                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -222,19 +195,18 @@ const Bolgeler: React.FC = () => {
                                                 {region.price && (
                                                     <div className="absolute top-4 left-4 z-20">
                                                         <span className="inline-block px-3 py-1 bg-white text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm">
-                                                            {region.price}{siteContent.currency?.symbol || '€'} {tUI('startingFrom')}
+                                                            {region.price}{siteContent.currency?.symbol || '€'} Başlayan
                                                         </span>
                                                     </div>
                                                 )}
                                             </div>
 
-                                            {/* Content */}
                                             <div className="flex-1 p-5 flex flex-col">
                                                 <h3 className="text-lg font-playfair font-bold text-slate-800 mb-2 group-hover:text-[var(--color-primary)] transition-colors leading-snug line-clamp-1">
                                                     {region.name}
                                                 </h3>
                                                 <p className="text-slate-500 text-xs leading-relaxed mb-4 line-clamp-2">
-                                                    {t(region.desc)}
+                                                    {region.desc || `${region.name} bölgesine konforlu ve güvenli VIP transfer hizmeti.`}
                                                 </p>
 
                                                 <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-100">
@@ -248,7 +220,7 @@ const Bolgeler: React.FC = () => {
                                                         rel="noopener noreferrer"
                                                         className="flex items-center gap-1 text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform"
                                                     >
-                                                        <span>{tUI('getPrice')}</span>
+                                                        <span>Fiyat Al</span>
                                                         <i className="fa-solid fa-arrow-right" aria-hidden="true"></i>
                                                     </a>
                                                 </div>
@@ -262,8 +234,8 @@ const Bolgeler: React.FC = () => {
                                 <div className="inline-block p-6 rounded-full bg-slate-50 mb-4">
                                     <i className="fas fa-search text-4xl text-slate-300"></i>
                                 </div>
-                                <h3 className="text-lg font-medium text-slate-900">{tUI('noResult')}</h3>
-                                <p className="text-slate-500 mt-2">{tUI('noResultDesc')}</p>
+                                <h3 className="text-lg font-medium text-slate-900">Sonuç Bulunamadı</h3>
+                                <p className="text-slate-500 mt-2">Aramanızla eşleşen transfer bölgesi bulunamadı.</p>
                             </div>
                         )}
                     </div>
@@ -315,8 +287,8 @@ const Bolgeler: React.FC = () => {
             {/* CTA */}
             <section className="py-16 md:py-20 bg-[var(--color-dark)]">
                 <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-                    <h2 className="font-playfair font-bold text-white leading-tight" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)' }}>{tUI('ctaTitle')}</h2>
-                    <p className="text-white/40 mt-3 text-sm">{tUI('ctaDesc')}</p>
+                    <h2 className="font-playfair font-bold text-white leading-tight" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)' }}>Özel Fiyat Teklifi Alın</h2>
+                    <p className="text-white/40 mt-3 text-sm">Listede olmayan bir bölge için veya grup transferi için özel fiyat teklifi alın.</p>
                     <a
                         href={`https://wa.me/${siteContent.business.whatsapp}`}
                         target="_blank"
@@ -325,7 +297,7 @@ const Bolgeler: React.FC = () => {
                         style={{ background: '#c5a059' }}
                     >
                         <i className="fab fa-whatsapp text-xl"></i>
-                        {tUI('ctaBtn')}
+                        WhatsApp ile Fiyat Al
                     </a>
                 </div>
             </section>

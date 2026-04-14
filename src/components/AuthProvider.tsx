@@ -101,10 +101,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     // Redirect admin to /admin if logged in and on login page
     useEffect(() => {
         if (isAdmin && pathname?.includes('/login')) {
-            // Extract locale from pathname (e.g. /tr/login -> /tr/admin)
-            const localeMatch = pathname.match(/^\/([a-z]{2})\//);
-            const locale = localeMatch ? localeMatch[1] : 'tr';
-            router.push(`/${locale}/admin`);
+            router.push(`/admin`);
         }
     }, [isAdmin, pathname, router]);
 

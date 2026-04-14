@@ -2,9 +2,7 @@
 
 import React, { useEffect } from 'react';
 import Image from 'next/image';
-import { useParams, usePathname } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-import { useLanguage } from '../i18n/LanguageContext';
+import { useParams } from 'next/navigation';
 import TextureBackground from '../components/TextureBackground';
 import DOMPurify from 'dompurify';
 import type { BlogPost as BlogPostType } from '../types';
@@ -17,10 +15,6 @@ interface BlogPostProps {
 const BlogPost: React.FC<BlogPostProps> = ({ initialPost, blogPosts }) => {
     const params = useParams();
     const slug = params?.slug as string;
-    const pathname = usePathname();
-    const _localeMatch = pathname?.match(/^\/([a-z]{2})(\/|$)/);
-    const t = useTranslations('blogPost');
-    const { t: tCMS } = useLanguage();
 
     // Use server-fetched initialPost as fallback
     const post = blogPosts.find((p: BlogPostType) => p.slug === slug) ?? initialPost;
@@ -34,7 +28,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ initialPost, blogPosts }) => {
             <div className="min-h-screen bg-white flex items-center justify-center">
                 <div className="text-center px-4">
                     <h1 className="text-6xl font-playfair font-bold text-slate-800 mb-4">404</h1>
-                    <p className="text-slate-500 text-lg mb-8">{t('notFound')}</p>
+                    <p className="text-slate-500 text-lg mb-8">Aradığınız içerik bulunamadı veya kaldırılmış olabilir.</p>
                 </div>
             </div>
         );
@@ -55,14 +49,14 @@ const BlogPost: React.FC<BlogPostProps> = ({ initialPost, blogPosts }) => {
                 <div className="mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <div className="flex items-center gap-2 mb-6">
                         <span className="px-3 py-1 rounded-full bg-[#c5a059]/10 text-[#c5a059] text-[10px] font-black uppercase tracking-widest border border-[#c5a059]/20">
-                            {tCMS(post.category)}
+                            {post.category}
                         </span>
                         <span className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">
-                            {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : ''}
+                            {post.publishedAt ? new Date(post.publishedAt).toLocaleDateString('tr-TR') : ''}
                         </span>
                     </div>
                     <h1 className="text-3xl md:text-5xl lg:text-6xl font-playfair font-bold text-white mb-8 leading-[1.1] tracking-tight">
-                        {tCMS(post.title)}
+                        {post.title}
                     </h1>
                     <div className="flex items-center gap-4 py-6 border-y border-white/5">
                         <div className="w-10 h-10 rounded-full bg-[#c5a059]/10 border border-[#c5a059]/20 flex items-center justify-center text-[#c5a059] font-black text-sm">
@@ -77,7 +71,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ initialPost, blogPosts }) => {
 
                 {post.featuredImage && (
                     <div className="relative aspect-[21/9] rounded-3xl overflow-hidden mb-12 shadow-2xl shadow-black/50 border border-white/10 animate-in fade-in zoom-in-95 duration-1000 delay-200">
-                        <Image src={post.featuredImage} alt={tCMS(post.title)} fill priority className="object-cover" />
+                        <Image src={post.featuredImage} alt={post.title} fill priority className="object-cover" />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-transparent opacity-40"></div>
                     </div>
                 )}
@@ -94,9 +88,9 @@ const BlogPost: React.FC<BlogPostProps> = ({ initialPost, blogPosts }) => {
                             .filter(p => p.id !== post.id && p.isPublished)
                             .slice(0, 2)
                             .map(related => (
-                                <a key={related.id} href={`/${params.locale}/blog/${related.slug}`} className="group p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:border-[#c5a059]/30 transition-all duration-300">
-                                    <p className="text-[#c5a059] text-[10px] font-black uppercase tracking-widest mb-2">{tCMS(related.category)}</p>
-                                    <h4 className="text-white font-bold group-hover:text-[#c5a059] transition-colors line-clamp-2">{tCMS(related.title)}</h4>
+                                <a key={related.id} href={`/blog/${related.slug}`} className="group p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:border-[#c5a059]/30 transition-all duration-300">
+                                    <p className="text-[#c5a059] text-[10px] font-black uppercase tracking-widest mb-2">{related.category}</p>
+                                    <h4 className="text-white font-bold group-hover:text-[#c5a059] transition-colors line-clamp-2">{related.title}</h4>
                                 </a>
                             ))}
                     </div>

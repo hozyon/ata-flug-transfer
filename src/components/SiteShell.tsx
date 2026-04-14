@@ -1,11 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Navbar from './Navbar';
 import BookingForm from './BookingForm';
 import { useAppStore } from '../store/useAppStore';
-import { useTranslations } from 'next-intl';
 import { createClient } from '../utils/supabase/client';
 import { isSupabaseConfigured } from '../lib/supabase';
 import { addBooking } from '../app/actions/bookings';
@@ -16,10 +15,6 @@ import { addBooking } from '../app/actions/bookings';
  */
 export default function SiteShell({ children }: { children: React.ReactNode }) {
     const router = useRouter();
-    const pathname = usePathname();
-    const tCommon = useTranslations('common');
-    const tFooter = useTranslations('footer');
-    const tForm = useTranslations('form');
     const {
         isAdmin, setIsAdmin,
         siteContent,
@@ -27,10 +22,6 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
     } = useAppStore();
 
     const [isLoggingOut, setIsLoggingOut] = useState(false);
-
-    // Detect locale from pathname (e.g. /tr/bolgeler → tr)
-    const localeMatch = pathname?.match(/^\/([a-z]{2})(\/|$)/);
-    const locale = localeMatch ? localeMatch[1] : 'tr';
 
     const handleExitAdmin = async () => {
         if (isLoggingOut) return;
@@ -41,7 +32,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
             await supabase.auth.signOut();
         }
         setIsAdmin(false);
-        router.push(`/${locale}`);
+        router.push(`/`);
         setIsLoggingOut(false);
     };
 
@@ -49,7 +40,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
         if (isAdmin) {
             handleExitAdmin();
         } else {
-            router.push(`/${locale}/login`);
+            router.push(`/login`);
         }
     };
 
@@ -60,12 +51,11 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
                 href="#main-content"
                 className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[9999] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-[var(--color-primary)] focus:text-black focus:font-semibold focus:text-sm"
             >
-                {tCommon('skipNav')}
+                İçeriğe geç
             </a>
             <Navbar
                 onAdminToggle={handleAdminToggle}
                 isAdmin={isAdmin}
-                content={siteContent.navbar}
             />
 
             <main id="main-content" className="flex-grow">
@@ -86,11 +76,11 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
                             />
                             <div>
                                 <h4 className="text-white font-black text-xl tracking-tight">{siteContent.business.name}</h4>
-                                <p className="text-slate-400 text-xs">{tFooter('tagline')}</p>
+                                <p className="text-slate-400 text-xs">Premium VIP Transfer Hizmetleri</p>
                             </div>
                         </div>
                         <div>
-                            <h4 className="text-[var(--color-primary)] font-bold text-xs uppercase tracking-widest mb-3">{tFooter('contact')}</h4>
+                            <h4 className="text-[var(--color-primary)] font-bold text-xs uppercase tracking-widest mb-3">İletişim</h4>
                             <ul className="space-y-3 md:space-y-2 text-sm text-slate-300">
                                 {siteContent.business.phone && (
                                     <li><a href={`tel:${siteContent.business.phone}`} rel="noopener noreferrer" className="hover:text-[var(--color-primary)] transition-colors inline-flex items-center min-h-[44px] md:min-h-0"><i className="fa-solid fa-phone mr-3 text-[var(--color-primary)]"></i>{siteContent.business.phone}</a></li>
@@ -104,7 +94,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
                             </ul>
                         </div>
                         <div>
-                            <h4 className="text-[var(--color-primary)] font-bold text-xs uppercase tracking-widest mb-3">{tFooter('quickSupport')}</h4>
+                            <h4 className="text-[var(--color-primary)] font-bold text-xs uppercase tracking-widest mb-3">Hızlı Destek</h4>
                             <div className="flex justify-center md:justify-start space-x-3">
                                 {siteContent.business.whatsapp && <a href={`https://wa.me/${siteContent.business.whatsapp}`} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="w-12 h-12 md:w-11 md:h-11 bg-emerald-500 rounded-full flex items-center justify-center text-white text-xl hover:scale-110 active:scale-95 transition-transform shadow-lg"><i className="fa-brands fa-whatsapp"></i></a>}
                                 {siteContent.business.telegram && <a href={siteContent.business.telegram} target="_blank" rel="noopener noreferrer" aria-label="Telegram" className="w-12 h-12 md:w-11 md:h-11 bg-sky-500 rounded-full flex items-center justify-center text-white text-xl hover:scale-110 active:scale-95 transition-transform shadow-lg"><i className="fa-brands fa-telegram"></i></a>}
@@ -138,7 +128,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
                 href={`https://wa.me/${siteContent.business.whatsapp}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label={tCommon('contactWhatsApp')}
+                aria-label="WhatsApp ile iletişime geçin"
                 className="fixed left-6 z-[90] lg:left-8 group"
                 style={{ bottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}
             >
@@ -164,14 +154,14 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
                                 <div>
                                     <div className="inline-flex items-center gap-2 mb-2">
                                         <span className="w-5 h-[2px] bg-[var(--color-primary)]" />
-                                        <span className="text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-[0.2em]">{tForm('eyebrow')}</span>
+                                        <span className="text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-[0.2em]">Online Rezervasyon</span>
                                     </div>
-                                    <h3 className="text-white font-bold text-xl">{tForm('title')}</h3>
+                                    <h3 className="text-white font-bold text-xl">Transfer Talebi</h3>
                                 </div>
                                 <button
                                     onClick={() => setBookingFormOpen(false)}
                                     className="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/10 flex items-center justify-center text-white/40 hover:text-white transition-colors mt-1"
-                                    aria-label={tCommon('close')}
+                                    aria-label="Kapat"
                                 >
                                     <i className="fa-solid fa-xmark text-sm" />
                                 </button>
@@ -184,13 +174,13 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
                             </div>
                             <div className="px-6 py-3 border-t border-white/[0.06] flex items-center justify-center gap-5">
                                 <div className="flex items-center gap-1.5 text-white/30 text-[10px]">
-                                    <i className="fa-solid fa-lock text-[8px] text-emerald-400" /><span>{tForm('trustSecure')}</span>
+                                    <i className="fa-solid fa-lock text-[8px] text-emerald-400" /><span>Güvenli</span>
                                 </div>
                                 <div className="flex items-center gap-1.5 text-white/30 text-[10px]">
-                                    <i className="fa-solid fa-bolt text-[8px] text-amber-400" /><span>{tForm('trustFast')}</span>
+                                    <i className="fa-solid fa-bolt text-[8px] text-amber-400" /><span>Hızlı Onay</span>
                                 </div>
                                 <div className="flex items-center gap-1.5 text-white/30 text-[10px]">
-                                    <i className="fa-brands fa-whatsapp text-[8px] text-[#25D366]" /><span>{tForm('trustWhatsapp')}</span>
+                                    <i className="fa-brands fa-whatsapp text-[8px] text-[#25D366]" /><span>WhatsApp Bildirim</span>
                                 </div>
                             </div>
                         </div>

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '../utils/supabase/client';
 import { isSupabaseConfigured } from '../lib/supabase';
@@ -11,7 +11,6 @@ interface AdminLoginProps {
 }
 
 const LOGIN_SLOGANS = [
-// ... (rest of the file)
     { title: "Yönetim", highlight: "Kontrol Merkezi", desc: "Operasyonel süreçlerinizi anlık takip edin, rezervasyonları yönetin ve işinizi büyütün." },
     { title: "Kusursuz", highlight: "Müşteri Deneyimi", desc: "Her transferi unutulmaz bir yolculuğa dönüştürmek için ihtiyacınız olan tüm araçlar burada." },
     { title: "Akıllı", highlight: "Filo Yönetimi", desc: "Araçlarınızın durumunu, konumunu ve performansını tek bir ekrandan zahmetsizce izleyin." },
@@ -23,7 +22,6 @@ const LOGIN_SLOGANS = [
 ];
 
 const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
-    const pathname = usePathname();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -35,9 +33,14 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
     const [_sloganIndex, setSloganIndex] = useState(() => Math.floor(Math.random() * LOGIN_SLOGANS.length));
     const emailRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
-    const localeMatch = pathname?.match(/^\/([a-z]{2})(\/|$)/);
-    const locale = localeMatch ? localeMatch[1] : 'tr';
-    const handleLoginSuccess = () => { if (onLogin) { handleLoginSuccess(); } else { router.push(`/${locale}/admin`); } };
+
+    const handleLoginSuccess = () => {
+        if (onLogin) {
+            onLogin();
+        } else {
+            router.push(`/admin`);
+        }
+    };
 
     useEffect(() => {
         setTimeout(() => emailRef.current?.focus(), 600);
@@ -60,7 +63,6 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
 
         if (isSupabaseConfigured) {
             const supabase = createClient();
-            // Real Supabase authentication
             const { error } = await supabase.auth.signInWithPassword({ email, password });
 
             if (error) {
@@ -83,7 +85,6 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                 handleLoginSuccess();
             }, 800);
         } else {
-            // Dev fallback: simple hardcoded check
             if (email === 'ataflugtransfer@gmail.com' && password === 'Trak1ng-16') {
                 setLoginStage('success');
                 setTimeout(() => {
@@ -171,15 +172,12 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
 
             {/* ── LEFT: Login Panel ── */}
             <div className="relative w-full lg:w-[460px] xl:w-[500px] shrink-0 flex flex-col justify-between px-8 sm:px-12 py-10 z-10 overflow-hidden">
-                {/* Subtle background texture */}
                 <div className="absolute inset-0 pointer-events-none">
                     <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(197,160,89,0.06) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(197,160,89,0.04) 0%, transparent 50%)' }} />
                     <div className="absolute inset-0 opacity-[0.015]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-                    {/* Gold right border */}
                     <div className="hidden lg:block absolute right-0 top-[10%] bottom-[10%] w-px bg-gradient-to-b from-transparent via-[#c5a059]/20 to-transparent" />
                 </div>
 
-                {/* Top: Logo */}
                 <div className="relative animate-in fade-in slide-in-from-bottom-3 duration-700">
                     <div className="mb-5">
                         <Link
@@ -204,7 +202,6 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                     </div>
                 </div>
 
-                {/* Center: Form */}
                 <div className="relative w-full max-w-[360px] mx-auto">
                     {loginStage === 'success' ? (
                         <div className="text-center py-12 animate-in fade-in zoom-in duration-500">
@@ -236,7 +233,6 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                             )}
 
                             <form onSubmit={handleSubmit} className="space-y-4" style={{ animation: 'fadeUp 0.6s ease 0.1s both' }}>
-                                {/* Email */}
                                 <div className="space-y-2">
                                     <label className="text-[10px] font-black text-slate-600 uppercase tracking-[0.15em]">E-posta</label>
                                     <div className={`relative rounded-xl border transition-all duration-200 ${isFocused === 'email' ? 'border-[#c5a059]/40 bg-[#c5a059]/[0.04] shadow-[0_0_20px_rgba(197,160,89,0.08)]' : 'border-white/[0.07] bg-white/[0.02] hover:border-white/[0.12]'}`}>
@@ -249,7 +245,6 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                                     </div>
                                 </div>
 
-                                {/* Password */}
                                 <div className="space-y-2">
                                     <div className="flex justify-between items-center">
                                         <label className="text-[10px] font-black text-slate-600 uppercase tracking-[0.15em]">Şifre</label>
@@ -272,7 +267,6 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                                     </div>
                                 </div>
 
-                                {/* Submit */}
                                 <button type="submit" disabled={isLoading || !email || !password}
                                     className="group relative w-full h-[50px] rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 mt-2">
                                     <div className="absolute inset-0 bg-gradient-to-r from-[#c5a059] via-amber-500 to-[#c5a059] bg-[length:200%_100%] transition-all duration-500 group-hover:bg-[position:100%_0]" style={{ backgroundPosition: '0% 0%' }} />
@@ -296,7 +290,6 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                     )}
                 </div>
 
-                {/* Bottom */}
                 <div className="relative flex items-center justify-between">
                     <p className="text-slate-800 text-[10px]">© {new Date().getFullYear()} Ata Flug Transfer</p>
                     {!isSupabaseConfigured && (
@@ -309,7 +302,6 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
 
             {/* ── RIGHT: Animated Visual Panel ── */}
             <div className="hidden lg:flex flex-1 relative overflow-hidden items-center justify-center bg-[#050010]">
-                {/* Animated blobs */}
                 <div className="absolute w-[420px] h-[420px] rounded-full blur-[120px]"
                     style={{ background: '#7c3aed', opacity: 0.45, top: '0%', left: '5%', animation: 'blobMove1 9s ease-in-out infinite' }} />
                 <div className="absolute w-[380px] h-[380px] rounded-full blur-[110px]"
@@ -321,14 +313,11 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                 <div className="absolute w-[240px] h-[240px] rounded-full blur-[80px]"
                     style={{ background: '#6d28d9', opacity: 0.30, bottom: '20%', left: '15%', animation: 'blobMove2 7s ease-in-out infinite reverse' }} />
 
-                {/* Noise texture overlay */}
                 <div className="absolute inset-0 opacity-[0.03]"
                     style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")', backgroundSize: '200px 200px' }} />
 
-                {/* Dark vignette edges */}
                 <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, transparent 40%, rgba(5,0,16,0.7) 100%)' }} />
 
-                {/* Content */}
                 <div className="relative z-10 px-12 xl:px-16 max-w-lg">
                     <div className="mb-3" style={{ animation: 'fadeUp 0.8s ease 0.3s both' }}>
                         <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-black text-white/50 uppercase tracking-[0.2em]">

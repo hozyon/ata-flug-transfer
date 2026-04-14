@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
-import { usePathname } from 'next/navigation';
+
 const STORAGE_KEY = 'ata_cookie_consent';
 
 const updateConsent = (granted: boolean) => {
@@ -16,9 +15,6 @@ const updateConsent = (granted: boolean) => {
 };
 
 export default function CookieConsentBanner() {
-    const t = useTranslations('cookie');
-    const pathname = usePathname();
-    const locale = pathname?.match(/^\/([a-z]{2})(\/|$)/)?.[1] ?? 'tr';
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
@@ -45,32 +41,24 @@ export default function CookieConsentBanner() {
     if (!visible) return null;
 
     return (
-        <div
-            role="dialog"
-            aria-label="Cookie consent"
-            className="fixed bottom-0 left-0 right-0 z-[150] bg-slate-900 text-white px-4 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-lg"
-        >
-            <p className="text-sm text-slate-300 flex-1">
-                {t('message')}{' '}
-                <Link
-                    href={`/${locale}/gizlilik`}
-                    className="underline underline-offset-2 text-slate-400 hover:text-white transition-colors text-xs"
-                >
-                    {t('learnMore')}
-                </Link>
+        <div className="fixed bottom-6 right-6 left-6 md:left-auto md:w-96 z-[9999] bg-slate-900 border border-white/10 rounded-2xl p-6 shadow-2xl animate-in slide-in-from-bottom-4 duration-500">
+            <h3 className="text-white font-bold mb-2">Çerez Kullanımı</h3>
+            <p className="text-slate-400 text-sm mb-6 leading-relaxed">
+                Size daha iyi bir deneyim sunabilmek için çerezleri kullanıyoruz. Devam ederek çerez politikamızı kabul etmiş sayılırsınız. 
+                <Link href="/gizlilik" className="text-amber-500 hover:underline ml-1">Detaylı bilgi</Link>
             </p>
-            <div className="flex gap-2 shrink-0">
+            <div className="flex gap-3">
                 <button
                     onClick={reject}
-                    className="px-4 py-2 text-sm border border-slate-600 rounded hover:border-slate-400 transition-colors"
+                    className="flex-1 px-4 py-2 text-sm text-slate-400 hover:text-white transition-colors font-medium border border-white/5 rounded"
                 >
-                    {t('reject')}
+                    Reddet
                 </button>
                 <button
                     onClick={accept}
-                    className="px-4 py-2 text-sm bg-amber-500 text-black rounded hover:bg-amber-400 transition-colors font-semibold"
+                    className="flex-1 px-4 py-2 text-sm bg-amber-500 text-black rounded hover:bg-amber-400 transition-colors font-semibold"
                 >
-                    {t('accept')}
+                    Kabul Et
                 </button>
             </div>
         </div>

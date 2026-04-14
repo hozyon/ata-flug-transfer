@@ -5,26 +5,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useAppStore } from '../store/useAppStore';
 import { useSiteContent } from '../SiteContext';
-import { useTranslations } from 'next-intl';
-import { useLanguage } from '../i18n/LanguageContext';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { BlogPost, UserReview } from '../types';
 
 interface HomePageProps {
-    locale: string;
     blogPosts: BlogPost[];
     userReviews: UserReview[];
 }
 
-export default function HomePage({ locale, blogPosts, userReviews }: HomePageProps) {
+export default function HomePage({ blogPosts, userReviews }: HomePageProps) {
     const { siteContent } = useSiteContent();
-    const { t } = useLanguage();
-    const tHero = useTranslations('hero');
-    const tPricing = useTranslations('pricing');
-    const tServices = useTranslations('services');
-    const tRegions = useTranslations('regions');
-    const tBlog = useTranslations('blog');
-    const tReviews = useTranslations('reviews');
     const { setBookingFormOpen } = useAppStore();
 
     const regionsCarouselRef = useRef<HTMLDivElement>(null);
@@ -33,7 +23,6 @@ export default function HomePage({ locale, blogPosts, userReviews }: HomePagePro
 
     const randomBlogPosts = useMemo(() => {
         const published = blogPosts.filter(p => p.isPublished);
-        // Simple deterministic slice if we want to avoid Math.random during render
         return published.slice(0, 4);
     }, [blogPosts]);
 
@@ -93,9 +82,9 @@ export default function HomePage({ locale, blogPosts, userReviews }: HomePagePro
     const sortedRegions = [...pricedRegions].sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
 
     const groups = [
-        { labelKey: 'pricing.near', accent: '#34d399', accentBg: 'rgba(52,211,153,0.08)', borderClr: 'rgba(52,211,153,0.2)', regions: sortedRegions.filter(r => (r.price ?? 0) <= 60) },
-        { labelKey: 'pricing.mid', accent: '#c5a059', accentBg: 'rgba(197,160,89,0.08)', borderClr: 'rgba(197,160,89,0.2)', regions: sortedRegions.filter(r => (r.price ?? 0) > 60 && (r.price ?? 0) <= 120) },
-        { labelKey: 'pricing.far', accent: '#fb7185', accentBg: 'rgba(251,113,133,0.08)', borderClr: 'rgba(251,113,133,0.2)', regions: sortedRegions.filter(r => (r.price ?? 0) > 120) }
+        { label: 'Yakın Mesafe', accent: '#34d399', accentBg: 'rgba(52,211,153,0.08)', borderClr: 'rgba(52,211,153,0.2)', regions: sortedRegions.filter(r => (r.price ?? 0) <= 60) },
+        { label: 'Orta Mesafe', accent: '#c5a059', accentBg: 'rgba(197,160,89,0.08)', borderClr: 'rgba(197,160,89,0.2)', regions: sortedRegions.filter(r => (r.price ?? 0) > 60 && (r.price ?? 0) <= 120) },
+        { label: 'Uzak Mesafe', accent: '#fb7185', accentBg: 'rgba(251,113,133,0.08)', borderClr: 'rgba(251,113,133,0.2)', regions: sortedRegions.filter(r => (r.price ?? 0) > 120) }
     ];
 
     const activeGroups = groups.filter(g => g.regions.length > 0).map(g => ({
@@ -106,9 +95,9 @@ export default function HomePage({ locale, blogPosts, userReviews }: HomePagePro
     })).filter(g => g.regions.length > 0);
 
     const stats = [
-        { label: tReviews('stat1'), val: '4.9', icon: 'fa-star' },
-        { label: tReviews('stat2'), val: '10K+', icon: 'fa-users' },
-        { label: tReviews('stat3'), val: '15+', icon: 'fa-award' }
+        { label: 'Mutlu Müşteri', val: '4.9', icon: 'fa-star' },
+        { label: 'Yıllık Transfer', val: '10K+', icon: 'fa-users' },
+        { label: 'Yıllık Deneyim', val: '15+', icon: 'fa-award' }
     ];
 
     const heroBgs = siteContent.hero.backgrounds || ['/bg1.webp', '/bg2.webp', '/bg3.webp'];
@@ -136,17 +125,17 @@ export default function HomePage({ locale, blogPosts, userReviews }: HomePagePro
                     <div className="reveal">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-[10px] font-bold uppercase tracking-widest backdrop-blur-md border border-white/10 mb-6 animate-pulse">
                             <span className="w-1.5 h-1.5 rounded-full bg-[#c5a059]"></span>
-                            {tHero('eyebrow')}
+                            PREMIUM VIP TRANSFER
                         </div>
                         <h1 className="text-4xl sm:text-6xl md:text-8xl font-playfair font-medium text-white mb-6 tracking-tight leading-tight">
-                            {tHero('title')} <span className="text-[#c5a059] italic">{tHero('titleAccent')}</span>
+                            Lüks Ve Konforun <span className="text-[#c5a059] italic">Yeni Tanımı</span>
                         </h1>
                         <p className="text-slate-300 text-lg md:text-xl max-w-2xl mx-auto mb-10 font-light tracking-wide leading-relaxed">
-                            {tHero('subtitle')}
+                            Antalya Havalimanı'ndan dilediğiniz her noktaya modern araç filomuz ve profesyonel ekibimizle eşsiz bir VIP deneyimi yaşayın.
                         </p>
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                             <button onClick={() => setBookingFormOpen(true)} className="w-full sm:w-auto px-10 py-4 bg-[#c5a059] hover:bg-[#b08d48] text-[#020617] font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-2xl shadow-[#c5a059]/20">
-                                {tHero('cta')}
+                                Rezervasyon Yap
                             </button>
                             <a href={`https://wa.me/${siteContent.business.whatsapp}`} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto px-10 py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-2xl backdrop-blur-md border border-white/10 transition-all duration-300 flex items-center justify-center gap-2">
                                 <i className="fa-brands fa-whatsapp text-xl text-[#25D366]"></i> WhatsApp
@@ -186,18 +175,22 @@ export default function HomePage({ locale, blogPosts, userReviews }: HomePagePro
                             <div className="reveal">
                                 <div className="flex items-center gap-2.5 mb-2.5">
                                     <span className="w-5 h-px bg-[#c5a059]"></span>
-                                    <span className="text-[10px] font-black tracking-[0.35em] uppercase text-[#c5a059]">{tPricing('eyebrow')}</span>
+                                    <span className="text-[10px] font-black tracking-[0.35em] uppercase text-[#c5a059]">ANTALYA HAVALİMANI → TÜM BÖLGELER</span>
                                 </div>
                                 <h2 className="text-[26px] md:text-[34px] font-black tracking-tight leading-none text-white" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                                    {tPricing('title')}&nbsp;<span style={{ color: '#c5a059' }}>{tPricing('titleAccent')}</span>
+                                    Transfer <span style={{ color: '#c5a059' }}>Fiyatları</span>
                                 </h2>
-                                <p className="text-white/35 text-[12px] mt-1.5 font-medium">{tPricing('subtitle')}</p>
+                                <p className="text-white/35 text-[12px] mt-1.5 font-medium">Tek yön, araç başı — kişi sayısından bağımsız sabit fiyat</p>
                             </div>
                             <div className="hidden sm:flex items-center gap-5 pb-1">
-                                {[{ color: '#34d399', lk: 'pricing.legendNear' }, { color: '#c5a059', lk: 'pricing.legendMid' }, { color: '#fb7185', lk: 'pricing.legendFar' }].map(item => (
-                                    <div key={item.lk} className="flex items-center gap-1.5">
+                                {[
+                                    { color: '#34d399', label: 'Yakın mesafe' },
+                                    { color: '#c5a059', label: 'Orta mesafe' },
+                                    { color: '#fb7185', label: 'Uzak mesafe' }
+                                ].map(item => (
+                                    <div key={item.label} className="flex items-center gap-1.5">
                                         <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: item.color }}></span>
-                                        <span className="text-[10px] text-white/35 font-medium">{t(item.lk)}</span>
+                                        <span className="text-[10px] text-white/35 font-medium">{item.label}</span>
                                     </div>
                                 ))}
                             </div>
@@ -205,10 +198,10 @@ export default function HomePage({ locale, blogPosts, userReviews }: HomePagePro
 
                         <div className="flex items-center gap-3 mb-7 rounded-xl px-3 py-2" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
                             <i className="fa-solid fa-magnifying-glass text-white/25 text-[11px] shrink-0"></i>
-                            <input type="text" value={priceSearch} onChange={e => setPriceSearch(e.target.value)} placeholder={tPricing('search')} className="flex-1 bg-transparent text-[12px] text-white/70 placeholder-white/20 focus:outline-none" />
+                            <input type="text" value={priceSearch} onChange={e => setPriceSearch(e.target.value)} placeholder="Bölge adı veya fiyat ara..." className="flex-1 bg-transparent text-[12px] text-white/70 placeholder-white/20 focus:outline-none" />
                             {priceSearch
                                 ? <button onClick={() => setPriceSearch('')} className="text-white/30 hover:text-white/70 transition-colors shrink-0"><i className="fa-solid fa-xmark text-[11px]"></i></button>
-                                : <span className="text-[10px] text-white/15 font-mono shrink-0">{pricedRegions.length} {tPricing('regionsLabel')}</span>
+                                : <span className="text-[10px] text-white/15 font-mono shrink-0">{pricedRegions.length} bölge</span>
                             }
                         </div>
 
@@ -217,10 +210,10 @@ export default function HomePage({ locale, blogPosts, userReviews }: HomePagePro
                         ) : (
                             <div className="space-y-7">
                                 {activeGroups.map(group => (
-                                    <div key={group.labelKey}>
+                                    <div key={group.label}>
                                         <div className="flex items-center gap-3 mb-3">
                                             <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: group.accent }}></span>
-                                            <span className="text-[8.5px] font-black uppercase tracking-[0.4em]" style={{ color: group.accent }}>{t(group.labelKey)}</span>
+                                            <span className="text-[8.5px] font-black uppercase tracking-[0.4em]" style={{ color: group.accent }}>{group.label}</span>
                                             <span className="flex-1 h-px" style={{ background: `linear-gradient(to right, ${group.borderClr}, transparent)` }}></span>
                                             <span className="text-[9px] font-bold text-white/20">{group.regions.length}</span>
                                         </div>
@@ -251,10 +244,10 @@ export default function HomePage({ locale, blogPosts, userReviews }: HomePagePro
                         <div className="mt-7 pt-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                             <div className="flex items-start gap-2">
                                 <i className="fa-solid fa-circle-info text-white/20 text-[9px] mt-[3px] shrink-0"></i>
-                                <p className="text-white/25 text-[10.5px] leading-relaxed max-w-lg">{tPricing('note')}</p>
+                                <p className="text-white/25 text-[10.5px] leading-relaxed max-w-lg">Fiyatlar araç başıdır. Gece transferi (00:00–06:00) ve ekstra bagaj için fiyat değişmez. Listede olmayan bölge için WhatsApp'tan fiyat alın.</p>
                             </div>
-                            <Link href={`/${locale}/bolgeler`} className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-white/45 hover:text-[var(--color-primary)] text-[10px] font-black tracking-[0.15em] uppercase transition-all duration-200" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
-                                {tPricing('allRegions')}<i className="fa-solid fa-arrow-right text-[8px]"></i>
+                            <Link href={`/bolgeler`} className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-xl text-white/45 hover:text-[var(--color-primary)] text-[10px] font-black tracking-[0.15em] uppercase transition-all duration-200" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
+                                TÜM BÖLGELER<i className="fa-solid fa-arrow-right text-[8px]"></i>
                             </Link>
                         </div>
                     </div>
@@ -268,28 +261,28 @@ export default function HomePage({ locale, blogPosts, userReviews }: HomePagePro
                     <div className="text-center mb-12 md:mb-16 reveal">
                         <div className="flex items-center justify-center gap-4 mb-5">
                             <span className="flex-1 max-w-[72px] h-px" style={{ background: 'linear-gradient(90deg, transparent, #c5a059)' }} />
-                            <span className="text-[10px] font-black tracking-[0.35em] uppercase text-[#c5a059]">{tServices('eyebrow')}</span>
+                            <span className="text-[10px] font-black tracking-[0.35em] uppercase text-[#c5a059]">PREMİUM DENEYİM</span>
                             <span className="flex-1 max-w-[72px] h-px" style={{ background: 'linear-gradient(270deg, transparent, #c5a059)' }} />
                         </div>
                         <h2 className="font-playfair font-bold text-white leading-tight" style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)' }}>
-                            {tServices('title')}&nbsp;<span className="bg-gradient-to-r from-[#c5a059] via-[#e0c07a] to-[#c5a059] bg-clip-text text-transparent">{tServices('titleAccent')}</span>
+                            VIP Transfer <span className="bg-gradient-to-r from-[#c5a059] via-[#e0c07a] to-[#c5a059] bg-clip-text text-transparent">Hizmetleri</span>
                         </h2>
-                        <p className="text-white/35 text-sm mt-3 max-w-xl mx-auto">{tServices('subtitle')}</p>
+                        <p className="text-white/35 text-sm mt-3 max-w-xl mx-auto">Antalya havalimanı ve çevresi için premium transfer deneyimi</p>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0">
                         {[
-                            { num: '01', icon: 'fa-plane-arrival', titleKey: 'services.card1.title', descKey: 'services.card1.desc' },
-                            { num: '02', icon: 'fa-map', titleKey: 'services.card2.title', descKey: 'services.card2.desc' },
-                            { num: '03', icon: 'fa-route', titleKey: 'services.card3.title', descKey: 'services.card3.desc' },
-                            { num: '04', icon: 'fa-car-side', titleKey: 'services.card4.title', descKey: 'services.card4.desc' },
+                            { num: '01', icon: 'fa-plane-arrival', title: 'Havalimanı Transferi', desc: 'Lüks Mercedes Vito araçlarımızla kesintisiz karşılama. Uçuş durumunuzu takip ediyor, rötarlarda bekliyoruz.' },
+                            { num: '02', icon: 'fa-map', title: 'Özel Şehir Turları', desc: 'Antalya ve çevresini kendi hızınızda keşfedin. Yerel şoförlerimiz eşliğinde gizli kalmış güzellikleri görün.' },
+                            { num: '03', icon: 'fa-route', title: 'VIP Transfer', desc: 'Kişisel ihtiyaçlarınıza göre uyarlanmış rotalarla mükemmel konforu tasarlayın. Eğlence veya tatil odaklı VIP seyahat.' },
+                            { num: '04', icon: 'fa-car-side', title: 'Şehirlerarası Transfer', desc: 'Antalya\'dan dilediğiniz şehre, lüks araçlarımızla stressiz ve konforlu uzun yolculuk deneyimi.' },
                         ].map((s, i) => (
                             <div key={i} className="group relative flex flex-col px-6 py-8 md:px-8 md:py-10 border-t border-white/[0.06] sm:border-t-0 first:border-t-0 sm:border-l sm:first:border-l-0 transition-all duration-300 hover:bg-white/[0.025]">
                                 <span className="text-[42px] md:text-[56px] font-black leading-none mb-6 select-none" style={{ color: 'rgba(197,160,89,0.12)' }}>{s.num}</span>
                                 <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-5 border transition-all duration-300 group-hover:border-[#c5a059]/40 group-hover:bg-[#c5a059]/10" style={{ borderColor: 'rgba(197,160,89,0.2)', background: 'rgba(197,160,89,0.06)' }}>
                                     <i className={`fa-solid ${s.icon} text-sm`} style={{ color: '#c5a059' }}></i>
                                 </div>
-                                <h4 className="text-white font-semibold text-base mb-3 leading-snug transition-colors duration-300 group-hover:text-[#c5a059]">{t(s.titleKey)}</h4>
-                                <p className="text-white/35 text-xs md:text-sm leading-relaxed">{t(s.descKey)}</p>
+                                <h4 className="text-white font-semibold text-base mb-3 leading-snug transition-colors duration-300 group-hover:text-[#c5a059]">{s.title}</h4>
+                                <p className="text-white/35 text-xs md:text-sm leading-relaxed">{s.desc}</p>
                                 <div className="absolute bottom-0 left-6 right-6 h-px scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" style={{ background: 'linear-gradient(90deg, #c5a059, transparent)' }} />
                             </div>
                         ))}
@@ -304,14 +297,13 @@ export default function HomePage({ locale, blogPosts, userReviews }: HomePagePro
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex items-center gap-3 mb-3">
                             <span className="h-px w-8 bg-[#c5a059]" />
-                            <span className="text-[10px] font-black uppercase tracking-[0.35em] text-[#c5a059]">{tRegions('eyebrow')}</span>
+                            <span className="text-[10px] font-black uppercase tracking-[0.35em] text-[#c5a059]">PREMİUM TRANSFER</span>
                         </div>
                         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
                             <h2 className="font-playfair font-bold text-white leading-tight" style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)' }}>
-                                {tRegions('title')}{' '}
-                                <span className="bg-gradient-to-r from-[#c5a059] via-[#e0c07a] to-[#c5a059] bg-clip-text text-transparent">{tRegions('titleAccent')}</span>
+                                Hizmet <span className="bg-gradient-to-r from-[#c5a059] via-[#e0c07a] to-[#c5a059] bg-clip-text text-transparent">Bölgelerimiz</span>
                             </h2>
-                            <Link href={`/${locale}/bolgeler`} className="shrink-0 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#c5a059] transition-colors hover:text-[#e0c07a]">
+                            <Link href={`/bolgeler`} className="shrink-0 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#c5a059] transition-colors hover:text-[#e0c07a]">
                                 Tüm Bölgeler <i className="fa-solid fa-arrow-right text-[9px]" />
                             </Link>
                         </div>
@@ -320,7 +312,7 @@ export default function HomePage({ locale, blogPosts, userReviews }: HomePagePro
                         {pricedRegions.map((region) => {
                             const slug = region.name.toLowerCase().replace(/ /g, '-').replace(/[ğĞ]/g, 'g').replace(/[üÜ]/g, 'u').replace(/[şŞ]/g, 's').replace(/[ıİ]/g, 'i').replace(/[öÖ]/g, 'o').replace(/[çÇ]/g, 'c').replace(/[^a-z0-9-]/g, '');
                             return (
-                                <Link key={region.id} href={`/${locale}/transfer/${slug}-transfer`} data-rc="" className="group relative block overflow-hidden rounded-2xl shrink-0"
+                                <Link key={region.id} href={`/transfer/${slug}-transfer`} data-rc="" className="group relative block overflow-hidden rounded-2xl shrink-0"
                                     style={{ width: 'min(220px, 62vw)', height: '300px', scrollSnapAlign: 'center', transition: 'transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.35s ease', willChange: 'transform, opacity' }}>
                                     <Image src={region.image || '/bg1.webp'} alt={region.name} fill sizes="(max-width: 768px) 62vw, 220px" className="object-cover transition-transform duration-500 group-hover:scale-105" />
                                     <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(5,8,15,0.95) 0%, rgba(5,8,15,0.35) 55%, transparent 100%)' }} />
@@ -347,16 +339,16 @@ export default function HomePage({ locale, blogPosts, userReviews }: HomePagePro
                         <div className="text-center mb-10 md:mb-14 reveal">
                             <div className="flex items-center justify-center gap-4 mb-5">
                                 <span className="flex-1 max-w-[72px] h-px" style={{ background: 'linear-gradient(90deg, transparent, #c5a059)' }} />
-                                <span className="text-[10px] font-black tracking-[0.35em] uppercase text-[#c5a059]">{tBlog('eyebrow')}</span>
+                                <span className="text-[10px] font-black tracking-[0.35em] uppercase text-[#c5a059]">BLOG</span>
                                 <span className="flex-1 max-w-[72px] h-px" style={{ background: 'linear-gradient(270deg, transparent, #c5a059)' }} />
                             </div>
                             <h2 className="font-playfair font-bold text-white leading-tight" style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)' }}>
-                                {tBlog('title')}&nbsp;<span className="bg-gradient-to-r from-[#c5a059] via-[#e0c07a] to-[#c5a059] bg-clip-text text-transparent">{tBlog('titleAccent')}</span>
+                                Sizin İçin <span className="bg-gradient-to-r from-[#c5a059] via-[#e0c07a] to-[#c5a059] bg-clip-text text-transparent">Seçtiklerimiz</span>
                             </h2>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 stagger-children">
                             {randomBlogPosts.map((post) => (
-                                <Link key={post.id} href={`/${locale}/blog/${post.slug}`} className="reveal group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                                <Link key={post.id} href={`/blog/${post.slug}`} className="reveal group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
                                     <div className="relative h-40 overflow-hidden">
                                         <Image src={post.featuredImage || '/bg1.webp'} alt={post.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
                                         <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(5,8,15,0.85) 0%, rgba(5,8,15,0.2) 100%)' }}></div>
@@ -366,7 +358,7 @@ export default function HomePage({ locale, blogPosts, userReviews }: HomePagePro
                                         <h3 className="text-sm font-bold text-white/90 line-clamp-2 mb-2 group-hover:text-[#c5a059] transition-colors leading-snug">{post.title}</h3>
                                         <p className="text-xs text-white/35 line-clamp-2 leading-relaxed">{post.excerpt}</p>
                                         <div className="mt-3 flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-[#c5a059]">
-                                            <span>{tBlog('readMore')}</span>
+                                            <span>Devamını Oku</span>
                                             <i className="fa-solid fa-arrow-right text-[8px] group-hover:translate-x-1 transition-transform"></i>
                                         </div>
                                     </div>
@@ -374,8 +366,8 @@ export default function HomePage({ locale, blogPosts, userReviews }: HomePagePro
                             ))}
                         </div>
                         <div className="mt-12 text-center">
-                            <Link href={`/${locale}/blog`} className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white border border-white/10 transition-all font-bold text-xs uppercase tracking-widest">
-                                {tBlog('allPosts')} <i className="fa-solid fa-arrow-right text-[10px]"></i>
+                            <Link href={`/blog`} className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-white/60 hover:text-white border border-white/10 transition-all font-bold text-xs uppercase tracking-widest">
+                                Tüm Yazıları Gör <i className="fa-solid fa-arrow-right text-[10px]"></i>
                             </Link>
                         </div>
                     </div>
@@ -389,11 +381,11 @@ export default function HomePage({ locale, blogPosts, userReviews }: HomePagePro
                         <div className="text-center mb-12 md:mb-16 reveal">
                             <div className="flex items-center justify-center gap-4 mb-5">
                                 <span className="flex-1 max-w-[72px] h-px" style={{ background: 'linear-gradient(90deg, transparent, #c5a059)' }} />
-                                <span className="text-[10px] font-black tracking-[0.35em] uppercase text-[#c5a059]">{tReviews('eyebrow')}</span>
+                                <span className="text-[10px] font-black tracking-[0.35em] uppercase text-[#c5a059]">MÜŞTERİ YORUMLARI</span>
                                 <span className="flex-1 max-w-[72px] h-px" style={{ background: 'linear-gradient(270deg, transparent, #c5a059)' }} />
                             </div>
                             <h2 className="font-playfair font-bold text-white leading-tight" style={{ fontSize: 'clamp(1.8rem, 3.5vw, 3rem)' }}>
-                                {tReviews('title')}&nbsp;<span className="bg-gradient-to-r from-[#c5a059] via-[#e0c07a] to-[#c5a059] bg-clip-text text-transparent">{tReviews('titleAccent')}</span>
+                                Misafirlerimizin <span className="bg-gradient-to-r from-[#c5a059] via-[#e0c07a] to-[#c5a059] bg-clip-text text-transparent">Deneyimleri</span>
                             </h2>
                         </div>
 

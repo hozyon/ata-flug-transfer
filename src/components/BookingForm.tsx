@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Booking, Vehicle } from '../types';
-import { useLanguage } from '../i18n/LanguageContext';
 import { useAppStore } from '../store/useAppStore';
 
 const COUNTRY_CODES = [
@@ -17,7 +16,7 @@ const COUNTRY_CODES = [
   { code: '+43', flag: '🇦🇹', name: 'AT' },
   { code: '+41', flag: '🇨🇭', name: 'CH' },
   { code: '+46', flag: '🇸🇪', name: 'SE' },
-  { code: '+47', flag: '🇳🇴', name: 'NO' },
+  { code: '+47', flag: '🇳挪', name: 'NO' },
   { code: '+45', flag: '🇩🇰', name: 'DK' },
   { code: '+48', flag: '🇵🇱', name: 'PL' },
   { code: '+380', flag: '🇺🇦', name: 'UA' },
@@ -36,7 +35,6 @@ interface BookingFormProps {
 const STEPS = ['Rota', 'Bilgiler', 'Detaylar', 'Özet'] as const;
 
 const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) => {
-  const { t, language } = useLanguage();
   const siteContent = useAppStore(state => state.siteContent);
   const businessName = siteContent.business.name;
   const whatsappNumber = siteContent.business.whatsapp;
@@ -88,13 +86,13 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
   const validateStep = (s: number): Record<string, string> => {
     const e: Record<string, string> = {};
     if (s === 0) {
-      if (formData.pickup === formData.destination) e.route = t('Nereden ve Nereye aynı olamaz. Lütfen farklı bir rota seçin.');
-      if (!formData.date) e.date = t('Lütfen tarih seçin.');
-      if (!formData.time) e.time = t('Lütfen saat seçin.');
+      if (formData.pickup === formData.destination) e.route = 'Nereden ve Nereye aynı olamaz. Lütfen farklı bir rota seçin.';
+      if (!formData.date) e.date = 'Lütfen tarih seçin.';
+      if (!formData.time) e.time = 'Lütfen saat seçin.';
     }
     if (s === 1) {
-      if (!formData.firstName.trim()) e.firstName = t('Ad gerekli.');
-      if (!formData.phone.trim()) e.phone = t('Telefon gerekli.');
+      if (!formData.firstName.trim()) e.firstName = 'Ad gerekli.';
+      if (!formData.phone.trim()) e.phone = 'Telefon gerekli.';
     }
     return e;
   };
@@ -132,27 +130,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
     if (formData.flightNumber) trLines.push('✈️  Uçuş No: ' + formData.flightNumber);
     if (formData.notes) trLines.push('📝  Not: ' + formData.notes);
 
-    let msg = '';
-    if (language === 'tr') {
-      msg = [`✨ *${businessName}* ✨`, '____________________________', '', '⭐ *YENİ REZERVASYON TALEBİ*', '', ...trLines, '', '✅ _Müsaitlik durumu hakkında bilgi bekliyorum._'].join('\n');
-    } else {
-      const langFlags: Record<string, string> = { en: '🇬🇧', de: '🇩🇪', fr: '🇫🇷', ru: '🇷🇺', ar: '🇸🇦' };
-      const lf = langFlags[language] || '🌐';
-      const lb = {
-        title: t('YENİ REZERVASYON TALEBİ'), name: t('Ad Soyad'), ph: t('Telefon'),
-        from: t('Nereden'), to: t('Nereye'), date: t('Tarih'), time: t('Saat'),
-        pax: t('Kişi'), veh: t('Araç'), flt: t('Uçuş No'), nt: t('Not'),
-      };
-      const trLines2 = [
-        '👤  ' + lb.name + ': ' + fullName, '📱  ' + lb.ph + ': ' + fullPhone,
-        '📍  ' + lb.from + ': ' + formData.pickup, '🏁  ' + lb.to + ': ' + formData.destination,
-        '📅  ' + lb.date + ': ' + dateFormatted, '⏰  ' + lb.time + ': ' + formData.time,
-        '👥  ' + lb.pax + ': ' + formData.passengers, '🚐  ' + lb.veh + ': ' + (selectedVehicle?.name || '-'),
-      ];
-      if (formData.flightNumber) trLines2.push('✈️  ' + lb.flt + ': ' + formData.flightNumber);
-      if (formData.notes) trLines2.push('📝  ' + lb.nt + ': ' + formData.notes);
-      msg = [`✨ *${businessName}* ✨`, '____________________________', '', lf + ' *' + lb.title + '*', '', ...trLines2, '', '✅ _' + t('Müsaitlik durumu hakkında bilgi bekliyorum.') + '_', '', '~~~~~~~~~~~~~~~~~~~~~~~~~~~~', '', '🇹🇷 *YENİ REZERVASYON TALEBİ*', '', ...trLines, '', '✅ _Müsaitlik durumu hakkında bilgi bekliyorum._'].join('\n');
-    }
+    const msg = [`✨ *${businessName}* ✨`, '____________________________', '', '⭐ *YENİ REZERVASYON TALEBİ*', '', ...trLines, '', '✅ _Müsaitlik durumu hakkında bilgi bekliyorum._'].join('\n');
 
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     const waNumber = whatsappNumber;
@@ -190,7 +168,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
               onClick={() => i < step && goToStep(i)}
               className={`text-[10px] font-black uppercase tracking-wider transition-colors duration-300 ${i <= step ? 'cursor-pointer' : 'cursor-default'} ${i < step ? 'text-[#c5a059]/60' : i === step ? 'text-[#c5a059]' : 'text-white/20'}`}
             >
-              {t(label)}
+              {label}
             </button>
           ))}
         </div>
@@ -214,7 +192,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
             <div className="relative">
               <div className="flex flex-col gap-0 rounded-xl border border-white/[0.08] bg-white/[0.03] overflow-hidden focus-within:border-[var(--color-primary)]/40 transition-colors">
                 <div className="px-3 py-2.5">
-                  <label htmlFor="bf-pickup" className={lbl}>{t('Nereden')}</label>
+                  <label htmlFor="bf-pickup" className={lbl}>Nereden</label>
                   <div className="flex items-center gap-2">
                     <i className="fa-solid fa-circle-dot text-[var(--color-primary)] text-[9px] flex-shrink-0" />
                     <select id="bf-pickup" name="pickup" value={formData.pickup} onChange={handleChange}
@@ -225,7 +203,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
                 </div>
                 <div className="border-t border-white/[0.06] mx-3" />
                 <div className="px-3 py-2.5">
-                  <label htmlFor="bf-destination" className={lbl}>{t('Nereye')}</label>
+                  <label htmlFor="bf-destination" className={lbl}>Nereye</label>
                   <div className="flex items-center gap-2">
                     <i className="fa-solid fa-location-dot text-[var(--color-primary)] text-[9px] flex-shrink-0" />
                     <select id="bf-destination" name="destination" value={formData.destination} onChange={handleChange}
@@ -244,7 +222,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
 
             <div className="grid grid-cols-2 gap-2">
               <div className={card}>
-                <label htmlFor="bf-date" className={lbl}>{t('Tarih')}</label>
+                <label htmlFor="bf-date" className={lbl}>Tarih</label>
                 <div className="flex items-center gap-2">
                   <i className="fa-regular fa-calendar text-[var(--color-primary)] text-[9px] flex-shrink-0" />
                   <input id="bf-date" required type="date" name="date" value={formData.date} onChange={handleChange}
@@ -253,7 +231,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
                 {errors.date && <p className="text-rose-400 text-[9px] mt-1">{errors.date}</p>}
               </div>
               <div className={card}>
-                <label htmlFor="bf-time" className={lbl}>{t('Saat')}</label>
+                <label htmlFor="bf-time" className={lbl}>Saat</label>
                 <div className="flex items-center gap-2">
                   <i className="fa-regular fa-clock text-[var(--color-primary)] text-[9px] flex-shrink-0" />
                   <input id="bf-time" required type="time" name="time" value={formData.time} onChange={handleChange}
@@ -270,26 +248,26 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
           <>
             <div className="grid grid-cols-2 gap-2">
               <div className={card}>
-                <label htmlFor="bf-firstName" className={lbl}>{t('Ad')}</label>
+                <label htmlFor="bf-firstName" className={lbl}>Ad</label>
                 <div className="flex items-center gap-2">
                   <i className="fa-regular fa-user text-[var(--color-primary)] text-[9px] flex-shrink-0" />
                   <input id="bf-firstName" required type="text" name="firstName" value={formData.firstName} onChange={handleChange}
-                    className={inp} placeholder={t('Adınız')} autoComplete="given-name" />
+                    className={inp} placeholder="Adınız" autoComplete="given-name" />
                 </div>
                 {errors.firstName && <p className="text-rose-400 text-[9px] mt-1">{errors.firstName}</p>}
               </div>
               <div className={card}>
-                <label htmlFor="bf-lastName" className={lbl}>{t('Soyad')}</label>
+                <label htmlFor="bf-lastName" className={lbl}>Soyad</label>
                 <div className="flex items-center gap-2">
                   <i className="fa-regular fa-user text-[var(--color-primary)] text-[9px] flex-shrink-0" />
                   <input id="bf-lastName" type="text" name="lastName" value={formData.lastName} onChange={handleChange}
-                    className={inp} placeholder={t('Soyadınız')} autoComplete="family-name" />
+                    className={inp} placeholder="Soyadınız" autoComplete="family-name" />
                 </div>
               </div>
             </div>
 
             <div className={card}>
-              <label htmlFor="bf-phone" className={lbl}>{t('Telefon')}</label>
+              <label htmlFor="bf-phone" className={lbl}>Telefon</label>
               <div className="flex items-center gap-1.5">
                 <i className="fa-solid fa-phone text-[var(--color-primary)] text-[9px] flex-shrink-0" />
                 <select aria-label="Ülke kodu" name="countryCode" value={formData.countryCode} onChange={handleChange}
@@ -306,7 +284,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
             </div>
 
             <div className={card}>
-              <label htmlFor="bf-email" className={lbl}>{t('E-posta')}</label>
+              <label htmlFor="bf-email" className={lbl}>E-posta</label>
               <div className="flex items-center gap-2">
                 <i className="fa-regular fa-envelope text-[var(--color-primary)] text-[9px] flex-shrink-0" />
                 <input id="bf-email" type="email" name="email" value={formData.email} onChange={handleChange}
@@ -321,7 +299,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
           <>
             {/* Araç seçimi — card-based */}
             <div>
-              <label className={lbl + ' mb-2'}>{t('Araç')}</label>
+              <label className={lbl + ' mb-2'}>Araç</label>
               <div className="flex flex-col gap-2">
                 {vehicles.map(v => (
                   <button
@@ -343,7 +321,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className={`text-[13px] font-semibold truncate transition-colors duration-200 ${formData.vehicleId === v.id ? 'text-white' : 'text-white/70'}`}>{v.name}</div>
-                      {v.capacity && <div className="text-white/30 text-[10px] mt-0.5">{t('Kapasite')}: {v.capacity} {t('kişi')}</div>}
+                      {v.capacity && <div className="text-white/30 text-[10px] mt-0.5">Kapasite: {v.capacity} kişi</div>}
                     </div>
                     {formData.vehicleId === v.id && (
                       <i className="fa-solid fa-circle-check text-[#c5a059] text-sm flex-shrink-0" />
@@ -355,7 +333,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
 
             <div className="grid grid-cols-2 gap-2">
               <div className={card}>
-                <label htmlFor="bf-passengers" className={lbl}>{t('Yolcu')}</label>
+                <label htmlFor="bf-passengers" className={lbl}>Yolcu</label>
                 <div className="flex items-center gap-1.5">
                   <i className="fa-solid fa-user-group text-[var(--color-primary)] text-[9px] flex-shrink-0" />
                   <select id="bf-passengers" name="passengers" value={formData.passengers} onChange={handleChange}
@@ -367,7 +345,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
                 </div>
               </div>
               <div className={card}>
-                <label htmlFor="bf-flightNumber" className={lbl}>{t('Uçuş No')}</label>
+                <label htmlFor="bf-flightNumber" className={lbl}>Uçuş No</label>
                 <div className="flex items-center gap-1.5">
                   <i className="fa-solid fa-plane text-[var(--color-primary)] text-[9px] flex-shrink-0" />
                   <input id="bf-flightNumber" type="text" name="flightNumber" value={formData.flightNumber} onChange={handleChange}
@@ -377,11 +355,11 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
             </div>
 
             <div className={card}>
-              <label htmlFor="bf-notes" className={lbl}>{t('Not / Ek Bilgi')}</label>
+              <label htmlFor="bf-notes" className={lbl}>Not / Ek Bilgi</label>
               <div className="flex items-start gap-2">
                 <i className="fa-regular fa-comment text-[var(--color-primary)] text-[9px] flex-shrink-0 mt-0.5" />
                 <input id="bf-notes" type="text" name="notes" value={formData.notes} onChange={handleChange}
-                  className={inp} placeholder={t('Bebek koltuğu, extra bagaj vb. (opsiyonel)')} />
+                  className={inp} placeholder="Bebek koltuğu, extra bagaj vb. (opsiyonel)" />
               </div>
             </div>
           </>
@@ -392,7 +370,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
           <div className="rounded-xl border border-white/[0.08] bg-white/[0.03] overflow-hidden">
             {/* Rota */}
             <div className="px-4 py-3 border-b border-white/[0.06]">
-              <div className="text-[9px] font-bold text-[var(--color-primary)]/60 uppercase tracking-[0.15em] mb-2">{t('Rota')}</div>
+              <div className="text-[9px] font-bold text-[var(--color-primary)]/60 uppercase tracking-[0.15em] mb-2">Rota</div>
               <div className="flex items-center gap-2">
                 <div className="flex flex-col items-center gap-1">
                   <i className="fa-solid fa-circle-dot text-[var(--color-primary)] text-[8px]" />
@@ -411,7 +389,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
             </div>
             {/* Kişi */}
             <div className="px-4 py-3 border-b border-white/[0.06]">
-              <div className="text-[9px] font-bold text-[var(--color-primary)]/60 uppercase tracking-[0.15em] mb-2">{t('Yolcu')}</div>
+              <div className="text-[9px] font-bold text-[var(--color-primary)]/60 uppercase tracking-[0.15em] mb-2">Yolcu</div>
               <div className="flex items-center justify-between">
                 <div>
                   <div className="text-white text-[12px] font-medium">{(formData.firstName + ' ' + formData.lastName).trim() || '-'}</div>
@@ -419,13 +397,13 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
                   {formData.email && <div className="text-white/40 text-[10px]">{formData.email}</div>}
                 </div>
                 <div className="text-right">
-                  <div className="text-white/40 text-[10px]">{formData.passengers} {t('kişi')}</div>
+                  <div className="text-white/40 text-[10px]">{formData.passengers} kişi</div>
                 </div>
               </div>
             </div>
             {/* Araç */}
             <div className="px-4 py-3">
-              <div className="text-[9px] font-bold text-[var(--color-primary)]/60 uppercase tracking-[0.15em] mb-2">{t('Araç')}</div>
+              <div className="text-[9px] font-bold text-[var(--color-primary)]/60 uppercase tracking-[0.15em] mb-2">Araç</div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <i className="fa-solid fa-car-side text-[var(--color-primary)] text-[11px]" />
@@ -456,7 +434,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
           <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">
             <i className="fa-solid fa-check text-white text-[10px]" />
           </div>
-          <span className="text-emerald-400 text-[12px] font-medium">{t("Talebiniz alındı! WhatsApp'a yönlendiriliyorsunuz...")}</span>
+          <span className="text-emerald-400 text-[12px] font-medium">Talebiniz alındı! WhatsApp'a yönlendiriliyorsunuz...</span>
         </div>
       )}
 
@@ -466,7 +444,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
           <button
             type="button"
             onClick={() => goToStep(step - 1)}
-            aria-label={t('Geri')}
+            aria-label="Geri"
             className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-white/10 hover:border-white/20 text-white/50 hover:text-white text-sm font-semibold transition-all duration-200 active:scale-[0.97] min-h-[48px]"
           >
             <i className="fa-solid fa-arrow-left text-xs" aria-hidden="true" />
@@ -478,7 +456,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
             onClick={() => goToStep(step + 1)}
             className="group flex-1 flex items-center justify-center gap-2.5 bg-[var(--color-primary)] hover:bg-[#d4af6a] text-[#0a0a0e] rounded-xl px-5 py-3.5 font-bold text-sm tracking-wide transition-all duration-300 active:scale-[0.98] min-h-[48px]"
           >
-            <span>{t('Devam')}</span>
+            <span>Devam</span>
             <i className="fa-solid fa-arrow-right text-xs group-hover:translate-x-0.5 transition-transform duration-200" />
           </button>
         ) : (
@@ -488,7 +466,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
             className="group flex-1 flex items-center justify-center gap-2.5 bg-[var(--color-primary)] hover:bg-[#d4af6a] text-[#0a0a0e] rounded-xl px-5 py-3.5 font-bold text-sm tracking-wide transition-all duration-300 active:scale-[0.98] min-h-[48px]"
           >
             <i className="fa-brands fa-whatsapp text-lg" />
-            <span>{t("WhatsApp'a Gönder")}</span>
+            <span>WhatsApp'a Gönder</span>
             <i className="fa-solid fa-arrow-right text-xs opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
           </button>
         )}

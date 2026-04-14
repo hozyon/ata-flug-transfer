@@ -2,10 +2,9 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAppStore } from '../store/useAppStore';
-import { useTranslations } from 'next-intl';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { slugify } from '../utils/slugify';
 import { DESTINATION_META } from '../data/destinationMeta';
@@ -14,14 +13,8 @@ import { INITIAL_SITE_CONTENT } from '../constants';
 const TransferDestination: React.FC = () => {
   const params = useParams();
   const transferSlug = params?.region as string;
-  const pathname = usePathname();
   const router = useRouter();
-  const localeMatch = pathname?.match(/^\/([a-z]{2})(\/|$)/);
-  const locale = localeMatch ? localeMatch[1] : 'tr';
   const { siteContent, setBookingFormOpen } = useAppStore();
-  const tTd = useTranslations('td');
-  const tNav = useTranslations('nav');
-  const tSrv = useTranslations('services');
   useScrollReveal();
 
   // FAQ accordion state — must be before early return (Rules of Hooks)
@@ -34,15 +27,15 @@ const TransferDestination: React.FC = () => {
   const region = siteContent.regions.find(r => slugify(r.name) === regionSlug)
     || INITIAL_SITE_CONTENT.regions.find(r => slugify(r.name) === regionSlug);
 
-  if (!region) { router.replace(`/${locale}`); return null; }
+  if (!region) { router.replace('/'); return null; }
 
   const meta = DESTINATION_META[regionSlug];
   const business = siteContent.business;
   const sym = siteContent.currency?.symbol || '€';
 
   const serviceItems = [
-    { icon: 'fa-plane-arrival', title: tSrv('card1.title') || 'Havalimanı Karşılama', desc: tSrv('card1.desc') || 'İsim tabelası ile kapıda karşılama' },
-    { icon: 'fa-car-side',      title: tSrv('card4.title') || 'VIP Araç Filosu',      desc: 'Mercedes Vito ve Sprinter araçlar' },
+    { icon: 'fa-plane-arrival', title: 'Havalimanı Transferi', desc: 'Lüks Mercedes Vito araçlarımızla kesintisiz karşılama. Uçuş durumunuzu takip ediyor, rötarlarda bekliyoruz.' },
+    { icon: 'fa-car-side',      title: 'Şehirlerarası Transfer',      desc: 'Mercedes Vito ve Sprinter araçlar' },
     { icon: 'fa-clock',         title: 'Uçuş Takibi',           desc: 'Rötar durumunda ek ücret alınmaz' },
     { icon: 'fa-baby',          title: 'Bebek Koltuğu',          desc: 'Ücretsiz bebek ve çocuk koltuğu' },
     { icon: 'fa-wifi',          title: 'Ücretsiz Wi-Fi',         desc: 'Araç içi internet bağlantısı' },
@@ -69,9 +62,9 @@ const TransferDestination: React.FC = () => {
         <div className="relative z-10 max-w-6xl mx-auto px-5 pb-10 w-full">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-white/40 text-[11px] mb-5 font-medium" aria-label="Breadcrumb">
-            <Link href={`/${locale}`} className="hover:text-white/70 transition-colors">{tNav('home') || 'Ana Sayfa'}</Link>
+            <Link href="/" className="hover:text-white/70 transition-colors">ANA SAYFA</Link>
             <i className="fa-solid fa-chevron-right text-[8px]" aria-hidden="true" />
-            <Link href={`/${locale}/bolgeler`} className="hover:text-white/70 transition-colors">{tNav('regions') || 'Bölgeler'}</Link>
+            <Link href="/bolgeler" className="hover:text-white/70 transition-colors">BÖLGELER</Link>
             <i className="fa-solid fa-chevron-right text-[8px]" aria-hidden="true" />
             <span className="text-white/60">{region.name}</span>
           </nav>
@@ -80,7 +73,7 @@ const TransferDestination: React.FC = () => {
           {region.price && (
             <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full text-[11px] font-black tracking-wider" style={{ background: 'rgba(197,160,89,0.15)', border: '1px solid rgba(197,160,89,0.35)', color: '#c5a059' }}>
               <i className="fa-solid fa-tag text-[9px]" aria-hidden="true" />
-              {tTd('from') || 'İtibaren'} {sym}{region.price}
+              İtibaren {sym}{region.price}
             </div>
           )}
 
@@ -98,9 +91,9 @@ const TransferDestination: React.FC = () => {
         <section style={{ background: 'rgba(197,160,89,0.06)', borderBottom: '1px solid rgba(197,160,89,0.12)' }}>
           <div className="max-w-6xl mx-auto px-4 sm:px-5 py-5 grid grid-cols-3 gap-3 text-center">
             {[
-              { value: `${meta.distanceKm} km`, label: tTd('distance') || 'Havalimanına Mesafe' },
-              { value: `~${meta.durationMin} dk`, label: tTd('duration') || 'Transfer Süresi' },
-              { value: '7/24', label: tTd('service') || 'Hizmet' },
+              { value: `${meta.distanceKm} km`, label: 'Havalimanına Mesafe' },
+              { value: `~${meta.durationMin} dk`, label: 'Transfer Süresi' },
+              { value: '7/24', label: 'Hizmet' },
             ].map((item, i) => (
               <div key={i}>
                 <div className="text-lg sm:text-2xl font-black" style={{ color: '#c5a059' }}>{item.value}</div>
@@ -220,7 +213,7 @@ const TransferDestination: React.FC = () => {
               style={{ background: '#c5a059' }}
             >
               <i className="fa-solid fa-calendar-check text-sm" aria-hidden="true" />
-              {tTd('bookNow') || 'Hemen Rezervasyon Yap'}
+              Hemen Rezervasyon Yap
             </button>
 
             {/* WhatsApp */}
@@ -242,7 +235,7 @@ const TransferDestination: React.FC = () => {
                 className="w-full flex items-center justify-center gap-2 font-medium py-2.5 rounded-xl transition-colors text-white/60 hover:text-white text-sm"
                 style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
               >
-                <i className="fa-solid fa-phone text-xs" style={{ color: '#c5a059' }} aria-hidden="true"></i>
+                <i className="fa-solid fa-phone text-xs" style={{ color: '#c5a059' }} aria-hidden="true" />
                 {business.phone}
               </a>
             )}
@@ -277,7 +270,7 @@ const TransferDestination: React.FC = () => {
                 .map(r => (
                   <Link
                     key={r.id}
-                    href={`/${locale}/transfer/${slugify(r.name)}-transfer`}
+                    href={`/transfer/${slugify(r.name)}-transfer`}
                     className="flex items-center gap-2 text-white/45 hover:text-[#c5a059] text-sm py-1.5 transition-colors group"
                   >
                     <i className="fa-solid fa-location-dot text-[#c5a059]/40 group-hover:text-[#c5a059] text-[10px] transition-colors" aria-hidden="true"></i>
@@ -285,7 +278,7 @@ const TransferDestination: React.FC = () => {
                   </Link>
                 ))
               }
-              <Link href={`/${locale}/bolgeler`} className="flex items-center gap-1.5 text-sm py-1.5 font-bold uppercase tracking-wider transition-colors mt-2" style={{ color: '#c5a059', fontSize: '11px' }}>
+              <Link href="/bolgeler" className="flex items-center gap-1.5 text-sm py-1.5 font-bold uppercase tracking-wider transition-colors mt-2" style={{ color: '#c5a059', fontSize: '11px' }}>
                 Tüm Bölgeleri Gör
                 <i className="fa-solid fa-arrow-right text-[9px]" aria-hidden="true" />
               </Link>

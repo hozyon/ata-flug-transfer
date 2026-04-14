@@ -4,24 +4,19 @@ import React from 'react';
 import Image from 'next/image';
 
 import { useSiteContent } from '../SiteContext';
-import { useTranslations } from 'next-intl';
-import { useLanguage } from '../i18n/LanguageContext';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 
 const Hakkimizda: React.FC = () => {
     const { siteContent } = useSiteContent();
-    const t = useTranslations('about');
-    const tPage = useTranslations('page');
-    const { t: tCMS } = useLanguage();
     const about = siteContent.about;
     const business = siteContent.business;
 
     useScrollReveal();
 
     const features = [
-        { icon: "fa-shield-halved", title: t('feat1.title'), desc: t('feat1.desc') },
-        { icon: "fa-car", title: t('feat2.title'), desc: t('feat2.desc') },
-        { icon: "fa-headset", title: t('feat3.title'), desc: t('feat3.desc') },
+        { icon: "fa-shield-halved", title: "Güven ve Kalite", desc: "Uçuş takibi, zamanında karşılama ve güvenli seyahat garantisi." },
+        { icon: "fa-car", title: "Premium Filo", desc: "Mercedes-Benz Vito ve Sprinter araçlarla konforun tadını çıkarın." },
+        { icon: "fa-headset", title: "7/24 Destek", desc: "İhtiyaç duyduğunuz her an WhatsApp üzerinden anında iletişim." },
     ];
 
     return (
@@ -35,13 +30,13 @@ const Hakkimizda: React.FC = () => {
                 <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border border-white/10 mb-4 shadow-lg animate-in fade-in slide-in-from-bottom-3 duration-700">
                         <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse"></span>
-                        <span>{t('eyebrow')}</span>
+                        <span>KURUMSAL</span>
                     </div>
                     <h1 className="text-3xl sm:text-5xl md:text-7xl font-playfair font-medium text-white mb-6 tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 drop-shadow-2xl">
-                        {tPage('about.title')}
+                        Hakkımızda
                     </h1>
                     <p className="text-slate-300 text-lg md:text-xl font-light tracking-wide animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-                        {t('subtitle')}
+                        Antalya'nın En Prestijli VIP Transfer Hizmeti
                     </p>
                 </div>
             </section>
@@ -50,13 +45,13 @@ const Hakkimizda: React.FC = () => {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
                         <div className="pt-2 reveal-left">
-                            <h2 className="font-playfair font-bold text-slate-900 leading-tight mb-6" style={{ fontSize: 'clamp(1.6rem, 3vw, 2.5rem)' }}>{tCMS(about.title)}</h2>
+                            <h2 className="font-playfair font-bold text-slate-900 leading-tight mb-6" style={{ fontSize: 'clamp(1.6rem, 3vw, 2.5rem)' }}>{about.title}</h2>
                             <div className="text-slate-600 text-base leading-relaxed space-y-5 whitespace-pre-line border-l-2 pl-6" style={{ borderColor: 'rgba(197,160,89,0.4)' }}>
-                                {tCMS(about.content)}
+                                {about.content}
                             </div>
                             <div className="mt-8">
                                 <a href={`https://wa.me/${business.whatsapp}`} target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-3 font-semibold transition-colors hover:opacity-80" style={{ color: '#c5a059' }}>
-                                    <span>{t('contactCta')}</span>
+                                    <span>İletişime Geç</span>
                                     <i className="fa-solid fa-arrow-right text-sm transform group-hover:translate-x-1 transition-transform" aria-hidden="true"></i>
                                 </a>
                             </div>
@@ -67,7 +62,7 @@ const Hakkimizda: React.FC = () => {
                             </div>
                             <div className="absolute -bottom-8 -left-8 w-2/3 bg-white p-6 rounded-2xl hidden md:block shadow-lg border border-slate-100">
                                 <div className="font-playfair font-bold mb-1" style={{ color: '#c5a059', fontSize: '2rem' }}>VIP</div>
-                                <div className="text-slate-700 font-semibold uppercase tracking-widest text-xs">{t('transferService')}</div>
+                                <div className="text-slate-700 font-semibold uppercase tracking-widest text-xs">Transfer Hizmeti</div>
                             </div>
                         </div>
                     </div>

@@ -4,13 +4,9 @@ import React from 'react';
 import Image from 'next/image';
 
 import { useSiteContent } from '../SiteContext';
-import { useTranslations } from 'next-intl';
-import { useLanguage } from '../i18n/LanguageContext';
 
 const VizyonMisyon: React.FC = () => {
     const { siteContent } = useSiteContent();
-    const tVision = useTranslations('vision');
-    const { t } = useLanguage();
     const vm = siteContent.visionMission;
 
     return (
@@ -24,13 +20,13 @@ const VizyonMisyon: React.FC = () => {
                 <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border border-white/10 mb-4 shadow-lg animate-in fade-in slide-in-from-bottom-3 duration-700">
                         <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse"></span>
-                        <span>{tVision('eyebrow')}</span>
+                        <span>KURUMSAL</span>
                     </div>
                     <h1 className="text-3xl sm:text-5xl md:text-7xl font-playfair font-medium text-white mb-6 tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 drop-shadow-2xl">
-                        {t(vm?.hero?.title || 'Vizyon & Misyon')}
+                        {vm?.hero?.title || 'Vizyon & Misyon'}
                     </h1>
                     <p className="text-slate-300 text-lg md:text-xl font-light tracking-wide animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-                        {t(vm?.hero?.desc || 'Geleceğe bakışımız ve değerlerimiz.')}
+                        {vm?.hero?.desc || 'Geleceğe bakışımız ve değerlerimiz.'}
                     </p>
                 </div>
             </section>
@@ -45,14 +41,14 @@ const VizyonMisyon: React.FC = () => {
                                 <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-105" style={{ background: 'rgba(197,160,89,0.1)', border: '1px solid rgba(197,160,89,0.2)' }}>
                                     <i className="fa-solid fa-eye text-xl" style={{ color: '#c5a059' }} aria-hidden="true"></i>
                                 </div>
-                                <h2 className="font-playfair font-bold text-slate-900 mb-3 leading-snug group-hover:text-[var(--color-primary)] transition-colors" style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.75rem)' }}>{t(vm?.vision?.title || '')}</h2>
-                                <p className="text-slate-500 leading-relaxed text-sm mb-6">{t(vm?.vision?.desc || '')}</p>
+                                <h2 className="font-playfair font-bold text-slate-900 mb-3 leading-snug group-hover:text-[var(--color-primary)] transition-colors" style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.75rem)' }}>{vm?.vision?.title || ''}</h2>
+                                <p className="text-slate-500 leading-relaxed text-sm mb-6">{vm?.vision?.desc || ''}</p>
                                 <div className="space-y-3">
                                     {vm?.vision?.items?.map((item, idx) => (
                                         item ? (
                                             <div key={idx} className="flex items-center gap-3 p-3 rounded-xl transition-colors duration-200" style={{ background: '#f8f7f4' }}>
                                                 <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(197,160,89,0.15)', color: '#c5a059' }}><i className="fa-solid fa-check text-[10px]" aria-hidden="true"></i></div>
-                                                <span className="text-slate-600 text-sm font-medium">{t(item)}</span>
+                                                <span className="text-slate-600 text-sm font-medium">{item}</span>
                                             </div>
                                         ) : null
                                     ))}
@@ -67,14 +63,14 @@ const VizyonMisyon: React.FC = () => {
                                 <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-105" style={{ background: 'rgba(197,160,89,0.1)', border: '1px solid rgba(197,160,89,0.2)' }}>
                                     <i className="fa-solid fa-bullseye text-xl" style={{ color: '#c5a059' }} aria-hidden="true"></i>
                                 </div>
-                                <h2 className="font-playfair font-bold text-slate-900 mb-3 leading-snug group-hover:text-[var(--color-primary)] transition-colors" style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.75rem)' }}>{t(vm?.mission?.title || '')}</h2>
-                                <p className="text-slate-500 leading-relaxed text-sm mb-6">{t(vm?.mission?.desc || '')}</p>
+                                <h2 className="font-playfair font-bold text-slate-900 mb-3 leading-snug group-hover:text-[var(--color-primary)] transition-colors" style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.75rem)' }}>{vm?.mission?.title || ''}</h2>
+                                <p className="text-slate-500 leading-relaxed text-sm mb-6">{vm?.mission?.desc || ''}</p>
                                 <div className="space-y-3">
                                     {vm?.mission?.items?.map((item, idx) => (
                                         item ? (
                                             <div key={idx} className="flex items-center gap-3 p-3 rounded-xl transition-colors duration-200" style={{ background: '#f8f7f4' }}>
                                                 <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(197,160,89,0.15)', color: '#c5a059' }}><i className="fa-solid fa-check text-[10px]" aria-hidden="true"></i></div>
-                                                <span className="text-slate-600 text-sm font-medium">{t(item)}</span>
+                                                <span className="text-slate-600 text-sm font-medium">{item}</span>
                                             </div>
                                         ) : null
                                     ))}
@@ -90,11 +86,11 @@ const VizyonMisyon: React.FC = () => {
                     <div className="text-center mb-12">
                         <div className="flex items-center justify-center gap-4 mb-4">
                             <span className="flex-1 max-w-[72px] h-px" style={{ background: 'linear-gradient(90deg, transparent, #c5a059)' }} />
-                            <span className="text-[10px] font-black tracking-[0.35em] uppercase" style={{ color: '#c5a059' }}>{tVision('valuesEyebrow')}</span>
+                            <span className="text-[10px] font-black tracking-[0.35em] uppercase" style={{ color: '#c5a059' }}>HİZMET İLKELERİMİZ</span>
                             <span className="flex-1 max-w-[72px] h-px" style={{ background: 'linear-gradient(270deg, transparent, #c5a059)' }} />
                         </div>
-                        <h2 className="font-playfair font-bold text-slate-900 leading-tight" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.25rem)' }}>{t(vm?.values?.title || '')}</h2>
-                        <p className="text-slate-500 mt-2 max-w-2xl mx-auto text-sm">{t(vm?.values?.desc || '')}</p>
+                        <h2 className="font-playfair font-bold text-slate-900 leading-tight" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.25rem)' }}>{vm?.values?.title || ''}</h2>
+                        <p className="text-slate-500 mt-2 max-w-2xl mx-auto text-sm">{vm?.values?.desc || ''}</p>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
                         {vm?.values?.items?.map((valueItem, idx) => (
@@ -102,8 +98,8 @@ const VizyonMisyon: React.FC = () => {
                                 <div className="w-12 h-12 rounded-2xl mx-auto flex items-center justify-center text-xl mb-4 transition-all duration-200 group-hover:scale-105" style={{ background: 'rgba(197,160,89,0.1)', color: '#c5a059', border: '1px solid rgba(197,160,89,0.2)' }}>
                                     <i className={`fa-solid ${valueItem.icon}`}></i>
                                 </div>
-                                <h3 className="font-playfair font-bold text-slate-900 text-base mb-2 group-hover:text-[var(--color-primary)] transition-colors">{t(valueItem.title)}</h3>
-                                <p className="text-slate-500 leading-relaxed text-xs">{t(valueItem.desc)}</p>
+                                <h3 className="font-playfair font-bold text-slate-900 text-base mb-2 group-hover:text-[var(--color-primary)] transition-colors">{valueItem.title}</h3>
+                                <p className="text-slate-500 leading-relaxed text-xs">{valueItem.desc}</p>
                             </div>
                         ))}
                     </div>

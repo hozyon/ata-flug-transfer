@@ -2,17 +2,14 @@
 
 import React, { useEffect, useRef } from 'react';
 import { SiteProvider } from '../SiteContext';
-import { LanguageProvider } from '../i18n/LanguageContext';
 import { useAppStore } from '../store/useAppStore';
 import CookieConsentBanner from './CookieConsentBanner';
 import AuthProvider from './AuthProvider';
-import type { Locale } from '../../i18n';
 import type { SiteContent } from '../types';
 import { updateSiteContent } from '../app/actions/siteContent';
 
 interface AppProvidersProps {
     children: React.ReactNode;
-    locale: Locale;
     initialSiteContent: SiteContent;
 }
 
@@ -39,7 +36,7 @@ function ServiceWorkerRegistrar() {
     return null;
 }
 
-export default function AppProviders({ children, locale: _locale, initialSiteContent }: AppProvidersProps) {
+export default function AppProviders({ children, initialSiteContent }: AppProvidersProps) {
     // Hydrate store with server data on initialization
     const hasHydrated = useRef(false);
     if (!hasHydrated.current) {
@@ -50,15 +47,13 @@ export default function AppProviders({ children, locale: _locale, initialSiteCon
     const siteContent = useAppStore(s => s.siteContent);
 
     return (
-        <LanguageProvider>
-            <SiteProvider value={{ siteContent, updateSiteContent: async (content) => { await updateSiteContent(content); } }}>
-                <AuthProvider>
-                    <BrandColorSync />
-                    <ServiceWorkerRegistrar />
-                    {children}
-                    <CookieConsentBanner />
-                </AuthProvider>
-            </SiteProvider>
-        </LanguageProvider>
+        <SiteProvider value={{ siteContent, updateSiteContent: async (content) => { await updateSiteContent(content); } }}>
+            <AuthProvider>
+                <BrandColorSync />
+                <ServiceWorkerRegistrar />
+                {children}
+                <CookieConsentBanner />
+            </AuthProvider>
+        </SiteProvider>
     );
 }
