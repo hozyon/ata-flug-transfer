@@ -81,86 +81,51 @@ export default function HomePage({ blogPosts, userReviews }: HomePageProps) {
     return (
         <main className="min-h-screen bg-[#020617]">
             {/* ── Hero Section ── */}
-            <section className="relative h-[95vh] min-h-[700px] flex items-center justify-center overflow-hidden">
+            <section className="relative h-[90vh] min-h-[600px] flex items-center justify-center overflow-hidden">
                 {/* Background images with crossfade */}
                 {heroBgs.map((bg, idx) => (
-                    <div key={idx} className={`absolute inset-0 transition-opacity duration-[2000ms] ease-in-out ${idx === currentBgIndex ? 'opacity-100' : 'opacity-0'}`}>
-                        <Image src={bg} alt="Antalya VIP Transfer" fill priority={idx === 0} className="object-cover scale-105 animate-[slow-zoom_25s_infinite_alternate]" />
+                    <div key={idx} className={`absolute inset-0 transition-opacity duration-[2500ms] ease-in-out ${idx === currentBgIndex ? 'opacity-100' : 'opacity-0'}`}>
+                        <Image src={bg} alt="Antalya VIP Transfer" fill priority={idx === 0} className="object-cover scale-100 animate-[slow-zoom_30s_infinite_alternate]" />
                     </div>
                 ))}
                 
-                {/* Creative Overlays */}
-                <div className="absolute inset-0 bg-[#020617]/40" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-[#020617]/60" />
-                <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(197,160,89,0.3) 1px, transparent 0)', backgroundSize: '40px 40px' }} />
+                {/* Minimal Overlay */}
+                <div className="absolute inset-0 bg-[#020617]/30" />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#020617]/20 to-[#020617]" />
 
-                <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
-                    <div className="reveal text-center mb-10">
-                        <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-[#c5a059]/20 text-[#c5a059] text-[11px] font-black uppercase tracking-[0.3em] backdrop-blur-xl border border-[#c5a059]/30 mb-8 shadow-[0_0_40px_rgba(197,160,89,0.2)]">
-                            <span className="w-2 h-2 rounded-full bg-[#c5a059] shadow-[0_0_10px_#c5a059] animate-pulse"></span>
-                            PREMIUM ANTALYA VIP TRANSFER
+                <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
+                    <div className="reveal">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-[9px] font-bold uppercase tracking-[0.3em] backdrop-blur-md border border-white/10 mb-8">
+                            PREMIUM VIP SERVICE
                         </div>
-                        <h1 className="text-5xl sm:text-7xl md:text-9xl font-playfair font-medium text-white mb-8 tracking-tighter leading-[0.85]">
-                            <span className="block mb-2">Seyahatini</span>
-                            <span className="text-[#c5a059] italic">Sanata</span> Dönüştür
+                        <h1 className="text-5xl sm:text-7xl md:text-9xl font-playfair font-medium text-white mb-8 tracking-tighter leading-none">
+                            Zarafet <span className="text-[#c5a059] italic">&</span> Konfor
                         </h1>
-                        <p className="text-white/70 text-lg md:text-2xl max-w-2xl mx-auto mb-12 font-light tracking-wide leading-relaxed drop-shadow-lg">
-                            Antalya'nın en seçkin VIP transfer filosuyla, her kilometrede mutlak konfor ve zarafeti keşfedin.
+                        <p className="text-white/60 text-lg md:text-xl max-w-xl mx-auto mb-12 font-light tracking-wide leading-relaxed">
+                            Antalya Havalimanı'ndan dilediğiniz her noktaya lüks araç filomuzla ayrıcalıklı seyahat edin.
                         </p>
-                    </div>
-
-                    {/* Quick Action Dashboard */}
-                    <div className="reveal w-full max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-4 p-4 rounded-[2.5rem] bg-white/[0.03] border border-white/10 backdrop-blur-3xl shadow-2xl">
-                        <div className="flex flex-col gap-2 p-6 rounded-3xl bg-white/[0.05] border border-white/5 hover:bg-white/[0.08] transition-all group cursor-pointer" onClick={() => setBookingFormOpen(true)}>
-                            <div className="flex items-center justify-between">
-                                <i className="fa-solid fa-calendar-check text-[#c5a059] text-xl"></i>
-                                <i className="fa-solid fa-arrow-up-right text-white/20 group-hover:text-[#c5a059] transition-colors"></i>
-                            </div>
-                            <h3 className="text-white font-bold text-lg mt-4">Hemen Rezervasyon</h3>
-                            <p className="text-white/40 text-xs">Saniyeler içinde yerinizi ayırtın</p>
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                            <button onClick={() => setBookingFormOpen(true)} className="w-full sm:w-auto px-12 py-5 bg-[#c5a059] text-[#020617] font-bold rounded-full transition-all duration-500 hover:bg-white hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] uppercase tracking-widest text-[10px]">
+                                Rezervasyon Yap
+                            </button>
+                            <a href={`https://wa.me/${siteContent.business.whatsapp}`} target="_blank" rel="noopener noreferrer" className="text-white font-bold uppercase tracking-widest text-[10px] border-b border-white/20 pb-1 hover:text-[#c5a059] hover:border-[#c5a059] transition-all">
+                                WhatsApp İletişim
+                            </a>
                         </div>
-                        
-                        <div className="flex flex-col gap-2 p-6 rounded-3xl bg-white/[0.05] border border-white/5 hover:bg-white/[0.08] transition-all group cursor-pointer" onClick={() => {
-                            const regionsEl = document.getElementById('regions');
-                            regionsEl?.scrollIntoView({ behavior: 'smooth' });
-                        }}>
-                            <div className="flex items-center justify-between">
-                                <i className="fa-solid fa-map-location-dot text-[#c5a059] text-xl"></i>
-                                <i className="fa-solid fa-arrow-up-right text-white/20 group-hover:text-[#c5a059] transition-colors"></i>
-                            </div>
-                            <h3 className="text-white font-bold text-lg mt-4">Bölgeleri Keşfet</h3>
-                            <p className="text-white/40 text-xs">Popüler destinasyonlar ve fiyatlar</p>
-                        </div>
-
-                        <a href={`https://wa.me/${siteContent.business.whatsapp}`} target="_blank" rel="noopener noreferrer" 
-                           className="flex flex-col gap-2 p-6 rounded-3xl bg-[#25D366]/10 border border-[#25D366]/20 hover:bg-[#25D366]/20 transition-all group">
-                            <div className="flex items-center justify-between">
-                                <i className="fa-brands fa-whatsapp text-[#25D366] text-2xl"></i>
-                                <i className="fa-solid fa-arrow-up-right text-[#25D366]/40 group-hover:text-[#25D366] transition-colors"></i>
-                            </div>
-                            <h3 className="text-white font-bold text-lg mt-4">Canlı Destek</h3>
-                            <p className="text-[#25D366]/60 text-xs">7/24 WhatsApp hattımız aktif</p>
-                        </a>
                     </div>
                 </div>
 
-                {/* Trust bar overlay at bottom of hero */}
-                <div className="absolute bottom-8 left-0 right-0 z-20 pointer-events-none">
-                    <div className="max-w-7xl mx-auto px-6 flex items-center justify-between opacity-40">
-                        <div className="hidden md:flex items-center gap-12">
-                            <div className="flex items-center gap-3">
-                                <i className="fa-solid fa-shield-halved text-[#c5a059] text-xs"></i>
-                                <span className="text-white text-[10px] font-black uppercase tracking-[0.2em]">SABİT FİYAT</span>
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <i className="fa-solid fa-plane-arrival text-[#c5a059] text-xs"></i>
-                                <span className="text-white text-[10px] font-black uppercase tracking-[0.2em]">KARŞILAMA</span>
-                            </div>
+                {/* Refined trust bar */}
+                <div className="absolute bottom-12 left-0 right-0 z-20">
+                    <div className="max-w-7xl mx-auto px-6 flex items-center justify-center gap-12 md:gap-24 opacity-40">
+                        <div className="flex items-center gap-3 text-white text-[10px] font-black tracking-widest">
+                            <i className="fa-solid fa-shield-halved text-[#c5a059]"></i>
+                            <span>SABİT FİYAT</span>
                         </div>
-                        <div className="flex items-center gap-3 bg-white/5 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
-                            <i className="fa-solid fa-location-dot text-[#c5a059] text-xs"></i>
-                            <div className="w-[120px] overflow-hidden">
-                                <span key={currentRegionIndex} className={`block text-white text-[10px] font-black uppercase tracking-[0.15em] transition-all duration-700 ${isFading ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'}`}>
+                        <div className="flex items-center gap-3 text-white text-[10px] font-black tracking-widest">
+                            <i className="fa-solid fa-location-dot text-[#c5a059]"></i>
+                            <div className="w-[100px] overflow-hidden">
+                                <span key={currentRegionIndex} className={`block transition-all duration-700 ${isFading ? 'opacity-0 translate-y-1' : 'opacity-100 translate-y-0'}`}>
                                     {pricedRegions[currentRegionIndex]?.name || 'Antalya'}
                                 </span>
                             </div>
@@ -169,83 +134,49 @@ export default function HomePage({ blogPosts, userReviews }: HomePageProps) {
                 </div>
             </section>
 
-            {/* ── Pricing Section ── */}
+            {/* ── Pricing Section — COMPACT ── */}
             {pricedRegions.length > 0 && (
-                <section className="relative overflow-hidden py-24 md:py-32" style={{ background: 'linear-gradient(160deg, #080c16 0%, #0c1220 50%, #080c16 100%)' }}>
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[300px] opacity-[0.15]" style={{ background: 'radial-gradient(circle, #c5a059 0%, transparent 70%)' }} />
-                    <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="text-center mb-16 reveal">
-                            <div className="flex items-center justify-center gap-4 mb-6">
-                                <span className="w-12 h-px bg-[#c5a059]"></span>
-                                <span className="text-[11px] font-black tracking-[0.4em] uppercase text-[#c5a059]">TRANSFER ÜCRETLERİ</span>
-                                <span className="w-12 h-px bg-[#c5a059]"></span>
+                <section className="relative py-12 md:py-16 bg-[#080c16]">
+                    <div className="max-w-7xl mx-auto px-6">
+                        <div className="flex flex-col md:flex-row items-center justify-between gap-8 mb-10 reveal">
+                            <div className="text-center md:text-left">
+                                <h2 className="text-3xl md:text-4xl font-playfair font-medium text-white tracking-tight">
+                                    Transfer <span className="italic text-[#c5a059]">Fiyatları</span>
+                                </h2>
+                                <p className="text-white/30 text-xs mt-2">Havalimanı çıkışlı sabit, her şey dahil fiyatlar.</p>
                             </div>
-                            <h2 className="text-4xl md:text-6xl font-playfair font-medium text-white mb-6 tracking-tight">
-                                Şeffaf <span className="italic text-[#c5a059]">Fiyatlandırma</span>
-                            </h2>
-                            <p className="text-white/40 text-lg max-w-xl mx-auto font-light leading-relaxed">
-                                Antalya'nın her noktasına sabit fiyat garantisi. Kişi sayısından bağımsız, araç başı fiyatlar.
-                            </p>
-                        </div>
-
-                        <div className="max-w-2xl mx-auto mb-16 reveal">
-                            <div className="relative group">
-                                <i className="fa-solid fa-magnifying-glass absolute left-6 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-[#c5a059] transition-colors"></i>
+                            
+                            <div className="w-full md:w-80 relative group">
+                                <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-[#c5a059] transition-colors text-xs"></i>
                                 <input 
                                     type="text" 
                                     value={priceSearch} 
                                     onChange={e => setPriceSearch(e.target.value)} 
-                                    placeholder="Bölge adı veya destinasyon ara..." 
-                                    className="w-full pl-14 pr-6 py-5 bg-white/[0.03] border border-white/10 rounded-full text-white placeholder-white/20 focus:outline-none focus:border-[#c5a059]/40 focus:ring-4 focus:ring-[#c5a059]/5 transition-all backdrop-blur-xl shadow-2xl"
+                                    placeholder="Bölge ara..." 
+                                    className="w-full pl-10 pr-4 py-3 bg-white/[0.03] border border-white/10 rounded-full text-white text-sm focus:outline-none focus:border-[#c5a059]/40 transition-all"
                                 />
-                                {priceSearch && (
-                                    <button onClick={() => setPriceSearch('')} className="absolute right-6 top-1/2 -translate-y-1/2 text-white/30 hover:text-white transition-colors">
-                                        <i className="fa-solid fa-xmark text-lg"></i>
-                                    </button>
-                                )}
                             </div>
                         </div>
 
                         {activeGroups.length === 0 ? (
-                            <div className="text-center py-20 bg-white/[0.02] rounded-3xl border border-white/5">
-                                <i className="fa-solid fa-magnifying-glass text-white/5 text-5xl mb-6 block"></i>
-                                <p className="text-white/20 text-lg italic font-light">Aradığınız bölge için sonuç bulunamadı.</p>
-                            </div>
+                            <p className="text-white/20 text-center py-10 italic text-sm">Sonuç bulunamadı.</p>
                         ) : (
-                            <div className="space-y-12">
-                                {activeGroups.map(group => (
-                                    <div key={group.label} className="reveal">
-                                        <div className="flex items-center gap-4 mb-6">
-                                            <div className="w-2 h-2 rounded-full" style={{ background: group.accent, boxShadow: `0 0 10px ${group.accent}` }}></div>
-                                            <h3 className="text-[11px] font-black uppercase tracking-[0.35em]" style={{ color: group.accent }}>{group.label}</h3>
-                                            <div className="flex-1 h-px opacity-20" style={{ background: `linear-gradient(90deg, ${group.accent}, transparent)` }}></div>
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 reveal-stagger">
+                                {activeGroups.flatMap(g => g.regions).map(region => (
+                                    <a key={region.id} href={buildWaUrl(region.name, region.price)} target="_blank" rel="noopener noreferrer"
+                                        className="group p-4 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.05] hover:border-[#c5a059]/30 transition-all">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <span className="text-white/80 text-[13px] font-bold truncate pr-2 group-hover:text-[#c5a059] transition-colors">{region.name}</span>
+                                            <i className="fa-brands fa-whatsapp text-[#25D366]/40 text-xs opacity-0 group-hover:opacity-100 transition-opacity"></i>
                                         </div>
-                                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-                                            {group.regions.map(region => (
-                                                <a key={region.id} href={buildWaUrl(region.name, region.price)} target="_blank" rel="noopener noreferrer"
-                                                    className="group relative flex flex-col p-5 rounded-2xl bg-white/[0.02] border border-white/[0.05] hover:bg-white/[0.05] hover:border-[#c5a059]/30 transition-all duration-300">
-                                                    <div className="flex items-center justify-between mb-4">
-                                                        <i className="fa-solid fa-location-dot text-white/10 group-hover:text-[#c5a059] transition-colors"></i>
-                                                        <i className="fa-brands fa-whatsapp text-[#25D366]/40 opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                                                    </div>
-                                                    <span className="text-white/90 text-sm font-bold truncate mb-1">{region.name}</span>
-                                                    <span className="font-black text-xl leading-none" style={{ color: group.accent }}>{sym}{region.price}</span>
-                                                </a>
-                                            ))}
-                                        </div>
-                                    </div>
+                                        <span className="text-[#c5a059] font-black text-lg">{sym}{region.price}</span>
+                                    </a>
                                 ))}
                             </div>
                         )}
-
-                        <div className="mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-white/5">
-                            <div className="flex items-center gap-3">
-                                <i className="fa-solid fa-circle-info text-[#c5a059] opacity-50"></i>
-                                <p className="text-white/30 text-xs leading-relaxed">Fiyatlar araç başıdır, KDV dahildir. Ekstra durak veya güzergah değişikliği fiyatı etkileyebilir.</p>
-                            </div>
-                            <Link href={`/bolgeler`} className="px-8 py-3 rounded-full bg-white/5 hover:bg-[#c5a059] hover:text-[#020617] text-[#c5a059] text-[10px] font-black tracking-widest uppercase transition-all duration-500 border border-[#c5a059]/30">
-                                TÜM FİYATLARI GÖR
-                            </Link>
+                        
+                        <div className="mt-8 text-center reveal">
+                            <Link href="/bolgeler" className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] hover:text-[#c5a059] transition-colors border-b border-white/5 pb-1">Tüm Listeyi İncele</Link>
                         </div>
                     </div>
                 </section>
