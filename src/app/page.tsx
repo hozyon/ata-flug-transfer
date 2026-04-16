@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { fetchSiteContent, fetchReviews } from '../lib/supabase-server';
+import { fetchSiteContent, fetchBlogPosts, fetchReviews } from '../lib/supabase-server';
 import HomePage from '../components/HomePage';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -42,8 +42,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePageRoute() {
-    const [content, userReviews] = await Promise.all([
+    const [content, blogPosts, userReviews] = await Promise.all([
         fetchSiteContent(),
+        fetchBlogPosts(),
         fetchReviews()
     ]);
     const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://ata-flug-transfer.vercel.app';
@@ -82,7 +83,7 @@ export default async function HomePageRoute() {
             {businessSchema && (
                 <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(businessSchema) }} />
             )}
-            <HomePage userReviews={userReviews} />
+            <HomePage blogPosts={blogPosts} userReviews={userReviews} />
         </>
     );
 }

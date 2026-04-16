@@ -23,57 +23,49 @@ const Blog: React.FC<BlogProps> = ({ blogPosts }) => {
     );
 
     return (
-        <div className="min-h-screen bg-[#fafafa] pt-48 pb-32">
-            <div className="max-w-7xl mx-auto px-6">
-                {/* ── Header ── */}
-                <div className="text-center mb-24 reveal">
-                    <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-[#f8f7f4] text-[#c5a059] text-[10px] font-bold uppercase tracking-[0.3em] border border-black/5 mb-8 shadow-sm">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#c5a059] animate-pulse" />
-                        <span>KEŞİF REHBERİ</span>
-                    </div>
-                    <h1 className="text-5xl md:text-8xl font-playfair font-medium text-[#0a0a0a] mb-8 tracking-tighter leading-none">
-                        Antalya <span className="italic text-[#c5a059]">Günlükleri</span>
+        <div className="min-h-screen bg-[#020617] pt-32 pb-20">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Header */}
+                <div className="text-center mb-16">
+                    <h1 className="text-4xl md:text-6xl font-playfair font-bold text-white mb-6 tracking-tight">
+                        Antalya <span className="text-[#c5a059]">Keşif Rehberi</span>
                     </h1>
-                    <p className="text-[#666] text-lg md:text-xl font-light tracking-tight max-w-2xl mx-auto">
-                        Antalya'nın gizli kalmış rotalarından VIP seyahat ipuçlarına kadar her şey.
+                    <p className="text-slate-400 text-lg max-w-2xl mx-auto font-light leading-relaxed">
+                        Antalya'nın gizli kalmış koylarından en lezzetli restoranlarına, tarihi rotalardan gece hayatına kapsamlı bir yolculuk.
                     </p>
                 </div>
 
-                {/* ── Grid ── */}
+                {/* Grid */}
                 {publishedPosts.length === 0 ? (
-                    <div className="text-center py-32 bg-white rounded-[3rem] border border-black/[0.03] editorial-shadow reveal">
-                        <div className="w-20 h-20 rounded-full bg-[#fafafa] flex items-center justify-center mx-auto mb-8">
-                            <i className="fa-solid fa-newspaper text-2xl text-black/10"></i>
-                        </div>
-                        <p className="text-black/40 font-light italic">Henüz bir yazı paylaşılmadı.</p>
+                    <div className="text-center py-20 bg-white/5 rounded-3xl border border-white/10">
+                        <i className="fa-solid fa-newspaper text-5xl text-white/10 mb-4 block"></i>
+                        <p className="text-slate-500">Henüz yazı eklenmemiş.</p>
                     </div>
                 ) : (
                     <>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 reveal-stagger">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {currentPosts.map((post) => {
                                 return (
-                                    <Link key={post.id} href={`/blog/${post.slug}`} className="group flex flex-col transition-all duration-700">
-                                        <div className="relative aspect-[16/10] overflow-hidden rounded-[2rem] editorial-shadow-lg mb-8">
-                                            <Image src={post.featuredImage || '/bg1.webp'} alt={post.title} fill className="object-cover transition-transform duration-1000 group-hover:scale-110" />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                                            <span className="absolute top-6 left-6 text-[10px] font-bold text-white uppercase tracking-widest rounded-full px-4 py-1.5 bg-black/20 backdrop-blur-md border border-white/10">
+                                    <Link key={post.id} href={`/blog/${post.slug}`} className="group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-1 bg-white/[0.03] border border-white/[0.06] hover:border-[#c5a059]/30">
+                                        <div className="relative h-48 overflow-hidden">
+                                            <Image src={post.featuredImage || '/bg1.webp'} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-transparent to-transparent opacity-60"></div>
+                                            <span className="absolute bottom-3 left-4 text-[10px] font-bold text-white/90 rounded-full px-3 py-1 bg-[#c5a059]/20 border border-[#c5a059]/30 backdrop-blur-md">
                                                 {post.category}
                                             </span>
                                         </div>
-                                        <div className="flex-grow">
-                                            <h3 className="text-2xl font-playfair font-bold text-[#0a0a0a] mb-4 group-hover:text-[#c5a059] transition-colors leading-tight">{post.title}</h3>
-                                            <p className="text-[#666] text-sm font-light leading-relaxed line-clamp-3 mb-6">{post.excerpt}</p>
-                                            
-                                            <div className="flex items-center justify-between pt-6 border-t border-black/5">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-8 h-8 rounded-full bg-[#f8f7f4] flex items-center justify-center text-[10px] font-bold text-black/30 border border-black/5">
+                                        <div className="p-5">
+                                            <h3 className="text-base font-bold text-white mb-3 group-hover:text-[#c5a059] transition-colors leading-snug line-clamp-2">{post.title}</h3>
+                                            <p className="text-slate-400 text-xs leading-relaxed line-clamp-3 mb-4">{post.excerpt}</p>
+                                            <div className="flex items-center justify-between pt-4 border-t border-white/5">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold text-white/40">
                                                         {post.author.charAt(0)}
                                                     </div>
-                                                    <span className="text-[10px] font-black uppercase tracking-widest text-black/40">{post.author}</span>
+                                                    <span className="text-[10px] font-medium text-slate-500">{post.author}</span>
                                                 </div>
-                                                <div className="flex items-center gap-3 text-[#c5a059] group-hover:translate-x-2 transition-transform duration-500">
-                                                    <span className="text-[10px] font-black uppercase tracking-widest">Oku</span>
-                                                    <i className="fa-solid fa-arrow-right text-[10px]"></i>
+                                                <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#c5a059] uppercase tracking-widest">
+                                                    Oku <i className="fa-solid fa-arrow-right text-[8px]"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -82,12 +74,12 @@ const Blog: React.FC<BlogProps> = ({ blogPosts }) => {
                             })}
                         </div>
 
-                        {/* ── Pagination ── */}
+                        {/* Pagination */}
                         {totalPages > 1 && (
-                            <div className="mt-24 flex justify-center gap-3 reveal">
+                            <div className="mt-16 flex justify-center gap-2">
                                 {[...Array(totalPages)].map((_, i) => (
-                                    <button key={i} onClick={() => { setCurrentPage(i + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                                        className={`w-12 h-12 rounded-full font-bold text-xs transition-all ${currentPage === i + 1 ? 'bg-[#c5a059] text-white shadow-lg shadow-[#c5a059]/20' : 'bg-white border border-black/5 text-black hover:bg-black/5'}`}>
+                                    <button key={i} onClick={() => { setCurrentPage(i + 1); window.scrollTo(0, 0); }}
+                                        className={`w-10 h-10 rounded-xl font-bold text-sm transition-all ${currentPage === i + 1 ? 'bg-[#c5a059] text-[#020617] shadow-lg shadow-[#c5a059]/20' : 'bg-white/5 text-slate-500 hover:bg-white/10 hover:text-white border border-white/5'}`}>
                                         {i + 1}
                                     </button>
                                 ))}
