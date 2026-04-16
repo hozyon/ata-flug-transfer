@@ -2,6 +2,7 @@ import '../index.css';
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import AppProviders from '../components/AppProviders';
+import SiteShell from '../components/SiteShell';
 import { montserrat, outfit, playfair } from '../lib/fonts';
 import { fetchSiteContent } from '../lib/supabase-server';
 
@@ -74,7 +75,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </head>
             <body suppressHydrationWarning>
                 <AppProviders initialSiteContent={siteContent}>
-                    {children}
+                    <SiteShell>
+                        {children}
+                    </SiteShell>
                 </AppProviders>
                 {GA_ID && (
                     <>
