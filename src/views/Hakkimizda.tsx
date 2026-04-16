@@ -20,69 +20,95 @@ const Hakkimizda: React.FC = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50">
-            {/* SEO handled by generateMetadata() in page.tsx */}
-            <section className="relative pt-28 pb-14 flex items-center justify-center overflow-hidden border-b border-white/5">
+        <div className="min-h-screen bg-[#fafafa]">
+            {/* ── Editorial Banner ── */}
+            <section className="relative pt-48 pb-24 flex items-center justify-center overflow-hidden bg-white">
                 <div className="absolute inset-0 z-0">
-                    <Image src={about.bannerImage || "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=2000"} alt="Antalya Luxury" fill sizes="100vw" priority className="object-cover" />
-                    <div className="absolute inset-0 bg-slate-900/80"></div>
+                    <Image 
+                        src={about.bannerImage || "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=2000"} 
+                        alt="Antalya Luxury" 
+                        fill 
+                        sizes="100vw" 
+                        priority 
+                        className="object-cover opacity-15" 
+                    />
                 </div>
-                <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border border-white/10 mb-4 shadow-lg animate-in fade-in slide-in-from-bottom-3 duration-700">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse"></span>
-                        <span>KURUMSAL</span>
+                <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
+                    <div className="reveal">
+                        <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-[#f8f7f4] text-[#c5a059] text-[10px] font-bold uppercase tracking-[0.3em] border border-black/5 mb-8 shadow-sm">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#c5a059] animate-pulse"></span>
+                            <span>HİKAYEMİZ</span>
+                        </div>
+                        <h1 className="text-5xl md:text-8xl font-playfair font-medium text-[#0a0a0a] mb-8 tracking-tighter leading-none">
+                            Hakkımızda
+                        </h1>
+                        <p className="text-[#666] text-lg md:text-2xl font-light tracking-tight max-w-2xl mx-auto">
+                            Antalya'nın en prestijli VIP transfer deneyimini keşfedin.
+                        </p>
                     </div>
-                    <h1 className="text-3xl sm:text-5xl md:text-7xl font-playfair font-medium text-white mb-6 tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 drop-shadow-2xl">
-                        Hakkımızda
-                    </h1>
-                    <p className="text-slate-300 text-lg md:text-xl font-light tracking-wide animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-                        Antalya'nın En Prestijli VIP Transfer Hizmeti
-                    </p>
                 </div>
             </section>
 
-            <section className="py-16 md:py-24 relative z-20 overflow-hidden" style={{ background: '#f8f7f4' }}>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-                        <div className="pt-2 reveal-left">
-                            <h2 className="font-playfair font-bold text-slate-900 leading-tight mb-6" style={{ fontSize: 'clamp(1.6rem, 3vw, 2.5rem)' }}>{about.title}</h2>
-                            <div className="text-slate-600 text-base leading-relaxed space-y-5 whitespace-pre-line border-l-2 pl-6" style={{ borderColor: 'rgba(197,160,89,0.4)' }}>
+            {/* ── Content Section ── */}
+            <section className="py-24 md:py-32 relative z-20">
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-start">
+                        <div className="lg:col-span-6 reveal">
+                            <h2 className="text-4xl md:text-6xl font-playfair font-medium text-[#0a0a0a] leading-[1.1] tracking-tight mb-10">
+                                {about.title}
+                            </h2>
+                            <div className="text-[#444] text-lg font-light leading-relaxed space-y-8 whitespace-pre-line border-l border-[#c5a059]/30 pl-10">
                                 {about.content}
                             </div>
-                            <div className="mt-8">
-                                <a href={`https://wa.me/${business.whatsapp}`} target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-3 font-semibold transition-colors hover:opacity-80" style={{ color: '#c5a059' }}>
-                                    <span>İletişime Geç</span>
-                                    <i className="fa-solid fa-arrow-right text-sm transform group-hover:translate-x-1 transition-transform" aria-hidden="true"></i>
+                            <div className="mt-12">
+                                <a 
+                                    href={`https://wa.me/${business.whatsapp}`} 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className="group inline-flex items-center gap-4 text-xs font-bold uppercase tracking-[0.25em] text-[#c5a059] transition-all hover:opacity-80 border-b border-[#c5a059]/20 pb-2 hover:border-[#c5a059]"
+                                >
+                                    <span>Hemen İletişime Geç</span>
+                                    <i className="fa-solid fa-arrow-right text-[10px] transform group-hover:translate-x-2 transition-transform"></i>
                                 </a>
                             </div>
                         </div>
-                        <div className="relative reveal">
-                            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-xl border border-slate-200">
-                                <Image src={about.image || '/images/about-custom.jpg'} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover hover:scale-105 transition-transform duration-700" alt="About Us Feature" />
+                        
+                        <div className="lg:col-span-6 relative reveal">
+                            <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden editorial-shadow-lg border border-black/5">
+                                <Image 
+                                    src={about.image || '/images/about-custom.jpg'} 
+                                    fill 
+                                    sizes="(max-width: 768px) 100vw, 50vw" 
+                                    className="object-cover transition-transform duration-1000 hover:scale-105" 
+                                    alt="About Us Feature" 
+                                />
                             </div>
-                            <div className="absolute -bottom-8 -left-8 w-2/3 bg-white p-6 rounded-2xl hidden md:block shadow-lg border border-slate-100">
-                                <div className="font-playfair font-bold mb-1" style={{ color: '#c5a059', fontSize: '2rem' }}>VIP</div>
-                                <div className="text-slate-700 font-semibold uppercase tracking-widest text-xs">Transfer Hizmeti</div>
+                            {/* Floating Accents */}
+                            <div className="absolute -bottom-10 -left-10 w-2/3 bg-white p-10 rounded-[2rem] hidden md:block editorial-shadow-lg border border-black/5">
+                                <div className="text-[10px] font-black uppercase tracking-[0.3em] text-[#c5a059] mb-4">PRESTİJ</div>
+                                <h3 className="text-3xl font-playfair font-medium text-[#0a0a0a] mb-2 leading-none">VIP Hizmet</h3>
+                                <p className="text-[#666] text-xs font-light uppercase tracking-widest">Kusursuz Transfer</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section className="py-16 md:py-20 bg-[var(--color-dark)]">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 stagger-children">
+            {/* ── Features Section ── */}
+            <section className="py-24 md:py-32 bg-white">
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12 reveal-stagger">
                         {features.map((feature, idx) => (
-                            <div key={idx} className="reveal rounded-2xl p-6 border transition-all duration-300 group hover:-translate-y-1 cursor-default" style={{ borderColor: 'rgba(255,255,255,0.07)', background: 'rgba(255,255,255,0.03)' }}
-                                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(197,160,89,0.35)'; (e.currentTarget as HTMLDivElement).style.background = 'rgba(197,160,89,0.04)'; }}
-                                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,255,255,0.07)'; (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)'; }}>
-                                <div className="flex flex-col items-center text-center gap-3">
-                                    <div className="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-1 transition-all duration-300 group-hover:scale-110" style={{ background: 'rgba(197,160,89,0.12)', color: '#c5a059', border: '1px solid rgba(197,160,89,0.25)' }}>
-                                        <i className={`fa-solid ${feature.icon}`}></i>
-                                    </div>
-                                    <h3 className="font-playfair font-bold text-white text-base group-hover:text-[#c5a059] transition-colors">{feature.title}</h3>
-                                    <p className="text-white/40 text-sm leading-relaxed">{feature.desc}</p>
+                            <div key={idx} className="flex flex-col items-center text-center group">
+                                <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl mb-8 bg-[#fafafa] text-[#c5a059] border border-black/[0.03] transition-all duration-500 group-hover:bg-[#c5a059] group-hover:text-white group-hover:editorial-shadow">
+                                    <i className={`fa-solid ${feature.icon}`}></i>
                                 </div>
+                                <h3 className="text-xl font-bold text-[#0a0a0a] mb-4 tracking-tight group-hover:text-[#c5a059] transition-colors">
+                                    {feature.title}
+                                </h3>
+                                <p className="text-[#666] text-sm font-light leading-relaxed max-w-[280px]">
+                                    {feature.desc}
+                                </p>
                             </div>
                         ))}
                     </div>
