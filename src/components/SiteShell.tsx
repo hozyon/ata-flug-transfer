@@ -7,7 +7,6 @@ import BookingForm from './BookingForm';
 import { useAppStore } from '../store/useAppStore';
 import { createClient } from '../utils/supabase/client';
 import { isSupabaseConfigured } from '../lib/supabase';
-import { addBooking } from '../app/actions/bookings';
 
 export default function SiteShell({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
