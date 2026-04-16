@@ -246,9 +246,17 @@
 /* Dark form input placeholder color */
 .iletisim-input::placeholder { color: rgba(255,255,255,0.2); }
 
-@keyframes hozyonPulse {
-  0%, 100% { text-shadow: 0 0 6px rgba(197,160,89,0.6), 0 0 16px rgba(197,160,89,0.3); opacity: 0.85; }
-  50%       { text-shadow: 0 0 12px rgba(197,160,89,0.95), 0 0 32px rgba(197,160,89,0.55), 0 0 60px rgba(197,160,89,0.2); opacity: 1; }
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 60s linear infinite;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
 }
 
 @layer utilities {
