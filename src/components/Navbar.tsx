@@ -37,6 +37,10 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
     excerpt: row.excerpt || '',
     category: row.category || '',
     tags: row.tags || [],
+    content: row.content || '',
+    featuredImage: row.featuredImage || '',
+    author: row.author || 'Müşteri Hizmetleri',
+    isPublished: row.isPublished ?? true,
   })) || [];
 
   const pathname = usePathname();
