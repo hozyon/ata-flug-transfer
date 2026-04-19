@@ -135,7 +135,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
     setTimeout(() => setShowToast(false), 4000);
   };
 
-  const card = "border border-gray-200 bg-transparent px-5 py-4 min-h-[64px] focus-within:border-gray-900 transition-colors duration-300";
+  const card = "border border-gray-200 bg-white px-5 py-4 min-h-[64px] focus-within:border-gray-900 shadow-sm transition-all duration-300";
   const lbl = "block text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2";
   const inp = "w-full bg-transparent border-none outline-none text-base text-gray-900 font-medium placeholder-gray-300 font-outfit";
   const errTxt = "text-red-500 text-[10px] mt-2 font-medium tracking-wide uppercase";
@@ -173,7 +173,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
         {/* STEP 0 — Rota */}
         {step === 0 && (
           <div className="space-y-4 animate-in fade-in zoom-in-95 duration-500">
-            <div className="relative border border-gray-200 bg-white">
+            <div className="relative border border-gray-200 bg-white shadow-sm">
               <div className="px-6 py-5 border-b border-gray-100">
                 <label htmlFor="bf-pickup" className={lbl}>Nereden</label>
                 <select id="bf-pickup" name="pickup" value={formData.pickup} onChange={handleChange}
@@ -260,8 +260,8 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
                   onClick={() => setFormData(prev => ({ ...prev, vehicleId: v.id }))}
                   className={`w-full flex items-center justify-between px-6 py-5 border transition-all duration-300 text-left ${
                     formData.vehicleId === v.id
-                      ? 'border-gray-900 bg-[var(--color-surface-alt)] shadow-sm'
-                      : 'border-gray-200 bg-transparent hover:border-gray-400'
+                      ? 'border-gray-900 bg-[#fefefe] shadow-sm'
+                      : 'border-gray-200 bg-white hover:border-gray-400'
                   }`}
                 >
                   <div>
@@ -301,7 +301,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
 
         {/* STEP 3 — Özet */}
         {step === 3 && (
-          <div className="border border-gray-200 bg-transparent animate-in fade-in zoom-in-95 duration-500">
+          <div className="border border-gray-200 bg-white shadow-sm animate-in fade-in zoom-in-95 duration-500">
             <div className="p-8 border-b border-gray-200">
               <div className="flex justify-between items-start mb-8">
                 <span className="text-[9px] font-black uppercase tracking-[0.25em] text-gray-400">Menşei • İstikamet</span>

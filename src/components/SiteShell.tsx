@@ -122,7 +122,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
             {/* Full Screen Booking Overlay */}
             {isBookingFormOpen && (
                 <div className="fixed inset-0 z-[500] flex">
-                    <div className="absolute inset-0 bg-white/95 backdrop-blur-3xl transition-all duration-500 animate-in fade-in" />
+                    <div className="absolute inset-0 bg-[#f8f8f8] transition-all duration-500 animate-in fade-in" />
                     
                     <div className="relative w-full h-full max-w-[800px] mx-auto flex flex-col pt-12 sm:pt-20 px-4 sm:px-12 animate-in slide-in-from-bottom-20 fade-in duration-700 ease-out">
                         <div className="flex justify-between items-center mb-10 shrink-0">
@@ -130,7 +130,7 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
                                 <p className="text-[var(--color-text-muted)] text-[10px] uppercase tracking-[0.2em] mb-2 font-bold">Rezervasyon</p>
                                 <h3 className="text-[var(--color-text)] font-playfair font-medium text-4xl sm:text-5xl tracking-tight">VIP Transfer</h3>
                             </div>
-                            <button onClick={() => setBookingFormOpen(false)} className="w-12 h-12 rounded-none flex items-center justify-center bg-[var(--color-surface-alt)] text-[var(--color-text)] hover:bg-gray-100 transition-colors">
+                            <button onClick={() => setBookingFormOpen(false)} className="w-12 h-12 rounded-none flex items-center justify-center bg-white border border-gray-200 text-gray-900 shadow-sm hover:bg-gray-50 transition-all active:scale-95">
                                 <i className="fa-solid fa-xmark text-xl"></i>
                             </button>
                         </div>
