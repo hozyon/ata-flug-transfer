@@ -240,7 +240,7 @@ export default function HomePage({ blogPosts, userReviews }: HomePageProps) {
             )}
 
             {/* ── FOOTER SVG JOURNEY & CALL TO ACTION ── */}
-            <section className="relative pt-16 pb-0 bg-white text-[#111] flex flex-col items-center justify-center text-center px-6 overflow-hidden border-t border-gray-100">
+            <section className="relative pt-16 pb-16 bg-white text-[#111] flex flex-col items-center justify-center text-center px-6 border-t border-gray-100">
                 <style>{`
                     @keyframes flowGreen {
                         0% { stroke-dashoffset: 20; opacity: 0; }
@@ -256,6 +256,14 @@ export default function HomePage({ blogPosts, userReviews }: HomePageProps) {
                         stroke-dasharray: 20 100;
                         animation: flowGreen 2.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
                     }
+                    .btn-elegant-glow {
+                        animation: elegantGlow 2.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+                    }
+                    @keyframes elegantGlow {
+                        0% { box-shadow: 0 10px 30px -10px rgba(34, 197, 94, 0.2); }
+                        50% { box-shadow: 0 10px 40px 0px rgba(34, 197, 94, 0.6); }
+                        100% { box-shadow: 0 10px 30px -10px rgba(34, 197, 94, 0.2); }
+                    }
                 `}</style>
                 
                 <div className="reveal max-w-3xl mb-16 z-10 relative">
@@ -267,7 +275,7 @@ export default function HomePage({ blogPosts, userReviews }: HomePageProps) {
                     </p>
                 </div>
 
-                <div className="w-full max-w-4xl mx-auto relative mb-6 reveal" style={{ minHeight: '300px' }}>
+                <div className="w-full max-w-4xl mx-auto relative reveal" style={{ minHeight: '300px' }}>
                     <svg viewBox="0 0 1000 400" className="w-full h-auto overflow-visible">
                         {[ 
                             { x: 150, i: 'fa-plane' }, 
@@ -298,29 +306,18 @@ export default function HomePage({ blogPosts, userReviews }: HomePageProps) {
                         ))}
                     </svg>
 
-                    {/* Animated Button positioned slightly below the root node to avoid covering the tip */}
-                    <div className="absolute left-1/2 top-[95%] transform -translate-x-1/2 translate-y-6 z-20">
+                    {/* Animated Button positioned slightly below the root node */}
+                    <div className="absolute left-1/2 top-[95%] transform -translate-x-1/2 translate-y-2 z-20">
                         <button 
                             onClick={() => setBookingFormOpen(true)} 
-                            className="relative px-10 py-5 bg-[var(--color-primary)] text-white text-[10px] font-bold uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:brightness-110 transition-all border border-transparent btn-glow-effect overflow-hidden group"
+                            className="relative px-12 py-5 bg-[#111] text-white text-[10px] font-bold uppercase tracking-[0.2em] hover:-translate-y-1 transition-transform btn-elegant-glow group overflow-hidden"
                         >
-                            <span className="relative z-10">Rezervasyon Yap</span>
+                            <span className="relative z-10 block transition-transform group-hover:scale-105">Rezervasyon Yap</span>
                             {/* Matching green flow light passing through the button */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#22c55e] to-transparent opacity-30 transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#22c55e] to-transparent opacity-20 transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                         </button>
                     </div>
                 </div>
-
-                <style>{`
-                    .btn-glow-effect {
-                        animation: buttonGlow 2.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
-                    }
-                    @keyframes buttonGlow {
-                        0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
-                        40% { box-shadow: 0 0 0 25px rgba(34, 197, 94, 0); }
-                        100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
-                    }
-                `}</style>
             </section>
             
         </main>
