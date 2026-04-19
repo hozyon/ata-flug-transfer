@@ -21,7 +21,7 @@ const VizyonMisyon: React.FC = () => {
             </section>
 
             {/* ── CORE ── */}
-            <section className="py-24 sm:py-32 border-b border-gray-100">
+            <section className="py-12 sm:py-16 border-b border-gray-100">
                 <div className="max-w-[1400px] mx-auto px-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-32">
                         {/* VİZYON */}
@@ -60,7 +60,7 @@ const VizyonMisyon: React.FC = () => {
             </section>
 
             {/* ── VALUES ── */}
-            <section className="py-24 sm:py-32 bg-[#fafafa]">
+            <section className="py-12 sm:py-16 bg-[#fafafa]">
                 <div className="max-w-[1400px] mx-auto px-6">
                     <div className="mb-20 reveal">
                         <h2 className="text-5xl font-playfair font-medium text-[#111] tracking-tight">{vm?.values?.title || 'Hizmet İlkelerimiz.'}</h2>

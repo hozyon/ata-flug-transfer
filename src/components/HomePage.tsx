@@ -240,7 +240,7 @@ export default function HomePage({ blogPosts, userReviews }: HomePageProps) {
             )}
 
             {/* ── FOOTER SVG JOURNEY & CALL TO ACTION ── */}
-            <section className="relative pt-16 pb-24 bg-[#333333] text-white flex flex-col items-center justify-center text-center px-6 overflow-hidden">
+            <section className="relative pt-16 pb-0 bg-white text-[#111] flex flex-col items-center justify-center text-center px-6 overflow-hidden border-t border-gray-100">
                 <style>{`
                     @keyframes flowGreen {
                         0% { stroke-dashoffset: 20; opacity: 0; }
@@ -262,12 +262,12 @@ export default function HomePage({ blogPosts, userReviews }: HomePageProps) {
                     <h2 className="text-4xl sm:text-5xl font-outfit font-light tracking-wide mb-6">
                         Her Noktaya <span className="text-[var(--color-primary)] font-medium">Konforlu</span> Transfer
                     </h2>
-                    <p className="text-gray-400 text-sm sm:text-base font-outfit leading-relaxed max-w-lg mx-auto">
+                    <p className="text-gray-500 text-sm sm:text-base font-outfit leading-relaxed max-w-lg mx-auto">
                         Havalimanından otellere, plajlardan alışveriş merkezlerine kadar Antalya'nın her noktasına VIP ulaşım
                     </p>
                 </div>
 
-                <div className="w-full max-w-4xl mx-auto relative mb-32 reveal" style={{ minHeight: '300px' }}>
+                <div className="w-full max-w-4xl mx-auto relative mb-6 reveal" style={{ minHeight: '300px' }}>
                     <svg viewBox="0 0 1000 400" className="w-full h-auto overflow-visible">
                         {[ 
                             { x: 150, i: 'fa-plane' }, 
@@ -280,7 +280,7 @@ export default function HomePage({ blogPosts, userReviews }: HomePageProps) {
                             <g key={idx}>
                                 <path 
                                     d={`M 500 380 C 500 240, ${item.x} 240, ${item.x} 100`} 
-                                    stroke="rgba(255,255,255,0.15)" 
+                                    stroke="rgba(0,0,0,0.08)" 
                                     strokeWidth="2" 
                                     fill="none" 
                                 />
@@ -290,7 +290,7 @@ export default function HomePage({ blogPosts, userReviews }: HomePageProps) {
                                     pathLength="100"
                                 />
                                 <foreignObject x={item.x - 20} y={40} width={40} height={40}>
-                                    <div className="flex items-center justify-center w-full h-full text-3xl text-white">
+                                    <div className="flex items-center justify-center w-full h-full text-3xl text-[#333]">
                                         <i className={`fa-solid ${item.i}`}></i>
                                     </div>
                                 </foreignObject>
@@ -298,11 +298,11 @@ export default function HomePage({ blogPosts, userReviews }: HomePageProps) {
                         ))}
                     </svg>
 
-                    {/* Animated Button positioned exactly at the root node of the SVG (x=500, y=380 is left 50%, top 95%) */}
-                    <div className="absolute left-1/2 top-[95%] transform -translate-x-1/2 -translate-y-1/2 z-20">
+                    {/* Animated Button positioned slightly below the root node to avoid covering the tip */}
+                    <div className="absolute left-1/2 top-[95%] transform -translate-x-1/2 translate-y-6 z-20">
                         <button 
                             onClick={() => setBookingFormOpen(true)} 
-                            className="relative px-10 py-5 bg-[var(--color-primary)] text-[#111] text-[10px] font-bold uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:brightness-110 transition-all border border-transparent btn-glow-effect overflow-hidden group"
+                            className="relative px-10 py-5 bg-[var(--color-primary)] text-white text-[10px] font-bold uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:brightness-110 transition-all border border-transparent btn-glow-effect overflow-hidden group"
                         >
                             <span className="relative z-10">Rezervasyon Yap</span>
                             {/* Matching green flow light passing through the button */}

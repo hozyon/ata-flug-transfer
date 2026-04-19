@@ -33,7 +33,7 @@ const Hakkimizda: React.FC = () => {
             </section>
 
             {/* ── MAIN ── */}
-            <section className="py-24 sm:py-32">
+            <section className="py-12 sm:py-16">
                 <div className="max-w-[1400px] mx-auto px-6">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
                         <div className="lg:col-span-5 reveal-left">
@@ -65,7 +65,7 @@ const Hakkimizda: React.FC = () => {
             </section>
 
             {/* ── FEATURES ── */}
-            <section className="py-32 bg-[#fafafa] border-t border-gray-100">
+            <section className="py-16 bg-[#fafafa] border-t border-gray-100">
                 <div className="max-w-[1400px] mx-auto px-6">
                     <div className="text-center mb-24 reveal">
                         <h2 className="text-5xl font-playfair font-medium tracking-tight">Kusursuz Seçim</h2>

@@ -84,7 +84,7 @@ const TransferDestination: React.FC = () => {
       )}
 
       {/* ── Main Content ── */}
-      <section className="max-w-[1400px] mx-auto px-6 py-24 sm:py-32 grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
+      <section className="max-w-[1400px] mx-auto px-6 py-12 sm:py-16 grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
         
         {/* Left: Content */}
         <div className="lg:col-span-8 space-y-24">

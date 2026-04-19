@@ -33,9 +33,9 @@ const Blog: React.FC<BlogProps> = ({ blogPosts }) => {
                 </div>
             </section>
 
-            <div className="max-w-[1400px] mx-auto px-6 py-24 sm:py-32">
+            <div className="max-w-[1400px] mx-auto px-6 py-12 sm:py-16">
                 {publishedPosts.length === 0 ? (
-                    <div className="text-center py-32 border-t border-b border-gray-100 reveal">
+                    <div className="text-center py-16 border-t border-b border-gray-100 reveal">
                         <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#888]">Henüz Günce Eklenmedi.</p>
                     </div>
                 ) : (

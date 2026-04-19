@@ -103,10 +103,21 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
                 href={`https://wa.me/${siteContent.business.whatsapp}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="fixed bottom-6 left-6 z-[90] w-14 h-14 rounded-none bg-[var(--color-text)] text-white flex items-center justify-center hover:bg-[#25D366] transition-all duration-500 shadow-xl"
+                className="fixed bottom-6 left-6 z-[90] w-16 h-16 rounded-full bg-[#25D366] text-white flex items-center justify-center transition-all duration-500 shadow-[0_0_20px_rgba(37,211,102,0.5)] whatsapp-float-pulse"
             >
-                <i className="fa-brands fa-whatsapp text-2xl"></i>
+                <i className="fa-brands fa-whatsapp text-3xl"></i>
             </a>
+
+            <style>{`
+                @keyframes whatsappPulse {
+                    0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.8); }
+                    70% { box-shadow: 0 0 0 25px rgba(37, 211, 102, 0); }
+                    100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+                }
+                .whatsapp-float-pulse {
+                    animation: whatsappPulse 2s infinite;
+                }
+            `}</style>
 
             {/* Full Screen Booking Overlay */}
             {isBookingFormOpen && (

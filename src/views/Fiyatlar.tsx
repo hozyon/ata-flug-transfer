@@ -31,7 +31,7 @@ const Fiyatlar: React.FC = () => {
             </section>
 
             {/* Search + Grid */}
-            <section className="py-24 sm:py-32 bg-white">
+            <section className="py-12 sm:py-16 bg-white">
                 <div className="max-w-[1400px] mx-auto px-6">
                     
                     <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-10 mb-20 reveal">
@@ -88,7 +88,7 @@ const Fiyatlar: React.FC = () => {
             </section>
 
             {/* CTA */}
-            <section className="py-32 font-outfit bg-[#111]">
+            <section className="py-16 font-outfit bg-[#111]">
                 <div className="max-w-[1400px] mx-auto px-6 text-center reveal text-white">
                     <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#888] mb-6">Concierge Talebi</p>
                     <h2 className="text-5xl sm:text-7xl font-playfair font-medium tracking-tight mb-8">Farklı Bir İhtiyacınız mı Var?</h2>

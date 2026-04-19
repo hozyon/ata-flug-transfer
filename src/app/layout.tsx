@@ -28,6 +28,10 @@ export async function generateMetadata(): Promise<Metadata> {
         keywords: pageSeo?.keywords || seo?.siteKeywords,
         metadataBase: new URL(baseUrl),
         manifest: '/manifest.json',
+        icons: {
+            icon: content?.branding?.favicon || '/favicon.ico',
+            apple: content?.branding?.favicon || '/apple-touch-icon.png',
+        },
         robots: seo?.robotsDirective || 'index, follow',
         alternates: {
             canonical: baseUrl,

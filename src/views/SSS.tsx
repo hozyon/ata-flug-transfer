@@ -25,7 +25,7 @@ const SSS: React.FC = () => {
             </section>
 
             {/* ── FAQ ACCORDION ── */}
-            <section className="py-24 sm:py-32">
+            <section className="py-12 sm:py-16">
                 <div className="max-w-[1000px] mx-auto px-6">
                     <div className="border-t border-[#111] reveal">
                         {faqs.map((faq) => (
@@ -51,7 +51,7 @@ const SSS: React.FC = () => {
             </section>
 
             {/* ── SUPPORT CONTACT ── */}
-            <section className="py-32 bg-[#fafafa]">
+            <section className="py-16 bg-[#fafafa]">
                 <div className="max-w-[1400px] mx-auto px-6">
                     <div className="text-center mb-24 reveal">
                         <h2 className="text-4xl sm:text-5xl font-playfair font-medium text-[#111]">Başka Bir Sorunuz mu Var?</h2>
