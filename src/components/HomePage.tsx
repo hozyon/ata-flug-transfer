@@ -24,11 +24,6 @@ export default function HomePage({ blogPosts, userReviews }: HomePageProps) {
         return published.slice(0, 4);
     }, [blogPosts]);
 
-    const buildWaUrl = (regionName: string, price?: number) => {
-        const msg = `Merhaba, *${regionName}* (${price || 0}${siteContent.currency?.symbol || '€'}) bölgesi için rezervasyon yaptırmak istiyorum.`;
-        return `https://wa.me/${siteContent.business.whatsapp}?text=${encodeURIComponent(msg)}`;
-    };
-
     const pricedRegions = useMemo(() => siteContent.regions.filter(r => r.price && r.price > 0), [siteContent.regions]);
 
     const [priceSearch, setPriceSearch] = useState('');

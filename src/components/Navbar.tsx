@@ -67,7 +67,6 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchFocused, setSearchFocused] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -189,6 +188,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
 
           {/* ── Logo ── */}
           <Link href="/" className="flex items-center gap-3 shrink-0 group">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={siteContent.business.logo || '/logo.png'}
               alt={siteContent.business.name}
@@ -295,7 +295,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle, isAdmin }) => {
           <div className="px-6 pb-4 shrink-0">
             <div className="search-ring flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-gray-50 border border-gray-200 transition-all">
               <i className="fa-solid fa-magnifying-glass text-gray-400" />
-              <input ref={searchRef} type="search" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} onFocus={() => setSearchFocused(true)} onBlur={() => setSearchFocused(false)} placeholder="Site içi ara..." className="flex-1 bg-transparent border-none outline-none text-sm text-gray-900 placeholder-gray-400 font-medium" />
+              <input ref={searchRef} type="search" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} placeholder="Site içi ara..." className="flex-1 bg-transparent border-none outline-none text-sm text-gray-900 placeholder-gray-400 font-medium" />
             </div>
           </div>
 
