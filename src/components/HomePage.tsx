@@ -80,7 +80,7 @@ export default function HomePage({ blogPosts, userReviews }: HomePageProps) {
 
             {/* ── REGIONS CAROUSEL ── */}
             {pricedRegions.length > 0 && (
-                <section className="py-24 sm:py-32 bg-[#fafafa]">
+                <section className="py-8 sm:py-12 bg-[#fafafa]">
                     <div className="max-w-[1400px] mx-auto px-6">
                         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8 mb-16 reveal">
                             <div>
@@ -135,7 +135,7 @@ export default function HomePage({ blogPosts, userReviews }: HomePageProps) {
             )}
 
             {/* ── BENTO FEATURES (MINIMALIST) ── */}
-            <section className="py-32 sm:py-48 bg-white border-t border-gray-100">
+            <section className="py-12 sm:py-16 bg-white border-t border-gray-100">
                 <div className="max-w-[1400px] mx-auto px-6">
                     <div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-24 items-start reveal">
                         <div className="md:col-span-5">
@@ -184,7 +184,7 @@ export default function HomePage({ blogPosts, userReviews }: HomePageProps) {
 
             {/* ── TESTIMONIALS (EDITORIAL) ── */}
             {userReviews.length > 0 && (
-                <section className="py-32 sm:py-48 bg-white border-t border-[#f0f0f0]">
+                <section className="py-12 sm:py-16 bg-white border-t border-[#f0f0f0]">
                     <div className="max-w-[1400px] mx-auto px-6">
                         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-10 mb-24 reveal">
                             <div>
@@ -214,7 +214,7 @@ export default function HomePage({ blogPosts, userReviews }: HomePageProps) {
 
             {/* ── EDITORIAL BLOG PREVIEW ── */}
             {randomBlogPosts.length > 0 && (
-                <section className="py-32 sm:py-48 bg-[#fafafa]">
+                <section className="py-12 sm:py-16 bg-[#fafafa]">
                     <div className="max-w-[1400px] mx-auto px-6">
                         <div className="flex flex-col md:flex-row justify-between items-end gap-10 mb-20 reveal">
                             <h2 className="text-4xl sm:text-6xl font-playfair text-[#111] tracking-tight max-w-xl leading-tight">İlham & <br/>Günceler</h2>
@@ -240,7 +240,7 @@ export default function HomePage({ blogPosts, userReviews }: HomePageProps) {
             )}
 
             {/* ── FOOTER SVG JOURNEY & CALL TO ACTION ── */}
-            <section className="relative pt-32 pb-40 bg-[#333333] text-white flex flex-col items-center justify-center text-center px-6 overflow-hidden">
+            <section className="relative pt-16 pb-24 bg-[#333333] text-white flex flex-col items-center justify-center text-center px-6 overflow-hidden">
                 <style>{`
                     @keyframes flowGreen {
                         0% { stroke-dashoffset: 20; opacity: 0; }
@@ -297,15 +297,30 @@ export default function HomePage({ blogPosts, userReviews }: HomePageProps) {
                             </g>
                         ))}
                     </svg>
+
+                    {/* Animated Button positioned exactly at the root node of the SVG (x=500, y=380 is left 50%, top 95%) */}
+                    <div className="absolute left-1/2 top-[95%] transform -translate-x-1/2 -translate-y-1/2 z-20">
+                        <button 
+                            onClick={() => setBookingFormOpen(true)} 
+                            className="relative px-10 py-5 bg-[var(--color-primary)] text-[#111] text-[10px] font-bold uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(34,197,94,0.3)] hover:brightness-110 transition-all border border-transparent btn-glow-effect overflow-hidden group"
+                        >
+                            <span className="relative z-10">Rezervasyon Yap</span>
+                            {/* Matching green flow light passing through the button */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#22c55e] to-transparent opacity-30 transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                        </button>
+                    </div>
                 </div>
 
-                <div className="reveal z-10 relative">
-                    <h2 className="text-5xl sm:text-7xl font-playfair font-medium tracking-tight mb-8">Yolculuk Başlıyor.</h2>
-                    <p className="text-gray-400 text-sm mb-12 max-w-sm mx-auto font-outfit">Sükunet dolu prestijli bir transfer için şimdi yerinizi ayırtın.</p>
-                    <button onClick={() => setBookingFormOpen(true)} className="px-12 py-5 bg-[var(--color-primary)] text-[#111] text-[10px] font-bold uppercase tracking-[0.2em] shadow-lg hover:shadow-2xl hover:brightness-110 transition-all border border-transparent">
-                        Rezervasyon Yap
-                    </button>
-                </div>
+                <style>{`
+                    .btn-glow-effect {
+                        animation: buttonGlow 2.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+                    }
+                    @keyframes buttonGlow {
+                        0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+                        40% { box-shadow: 0 0 0 25px rgba(34, 197, 94, 0); }
+                        100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+                    }
+                `}</style>
             </section>
             
         </main>

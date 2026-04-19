@@ -25,6 +25,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle }) => {
   const { setBookingFormOpen } = useAppStore();
 
   const pathname = usePathname();
+  const isHome = pathname === '/';
 
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
@@ -97,7 +98,7 @@ const Navbar: React.FC<NavbarProps> = ({ onAdminToggle }) => {
         {/* Base layer (glass) */}
         <div style={{
           position: 'absolute', inset: 0, pointerEvents: 'none',
-          background: scrolled ? 'rgba(255,255,255,0.98)' : 'transparent',
+          background: scrolled ? 'rgba(255,255,255,0.98)' : (isHome ? 'transparent' : '#111'),
           borderBottom: scrolled ? '1px solid rgba(0,0,0,0.05)' : '1px solid transparent',
           transition: 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)'
         }} />
