@@ -239,12 +239,70 @@ export default function HomePage({ blogPosts, userReviews }: HomePageProps) {
                 </section>
             )}
 
-            {/* ── FOOTER CALL TO ACTION ── */}
-            <section className="py-40 bg-[#111] text-white flex items-center justify-center text-center px-6">
-                <div className="reveal max-w-2xl">
+            {/* ── FOOTER SVG JOURNEY & CALL TO ACTION ── */}
+            <section className="relative pt-32 pb-40 bg-[#333333] text-white flex flex-col items-center justify-center text-center px-6 overflow-hidden">
+                <style>{`
+                    @keyframes flowGreen {
+                        0% { stroke-dashoffset: 20; opacity: 0; }
+                        10% { opacity: 1; }
+                        80% { opacity: 1; }
+                        100% { stroke-dashoffset: -100; opacity: 0; }
+                    }
+                    .branch-glow {
+                        stroke: #22c55e;
+                        stroke-width: 3;
+                        fill: none;
+                        stroke-linecap: round;
+                        stroke-dasharray: 20 100;
+                        animation: flowGreen 2.5s infinite cubic-bezier(0.4, 0, 0.2, 1);
+                    }
+                `}</style>
+                
+                <div className="reveal max-w-3xl mb-16 z-10 relative">
+                    <h2 className="text-4xl sm:text-5xl font-outfit font-light tracking-wide mb-6">
+                        Her Noktaya <span className="text-[var(--color-primary)] font-medium">Konforlu</span> Transfer
+                    </h2>
+                    <p className="text-gray-400 text-sm sm:text-base font-outfit leading-relaxed max-w-lg mx-auto">
+                        Havalimanından otellere, plajlardan alışveriş merkezlerine kadar Antalya'nın her noktasına VIP ulaşım
+                    </p>
+                </div>
+
+                <div className="w-full max-w-4xl mx-auto relative mb-32 reveal" style={{ minHeight: '300px' }}>
+                    <svg viewBox="0 0 1000 400" className="w-full h-auto overflow-visible">
+                        {[ 
+                            { x: 150, i: 'fa-plane' }, 
+                            { x: 290, i: 'fa-store' }, 
+                            { x: 430, i: 'fa-utensils' }, 
+                            { x: 570, i: 'fa-building-columns' }, 
+                            { x: 710, i: 'fa-house' }, 
+                            { x: 850, i: 'fa-cart-shopping' } 
+                        ].map((item, idx) => (
+                            <g key={idx}>
+                                <path 
+                                    d={`M 500 380 C 500 240, ${item.x} 240, ${item.x} 100`} 
+                                    stroke="rgba(255,255,255,0.15)" 
+                                    strokeWidth="2" 
+                                    fill="none" 
+                                />
+                                <path 
+                                    d={`M 500 380 C 500 240, ${item.x} 240, ${item.x} 100`} 
+                                    className="branch-glow"
+                                    pathLength="100"
+                                />
+                                <foreignObject x={item.x - 20} y={40} width={40} height={40}>
+                                    <div className="flex items-center justify-center w-full h-full text-3xl text-white">
+                                        <i className={`fa-solid ${item.i}`}></i>
+                                    </div>
+                                </foreignObject>
+                            </g>
+                        ))}
+                    </svg>
+                </div>
+
+                <div className="reveal z-10 relative">
                     <h2 className="text-5xl sm:text-7xl font-playfair font-medium tracking-tight mb-8">Yolculuk Başlıyor.</h2>
                     <p className="text-gray-400 text-sm mb-12 max-w-sm mx-auto font-outfit">Sükunet dolu prestijli bir transfer için şimdi yerinizi ayırtın.</p>
-                    <button onClick={() => setBookingFormOpen(true)} className="px-12 py-5 bg-white text-[#111] text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-gray-200 transition-colors">
+                    <button onClick={() => setBookingFormOpen(true)} className="px-12 py-5 bg-[var(--color-primary)] text-[#111] text-[10px] font-bold uppercase tracking-[0.2em] shadow-lg hover:shadow-2xl hover:brightness-110 transition-all border border-transparent">
                         Rezervasyon Yap
                     </button>
                 </div>
