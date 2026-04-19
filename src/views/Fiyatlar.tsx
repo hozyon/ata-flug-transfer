@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useAppStore } from '../store/useAppStore';
 import { useSiteContent } from '../SiteContext';
@@ -19,132 +18,88 @@ const Fiyatlar: React.FC = () => {
         : activeRegions;
 
     return (
-        <div className="min-h-screen" style={{ background: '#f8f7f4' }}>
-            {/* SEO handled by generateMetadata() in page.tsx */}
-
-            {/* Banner */}
-            <div className="relative pt-28 pb-14 overflow-hidden">
-                <div className="absolute inset-0">
-                    <Image
-                        src="/images/contact-banner.png"
-                        alt="Transfer Fiyatları"
-                        fill
-                        priority
-                        className="object-cover object-center scale-105"
-                    />
-                    <div className="absolute inset-0 bg-slate-900/60" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--color-dark)] via-slate-900/40 to-transparent" />
-                </div>
-                <div className="max-w-7xl mx-auto px-4 relative z-10 text-center">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border border-white/10 mb-4 shadow-lg">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse" />
-                        <span>Şeffaf Fiyatlandırma</span>
-                    </div>
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-playfair font-bold text-white mb-4 leading-none tracking-tight drop-shadow-2xl">
-                        Transfer Fiyatları
+        <div className="min-h-screen bg-white">
+            {/* BANNER SECTION */}
+            <section className="pt-40 pb-20 border-b border-gray-100 reveal">
+                <div className="max-w-[1400px] mx-auto px-6">
+                    <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#888] mb-6">Şeffaf Tarife</p>
+                    <h1 className="text-6xl sm:text-[100px] font-playfair font-medium text-[#111] tracking-tighter leading-[0.9]">
+                        Transfer <br />
+                        <span className="italic font-light text-[#555]">Fiyatları.</span>
                     </h1>
-                    <p className="text-slate-100/90 max-w-2xl mx-auto text-base md:text-lg font-light leading-relaxed drop-shadow-md">
-                        Antalya Havalimanı'ndan tüm bölgelere sabit fiyatlar. Gizli ücret yok.
-                    </p>
                 </div>
-            </div>
+            </section>
 
             {/* Search + Grid */}
-            <section className="py-12 md:py-16">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {/* Search */}
-                    <div className="mb-8 max-w-md mx-auto">
-                        <div className="relative">
-                            <i className="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm" aria-hidden="true" />
-                            <input
-                                type="text"
-                                value={search}
-                                onChange={e => setSearch(e.target.value)}
-                                placeholder="Bölge ara..."
-                                aria-label="Bölge ara..."
-                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-700 text-sm focus:outline-none focus:border-[var(--color-primary)] transition-colors"
-                            />
+            <section className="py-24 sm:py-32 bg-white">
+                <div className="max-w-[1400px] mx-auto px-6">
+                    
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-10 mb-20 reveal">
+                        <div className="w-full sm:w-[400px]">
+                            <div className="w-full border-b border-gray-300 pb-2 flex items-center gap-3">
+                                <i className="fa-solid fa-magnifying-glass text-[#888] text-sm"></i>
+                                <input
+                                    type="text"
+                                    placeholder="Fiyatını öğrenmek istediğiniz rota..."
+                                    aria-label="Bölge ara"
+                                    className="w-full bg-transparent border-none outline-none text-[#111] text-lg font-playfair placeholder-gray-400"
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                />
+                            </div>
                         </div>
                     </div>
 
                     {filtered.length === 0 ? (
-                        <div className="text-center py-20 text-slate-400">
-                            <i className="fa-solid fa-map-location-dot text-4xl mb-4 block" aria-hidden="true" />
-                            <p>Sonuç bulunamadı</p>
+                        <div className="text-center py-20 border-t border-gray-100">
+                            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#888]">Sonuç Bulunamadı.</p>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                            {filtered.map(region => (
-                                <Link
-                                    key={region.id}
-                                    href={`/transfer/${region.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')}-transfer`}
-                                    className="group bg-white rounded-2xl overflow-hidden border border-slate-100 hover:shadow-md hover:border-[var(--color-primary)]/30 transition-all duration-300 hover:-translate-y-0.5"
-                                >
-                                    {region.image && (
-                                        <div className="h-36 overflow-hidden relative">
-                                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                                            <img
-                                                src={region.image}
-                                                alt={region.name}
-                                                loading="lazy"
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                            />
-                                        </div>
-                                    )}
-                                    <div className="p-5">
-                                        <h2 className="font-playfair font-bold text-slate-800 text-lg mb-1 group-hover:text-[var(--color-primary)] transition-colors">
-                                            {region.name}
-                                        </h2>
-                                        <div className="flex items-center justify-between mt-3">
-                                            <div>
-                                                <span className="text-xs text-slate-400 uppercase tracking-wider">Başlangıç fiyatı</span>
-                                                <div className="text-2xl font-bold text-[var(--color-primary)]">
-                                                    €{region.price}
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center gap-1 text-[var(--color-primary)] text-xs font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform">
-                                                <span>Detaylar</span>
-                                                <i className="fa-solid fa-arrow-right" aria-hidden="true" />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 sm:gap-16">
+                            {filtered.map(region => {
+                                const slug = region.name.toLowerCase().replace(/ /g, '-').replace(/[ğĞ]/g, 'g').replace(/[üÜ]/g, 'u').replace(/[şŞ]/g, 's').replace(/[ıİ]/g, 'i').replace(/[öÖ]/g, 'o').replace(/[çÇ]/g, 'c').replace(/[^a-z0-9-]/g, '');
+                                return (
+                                    <Link
+                                        key={region.id}
+                                        href={`/transfer/${slug}-transfer`}
+                                        className="group border-t border-gray-100 pt-8 hover:border-[#111] transition-colors flex justify-between items-center"
+                                    >
+                                        <div className="flex-1">
+                                            <h2 className="font-playfair text-3xl sm:text-4xl text-[#111] mb-2 group-hover:italic transition-all">
+                                                {region.name}
+                                            </h2>
+                                            <div className="flex gap-4 items-center">
+                                                <span className="text-[10px] text-[#888] uppercase tracking-widest font-bold">Tek Yön</span>
+                                                <span className="w-4 h-[1px] bg-gray-300" />
+                                                <span className="text-[10px] text-[#888] uppercase tracking-widest font-bold">Sabit Fiyat</span>
                                             </div>
                                         </div>
-                                        <div className="flex flex-wrap gap-1.5 mt-3">
-                                            {[
-                                                { icon: 'fa-car', label: 'Araç başı' },
-                                                { icon: 'fa-arrow-right', label: 'Tek yön' },
-                                                { icon: 'fa-tag', label: 'Sabit fiyat' },
-                                            ].map(b => (
-                                                <span key={b.label} className="inline-flex items-center gap-1 text-[10px] text-slate-500 bg-slate-100 rounded-full px-2 py-0.5">
-                                                    <i className={`fa-solid ${b.icon} text-[8px] text-[var(--color-primary)]`} />
-                                                    {b.label}
-                                                </span>
-                                            ))}
+                                        <div className="text-right">
+                                            <div className="text-3xl font-playfair text-[#111]">
+                                                {siteContent.currency?.symbol || '€'}{region.price}
+                                            </div>
                                         </div>
-                                    </div>
-                                </Link>
-                            ))}
+                                    </Link>
+                                )
+                            })}
                         </div>
                     )}
                 </div>
             </section>
 
             {/* CTA */}
-            <section className="py-16 md:py-20 bg-[var(--color-dark)]">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-                    <h2 className="font-playfair font-bold text-white leading-tight mb-4" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)' }}>
-                        Özel Fiyat Teklifi İster misiniz?
-                    </h2>
-                    <p className="text-white/40 mb-8 max-w-xl mx-auto text-sm">
-                        Gruba özel, dönüş transferi veya uzun mesafe için özel fiyat alın.
-                    </p>
+            <section className="py-32 font-outfit bg-[#111]">
+                <div className="max-w-[1400px] mx-auto px-6 text-center reveal text-white">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#888] mb-6">Concierge Talebi</p>
+                    <h2 className="text-5xl sm:text-7xl font-playfair font-medium tracking-tight mb-8">Farklı Bir İhtiyacınız mı Var?</h2>
+                    <p className="text-gray-400 max-w-md mx-auto mb-16">Gruplara tahsis edilen araçlar, uzun süreli rezervasyon veya listede yer almayan lokasyonlar.</p>
                     <a
                         href={`https://wa.me/${business.whatsapp}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-2.5 text-white font-bold px-8 py-3.5 rounded-2xl transition-all duration-200 hover:brightness-110 active:scale-[0.98]"
-                        style={{ background: '#25D366' }}
+                        className="inline-flex items-center px-12 py-5 bg-white text-[#111] font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-gray-200 transition-colors"
                     >
-                        <i className="fa-brands fa-whatsapp text-xl" aria-hidden="true" />
-                        <span>WhatsApp'tan Fiyat Al</span>
+                        Temsilciye Bağlan
                     </a>
                 </div>
             </section>

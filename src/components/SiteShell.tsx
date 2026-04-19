@@ -36,7 +36,6 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
         }
     };
 
-    // Admin veya Login sayfasındaysak hiçbir şey ekleme, sadece içeriği döndür
     if (isAdminPage) {
         return <>{children}</>;
     }
@@ -48,67 +47,86 @@ export default function SiteShell({ children }: { children: React.ReactNode }) {
                 {children}
             </main>
 
-            {/* Footer */}
-            <footer id="contact" className="bg-[var(--color-surface)] text-[var(--color-text)] py-16 border-t border-[var(--color-border)]">
-                <div className="max-w-7xl mx-auto px-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center md:text-left">
-                        <div className="flex flex-col items-center md:items-start gap-5">
-                            <div className="flex items-center gap-3">
+            {/* ── EDITORIAL FOOTER ── */}
+            <footer id="contact" className="bg-white text-[var(--color-text)] py-20 border-t border-[var(--color-border)]">
+                <div className="max-w-[1400px] mx-auto px-6 sm:px-12">
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-16 md:gap-8">
+                        {/* Brand Column */}
+                        <div className="md:col-span-5 flex flex-col gap-8">
+                            <div>
                                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={siteContent.business.logo || '/logo.png'} alt="Logo" className="h-10 w-auto" style={{ filter: 'invert(1) contrast(1.2) brightness(0.2)' }} />
-                                <h4 className="text-[var(--color-text)] font-extrabold text-xl font-outfit uppercase tracking-wider">{siteContent.business.name}</h4>
+                                <img src={siteContent.business.logo || '/logo.png'} alt="Logo" className="h-10 w-auto mix-blend-difference" style={{ filter: 'brightness(0)' }} />
                             </div>
-                            <p className="text-[var(--color-text-muted)] text-sm font-light">Premium VIP Transfer Deneyimi</p>
+                            <p className="text-[var(--color-text-muted)] text-[13px] font-outfit max-w-sm leading-relaxed">
+                                Antalya'nın kalbinden, VIP transfer ve concierge hizmetlerinde zirveyi hedefleyenlerin eşsiz yolculuğu. Sadece bir taşıma değil, zamanın ötesinde bir deneyim.
+                            </p>
                         </div>
-                        <div>
-                            <h4 className="text-[var(--color-primary)] font-bold text-xs uppercase tracking-[0.2em] mb-6">İletişim</h4>
-                            <ul className="space-y-4 text-sm text-[var(--color-text-muted)] font-medium">
+                        
+                        {/* Contact Column */}
+                        <div className="md:col-span-4 flex flex-col gap-6">
+                            <h4 className="text-[var(--color-text)] font-semibold text-[9px] uppercase tracking-[0.2em]">Merkez Ofis</h4>
+                            <div className="space-y-4 text-[13px] text-[var(--color-text-muted)] font-outfit">
+                                <p className="leading-relaxed max-w-xs">{siteContent.business.address}</p>
                                 {siteContent.business.phone && (
-                                    <li><a href={`tel:${siteContent.business.phone}`} className="hover:text-[var(--color-primary)] transition-colors inline-flex items-center gap-3"><i className="fa-solid fa-phone text-[var(--color-primary)]"></i>{siteContent.business.phone}</a></li>
+                                    <p><a href={`tel:${siteContent.business.phone}`} className="hover:text-[var(--color-text)] transition-colors">{siteContent.business.phone}</a></p>
                                 )}
                                 {siteContent.business.email && (
-                                    <li><a href={`mailto:${siteContent.business.email}`} className="hover:text-[var(--color-primary)] transition-colors inline-flex items-center gap-3"><i className="fa-solid fa-envelope text-[var(--color-primary)]"></i>{siteContent.business.email}</a></li>
+                                    <p><a href={`mailto:${siteContent.business.email}`} className="hover:text-[var(--color-text)] transition-colors">{siteContent.business.email}</a></p>
                                 )}
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 className="text-[var(--color-primary)] font-bold text-xs uppercase tracking-[0.2em] mb-6">Sosyal Medya</h4>
-                            <div className="flex justify-center md:justify-start gap-4">
-                                {siteContent.business.whatsapp && <a href={`https://wa.me/${siteContent.business.whatsapp}`} target="_blank" rel="noopener noreferrer" className="w-11 h-11 bg-emerald-50 text-emerald-500 border border-emerald-100 rounded-full flex items-center justify-center text-lg hover:bg-emerald-500 hover:text-white transition-all shadow-sm"><i className="fa-brands fa-whatsapp"></i></a>}
-                                {siteContent.business.instagram && <a href={siteContent.business.instagram} target="_blank" rel="noopener noreferrer" className="w-11 h-11 bg-pink-50 text-pink-500 border border-pink-100 rounded-full flex items-center justify-center text-lg hover:bg-gradient-to-br hover:from-purple-500 hover:to-pink-500 hover:text-white transition-all shadow-sm"><i className="fa-brands fa-instagram"></i></a>}
                             </div>
                         </div>
+
+                        {/* Social Column */}
+                        <div className="md:col-span-3 flex flex-col gap-6">
+                            <h4 className="text-[var(--color-text)] font-semibold text-[9px] uppercase tracking-[0.2em]">Sosyal Medya</h4>
+                            <ul className="space-y-4 text-[13px] text-[var(--color-text-muted)] font-outfit">
+                                {siteContent.business.instagram && <li><a href={siteContent.business.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-text)] transition-colors flex items-center gap-3"><i className="fa-brands fa-instagram"></i> Instagram</a></li>}
+                                {siteContent.business.facebook && <li><a href={siteContent.business.facebook} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-text)] transition-colors flex items-center gap-3"><i className="fa-brands fa-facebook"></i> Facebook</a></li>}
+                                {siteContent.business.whatsapp && <li><a href={`https://wa.me/${siteContent.business.whatsapp}`} target="_blank" rel="noopener noreferrer" className="hover:text-[#25d366] transition-colors flex items-center gap-3"><i className="fa-brands fa-whatsapp"></i> WhatsApp</a></li>}
+                            </ul>
+                        </div>
                     </div>
-                    <div className="mt-16 pt-8 border-t border-[var(--color-border)] text-center">
-                        <p className="text-[var(--color-text-muted)] text-[10px] sm:text-xs uppercase tracking-widest font-semibold">
-                            © {new Date().getFullYear()} {siteContent.business.name}. Tüm Hakları Saklıdır.
+                    
+                    <div className="mt-20 pt-8 border-t border-[var(--color-border)] flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <p className="text-[var(--color-text-muted)] text-[10px] uppercase tracking-widest font-semibold flex items-center gap-2">
+                            <span>© {new Date().getFullYear()}</span>
+                            <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                            <span>{siteContent.business.name}</span>
                         </p>
+                        <p className="text-[var(--color-text-muted)] text-[10px] uppercase tracking-widest font-semibold">Tüm Hakları Saklıdır.</p>
                     </div>
                 </div>
             </footer>
 
-            {/* WhatsApp FAB */}
+            {/* Float WhatsApp */}
             <a
                 href={`https://wa.me/${siteContent.business.whatsapp}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="fixed bottom-6 left-6 z-[90] w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-[0_8px_30px_rgba(37,211,102,0.3)] hover:scale-105 hover:shadow-[0_12px_40px_rgba(37,211,102,0.4)] transition-all"
+                className="fixed bottom-6 left-6 z-[90] w-14 h-14 rounded-none bg-[var(--color-text)] text-white flex items-center justify-center hover:bg-[#25D366] transition-all duration-500 shadow-xl"
             >
                 <i className="fa-brands fa-whatsapp text-2xl"></i>
             </a>
 
-            {/* Booking Modal */}
+            {/* Full Screen Booking Overlay */}
             {isBookingFormOpen && (
-                <div className="fixed inset-0 z-[500] flex flex-col items-center justify-end sm:justify-center p-0 sm:p-4">
-                    <div className="absolute inset-0 bg-[rgba(253,251,247,0.7)] backdrop-blur-xl transition-all duration-300" onClick={() => setBookingFormOpen(false)} />
-                    <div className="relative w-full max-w-lg bg-[var(--color-surface)] sm:rounded-[2rem] rounded-t-[2rem] overflow-hidden border border-[var(--color-border)] p-6 shadow-2xl safe-area-bottom animate-in slide-in-from-bottom-10 fade-in duration-300">
-                        <div className="flex justify-between items-center mb-8">
-                            <h3 className="text-[var(--color-text)] font-playfair font-medium text-3xl tracking-tight">Rezervasyon</h3>
-                            <button onClick={() => setBookingFormOpen(false)} className="w-10 h-10 rounded-full flex items-center justify-center bg-[var(--color-surface-alt)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:shadow-sm border border-[var(--color-border)] transition-all">
-                                <i className="fa-solid fa-xmark"></i>
+                <div className="fixed inset-0 z-[500] flex">
+                    <div className="absolute inset-0 bg-white/95 backdrop-blur-3xl transition-all duration-500 animate-in fade-in" />
+                    
+                    <div className="relative w-full h-full max-w-[800px] mx-auto flex flex-col pt-12 sm:pt-20 px-4 sm:px-12 animate-in slide-in-from-bottom-20 fade-in duration-700 ease-out">
+                        <div className="flex justify-between items-center mb-10 shrink-0">
+                            <div>
+                                <p className="text-[var(--color-text-muted)] text-[10px] uppercase tracking-[0.2em] mb-2 font-bold">Rezervasyon</p>
+                                <h3 className="text-[var(--color-text)] font-playfair font-medium text-4xl sm:text-5xl tracking-tight">VIP Transfer</h3>
+                            </div>
+                            <button onClick={() => setBookingFormOpen(false)} className="w-12 h-12 rounded-none flex items-center justify-center bg-[var(--color-surface-alt)] text-[var(--color-text)] hover:bg-gray-100 transition-colors">
+                                <i className="fa-solid fa-xmark text-xl"></i>
                             </button>
                         </div>
-                        <BookingForm onBookingSubmit={() => setBookingFormOpen(false)} vehicles={siteContent.vehicles} />
+                        
+                        <div className="flex-1 overflow-y-auto pb-20 custom-scrollbar pr-2">
+                            <BookingForm onBookingSubmit={() => setBookingFormOpen(false)} vehicles={siteContent.vehicles} />
+                        </div>
                     </div>
                 </div>
             )}

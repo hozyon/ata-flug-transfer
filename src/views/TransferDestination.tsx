@@ -17,13 +17,10 @@ const TransferDestination: React.FC = () => {
   const { siteContent, setBookingFormOpen } = useAppStore();
   useScrollReveal();
 
-  // FAQ accordion state — must be before early return (Rules of Hooks)
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  // slug from URL is like "kemer-transfer" → strip "-transfer" to get region slug
   const regionSlug = transferSlug?.replace(/-transfer$/, '') || '';
 
-  // find region by its slugified name
   const region = siteContent.regions.find(r => slugify(r.name) === regionSlug)
     || INITIAL_SITE_CONTENT.regions.find(r => slugify(r.name) === regionSlug);
 
@@ -34,70 +31,52 @@ const TransferDestination: React.FC = () => {
   const sym = siteContent.currency?.symbol || '€';
 
   const serviceItems = [
-    { icon: 'fa-plane-arrival', title: 'Havalimanı Transferi', desc: 'Lüks Mercedes Vito araçlarımızla kesintisiz karşılama. Uçuş durumunuzu takip ediyor, rötarlarda bekliyoruz.' },
-    { icon: 'fa-car-side',      title: 'Şehirlerarası Transfer',      desc: 'Mercedes Vito ve Sprinter araçlar' },
-    { icon: 'fa-clock',         title: 'Uçuş Takibi',           desc: 'Rötar durumunda ek ücret alınmaz' },
-    { icon: 'fa-baby',          title: 'Bebek Koltuğu',          desc: 'Ücretsiz bebek ve çocuk koltuğu' },
-    { icon: 'fa-wifi',          title: 'Ücretsiz Wi-Fi',         desc: 'Araç içi internet bağlantısı' },
-    { icon: 'fa-shield-halved', title: 'Güvenli Transfer',       desc: 'Sigortalı araçlar, deneyimli şoförler' },
+    { icon: 'fa-plane-arrival', title: 'Karşılama', desc: 'Rötar bağımsız, zamanında VIP karşılama.' },
+    { icon: 'fa-car-side',      title: 'Premium Filo', desc: '100% lüks segment Mercedes-Benz araçlar.' },
+    { icon: 'fa-baby',          title: 'Çocuk Koltuğu', desc: 'Sertifikalı güvenlik donanımı.' },
+    { icon: 'fa-shield-halved', title: 'Protokol Tipi', desc: 'Yabancı dil bilen profesyonel şoförler.' },
   ];
 
   return (
-    <div className="min-h-screen" style={{ background: '#020617' }}>
-      {/* SEO handled by generateMetadata() in page.tsx */}
+    <div className="min-h-screen bg-white text-[#111]">
+      {/* ── Banner ── */}
+      <section className="pt-40 pb-20 border-b border-gray-100 reveal">
+          <div className="max-w-[1400px] mx-auto px-6">
+              <nav className="flex items-center gap-3 text-xs mb-8 font-bold uppercase tracking-[0.2em] text-[#888]" aria-label="Breadcrumb">
+                  <Link href="/" className="hover:text-[#111] transition-colors">Ana Sayfa</Link>
+                  <span className="w-4 h-[1px] bg-gray-300" />
+                  <Link href="/bolgeler" className="hover:text-[#111] transition-colors">Bölgeler</Link>
+                  <span className="w-4 h-[1px] bg-gray-300" />
+                  <span className="text-[#111]">{region.name}</span>
+              </nav>
 
-      {/* ── Hero Banner ── */}
-      <section className="relative h-72 md:h-[420px] flex items-end overflow-hidden">
-        <Image
-          src={region.image || '/bg1.png'}
-          alt={`${region.name} Transfer`}
-          fill
-          priority
-          className="object-cover"
-        />
-        {/* Multi-layer gradient for depth */}
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, #020617 0%, rgba(2,6,23,0.65) 50%, rgba(2,6,23,0.2) 100%)' }} />
-        <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(2,6,23,0.4) 0%, transparent 60%)' }} />
-
-        <div className="relative z-10 max-w-6xl mx-auto px-5 pb-10 w-full">
-          {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-white/40 text-[11px] mb-5 font-medium" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-white/70 transition-colors">ANA SAYFA</Link>
-            <i className="fa-solid fa-chevron-right text-[8px]" aria-hidden="true" />
-            <Link href="/bolgeler" className="hover:text-white/70 transition-colors">BÖLGELER</Link>
-            <i className="fa-solid fa-chevron-right text-[8px]" aria-hidden="true" />
-            <span className="text-white/60">{region.name}</span>
-          </nav>
-
-          {/* Price badge */}
-          {region.price && (
-            <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full text-[11px] font-black tracking-wider" style={{ background: 'rgba(197,160,89,0.15)', border: '1px solid rgba(197,160,89,0.35)', color: '#c5a059' }}>
-              <i className="fa-solid fa-tag text-[9px]" aria-hidden="true" />
-              İtibaren {sym}{region.price}
-            </div>
-          )}
-
-          <h1 className="font-playfair font-bold text-white leading-tight mb-2" style={{ fontSize: 'clamp(1.75rem, 4vw, 3.5rem)' }}>
-            {region.name} Transfer
-          </h1>
-          <p className="text-white/55 text-sm md:text-base">
-            Antalya Havalimanı → {region.name} · VIP Özel Transfer
-          </p>
-        </div>
+              <div className="flex flex-col md:flex-row justify-between md:items-end gap-10">
+                  <h1 className="font-playfair font-medium text-[#111] leading-[0.9] text-6xl sm:text-[100px] tracking-tighter">
+                      {region.name} <br/>
+                      <span className="italic font-light text-[#555]">Transfer.</span>
+                  </h1>
+                  {region.price && (
+                      <div className="text-right">
+                          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#888] mb-1">Sabit Tarife</p>
+                          <p className="text-4xl font-playfair">{sym}{region.price}</p>
+                      </div>
+                  )}
+              </div>
+          </div>
       </section>
 
       {/* ── Info Strip ── */}
       {meta && (
-        <section style={{ background: 'rgba(197,160,89,0.06)', borderBottom: '1px solid rgba(197,160,89,0.12)' }}>
-          <div className="max-w-6xl mx-auto px-4 sm:px-5 py-5 grid grid-cols-3 gap-3 text-center">
+        <section className="border-b border-gray-100">
+          <div className="max-w-[1400px] mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
             {[
-              { value: `${meta.distanceKm} km`, label: 'Havalimanına Mesafe' },
-              { value: `~${meta.durationMin} dk`, label: 'Transfer Süresi' },
-              { value: '7/24', label: 'Hizmet' },
+              { value: `${meta.distanceKm} KM`, label: 'Seyahat Mesafesi' },
+              { value: `~${meta.durationMin} DK`, label: 'Planlanan Süre' },
+              { value: '7/24', label: 'Operasyon Durumu' },
             ].map((item, i) => (
-              <div key={i}>
-                <div className="text-lg sm:text-2xl font-black" style={{ color: '#c5a059' }}>{item.value}</div>
-                <div className="text-white/40 text-[11px] mt-0.5 font-medium">{item.label}</div>
+              <div key={i} className="border-l border-gray-200 pl-6">
+                <div className="text-[10px] uppercase tracking-[0.2em] text-[#888] font-bold mb-2">{item.label}</div>
+                <div className="text-3xl font-playfair text-[#111]">{item.value}</div>
               </div>
             ))}
           </div>
@@ -105,88 +84,69 @@ const TransferDestination: React.FC = () => {
       )}
 
       {/* ── Main Content ── */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-5 py-12 md:py-16 grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
-
+      <section className="max-w-[1400px] mx-auto px-6 py-24 sm:py-32 grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
+        
         {/* Left: Content */}
-        <div className="lg:col-span-2 space-y-10">
+        <div className="lg:col-span-8 space-y-24">
+          
+          <div className="relative aspect-[21/9] bg-gray-100 mb-16 overflow-hidden reveal">
+            <Image src={region.image || '/bg1.png'} alt={`${region.name} Transfer`} fill priority className="object-cover grayscale hover:grayscale-0 transition-all duration-1000" />
+          </div>
 
-          {/* About */}
           <div className="reveal">
-            <div className="flex items-center gap-3 mb-4">
-              <span className="h-px w-6" style={{ background: '#c5a059' }} />
-              <span className="text-[10px] font-black tracking-[0.35em] uppercase" style={{ color: '#c5a059' }}>Transfer</span>
-            </div>
-            <h2 className="font-playfair font-bold text-white leading-snug mb-4" style={{ fontSize: 'clamp(1.3rem, 2.5vw, 2rem)' }}>
-              {region.name} Transfer Hizmeti
+            <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#888] border-b border-[#111] pb-1 inline-block mb-8">
+              Hizmet Detayları
             </h2>
+            <h3 className="text-4xl sm:text-5xl font-playfair text-[#111] mb-8 leading-tight">Zamanın durduğu <br className="hidden sm:block"/> o özel yolculuk.</h3>
             {meta?.uniqueDesc && (
-              <p className="text-white/50 leading-relaxed text-sm">{meta.uniqueDesc}</p>
+              <p className="text-[#555] opacity-90 leading-relaxed font-outfit text-base max-w-2xl text-justify">{meta.uniqueDesc}</p>
             )}
           </div>
 
-          {/* Highlights */}
           {meta?.highlights && meta.highlights.length > 0 && (
             <div className="reveal">
-              <h2 className="font-playfair font-bold text-white mb-5" style={{ fontSize: 'clamp(1.1rem, 2vw, 1.5rem)' }}>
-                {region.name}'de Gezilecek Yerler
-              </h2>
-              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 stagger-children">
+              <h2 className="text-3xl font-playfair text-[#111] mb-8 border-t border-gray-200 pt-8">Rota Üzerinde</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-6">
                 {meta.highlights.map((h, i) => (
-                  <li key={i} className="reveal flex items-center gap-3 rounded-xl px-4 py-3 transition-all duration-200 hover:-translate-y-0.5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLLIElement).style.borderColor = 'rgba(197,160,89,0.3)'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLLIElement).style.borderColor = 'rgba(255,255,255,0.07)'; }}>
-                    <span className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0" style={{ background: 'rgba(197,160,89,0.1)', color: '#c5a059' }}>
-                      <i className="fa-solid fa-location-dot text-[11px]" aria-hidden="true"></i>
-                    </span>
-                    <span className="text-white/75 text-sm font-medium">{h}</span>
-                  </li>
+                  <div key={i} className="flex items-start gap-4 pb-4 border-b border-gray-100">
+                    <span className="text-[#888] text-[10px] mt-1"><i className="fa-solid fa-diamond" /></span>
+                    <span className="text-[#111] font-outfit text-sm">{h}</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
           )}
 
-          {/* Services */}
           <div className="reveal">
-            <h2 className="font-playfair font-bold text-white mb-5" style={{ fontSize: 'clamp(1.1rem, 2vw, 1.5rem)' }}>
-              {region.name} Transfer Hizmetlerimiz
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 stagger-children">
+            <h2 className="text-3xl font-playfair text-[#111] mb-8 border-t border-gray-200 pt-8">Protokol Ayrıcalıkları</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-12">
               {serviceItems.map((s, i) => (
-                <div key={i} className="reveal group flex items-start gap-4 rounded-2xl px-5 py-4 transition-all duration-200 hover:-translate-y-0.5 cursor-default"
-                  style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(197,160,89,0.3)'; (e.currentTarget as HTMLDivElement).style.background = 'rgba(197,160,89,0.04)'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,255,255,0.07)'; (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)'; }}>
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-all duration-200 group-hover:scale-105" style={{ background: 'rgba(197,160,89,0.1)', color: '#c5a059', border: '1px solid rgba(197,160,89,0.2)' }}>
-                    <i className={`fa-solid ${s.icon} text-sm`}></i>
-                  </div>
+                <div key={i} className="flex flex-col gap-4 group">
+                  <div className="text-2xl text-[#111] group-hover:italic transition-all"><i className={`fa-solid ${s.icon}`}></i></div>
                   <div>
-                    <div className="font-semibold text-white/90 text-sm mb-0.5 group-hover:text-[#c5a059] transition-colors duration-200">{s.title}</div>
-                    <div className="text-white/40 text-xs leading-relaxed">{s.desc}</div>
+                    <h4 className="font-playfair text-xl text-[#111] mb-2">{s.title}</h4>
+                    <p className="text-[#888] text-xs font-outfit leading-relaxed">{s.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* FAQ Accordion */}
           {meta?.faqs && meta.faqs.length > 0 && (
-            <div className="reveal">
-              <h2 className="font-playfair font-bold text-white mb-5" style={{ fontSize: 'clamp(1.1rem, 2vw, 1.5rem)' }}>
-                Sıkça Sorulan Sorular
-              </h2>
-              <div className="space-y-2.5">
+            <div className="reveal border-t border-gray-200 pt-8">
+              <h2 className="text-3xl font-playfair text-[#111] mb-8">Sık Sorulan Sorular</h2>
+              <div className="space-y-0">
                 {meta.faqs.map((faq, i) => (
-                  <div key={i} className="rounded-2xl overflow-hidden transition-all duration-200"
-                    style={{ border: `1px solid ${openFaq === i ? 'rgba(197,160,89,0.3)' : 'rgba(255,255,255,0.07)'}`, background: openFaq === i ? 'rgba(197,160,89,0.04)' : 'rgba(255,255,255,0.02)' }}>
+                  <div key={i} className="border-b border-gray-200">
                     <button
                       onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                      className="w-full flex items-center justify-between px-5 py-4 text-left min-h-[56px] hover:bg-white/[0.02] transition-colors"
+                      className="w-full flex items-center justify-between py-6 text-left"
                     >
-                      <span className="font-semibold text-white/85 text-sm pr-4 leading-snug">{faq.q}</span>
-                      <i className={`fa-solid fa-chevron-down text-sm shrink-0 transition-transform duration-300 ${openFaq === i ? 'rotate-180' : ''}`} style={{ color: '#c5a059' }} />
+                      <span className="font-outfit font-bold text-[#111] text-base">{faq.q}</span>
+                      <i className={`fa-solid fa-plus text-xs transition-transform duration-300 ${openFaq === i ? 'rotate-45' : ''}`} />
                     </button>
-                    <div className={`overflow-hidden transition-all duration-300 ${openFaq === i ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'}`}>
-                      <p className="px-5 pb-5 pt-1 text-white/45 text-sm leading-relaxed" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>{faq.a}</p>
+                    <div className={`overflow-hidden transition-all duration-300 ${openFaq === i ? 'max-h-64 opacity-100 pb-6' : 'max-h-0 opacity-0'}`}>
+                      <p className="text-[#555] font-outfit text-sm leading-relaxed">{faq.a}</p>
                     </div>
                   </div>
                 ))}
@@ -195,96 +155,46 @@ const TransferDestination: React.FC = () => {
           )}
         </div>
 
-        {/* Right: CTA Sidebar */}
-        <div className="space-y-4">
-          <div className="rounded-2xl p-6 text-white lg:sticky lg:top-24" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}>
-            {/* Gold top accent */}
-            <div className="absolute top-0 left-0 right-0 h-0.5 rounded-t-2xl" style={{ background: 'linear-gradient(90deg, #c5a059, #e0c07a, rgba(197,160,89,0.2))' }} />
-
-            <h3 className="font-playfair font-bold text-white text-base mb-1">
-              {region.name} Transfer Rezervasyonu
-            </h3>
-            <p className="text-white/40 text-xs mb-5">En iyi fiyat garantisi · 7/24 hizmet</p>
-
-            {/* Book Now — opens booking modal */}
+        {/* Right: Sidebar */}
+        <div className="lg:col-span-4">
+          <div className="bg-[#fafafa] border border-gray-200 p-8 sm:p-12 lg:sticky lg:top-32 reveal-right">
+            <h3 className="font-playfair font-medium text-3xl text-[#111] mb-2">{region.name}</h3>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#888] mb-12">VIP Rezervasyon</p>
+            
             <button
               onClick={() => setBookingFormOpen(true)}
-              className="w-full flex items-center justify-center gap-2.5 font-bold py-3.5 rounded-2xl mb-3 transition-all duration-200 hover:brightness-110 active:scale-[0.98] text-[#0f172a]"
-              style={{ background: '#c5a059' }}
+              className="w-full h-16 bg-[#111] text-white font-bold text-[10px] uppercase tracking-[0.3em] hover:bg-[#333] transition-colors mb-4 flex items-center justify-center gap-3"
             >
-              <i className="fa-solid fa-calendar-check text-sm" aria-hidden="true" />
-              Hemen Rezervasyon Yap
+              Hemen Rezervasyon
             </button>
 
-            {/* WhatsApp */}
             <a
-              href={`https://wa.me/${business.whatsapp}?text=${encodeURIComponent(`Merhaba, Antalya Havalimanı - ${region.name} transfer için fiyat almak istiyorum.`)}`}
+              href={`https://wa.me/${business.whatsapp}?text=${encodeURIComponent(`Merhaba, Antalya Havalimanı - ${region.name} transfer talebim var.`)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 font-semibold py-3 rounded-2xl transition-all duration-200 hover:brightness-110 active:scale-[0.98] text-white text-sm mb-3"
-              style={{ background: '#25D366' }}
+              className="w-full h-16 bg-transparent border border-gray-300 text-[#111] font-bold text-[10px] uppercase tracking-[0.3em] hover:border-[#111] transition-colors mb-12 flex items-center justify-center gap-3"
             >
-              <i className="fa-brands fa-whatsapp text-lg" aria-hidden="true"></i>
-              WhatsApp ile Rezervasyon
+              WhatsApp
             </a>
 
-            {/* Phone */}
-            {business.phone && (
-              <a
-                href={`tel:${business.phone}`}
-                className="w-full flex items-center justify-center gap-2 font-medium py-2.5 rounded-xl transition-colors text-white/60 hover:text-white text-sm"
-                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
-              >
-                <i className="fa-solid fa-phone text-xs" style={{ color: '#c5a059' }} aria-hidden="true" />
-                {business.phone}
-              </a>
-            )}
-
-            {/* Meta info */}
-            {meta && (
-              <div className="mt-5 pt-5 space-y-2.5" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-                {[
-                  { label: 'Mesafe', value: `${meta.distanceKm} km` },
-                  { label: 'Süre', value: `~${meta.durationMin} dk` },
-                  { label: 'Ödeme', value: 'Nakit / Kart' },
-                ].map((row, i) => (
-                  <div key={i} className="flex justify-between text-sm">
-                    <span className="text-white/35">{row.label}</span>
-                    <span className="text-white/80 font-medium">{row.value}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Other regions */}
-          <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)' }}>
-            <h3 className="font-semibold text-white/70 text-sm mb-4 flex items-center gap-2">
-              <i className="fa-solid fa-map-location-dot text-xs" style={{ color: '#c5a059' }} aria-hidden="true" />
-              Diğer Bölgeler
-            </h3>
-            <div className="space-y-1">
-              {siteContent.regions
-                .filter(r => slugify(r.name) !== regionSlug)
-                .slice(0, 8)
-                .map(r => (
-                  <Link
-                    key={r.id}
-                    href={`/transfer/${slugify(r.name)}-transfer`}
-                    className="flex items-center gap-2 text-white/45 hover:text-[#c5a059] text-sm py-1.5 transition-colors group"
-                  >
-                    <i className="fa-solid fa-location-dot text-[#c5a059]/40 group-hover:text-[#c5a059] text-[10px] transition-colors" aria-hidden="true"></i>
-                    {r.name} Transfer
-                  </Link>
-                ))
-              }
-              <Link href="/bolgeler" className="flex items-center gap-1.5 text-sm py-1.5 font-bold uppercase tracking-wider transition-colors mt-2" style={{ color: '#c5a059', fontSize: '11px' }}>
-                Tüm Bölgeleri Gör
-                <i className="fa-solid fa-arrow-right text-[9px]" aria-hidden="true" />
-              </Link>
+            <div className="pt-8 border-t border-gray-200">
+                <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#111] mb-6">Alternatif Notalar</h4>
+                <div className="space-y-4">
+                  {siteContent.regions.filter(r => slugify(r.name) !== regionSlug).slice(0, 5).map(r => (
+                    <Link
+                      key={r.id}
+                      href={`/transfer/${slugify(r.name)}-transfer`}
+                      className="group flex justify-between items-center text-xs font-outfit text-[#555] hover:text-[#111] transition-colors"
+                    >
+                      <span>{r.name} Rotaları</span>
+                      <i className="fa-solid fa-arrow-right text-[8px] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </Link>
+                  ))}
+                </div>
             </div>
           </div>
         </div>
+
       </section>
     </div>
   );

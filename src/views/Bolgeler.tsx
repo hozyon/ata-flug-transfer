@@ -1,29 +1,27 @@
 'use client';
 
-import React from 'react';
-import Image from 'next/image';
+import React, { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Fuse from 'fuse.js';
 import { INITIAL_SITE_CONTENT } from '../constants';
 import { useAppStore } from '../store/useAppStore';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 
-const Bolgeler: React.FC = () => {
+const BolgelerContent: React.FC = () => {
     useScrollReveal();
     const { siteContent } = useAppStore();
 
     // Build WhatsApp message
     const buildWaMessage = (regionName: string) => {
-        const trMsg = `Merhaba, *${regionName}* bölgesi için transfer fiyat bilgisi almak istiyorum.`;
+        const trMsg = `Rezervasyon talebi:\nLütfen *${regionName}* transferi için bilgi veriniz.`;
         return encodeURIComponent(
-            `✈️ *${siteContent.business.name}*\n▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔\n\n🇹🇷 *Transfer Fiyat Talebi*\n\n🚐  *Bölge:* ${regionName}\n📩  ${trMsg}\n\n⏳ _Yanıt süresi: ~2 dakika_`
+            `[${siteContent.business.name} - TRANSFER]\n\nBölge: ${regionName}\n${trMsg}`
         );
     };
 
     const pricedRegions = React.useMemo(() => (siteContent.regions || INITIAL_SITE_CONTENT.regions).filter(r => r.price && r.price > 0), [siteContent.regions]);
     const [regions, setRegions] = React.useState(pricedRegions);
     const [searchTerm, setSearchTerm] = React.useState('');
-    const [_isAnimating, setIsAnimating] = React.useState(false);
     const searchParams = useSearchParams();
 
     React.useEffect(() => {
@@ -38,7 +36,6 @@ const Bolgeler: React.FC = () => {
     const [currentPage, setCurrentPage] = React.useState(1);
     const itemsPerPage = 8;
 
-    // Initialize Fuse with useMemo for performance
     const fuse = React.useMemo(() => {
         return new Fuse(regions, {
             keys: ['name'],
@@ -48,261 +45,145 @@ const Bolgeler: React.FC = () => {
         });
     }, [regions]);
 
-    // Advanced Filtering Logic
     const filteredRegions = React.useMemo(() => {
         if (!searchTerm.trim()) return regions;
         const results = fuse.search(searchTerm);
         return results.map(result => result.item);
     }, [searchTerm, regions, fuse]);
 
-    // Trigger visual feedback (blink) on search update
-    React.useEffect(() => {
-        if (searchTerm) {
-            setIsAnimating(true);
-            const timer = setTimeout(() => setIsAnimating(false), 500);
-            return () => clearTimeout(timer);
-        }
-    }, [searchTerm, filteredRegions]);
-
-    // Pagination Logic
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredRegions.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(filteredRegions.length / itemsPerPage);
 
-    const DISTANCE_MAP: Record<string, { dist: string; time: string }> = {
-        "Antalya Havalimanı (AYT)": { "dist": "0 km", "time": "0 dk" },
-        "Antalya (Merkez)": { "dist": "15 km", "time": "20 dk" },
-        "Kundu": { "dist": "16 km", "time": "20 dk" },
-        "Konyaaltı": { "dist": "32 km", "time": "40 dk" },
-        "Belek": { "dist": "33 km", "time": "35 dk" },
-        "Çolaklı": { "dist": "57 km", "time": "55 dk" },
-        "Evrenseki": { "dist": "60 km", "time": "55 dk" },
-        "Kumköy": { "dist": "61 km", "time": "55 dk" },
-        "Side": { "dist": "68 km", "time": "65 dk" },
-        "Beldibi": { "dist": "47 km", "time": "55 dk" },
-        "Göynük": { "dist": "54 km", "time": "60 dk" },
-        "Kemer": { "dist": "60 km", "time": "65 dk" },
-        "Tekirova": { "dist": "75 km", "time": "70 dk" },
-        "Kızılağaç": { "dist": "85 km", "time": "75 dk" },
-        "Okurcalar": { "dist": "97 km", "time": "85 dk" },
-        "İncekum": { "dist": "100 km", "time": "85 dk" },
-        "Türkler": { "dist": "107 km", "time": "95 dk" },
-        "Konaklı": { "dist": "113 km", "time": "100 dk" },
-        "Alanya": { "dist": "118 km", "time": "105 dk" },
-        "Mahmutlar": { "dist": "140 km", "time": "125 dk" },
-        "Kargıcak": { "dist": "143 km", "time": "130 dk" },
-        "Adrasan": { "dist": "110 km", "time": "105 dk" },
-        "Lara": { "dist": "15 km", "time": "25 dk" },
-        "Bodrum": { "dist": "420 km", "time": "5 sa" },
-        "Dalaman": { "dist": "240 km", "time": "3.5 sa" },
-        "Fethiye": { "dist": "200 km", "time": "3 sa" },
-        "Göcek": { "dist": "220 km", "time": "3.2 sa" },
-        "Marmaris": { "dist": "320 km", "time": "4.5 sa" },
-        "Ölüdeniz": { "dist": "210 km", "time": "3.2 sa" },
-        "Avsallar": { "dist": "102 km", "time": "90 dk" },
-        "Boğazkent": { "dist": "43 km", "time": "45 dk" },
-        "Çamyuva": { "dist": "67 km", "time": "65 dk" },
-        "Çıralı": { "dist": "97 km", "time": "95 dk" },
-        "Demre": { "dist": "156 km", "time": "140 dk" },
-        "Denizyaka": { "dist": "44 km", "time": "45 dk" },
-        "Finike": { "dist": "129 km", "time": "110 dk" },
-        "Gündoğdu": { "dist": "56 km", "time": "55 dk" },
-        "Kalkan": { "dist": "215 km", "time": "3.5 sa" },
-        "Kaş": { "dist": "205 km", "time": "3.2 sa" },
-        "Kestel": { "dist": "134 km", "time": "120 dk" },
-        "Kızılot": { "dist": "82 km", "time": "75 dk" },
-        "Kiriş": { "dist": "67 km", "time": "70 dk" },
-        "Kumluca": { "dist": "95 km", "time": "85 dk" },
-        "Manavgat": { "dist": "75 km", "time": "70 dk" },
-        "Olimpos": { "dist": "99 km", "time": "95 dk" },
-        "Sorgun": { "dist": "73 km", "time": "70 dk" },
-        "Titreyengöl": { "dist": "73 km", "time": "70 dk" },
-        "Kadriye": { "dist": "27 km", "time": "30 dk" }
-    };
-
     return (
-        <div className="min-h-screen" style={{ background: '#f8f7f4' }}>
+        <>
             {/* BANNER SECTION */}
-            <section className="relative pt-28 pb-14 overflow-hidden border-b border-white/5">
-                <div className="absolute inset-0 z-0">
-                    <Image
-                        src="/images/antalya-map-safe.png"
-                        alt="Antalya Map"
-                        fill
-                        priority
-                        className="object-cover"
-                    />
-                    <div className="absolute inset-0 bg-slate-900/60"></div>
-                </div>
-
-                <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border border-white/10 mb-4 shadow-lg animate-in fade-in slide-in-from-bottom-3 duration-700">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse"></span>
-                        <span>HİZMET BÖLGELERİ</span>
-                    </div>
-                    <h1 className="text-4xl sm:text-5xl md:text-7xl font-playfair font-medium text-white mb-6 tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 drop-shadow-2xl">
-                        Transfer Bölgelerimiz
+            <section className="pt-40 pb-20 border-b border-gray-100 reveal">
+                <div className="max-w-[1400px] mx-auto px-6">
+                    <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#888] mb-6">Operasyon Ağımız</p>
+                    <h1 className="text-6xl sm:text-[100px] font-playfair font-medium text-[#111] tracking-tighter leading-[0.9]">
+                        Transfer <br />
+                        <span className="italic font-light text-[#555]">Bölgeleri.</span>
                     </h1>
-                    <p className="text-slate-300 text-lg md:text-xl font-light tracking-wide animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-                        Antalya Havalimanı'ndan tüm popüler tatil bölgelerine VIP transfer.
-                    </p>
-
-                    <div className="mt-8 max-w-lg mx-auto relative animate-in fade-in slide-in-from-bottom-5 duration-700 delay-300">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <i className="fa-solid fa-search text-white/60 text-lg" aria-hidden="true"></i>
-                        </div>
-                        <input
-                            type="text"
-                            placeholder="Gitmek istediğiniz bölgeyi arayın..."
-                            aria-label="Bölge ara"
-                            className="block w-full pl-12 pr-4 py-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent transition-all shadow-2xl"
-                            value={searchTerm}
-                            onChange={(e) => {
-                                setSearchTerm(e.target.value);
-                                setCurrentPage(1);
-                            }}
-                        />
-                    </div>
                 </div>
             </section>
 
             {/* Regions Grid */}
-            <section className="py-12 md:py-16 relative z-20 overflow-hidden" style={{ background: '#f8f7f4' }}>
-                <div className="max-w-7xl mx-auto px-4 relative z-10">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
+            <section className="py-24 sm:py-32 bg-white">
+                <div className="max-w-[1400px] mx-auto px-6">
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-10 mb-20 reveal">
+                        <div className="w-full sm:w-[400px]">
+                            <div className="w-full border-b border-gray-300 pb-2 flex items-center gap-3">
+                                <i className="fa-solid fa-magnifying-glass text-[#888] text-sm"></i>
+                                <input
+                                    type="text"
+                                    placeholder="Hangi bölgeye gideceksiniz?"
+                                    aria-label="Bölge ara"
+                                    className="w-full bg-transparent border-none outline-none text-[#111] text-lg font-playfair placeholder-gray-400"
+                                    value={searchTerm}
+                                    onChange={(e) => {
+                                        setSearchTerm(e.target.value);
+                                        setCurrentPage(1);
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {currentItems.length > 0 ? (
                             currentItems.map((region) => {
-                                const distInfo = DISTANCE_MAP[region.name] || { dist: '-- km', time: '-- dk' };
-                                const shouldAnimate = searchTerm && currentItems.length < 5;
-
                                 return (
                                     <div
                                         key={region.id}
-                                        className={shouldAnimate ? "animate-border-rotate" : "h-full"}
+                                        className="group h-full flex flex-col border border-gray-200 hover:border-[#111] transition-colors reveal-stagger bg-transparent"
                                     >
-                                        <div className="group flex flex-col h-full bg-white rounded-2xl overflow-hidden border border-slate-100 hover:shadow-lg hover:border-slate-200 transition-all duration-300 transform hover:-translate-y-0.5">
-                                            <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
-                                                <div className="absolute inset-0 bg-slate-900/5 group-hover:bg-transparent transition-colors duration-300 z-10"></div>
-                                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                <img
-                                                    src={region.image}
-                                                    alt={region.name}
-                                                    loading="lazy"
-                                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03] will-change-transform"
-                                                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                                                />
-                                                {region.price && (
-                                                    <div className="absolute top-4 left-4 z-20">
-                                                        <span className="inline-block px-3 py-1 bg-white text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-wider rounded-full shadow-sm">
-                                                            {region.price}{siteContent.currency?.symbol || '€'} Başlayan
-                                                        </span>
-                                                    </div>
-                                                )}
-                                            </div>
-
-                                            <div className="flex-1 p-5 flex flex-col">
-                                                <h3 className="text-lg font-playfair font-bold text-slate-800 mb-2 group-hover:text-[var(--color-primary)] transition-colors leading-snug line-clamp-1">
-                                                    {region.name}
-                                                </h3>
-                                                <p className="text-slate-500 text-xs leading-relaxed mb-4 line-clamp-2">
-                                                    {region.desc || `${region.name} bölgesine konforlu ve güvenli VIP transfer hizmeti.`}
-                                                </p>
-
-                                                <div className="mt-auto flex items-center justify-between pt-4 border-t border-slate-100">
-                                                    <div className="flex items-center gap-2 text-slate-400 text-[10px] font-medium">
-                                                        <i className="fa-solid fa-route text-[var(--color-primary)]" aria-hidden="true"></i>
-                                                        <span>{distInfo.dist} / {distInfo.time}</span>
-                                                    </div>
-                                                    <a
-                                                        href={`https://wa.me/${siteContent.business.whatsapp}?text=${buildWaMessage(region.name)}`}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="flex items-center gap-1 text-[var(--color-primary)] text-[10px] font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform"
-                                                    >
-                                                        <span>Fiyat Al</span>
-                                                        <i className="fa-solid fa-arrow-right" aria-hidden="true"></i>
-                                                    </a>
+                                        <div className="relative aspect-[4/3] overflow-hidden bg-gray-50 border-b border-gray-200">
+                                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                                            <img
+                                                src={region.image}
+                                                alt={region.name}
+                                                loading="lazy"
+                                                className="w-full h-full object-cover grayscale transition-transform duration-[2000ms] group-hover:scale-105 group-hover:grayscale-0"
+                                                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                                            />
+                                            {region.price && (
+                                                <div className="absolute top-0 right-0 z-20">
+                                                    <span className="inline-block px-4 py-2 bg-black text-white text-[10px] font-bold tracking-[0.2em]">
+                                                        {siteContent.currency?.symbol || '€'}{region.price}
+                                                    </span>
                                                 </div>
+                                            )}
+                                        </div>
+
+                                        <div className="flex-1 p-8 flex flex-col">
+                                            <h3 className="text-2xl font-playfair font-bold text-[#111] mb-4 group-hover:italic transition-all">
+                                                {region.name}
+                                            </h3>
+                                            <p className="text-[#888] text-sm font-outfit leading-relaxed line-clamp-3">
+                                                {region.desc || `${region.name} noktasına ayrıcalıklı, sükunet dolu premium transfer deneyimi.`}
+                                            </p>
+
+                                            <div className="mt-8 pt-6 border-t border-gray-200">
+                                                <a
+                                                    href={`https://wa.me/${siteContent.business.whatsapp}?text=${buildWaMessage(region.name)}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-block text-[#111] text-[10px] font-bold uppercase tracking-[0.2em] border-b border-[#111] pb-1 hover:text-gray-500 transition-colors"
+                                                >
+                                                    Talep Oluştur
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
                                 );
                             })
                         ) : (
-                            <div className="col-span-full py-16 text-center">
-                                <div className="inline-block p-6 rounded-full bg-slate-50 mb-4">
-                                    <i className="fas fa-search text-4xl text-slate-300"></i>
-                                </div>
-                                <h3 className="text-lg font-medium text-slate-900">Sonuç Bulunamadı</h3>
-                                <p className="text-slate-500 mt-2">Aramanızla eşleşen transfer bölgesi bulunamadı.</p>
+                            <div className="col-span-full py-24 border-t border-gray-200 text-center">
+                                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#888]">Sonuç Bulunamadı.</p>
                             </div>
                         )}
                     </div>
 
                     {/* Pagination Controls */}
                     {totalPages > 1 && (
-                        <div className="flex justify-center items-center gap-2 mt-8">
-                            <button
-                                onClick={() => setCurrentPage(cms => Math.max(cms - 1, 1))}
-                                disabled={currentPage === 1}
-                                className="w-11 h-11 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                            >
-                                <i className="fas fa-chevron-left"></i>
-                            </button>
-
-                            <div className="flex flex-wrap gap-1">
-                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
-                                    const isActive = currentPage === page;
-                                    const isNearCurrent = Math.abs(page - currentPage) <= 1;
-                                    const isEdge = page === 1 || page === totalPages;
-                                    if (!isActive && !isNearCurrent && !isEdge && totalPages > 5) return null;
-                                    return (
-                                        <button
-                                            key={page}
-                                            onClick={() => setCurrentPage(page)}
-                                            className={`w-11 h-11 flex items-center justify-center rounded-lg border transition-colors ${isActive
-                                                ? 'bg-[var(--color-dark)] border-[var(--color-dark)] text-white'
-                                                : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50'
-                                                }`}
-                                        >
-                                            {page}
-                                        </button>
-                                    );
-                                })}
-                            </div>
-
-                            <button
-                                onClick={() => setCurrentPage(cms => Math.min(cms + 1, totalPages))}
-                                disabled={currentPage === totalPages}
-                                className="w-11 h-11 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                            >
-                                <i className="fas fa-chevron-right"></i>
-                            </button>
+                        <div className="flex justify-center items-center gap-4 mt-24 reveal">
+                            {[...Array(totalPages)].map((_, i) => (
+                                <button key={i} onClick={() => { setCurrentPage(i + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                                    className={`w-12 h-12 flex items-center justify-center border font-outfit transition-all ${currentPage === i + 1 ? 'border-[#111] bg-[#111] text-white' : 'border-gray-200 text-[#111] hover:border-[#111]'}`}>
+                                    {i + 1}
+                                </button>
+                            ))}
                         </div>
                     )}
                 </div>
             </section>
 
             {/* CTA */}
-            <section className="py-16 md:py-20 bg-[var(--color-dark)]">
-                <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-                    <h2 className="font-playfair font-bold text-white leading-tight" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.5rem)' }}>Özel Fiyat Teklifi Alın</h2>
-                    <p className="text-white/40 mt-3 text-sm">Listede olmayan bir bölge için veya grup transferi için özel fiyat teklifi alın.</p>
+            <section className="py-32 font-outfit bg-[#111]">
+                <div className="max-w-[1400px] mx-auto px-6 text-center reveal text-white">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#888] mb-6">Özel Rotalar</p>
+                    <h2 className="text-5xl sm:text-7xl font-playfair font-medium tracking-tight mb-8">Listede Bulamadınız mı?</h2>
+                    <p className="text-gray-400 max-w-md mx-auto mb-16">Size özel lokasyonlar veya saatlik tahsis talepleriniz için concierge ekibimizle iletişime geçin.</p>
                     <a
                         href={`https://wa.me/${siteContent.business.whatsapp}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2.5 text-[#0f172a] font-bold px-8 py-3.5 rounded-2xl mt-8 transition-all duration-200 hover:brightness-110 active:scale-[0.98]"
-                        style={{ background: '#c5a059' }}
+                        className="inline-flex items-center px-12 py-5 bg-white text-[#111] font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-gray-200 transition-colors"
                     >
-                        <i className="fab fa-whatsapp text-xl"></i>
-                        WhatsApp ile Fiyat Al
+                        VIP Destek
                     </a>
                 </div>
             </section>
-        </div>
+        </>
     );
 };
 
-export default Bolgeler;
+export default function Bolgeler() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-white" />}>
+            <BolgelerContent />
+        </Suspense>
+    );
+}

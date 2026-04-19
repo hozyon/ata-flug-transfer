@@ -14,74 +14,69 @@ const Hakkimizda: React.FC = () => {
     useScrollReveal();
 
     const features = [
-        { icon: "fa-shield-halved", title: "Güven ve Kalite", desc: "Uçuş takibi, zamanında karşılama ve güvenli seyahat garantisi." },
-        { icon: "fa-car", title: "Premium Filo", desc: "Mercedes-Benz Vito ve Sprinter araçlarla konforun tadını çıkarın." },
-        { icon: "fa-headset", title: "7/24 Destek", desc: "İhtiyaç duyduğunuz her an WhatsApp üzerinden anında iletişim." },
+        { icon: "fa-shield-halved", title: "Güven ve Prestij", desc: "Sıradanlıktan uzak, tamamen denetimli kusursuz seyahat." },
+        { icon: "fa-car", title: "Artizan Filo", desc: "En ince ayrıntısına kadar tasarlanmış lüks Mercedes-Benz kabinleri." },
+        { icon: "fa-headset", title: "Concierge Etkisi", desc: "Tüm taleplerinizi anında yöneten asistan hizmeti." },
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50">
-            {/* SEO handled by generateMetadata() in page.tsx */}
-            <section className="relative pt-28 pb-14 flex items-center justify-center overflow-hidden border-b border-white/5">
-                <div className="absolute inset-0 z-0">
-                    <Image src={about.bannerImage || "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=2000"} alt="Antalya Luxury" fill sizes="100vw" priority className="object-cover" />
-                    <div className="absolute inset-0 bg-slate-900/80"></div>
-                </div>
-                <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border border-white/10 mb-4 shadow-lg animate-in fade-in slide-in-from-bottom-3 duration-700">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse"></span>
-                        <span>KURUMSAL</span>
-                    </div>
-                    <h1 className="text-3xl sm:text-5xl md:text-7xl font-playfair font-medium text-white mb-6 tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 drop-shadow-2xl">
-                        Hakkımızda
+        <div className="min-h-screen bg-white text-[#111]">
+            {/* ── BANNER ── */}
+            <section className="pt-40 pb-20 border-b border-gray-100 reveal">
+                <div className="max-w-[1400px] mx-auto px-6">
+                    <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#888] mb-6">Kurumsal Kimlik</p>
+                    <h1 className="text-6xl sm:text-[100px] font-playfair font-medium tracking-tighter leading-[0.9]">
+                        Zamanın <br />
+                        <span className="italic font-light text-[#555]">Ötesinde.</span>
                     </h1>
-                    <p className="text-slate-300 text-lg md:text-xl font-light tracking-wide animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-                        Antalya'nın En Prestijli VIP Transfer Hizmeti
-                    </p>
                 </div>
             </section>
 
-            <section className="py-16 md:py-24 relative z-20 overflow-hidden" style={{ background: '#f8f7f4' }}>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
-                        <div className="pt-2 reveal-left">
-                            <h2 className="font-playfair font-bold text-slate-900 leading-tight mb-6" style={{ fontSize: 'clamp(1.6rem, 3vw, 2.5rem)' }}>{about.title}</h2>
-                            <div className="text-slate-600 text-base leading-relaxed space-y-5 whitespace-pre-line border-l-2 pl-6" style={{ borderColor: 'rgba(197,160,89,0.4)' }}>
-                                {about.content}
+            {/* ── MAIN ── */}
+            <section className="py-24 sm:py-32">
+                <div className="max-w-[1400px] mx-auto px-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
+                        <div className="lg:col-span-5 reveal-left">
+                            <h2 className="font-playfair text-4xl sm:text-5xl leading-tight mb-8">
+                                {about.title}
+                            </h2>
+                            <div className="flex flex-col gap-6 text-[#555] font-outfit text-sm leading-relaxed border-l border-[#111] pl-8 opacity-90 text-justify">
+                                {about.content?.split('\n').filter(Boolean).map((p, i) => (
+                                    <p key={i}>{p}</p>
+                                ))}
                             </div>
-                            <div className="mt-8">
-                                <a href={`https://wa.me/${business.whatsapp}`} target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-3 font-semibold transition-colors hover:opacity-80" style={{ color: '#c5a059' }}>
-                                    <span>İletişime Geç</span>
-                                    <i className="fa-solid fa-arrow-right text-sm transform group-hover:translate-x-1 transition-transform" aria-hidden="true"></i>
+                            <div className="mt-12">
+                                <a href={`https://wa.me/${business.whatsapp}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center text-[10px] font-bold uppercase tracking-[0.2em] border-b border-[#111] pb-1 hover:text-gray-500 hover:border-gray-500 transition-colors">
+                                    Ayrıcalıkları Keşfedin
                                 </a>
                             </div>
                         </div>
-                        <div className="relative reveal">
-                            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-xl border border-slate-200">
-                                <Image src={about.image || '/images/about-custom.jpg'} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover hover:scale-105 transition-transform duration-700" alt="About Us Feature" />
-                            </div>
-                            <div className="absolute -bottom-8 -left-8 w-2/3 bg-white p-6 rounded-2xl hidden md:block shadow-lg border border-slate-100">
-                                <div className="font-playfair font-bold mb-1" style={{ color: '#c5a059', fontSize: '2rem' }}>VIP</div>
-                                <div className="text-slate-700 font-semibold uppercase tracking-widest text-xs">Transfer Hizmeti</div>
+                        <div className="lg:col-span-7 reveal">
+                            <div className="relative aspect-[4/5] sm:aspect-[4/3] bg-gray-100">
+                                <Image src={about.image || '/images/about-custom.jpg'} fill className="object-cover grayscale hover:grayscale-0 transition-all duration-1000" alt="About Us Feature" />
+                                <div className="absolute -bottom-8 -left-8 bg-white p-8 border border-gray-100 hidden sm:block">
+                                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#888] mb-2">Başlangıçtan Bugüne</p>
+                                    <p className="font-playfair font-medium text-4xl text-[#111]">15+ Yıl</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section className="py-16 md:py-20 bg-[var(--color-dark)]">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 stagger-children">
+            {/* ── FEATURES ── */}
+            <section className="py-32 bg-[#fafafa] border-t border-gray-100">
+                <div className="max-w-[1400px] mx-auto px-6">
+                    <div className="text-center mb-24 reveal">
+                        <h2 className="text-5xl font-playfair font-medium tracking-tight">Kusursuz Seçim</h2>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
                         {features.map((feature, idx) => (
-                            <div key={idx} className="reveal rounded-2xl p-6 border transition-all duration-300 group hover:-translate-y-1 cursor-default" style={{ borderColor: 'rgba(255,255,255,0.07)', background: 'rgba(255,255,255,0.03)' }}
-                                onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(197,160,89,0.35)'; (e.currentTarget as HTMLDivElement).style.background = 'rgba(197,160,89,0.04)'; }}
-                                onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = 'rgba(255,255,255,0.07)'; (e.currentTarget as HTMLDivElement).style.background = 'rgba(255,255,255,0.03)'; }}>
-                                <div className="flex flex-col items-center text-center gap-3">
-                                    <div className="w-12 h-12 rounded-xl flex items-center justify-center text-xl mb-1 transition-all duration-300 group-hover:scale-110" style={{ background: 'rgba(197,160,89,0.12)', color: '#c5a059', border: '1px solid rgba(197,160,89,0.25)' }}>
-                                        <i className={`fa-solid ${feature.icon}`}></i>
-                                    </div>
-                                    <h3 className="font-playfair font-bold text-white text-base group-hover:text-[#c5a059] transition-colors">{feature.title}</h3>
-                                    <p className="text-white/40 text-sm leading-relaxed">{feature.desc}</p>
+                            <div key={idx} className="flex flex-col gap-6 reveal-stagger border-t border-gray-200 pt-8 hover:border-[#111] transition-colors">
+                                <div className="text-3xl text-[#111]"><i className={`fa-solid ${feature.icon}`}></i></div>
+                                <div>
+                                    <h3 className="font-playfair font-bold text-2xl text-[#111] mb-4">{feature.title}</h3>
+                                    <p className="text-[#888] text-sm leading-relaxed font-outfit">{feature.desc}</p>
                                 </div>
                             </div>
                         ))}

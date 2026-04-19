@@ -1,8 +1,6 @@
 'use client';
 
 import React from 'react';
-import Image from 'next/image';
-
 import { useSiteContent } from '../SiteContext';
 
 const VizyonMisyon: React.FC = () => {
@@ -10,101 +8,79 @@ const VizyonMisyon: React.FC = () => {
     const vm = siteContent.visionMission;
 
     return (
-        <div className="min-h-screen" style={{ background: '#f8f7f4' }}>
-            {/* SEO handled by generateMetadata() in page.tsx */}
-            <section className="relative pt-28 pb-14 flex items-center justify-center overflow-hidden border-b border-white/5">
-                <div className="absolute inset-0 z-0">
-                    <Image src={vm?.hero?.bannerImage || "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=2000"} alt="Antalya Luxury" fill sizes="100vw" priority className="object-cover" />
-                    <div className="absolute inset-0 bg-slate-900/80"></div>
-                </div>
-                <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-white/90 text-[10px] font-bold uppercase tracking-wider backdrop-blur-md border border-white/10 mb-4 shadow-lg animate-in fade-in slide-in-from-bottom-3 duration-700">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] animate-pulse"></span>
-                        <span>KURUMSAL</span>
-                    </div>
-                    <h1 className="text-3xl sm:text-5xl md:text-7xl font-playfair font-medium text-white mb-6 tracking-tight leading-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 drop-shadow-2xl">
-                        {vm?.hero?.title || 'Vizyon & Misyon'}
+        <div className="min-h-screen bg-white text-[#111]">
+            {/* ── BANNER ── */}
+            <section className="pt-40 pb-20 border-b border-gray-100 reveal">
+                <div className="max-w-[1400px] mx-auto px-6">
+                    <p className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#888] mb-6">Geleceğe Bakış</p>
+                    <h1 className="text-6xl sm:text-[100px] font-playfair font-medium tracking-tighter leading-[0.9]">
+                        Vizyon & <br />
+                        <span className="italic font-light text-[#555]">Misyon.</span>
                     </h1>
-                    <p className="text-slate-300 text-lg md:text-xl font-light tracking-wide animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
-                        {vm?.hero?.desc || 'Geleceğe bakışımız ve değerlerimiz.'}
-                    </p>
                 </div>
             </section>
 
-            <section className="py-16 md:py-24 relative z-20 overflow-hidden" style={{ background: '#f8f7f4' }}>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-                        {/* Vision Card */}
-                        <div className="bg-white rounded-2xl p-8 md:p-10 border border-slate-100 hover:border-[var(--color-primary)]/30 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 group relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-48 h-48 rounded-full blur-3xl -mr-24 -mt-24 transition-all duration-500" style={{ background: 'rgba(197,160,89,0.05)' }}></div>
-                            <div className="relative z-10">
-                                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-105" style={{ background: 'rgba(197,160,89,0.1)', border: '1px solid rgba(197,160,89,0.2)' }}>
-                                    <i className="fa-solid fa-eye text-xl" style={{ color: '#c5a059' }} aria-hidden="true"></i>
-                                </div>
-                                <h2 className="font-playfair font-bold text-slate-900 mb-3 leading-snug group-hover:text-[var(--color-primary)] transition-colors" style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.75rem)' }}>{vm?.vision?.title || ''}</h2>
-                                <p className="text-slate-500 leading-relaxed text-sm mb-6">{vm?.vision?.desc || ''}</p>
-                                <div className="space-y-3">
-                                    {vm?.vision?.items?.map((item, idx) => (
-                                        item ? (
-                                            <div key={idx} className="flex items-center gap-3 p-3 rounded-xl transition-colors duration-200" style={{ background: '#f8f7f4' }}>
-                                                <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(197,160,89,0.15)', color: '#c5a059' }}><i className="fa-solid fa-check text-[10px]" aria-hidden="true"></i></div>
-                                                <span className="text-slate-600 text-sm font-medium">{item}</span>
-                                            </div>
-                                        ) : null
-                                    ))}
-                                </div>
+            {/* ── CORE ── */}
+            <section className="py-24 sm:py-32 border-b border-gray-100">
+                <div className="max-w-[1400px] mx-auto px-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-16 lg:gap-32">
+                        {/* VİZYON */}
+                        <div className="reveal-left">
+                            <h2 className="text-[10px] font-bold uppercase tracking-[0.3em] border-[#111] border-b inline-block pb-1 mb-8">Vizyonumuz</h2>
+                            <h3 className="text-4xl font-playfair text-[#111] mb-8 leading-tight">{vm?.vision?.title || 'Zirveyi Tanımlamak'}</h3>
+                            <p className="text-[#555] font-outfit text-sm leading-relaxed mb-8">{vm?.vision?.desc || '-'}</p>
+                            
+                            <div className="space-y-4 border-t border-gray-100 pt-8">
+                                {vm?.vision?.items?.filter(Boolean).map((item, idx) => (
+                                    <div key={idx} className="flex gap-4">
+                                        <span className="text-[#888] text-[8px] mt-1.5"><i className="fa-solid fa-diamond" /></span>
+                                        <span className="text-[#111] text-sm font-outfit">{item}</span>
+                                    </div>
+                                ))}
                             </div>
                         </div>
 
-                        {/* Mission Card */}
-                        <div className="bg-white rounded-2xl p-8 md:p-10 border border-slate-100 hover:border-[var(--color-primary)]/30 hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 group relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-48 h-48 rounded-full blur-3xl -mr-24 -mt-24 transition-all duration-500" style={{ background: 'rgba(197,160,89,0.04)' }}></div>
-                            <div className="relative z-10">
-                                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 group-hover:scale-105" style={{ background: 'rgba(197,160,89,0.1)', border: '1px solid rgba(197,160,89,0.2)' }}>
-                                    <i className="fa-solid fa-bullseye text-xl" style={{ color: '#c5a059' }} aria-hidden="true"></i>
-                                </div>
-                                <h2 className="font-playfair font-bold text-slate-900 mb-3 leading-snug group-hover:text-[var(--color-primary)] transition-colors" style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.75rem)' }}>{vm?.mission?.title || ''}</h2>
-                                <p className="text-slate-500 leading-relaxed text-sm mb-6">{vm?.mission?.desc || ''}</p>
-                                <div className="space-y-3">
-                                    {vm?.mission?.items?.map((item, idx) => (
-                                        item ? (
-                                            <div key={idx} className="flex items-center gap-3 p-3 rounded-xl transition-colors duration-200" style={{ background: '#f8f7f4' }}>
-                                                <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0" style={{ background: 'rgba(197,160,89,0.15)', color: '#c5a059' }}><i className="fa-solid fa-check text-[10px]" aria-hidden="true"></i></div>
-                                                <span className="text-slate-600 text-sm font-medium">{item}</span>
-                                            </div>
-                                        ) : null
-                                    ))}
-                                </div>
+                        {/* MİSYON */}
+                        <div className="reveal">
+                            <h2 className="text-[10px] font-bold uppercase tracking-[0.3em] border-[#111] border-b inline-block pb-1 mb-8">Misyonumuz</h2>
+                            <h3 className="text-4xl font-playfair text-[#111] mb-8 leading-tight">{vm?.mission?.title || 'Kusursuzluk Standartı'}</h3>
+                            <p className="text-[#555] font-outfit text-sm leading-relaxed mb-8">{vm?.mission?.desc || '-'}</p>
+                            
+                            <div className="space-y-4 border-t border-gray-100 pt-8">
+                                {vm?.mission?.items?.filter(Boolean).map((item, idx) => (
+                                    <div key={idx} className="flex gap-4">
+                                        <span className="text-[#888] text-[8px] mt-1.5"><i className="fa-solid fa-diamond" /></span>
+                                        <span className="text-[#111] text-sm font-outfit">{item}</span>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <section className="py-16 md:py-20" style={{ background: '#f8f7f4', borderTop: '1px solid rgba(0,0,0,0.04)' }}>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-12">
-                        <div className="flex items-center justify-center gap-4 mb-4">
-                            <span className="flex-1 max-w-[72px] h-px" style={{ background: 'linear-gradient(90deg, transparent, #c5a059)' }} />
-                            <span className="text-[10px] font-black tracking-[0.35em] uppercase" style={{ color: '#c5a059' }}>HİZMET İLKELERİMİZ</span>
-                            <span className="flex-1 max-w-[72px] h-px" style={{ background: 'linear-gradient(270deg, transparent, #c5a059)' }} />
-                        </div>
-                        <h2 className="font-playfair font-bold text-slate-900 leading-tight" style={{ fontSize: 'clamp(1.5rem, 3vw, 2.25rem)' }}>{vm?.values?.title || ''}</h2>
-                        <p className="text-slate-500 mt-2 max-w-2xl mx-auto text-sm">{vm?.values?.desc || ''}</p>
+            {/* ── VALUES ── */}
+            <section className="py-24 sm:py-32 bg-[#fafafa]">
+                <div className="max-w-[1400px] mx-auto px-6">
+                    <div className="mb-20 reveal">
+                        <h2 className="text-5xl font-playfair font-medium text-[#111] tracking-tight">{vm?.values?.title || 'Hizmet İlkelerimiz.'}</h2>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#888] mt-4">{vm?.values?.desc || 'Her adımda mükemmellik.'}</p>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 sm:gap-16">
                         {vm?.values?.items?.map((valueItem, idx) => (
-                            <div key={idx} className="bg-white rounded-2xl p-6 border border-slate-100 hover:border-[var(--color-primary)]/25 hover:shadow-md transition-all duration-200 text-center group hover:-translate-y-0.5">
-                                <div className="w-12 h-12 rounded-2xl mx-auto flex items-center justify-center text-xl mb-4 transition-all duration-200 group-hover:scale-105" style={{ background: 'rgba(197,160,89,0.1)', color: '#c5a059', border: '1px solid rgba(197,160,89,0.2)' }}>
+                            <div key={idx} className="reveal-stagger group border-t border-gray-200 pt-8 hover:border-[#111] transition-colors">
+                                <div className="text-2xl text-[#111] mb-6 group-hover:italic transition-all">
                                     <i className={`fa-solid ${valueItem.icon}`}></i>
                                 </div>
-                                <h3 className="font-playfair font-bold text-slate-900 text-base mb-2 group-hover:text-[var(--color-primary)] transition-colors">{valueItem.title}</h3>
-                                <p className="text-slate-500 leading-relaxed text-xs">{valueItem.desc}</p>
+                                <h3 className="font-playfair font-bold text-xl text-[#111] mb-3">{valueItem.title}</h3>
+                                <p className="text-[#888] font-outfit text-xs leading-relaxed">{valueItem.desc}</p>
                             </div>
                         ))}
                     </div>
                 </div>
             </section>
+
         </div>
     );
 };

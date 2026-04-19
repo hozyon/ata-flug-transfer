@@ -8,8 +8,6 @@ const COUNTRY_CODES = [
   { code: '+44', flag: '🇬🇧', name: 'UK' },
   { code: '+33', flag: '🇫🇷', name: 'FR' },
   { code: '+7', flag: '🇷🇺', name: 'RU' },
-  { code: '+966', flag: '🇸🇦', name: 'SA' },
-  { code: '+971', flag: '🇦🇪', name: 'AE' },
   { code: '+1', flag: '🇺🇸', name: 'US' },
   { code: '+31', flag: '🇳🇱', name: 'NL' },
   { code: '+32', flag: '🇧🇪', name: 'BE' },
@@ -18,13 +16,6 @@ const COUNTRY_CODES = [
   { code: '+46', flag: '🇸🇪', name: 'SE' },
   { code: '+47', flag: '🇳🇴', name: 'NO' },
   { code: '+45', flag: '🇩🇰', name: 'DK' },
-  { code: '+48', flag: '🇵🇱', name: 'PL' },
-  { code: '+380', flag: '🇺🇦', name: 'UA' },
-  { code: '+40', flag: '🇷🇴', name: 'RO' },
-  { code: '+30', flag: '🇬🇷', name: 'GR' },
-  { code: '+972', flag: '🇮🇱', name: 'IL' },
-  { code: '+994', flag: '🇦🇿', name: 'AZ' },
-  { code: '+995', flag: '🇬🇪', name: 'GE' },
 ];
 
 interface BookingFormProps {
@@ -32,7 +23,7 @@ interface BookingFormProps {
   vehicles: Vehicle[];
 }
 
-const STEPS = ['Rota', 'Bilgiler', 'Detaylar', 'Özet'] as const;
+const STEPS = ['ROTA', 'YOLCU', 'ARAÇ', 'ÖZET'] as const;
 
 const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) => {
   const siteContent = useAppStore(state => state.siteContent);
@@ -87,8 +78,8 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
     const e: Record<string, string> = {};
     if (s === 0) {
       if (formData.pickup === formData.destination) e.route = 'Nereden ve Nereye aynı olamaz.';
-      if (!formData.date) e.date = 'Lütfen tarih seçin.';
-      if (!formData.time) e.time = 'Lütfen saat seçin.';
+      if (!formData.date) e.date = 'Tarih gerekli.';
+      if (!formData.time) e.time = 'Saat gerekli.';
     }
     if (s === 1) {
       if (!formData.firstName.trim()) e.firstName = 'Ad gerekli.';
@@ -106,7 +97,7 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
     setTimeout(() => {
       setStep(next);
       setAnimating(false);
-    }, 220);
+    }, 300);
   };
 
   const handleSubmit = () => {
@@ -118,19 +109,19 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
     onBookingSubmit({ ...formData, customerName: fullName, phone: fullPhone, email: formData.email || undefined });
 
     const trLines = [
-      '👤  Ad Soyad: ' + fullName,
-      '📱  Telefon: ' + fullPhone,
-      '📍  Nereden: ' + formData.pickup,
-      '🏁  Nereye: ' + formData.destination,
-      '📅  Tarih: ' + dateFormatted,
-      '⏰  Saat: ' + formData.time,
-      '👥  Kişi: ' + formData.passengers,
-      '🚐  Araç: ' + (selectedVehicle?.name || '-'),
+      'AD SOYAD: ' + fullName,
+      'TELEFON: ' + fullPhone,
+      'NEREDEN: ' + formData.pickup,
+      'NEREYE: ' + formData.destination,
+      'TARİH: ' + dateFormatted,
+      'SAAT: ' + formData.time,
+      'KİŞİ: ' + formData.passengers,
+      'ARAÇ: ' + (selectedVehicle?.name || '-'),
     ];
-    if (formData.flightNumber) trLines.push('✈️  Uçuş No: ' + formData.flightNumber);
-    if (formData.notes) trLines.push('📝  Not: ' + formData.notes);
+    if (formData.flightNumber) trLines.push('UÇUŞ NO: ' + formData.flightNumber);
+    if (formData.notes) trLines.push('NOT: ' + formData.notes);
 
-    const msg = [`✨ *${businessName}* ✨`, '____________________________', '', '⭐ *YENİ REZERVASYON TALEBİ*', '', ...trLines, '', '✅ _Teşekkürler, dönüş bekliyorum._'].join('\n');
+    const msg = [`[${businessName} - REZERVASYON]`, '', ...trLines].join('\n');
 
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     const waNumber = whatsappNumber;
@@ -144,237 +135,198 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
     setTimeout(() => setShowToast(false), 4000);
   };
 
-  const card = "rounded-2xl border border-gray-200 bg-white px-4 py-3 min-h-[56px] focus-within:border-[var(--color-primary)] hover:border-gray-300 transition-colors shadow-sm";
-  const lbl = "block text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1";
-  const inp = "w-full bg-transparent border-none outline-none text-sm text-gray-900 font-medium placeholder-gray-400";
-  const errTxt = "text-red-500 text-[10px] mt-1.5 flex items-center gap-1 font-medium";
+  const card = "border border-gray-200 bg-transparent px-5 py-4 min-h-[64px] focus-within:border-gray-900 transition-colors duration-300";
+  const lbl = "block text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2";
+  const inp = "w-full bg-transparent border-none outline-none text-base text-gray-900 font-medium placeholder-gray-300 font-outfit";
+  const errTxt = "text-red-500 text-[10px] mt-2 font-medium tracking-wide uppercase";
 
   const selectedVehicle = vehicles.find(v => v.id === formData.vehicleId);
 
   const slideClass = animating
-    ? (direction === 'forward' ? 'opacity-0 translate-x-4' : 'opacity-0 -translate-x-4')
-    : 'opacity-100 translate-x-0';
+    ? (direction === 'forward' ? 'opacity-0 translate-y-4' : 'opacity-0 -translate-y-4')
+    : 'opacity-100 translate-y-0';
 
   return (
-    <div className="w-full overflow-hidden" style={{ fontFamily: "'Outfit', sans-serif" }}>
+    <div className="w-full h-full flex flex-col font-outfit text-gray-900 pb-10">
 
-      {/* ── Step Indicator ── */}
-      <div className="px-1 pb-6">
-        <div className="flex items-center justify-between mb-3 px-1">
-          {STEPS.map((label, i) => (
+      {/* ── Step Indicator (Minimal Dots / Lines) ── */}
+      <div className="flex items-center gap-4 mb-12">
+        {STEPS.map((label, i) => (
+          <div key={label} className="flex-1">
             <button
-              key={label}
               type="button"
               onClick={() => i < step && goToStep(i)}
-              className={`text-[10px] font-black uppercase tracking-wider transition-colors duration-300 outline-none ${i <= step ? 'cursor-pointer' : 'cursor-default'} ${i < step ? 'text-gray-400 hover:text-[var(--color-primary)]' : i === step ? 'text-[var(--color-primary)]' : 'text-gray-300'}`}
+              className={`w-full text-left outline-none transition-all duration-500 ${i <= step ? 'cursor-pointer' : 'cursor-default'}`}
             >
-              {label}
+              <span className={`text-[9px] font-bold uppercase tracking-[0.2em] mb-2 block transition-colors ${i === step ? 'text-gray-900' : (i < step ? 'text-gray-400 hover:text-gray-900' : 'text-gray-300')}`}>
+                0{i + 1} // {label}
+              </span>
+              <div className={`h-[1px] w-full transition-colors duration-500 ${i <= step ? 'bg-gray-900' : 'bg-gray-200'}`} />
             </button>
-          ))}
-        </div>
-        <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-gradient-to-r from-[var(--color-primary-light)] to-[var(--color-primary)] rounded-full transition-all duration-500 ease-out"
-            style={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
-          />
-        </div>
+          </div>
+        ))}
       </div>
 
       {/* ── Step Content ── */}
-      <div
-        className={`flex flex-col gap-3 transition-all duration-220 ease-out ${slideClass}`}
-      >
+      <div className={`flex flex-col gap-4 flex-1 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${slideClass}`}>
 
         {/* STEP 0 — Rota */}
         {step === 0 && (
-          <>
-            <div className="relative">
-              <div className="flex flex-col rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-sm focus-within:border-[var(--color-primary)] transition-colors">
-                <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/50">
-                  <label htmlFor="bf-pickup" className={lbl}>Nereden</label>
-                  <div className="flex items-center gap-3">
-                    <i className="fa-solid fa-circle-dot text-[var(--color-primary)] text-[10px] flex-shrink-0" />
-                    <select id="bf-pickup" name="pickup" value={formData.pickup} onChange={handleChange}
-                      className="w-full bg-transparent outline-none text-sm text-gray-900 font-semibold appearance-none cursor-pointer truncate">
-                      <option value="" disabled hidden>Seçiniz</option>
-                      {siteContent.regions.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
-                    </select>
-                  </div>
-                </div>
-                <div className="px-4 py-3">
-                  <label htmlFor="bf-destination" className={lbl}>Nereye</label>
-                  <div className="flex items-center gap-3">
-                    <i className="fa-solid fa-location-dot text-[var(--color-primary)] text-[10px] flex-shrink-0" />
-                    <select id="bf-destination" name="destination" value={formData.destination} onChange={handleChange}
-                      className="w-full bg-transparent outline-none text-sm text-gray-900 font-semibold appearance-none cursor-pointer truncate">
-                      <option value="" disabled hidden>Seçiniz</option>
-                      {siteContent.regions.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
-                    </select>
-                  </div>
-                </div>
+          <div className="space-y-4 animate-in fade-in zoom-in-95 duration-500">
+            <div className="relative border border-gray-200 bg-white">
+              <div className="px-6 py-5 border-b border-gray-100">
+                <label htmlFor="bf-pickup" className={lbl}>Nereden</label>
+                <select id="bf-pickup" name="pickup" value={formData.pickup} onChange={handleChange}
+                  className="w-full bg-transparent outline-none text-2xl text-gray-900 font-playfair font-medium appearance-none cursor-pointer">
+                  <option value="" disabled hidden>Seçiniz</option>
+                  {siteContent.regions.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
+                </select>
               </div>
-              <button type="button" onClick={handleSwapLocations} aria-label="Yer değiştir"
-                className="absolute right-6 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-md border border-gray-100 hover:border-[var(--color-primary)] flex items-center justify-center text-gray-400 hover:text-[var(--color-primary)] transition-all active:scale-90 z-10">
-                <i className="fa-solid fa-arrow-right-arrow-left text-[10px] rotate-90" />
+              <div className="px-6 py-5">
+                <label htmlFor="bf-destination" className={lbl}>Nereye</label>
+                <select id="bf-destination" name="destination" value={formData.destination} onChange={handleChange}
+                  className="w-full bg-transparent outline-none text-2xl text-gray-900 font-playfair font-medium appearance-none cursor-pointer">
+                  <option value="" disabled hidden>Seçiniz</option>
+                  {siteContent.regions.map(r => <option key={r.id} value={r.name}>{r.name}</option>)}
+                </select>
+              </div>
+              
+              <button type="button" onClick={handleSwapLocations}
+                className="absolute right-8 top-1/2 -translate-y-1/2 w-12 h-12 bg-white border border-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-900 transition-all hover:bg-gray-50 active:scale-95 z-10 shadow-sm">
+                <i className="fa-solid fa-arrow-down-up-across-line" />
               </button>
             </div>
-            {errors.route && <p className={errTxt}><i className="fa-solid fa-circle-exclamation" />{errors.route}</p>}
+            {errors.route && <p className={errTxt}>{errors.route}</p>}
 
-            <div className="grid grid-cols-2 gap-3 mt-1">
+            <div className="grid grid-cols-2 gap-4">
               <div className={card}>
                 <label htmlFor="bf-date" className={lbl}>Tarih</label>
-                <div className="flex items-center gap-2">
-                  <i className="fa-regular fa-calendar-days text-gray-400 text-sm flex-shrink-0" />
-                  <input id="bf-date" required type="date" name="date" value={formData.date} onChange={handleChange} min={today} className={inp + ' cursor-pointer'} />
-                </div>
+                <input id="bf-date" required type="date" name="date" value={formData.date} onChange={handleChange} min={today} className={inp + ' cursor-pointer'} />
                 {errors.date && <p className={errTxt}>{errors.date}</p>}
               </div>
               <div className={card}>
                 <label htmlFor="bf-time" className={lbl}>Saat</label>
-                <div className="flex items-center gap-2">
-                  <i className="fa-regular fa-clock text-gray-400 text-sm flex-shrink-0" />
-                  <input id="bf-time" required type="time" name="time" value={formData.time} onChange={handleChange} className={inp + ' cursor-pointer'} />
-                </div>
+                <input id="bf-time" required type="time" name="time" value={formData.time} onChange={handleChange} className={inp + ' cursor-pointer'} />
                 {errors.time && <p className={errTxt}>{errors.time}</p>}
               </div>
             </div>
-          </>
+          </div>
         )}
 
         {/* STEP 1 — Kişi */}
         {step === 1 && (
-          <>
-            <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-4 animate-in fade-in zoom-in-95 duration-500">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className={card}>
-                <label htmlFor="bf-firstName" className={lbl}>Ad</label>
-                <input id="bf-firstName" required type="text" name="firstName" value={formData.firstName} onChange={handleChange} className={inp} placeholder="Adınız" />
+                <label htmlFor="bf-firstName" className={lbl}>İlk İsminiz</label>
+                <input id="bf-firstName" required type="text" name="firstName" value={formData.firstName} onChange={handleChange} className={inp} placeholder="JOHN" />
                 {errors.firstName && <p className={errTxt}>{errors.firstName}</p>}
               </div>
               <div className={card}>
-                <label htmlFor="bf-lastName" className={lbl}>Soyad</label>
-                <input id="bf-lastName" type="text" name="lastName" value={formData.lastName} onChange={handleChange} className={inp} placeholder="Soyadınız" />
+                <label htmlFor="bf-lastName" className={lbl}>Soy İsim</label>
+                <input id="bf-lastName" type="text" name="lastName" value={formData.lastName} onChange={handleChange} className={inp} placeholder="DOE" />
               </div>
             </div>
 
-            <div className={card}>
-              <label htmlFor="bf-phone" className={lbl}>Telefon</label>
-              <div className="flex items-center gap-2">
-                <select aria-label="Ülke kodu" name="countryCode" value={formData.countryCode} onChange={handleChange}
-                  className="w-[80px] bg-gray-50 border border-gray-100 rounded-lg px-2 py-1 outline-none text-sm text-gray-700 font-medium appearance-none cursor-pointer">
-                  {COUNTRY_CODES.map(cc => <option key={cc.code} value={cc.code}>{cc.flag} {cc.code}</option>)}
-                </select>
-                <input id="bf-phone" required type="tel" name="phone" value={formData.phone} onChange={handleChange} className={inp + ' flex-1 pl-2'} placeholder="555 123 4567" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className={card}>
+                <label htmlFor="bf-phone" className={lbl}>İletişim Numarası</label>
+                <div className="flex bg-gray-50 p-1 border border-gray-100">
+                  <select aria-label="Ülke kodu" name="countryCode" value={formData.countryCode} onChange={handleChange}
+                    className="w-[85px] bg-transparent outline-none text-sm text-gray-600 font-medium appearance-none cursor-pointer px-2">
+                    {COUNTRY_CODES.map(cc => <option key={cc.code} value={cc.code}>{cc.flag} {cc.code}</option>)}
+                  </select>
+                  <input id="bf-phone" required type="tel" name="phone" value={formData.phone} onChange={handleChange} className={inp + ' flex-1 bg-white px-3'} placeholder="555 123 4567" />
+                </div>
+                {errors.phone && <p className={errTxt}>{errors.phone}</p>}
               </div>
-              {errors.phone && <p className={errTxt}>{errors.phone}</p>}
+              <div className={card}>
+                <label htmlFor="bf-email" className={lbl}>E-Posta Adresi (Opsiyonel)</label>
+                <input id="bf-email" type="email" name="email" value={formData.email} onChange={handleChange} className={inp} placeholder="mail@example.com" />
+              </div>
             </div>
-
-            <div className={card}>
-              <label htmlFor="bf-email" className={lbl}>E-posta</label>
-              <input id="bf-email" type="email" name="email" value={formData.email} onChange={handleChange} className={inp} placeholder="ornek@email.com" />
-            </div>
-          </>
+          </div>
         )}
 
-        {/* STEP 2 — Detay */}
+        {/* STEP 2 — Araç Detay */}
         {step === 2 && (
-          <>
-            <div className="space-y-2">
-              <label className={lbl}>Araç Tercihi</label>
-              <div className="flex flex-col gap-2.5">
-                {vehicles.map(v => (
-                  <button
-                    key={v.id}
-                    type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, vehicleId: v.id }))}
-                    className={`group flex items-center gap-4 px-4 py-4 rounded-2xl border transition-all duration-300 text-left ${
-                      formData.vehicleId === v.id
-                        ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/5 shadow-md shadow-[var(--color-primary)]/10 ring-1 ring-[var(--color-primary)]'
-                        : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
-                    }`}
-                  >
-                    <div className={`w-12 h-12 rounded-full border shadow-sm flex items-center justify-center flex-shrink-0 transition-all duration-300 ${
-                      formData.vehicleId === v.id ? 'border-[var(--color-primary)] bg-[var(--color-primary)] text-white' : 'border-gray-200 bg-gray-50 group-hover:border-gray-300 text-gray-400'
-                    }`}>
-                      <i className="fa-solid fa-car-side text-sm" />
+          <div className="space-y-4 animate-in fade-in zoom-in-95 duration-500">
+            <div className="space-y-3">
+              <label className={lbl}>Araç Segmenti Seçimi</label>
+              {vehicles.map(v => (
+                <button
+                  key={v.id}
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, vehicleId: v.id }))}
+                  className={`w-full flex items-center justify-between px-6 py-5 border transition-all duration-300 text-left ${
+                    formData.vehicleId === v.id
+                      ? 'border-gray-900 bg-[var(--color-surface-alt)] shadow-sm'
+                      : 'border-gray-200 bg-transparent hover:border-gray-400'
+                  }`}
+                >
+                  <div>
+                    <div className={`text-xl font-playfair font-bold mb-1 transition-colors ${formData.vehicleId === v.id ? 'text-gray-900' : 'text-gray-600'}`}>
+                      {v.name}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className={`text-base font-bold truncate transition-colors duration-200 ${formData.vehicleId === v.id ? 'text-gray-900' : 'text-gray-700'}`}>{v.name}</div>
-                      {v.capacity && <div className="text-gray-400 font-medium text-[11px] mt-0.5">Maksimum {v.capacity} Kişi</div>}
-                    </div>
-                    {formData.vehicleId === v.id && (
-                      <i className="fa-solid fa-circle-check text-[var(--color-primary)] text-xl flex-shrink-0 animate-in zoom-in" />
-                    )}
-                  </button>
-                ))}
-              </div>
+                    {v.capacity && <div className="text-gray-400 text-[10px] tracking-widest uppercase font-bold">Maks. {v.capacity} Yolcu Kapasitesi</div>}
+                  </div>
+                  <div className={`w-6 h-6 border rounded-full flex items-center justify-center transition-all ${
+                    formData.vehicleId === v.id ? 'border-gray-900 bg-gray-900' : 'border-gray-300'
+                  }`}>
+                    {formData.vehicleId === v.id && <div className="w-2 h-2 bg-white rounded-full bg-white" />}
+                  </div>
+                </button>
+              ))}
             </div>
 
-            <div className="grid grid-cols-2 gap-3 mt-2">
+            <div className="grid grid-cols-2 gap-4">
               <div className={card}>
-                <label htmlFor="bf-passengers" className={lbl}>Yolcu Sayısı</label>
-                <div className="flex items-center gap-2">
-                  <i className="fa-solid fa-user-group text-gray-400 text-[10px]" />
-                  <select id="bf-passengers" name="passengers" value={formData.passengers} onChange={handleChange} className="w-full bg-transparent outline-none text-sm text-gray-900 font-semibold appearance-none cursor-pointer">
-                    {[1,2,3,4,5,6,7,8,9,10,11,12].map(n => <option key={n} value={n}>{n} Kişi</option>)}
-                  </select>
-                </div>
+                <label htmlFor="bf-passengers" className={lbl}>Toplam Ziyaretçi</label>
+                <select id="bf-passengers" name="passengers" value={formData.passengers} onChange={handleChange} className="w-full bg-transparent outline-none text-xl text-gray-900 font-playfair appearance-none cursor-pointer">
+                  {[1,2,3,4,5,6,7,8,9,10,11,12].map(n => <option key={n} value={n}>{n} Kişi</option>)}
+                </select>
               </div>
               <div className={card}>
-                <label htmlFor="bf-flightNumber" className={lbl}>Uçuş No</label>
-                <input id="bf-flightNumber" type="text" name="flightNumber" value={formData.flightNumber} onChange={handleChange} className={inp} placeholder="örn. TK2414" />
+                <label htmlFor="bf-flightNumber" className={lbl}>Uçuş Kodu (Gelişler İçin)</label>
+                <input id="bf-flightNumber" type="text" name="flightNumber" value={formData.flightNumber} onChange={handleChange} className={inp} placeholder="TK2414 vb." />
               </div>
             </div>
 
             <div className={card}>
-              <label htmlFor="bf-notes" className={lbl}>Ek Notlar (Opsiyonel)</label>
-              <input id="bf-notes" type="text" name="notes" value={formData.notes} onChange={handleChange} className={inp} placeholder="Bebek koltuğu, ekstra bagaj vs." />
+              <label htmlFor="bf-notes" className={lbl}>Vurgulanacak Detaylar & Talepler</label>
+              <textarea id="bf-notes" rows={2} name="notes" value={formData.notes} onChange={handleChange} className={inp + ' resize-none'} placeholder="Çocuk koltuğu gerekliliği, bagaj hacmi vb." />
             </div>
-          </>
+          </div>
         )}
 
         {/* STEP 3 — Özet */}
         {step === 3 && (
-          <div className="rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden text-gray-800">
-            <div className="px-5 py-4 border-b border-gray-100 bg-gray-50/50">
-              <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Rota Detayı</div>
-              <div className="flex items-start gap-4">
-                <div className="flex flex-col items-center gap-1 mt-1">
-                  <div className="w-2.5 h-2.5 rounded-full border-2 border-[var(--color-primary)] bg-white" />
-                  <div className="w-px h-8 bg-gradient-to-b from-[var(--color-primary)] to-gray-300" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-gray-900" />
-                </div>
-                <div className="flex flex-col justify-between h-[52px]">
-                  <span className="text-gray-900 text-sm font-bold">{formData.pickup}</span>
-                  <span className="text-gray-900 text-sm font-bold">{formData.destination}</span>
-                </div>
-                <div className="ml-auto text-right flex flex-col justify-between h-[52px]">
-                  <div className="text-gray-500 text-xs font-medium">{formatDate(formData.date)}</div>
-                  <div className="text-gray-500 text-xs font-medium">{formData.time}</div>
-                </div>
+          <div className="border border-gray-200 bg-transparent animate-in fade-in zoom-in-95 duration-500">
+            <div className="p-8 border-b border-gray-200">
+              <div className="flex justify-between items-start mb-8">
+                <span className="text-[9px] font-black uppercase tracking-[0.25em] text-gray-400">Menşei • İstikamet</span>
+                <span className="text-[9px] font-black uppercase tracking-[0.25em] text-gray-400 text-right">{formatDate(formData.date)}<br/>{formData.time}</span>
+              </div>
+              <div className="text-4xl font-playfair font-medium text-gray-900 tracking-tight leading-tight">
+                {formData.pickup} <br/>
+                <span className="text-gray-300 mx-2">→</span> <br/>
+                {formData.destination}
               </div>
             </div>
 
-            <div className="px-5 py-4 border-b border-gray-100">
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Müşteri</div>
-                  <div className="text-gray-900 text-sm font-bold">{(formData.firstName + ' ' + formData.lastName).trim() || '-'}</div>
-                  <div className="text-gray-500 text-xs mt-1">{formData.countryCode} {formData.phone}</div>
-                </div>
-                <div className="text-right">
-                  <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Kişi</div>
-                  <div className="text-gray-900 text-sm font-bold">{formData.passengers} Yolcu</div>
-                </div>
+            <div className="p-8 grid grid-cols-2 sm:grid-cols-3 gap-8 border-b border-gray-200 bg-gray-50/50">
+              <div>
+                <span className="block text-[9px] font-black uppercase tracking-[0.25em] text-gray-400 mb-2">Başvuran</span>
+                <p className="text-base font-bold text-gray-900">{(formData.firstName + ' ' + formData.lastName).trim() || '-'}</p>
               </div>
-            </div>
-
-            <div className="px-5 py-4 bg-gray-50">
-              <div className="flex items-center justify-between mb-1">
-                <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Araç ve Ekler</div>
-                {formData.flightNumber && <div className="text-gray-500 text-xs font-bold bg-white px-2 py-0.5 rounded border border-gray-200">✈️ {formData.flightNumber}</div>}
+              <div>
+                <span className="block text-[9px] font-black uppercase tracking-[0.25em] text-gray-400 mb-2">İletişim Hattı</span>
+                <p className="text-base font-bold text-gray-900">{formData.countryCode} {formData.phone}</p>
               </div>
-              <div className="text-gray-900 text-sm font-bold mt-2">{selectedVehicle?.name || '-'}</div>
-              {formData.notes && <div className="mt-2 text-gray-600 text-xs italic">Not: {formData.notes}</div>}
+              <div>
+                <span className="block text-[9px] font-black uppercase tracking-[0.25em] text-gray-400 mb-2">Misafir & Araç Tipi</span>
+                <p className="text-base font-bold text-gray-900">{formData.passengers} Kişi — {selectedVehicle?.name || '-'}</p>
+              </div>
             </div>
           </div>
         )}
@@ -382,25 +334,25 @@ const BookingForm: React.FC<BookingFormProps> = ({ onBookingSubmit, vehicles }) 
       </div>
 
       {showToast && (
-        <div className="mt-4 flex items-center justify-center gap-3 py-3 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 font-bold text-sm animate-in fade-in slide-in-from-bottom-2">
-          <i className="fa-solid fa-check-circle" /> WhatsApp'a aktarılıyor...
+        <div className="absolute top-8 left-1/2 -translate-x-1/2 flex items-center justify-center gap-3 px-6 py-4 bg-gray-900 text-white font-bold text-xs tracking-widest uppercase animate-in fade-in shadow-2xl z-50">
+          <i className="fa-solid fa-check" /> <span>Onaya Yönlendiriliyor</span>
         </div>
       )}
 
-      {/* ── CTA ── */}
-      <div className="pt-6 flex gap-3">
+      {/* ── CTA BUTTONS ── */}
+      <div className="mt-12 flex gap-4 shrink-0 transition-all duration-500">
         {step > 0 && (
-          <button type="button" onClick={() => goToStep(step - 1)} className="w-[52px] h-[52px] flex items-center justify-center rounded-xl bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100 hover:text-gray-800 transition-all active:scale-95 shrink-0">
+          <button type="button" onClick={() => goToStep(step - 1)} className="w-[60px] h-[60px] flex items-center justify-center border border-gray-200 text-gray-500 hover:text-gray-900 hover:border-gray-900 transition-colors bg-white shrink-0">
             <i className="fa-solid fa-arrow-left" />
           </button>
         )}
         {step < STEPS.length - 1 ? (
-          <button type="button" onClick={() => goToStep(step + 1)} className="flex-1 rounded-xl bg-gray-900 hover:bg-black text-white font-bold text-sm tracking-widest uppercase transition-all shadow-lg shadow-gray-900/20 active:scale-[0.98] h-[52px] flex items-center justify-center gap-3">
-            <span>Devam Et</span> <i className="fa-solid fa-arrow-right text-[10px]" />
+          <button type="button" onClick={() => goToStep(step + 1)} className="flex-1 h-[60px] bg-gray-900 text-white font-bold text-xs tracking-[0.2em] uppercase transition-all hover:bg-gray-800 flex items-center justify-center gap-4">
+            <span>Kaydet & Devam Et</span> <i className="fa-solid fa-arrow-right text-[10px]" />
           </button>
         ) : (
-          <button type="button" onClick={handleSubmit} className="flex-1 rounded-xl font-bold text-sm tracking-widest uppercase transition-all shadow-xl shadow-[var(--color-primary)]/20 active:scale-[0.98] h-[52px] flex items-center justify-center gap-3 text-white" style={{ background: 'linear-gradient(135deg, var(--color-primary-light), var(--color-primary))' }}>
-            <i className="fa-brands fa-whatsapp text-lg" /> <span>Rezervasyonu Tamamla</span>
+          <button type="button" onClick={handleSubmit} className="flex-1 h-[60px] bg-gray-900 text-white border border-gray-900 font-bold text-xs tracking-[0.2em] uppercase transition-all hover:bg-white hover:text-gray-900 flex items-center justify-center gap-4 shadow-xl">
+            <span>Talebi Ulaştır</span>
           </button>
         )}
       </div>
