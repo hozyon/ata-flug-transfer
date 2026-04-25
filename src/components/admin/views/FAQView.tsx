@@ -16,11 +16,14 @@ interface FAQViewProps {
     highlightedFaqId: string | null;
     setHighlightedFaqId: (id: string | null) => void;
     moveItem: <T>(list: T[], index: number, direction: 'up' | 'down') => T[];
+    _confirmAction: (options: { title: string; description: string; onConfirm: () => void; type?: 'danger' | 'warning' | 'info' }) => void;
 }
 
 export const FAQView: React.FC<FAQViewProps> = ({
-    editContent, setEditContent, faqFilter, setFaqFilter, highlightedFaqId, setHighlightedFaqId, moveItem
+    editContent, setEditContent, faqFilter, setFaqFilter,
+    highlightedFaqId, setHighlightedFaqId, moveItem, _confirmAction
 }) => {
+
     const faqEndRef = useRef<HTMLDivElement>(null);
     const prevFaqLength = useRef(editContent.faq.length);
     const [expandedId, setExpandedId] = useState<string | null>(null);

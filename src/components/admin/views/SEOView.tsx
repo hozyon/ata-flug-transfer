@@ -4,6 +4,7 @@ import { SiteContent } from '../../../types';
 interface SEOViewProps {
     editContent: SiteContent;
     setEditContent: (content: SiteContent) => void;
+    _confirmAction: (options: { title: string; description: string; onConfirm: () => void; type?: 'danger' | 'warning' | 'info' }) => void;
 }
 
 type PageKey = 'home' | 'about' | 'regions' | 'blog' | 'faq' | 'contact';
@@ -60,7 +61,7 @@ const ScoreBadge: React.FC<{ score: number }> = ({ score }) => {
     );
 };
 
-export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent }) => {
+export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent, _confirmAction }) => {
     const [activePage, setActivePage] = useState<PageKey>('home');
     const [urlErrors, setUrlErrors] = useState<Record<string, string>>({});
     const seo = editContent.seo;

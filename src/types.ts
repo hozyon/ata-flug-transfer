@@ -176,6 +176,7 @@ export interface Region {
   icon?: string;
   price: number;
   distance?: number;
+  isActive?: boolean;
 }
 
 // Blog Post Interface

@@ -5,9 +5,10 @@ import { SiteContent } from '../../../types';
 interface AboutViewProps {
     editContent: SiteContent;
     setEditContent: (content: SiteContent) => void;
+    _confirmAction: (options: { title: string; description: string; onConfirm: () => void; type?: 'danger' | 'warning' | 'info' }) => void;
 }
 
-export const AboutView: React.FC<AboutViewProps> = ({ editContent, setEditContent }) => {
+export const AboutView: React.FC<AboutViewProps> = ({ editContent, setEditContent, _confirmAction }) => {
     return (
         <div className="animate-in slide-in-from-right-8 duration-500 space-y-5">
             {/* Stats */}

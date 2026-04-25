@@ -11,7 +11,7 @@ import { AdminConfirmModal } from './admin/AdminConfirmModal';
 
 import { haptic } from '../utils/haptic';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
-import { Booking, SiteContent, Vehicle, BlogPost, UserReview } from '../types';
+import { Booking, SiteContent, Vehicle, BlogPost, UserReview, AdminAccountForm } from '../types';
 import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
   PieChart, Pie, AreaChart, Area, BarChart, Bar
@@ -683,7 +683,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   };
 
   // ── ACCOUNT SETTINGS STATE ──
-  const [accountForm, setAccountForm] = useState(() => {
+  const [accountForm, setAccountForm] = useState<AdminAccountForm>(() => {
     const saved = siteContent.adminAccount;
     return {
       fullName: saved?.fullName ?? INITIAL_SITE_CONTENT.adminAccount!.fullName,
@@ -2630,7 +2630,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 setEditContent={setEditContent}
                 handleMoveMenu={handleMoveMenu}
                 moveItem={moveItem}
-                confirmAction={confirmAction}
+                _confirmAction={confirmAction}
               />
             )
           }
@@ -2672,7 +2672,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 highlightedFaqId={highlightedFaqId}
                 setHighlightedFaqId={setHighlightedFaqId}
                 moveItem={moveItem}
-                confirmAction={confirmAction}
+                _confirmAction={confirmAction}
               />
             )
           }
@@ -2682,7 +2682,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               <BusinessSettingsView
                 editContent={editContent}
                 setEditContent={setEditContent}
-                confirmAction={confirmAction}
+                _confirmAction={confirmAction}
               />
             )
           }
@@ -2712,6 +2712,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               <AboutView
                 editContent={editContent}
                 setEditContent={setEditContent}
+                _confirmAction={confirmAction}
               />
             )
           }
@@ -2721,6 +2722,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               <VisionMissionView
                 editContent={editContent}
                 setEditContent={setEditContent}
+                _confirmAction={confirmAction}
               />
             )
           }
@@ -2740,6 +2742,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 setSelectedBlogs={setSelectedBlogs}
                 showToast={showToast}
                 clearAllBlogPosts={onClearAllBlogPosts}
+                confirmAction={confirmAction}
               />
             )
           }
@@ -2755,17 +2758,19 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 setEditableReviewsTab={setEditableReviewsTab}
                 selectedReviews={selectedReviews}
                 setSelectedReviews={setSelectedReviews}
+                showToast={showToast}
+                confirmAction={confirmAction}
               />
             )
           }
           {
-
             activeView === 'hero-images' && (
               <HeroImagesView
                 heroBackgrounds={heroBackgrounds}
                 updateHeroBackgrounds={updateHeroBackgrounds}
                 selectedHeroImages={selectedHeroImages}
                 setSelectedHeroImages={setSelectedHeroImages}
+                _confirmAction={confirmAction}
               />
             )
           }
@@ -2774,6 +2779,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               <SEOView
                 editContent={editContent}
                 setEditContent={updateContent}
+                _confirmAction={confirmAction}
               />
             )
           }

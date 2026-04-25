@@ -7,10 +7,11 @@ interface SiteSettingsViewProps {
     setEditContent: (content: SiteContent) => void;
     handleMoveMenu: (index: number, direction: 'up' | 'down') => void;
     moveItem: <T>(list: T[], index: number, direction: 'up' | 'down') => T[];
+    _confirmAction: (options: { title: string; description: string; onConfirm: () => void; type?: 'danger' | 'warning' | 'info' }) => void;
 }
 
 export const SiteSettingsView: React.FC<SiteSettingsViewProps> = ({
-    editContent, setEditContent, handleMoveMenu, moveItem
+    editContent, setEditContent, handleMoveMenu, moveItem, _confirmAction
 }) => {
     const [expandedMenu, setExpandedMenu] = useState<number | null>(null);
     const [restoreStatus, setRestoreStatus] = useState<'idle' | 'success' | 'error'>('idle');

@@ -17,6 +17,7 @@ const PALETTES = [
 interface BusinessSettingsViewProps {
     editContent: SiteContent;
     setEditContent: (content: SiteContent) => void;
+    _confirmAction: (options: { title: string; description: string; onConfirm: () => void; type?: 'danger' | 'warning' | 'info' }) => void;
 }
 
 const INPUT_CLS =
@@ -28,7 +29,7 @@ const isValidEmail = (v: string) => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 const isValidPhone = (v: string) => !v || /^\+?[\d\s\-()]{7,20}$/.test(v);
 const _isValidUrl = (v: string) => { if (!v) return true; try { new URL(v); return true; } catch { return false; } };
 
-export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ editContent, setEditContent }) => {
+export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ editContent, setEditContent, _confirmAction }) => {
     const [logoDragOver, setLogoDragOver] = useState(false);
     const [faviconDragOver, setFaviconDragOver] = useState(false);
     const [colorsOpen, setColorsOpen] = useState(false);

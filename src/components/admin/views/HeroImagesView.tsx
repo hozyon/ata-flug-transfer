@@ -6,10 +6,11 @@ interface HeroImagesViewProps {
     updateHeroBackgrounds: (newBackgrounds: string[]) => void;
     selectedHeroImages: number[];
     setSelectedHeroImages: Dispatch<SetStateAction<number[]>>;
+    _confirmAction: (options: { title: string; description: string; onConfirm: () => void; type?: 'danger' | 'warning' | 'info' }) => void;
 }
 
 export const HeroImagesView: React.FC<HeroImagesViewProps> = ({
-    heroBackgrounds, updateHeroBackgrounds, selectedHeroImages, setSelectedHeroImages
+    heroBackgrounds, updateHeroBackgrounds, selectedHeroImages, setSelectedHeroImages, _confirmAction
 }) => {
     const moveItem = (arr: any[], fromIndex: number, direction: 'up' | 'down') => {
         const toIndex = direction === 'up' ? fromIndex - 1 : fromIndex + 1;

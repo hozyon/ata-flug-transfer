@@ -146,6 +146,7 @@ export const INITIAL_SITE_CONTENT: SiteContent = {
     desc: r.desc,
     image: r.image,
     icon: 'fa-location-dot',
+    price: 0
   })),
   faq: [
     { id: 'f1', q: "Havalimanında şoförümü nasıl bulacağım?", a: "Şoförünüz sizi geliş terminali çıkışında isminizin yazılı olduğu bir tabela ile bekleyecektir." }

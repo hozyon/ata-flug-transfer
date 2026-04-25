@@ -5,9 +5,10 @@ import { SiteContent } from '../../../types';
 interface VisionMissionViewProps {
     editContent: SiteContent;
     setEditContent: (content: SiteContent) => void;
+    _confirmAction: (options: { title: string; description: string; onConfirm: () => void; type?: 'danger' | 'warning' | 'info' }) => void;
 }
 
-export const VisionMissionView: React.FC<VisionMissionViewProps> = ({ editContent, setEditContent }) => {
+export const VisionMissionView: React.FC<VisionMissionViewProps> = ({ editContent, setEditContent, _confirmAction }) => {
     const vm = editContent.visionMission || {};
     const update = (path: string, value: unknown) => {
         const parts = path.split('.');

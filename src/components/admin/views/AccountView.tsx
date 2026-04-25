@@ -389,9 +389,9 @@ export const AccountView: React.FC<AccountViewProps> = ({
                         </div>
                         <div className="p-4 space-y-1">
                             {[
-                                { key: 'notifyEmail', label: 'E-posta', desc: 'Yeni rezervasyonlar', icon: 'fa-envelope', color: 'text-blue-400' },
-                                { key: 'notifySms', label: 'SMS', desc: 'Acil uyarılar', icon: 'fa-comment-sms', color: 'text-emerald-400' },
-                                { key: 'notifySystem', label: 'Panel İçi', desc: 'Anlık bildirimler', icon: 'fa-bell', color: 'text-amber-400' },
+                                { key: 'notifyEmail' as const, label: 'E-posta', desc: 'Yeni rezervasyonlar', icon: 'fa-envelope', color: 'text-blue-400' },
+                                { key: 'notifySms' as const, label: 'SMS', desc: 'Acil uyarılar', icon: 'fa-comment-sms', color: 'text-emerald-400' },
+                                { key: 'notifySystem' as const, label: 'Panel İçi', desc: 'Anlık bildirimler', icon: 'fa-bell', color: 'text-amber-400' },
                             ].map((item, idx, arr) => (
                                 <React.Fragment key={item.key}>
                                     <div className="flex items-center justify-between py-2.5">
@@ -404,7 +404,8 @@ export const AccountView: React.FC<AccountViewProps> = ({
                                         </div>
                                         <button
                                             onClick={() => {
-                                                const updated = { ...accountForm, [item.key]: !accountForm[item.key] };
+                                                const key = item.key;
+                                                const updated = { ...accountForm, [key]: !accountForm[key] };
                                                 setAccountForm(updated);
                                                 onSaveAccount(updated);
                                             }}
