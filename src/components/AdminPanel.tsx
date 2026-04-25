@@ -159,7 +159,7 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ id, label, badge = 0, i
       </button>
       {!isSidebarOpen && (
         <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 pointer-events-none opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300 z-[100]">
-          <div className="relative px-4 py-2.5 rounded-xl bg-[#0a0e1a] backdrop-blur-3xl border border-white/[0.1] shadow-[0_20px_50px_rgba(0,0,0,0.6)] whitespace-nowrap">
+          <div className="relative px-4 py-2.5 rounded-xl bg-[#0a0e1a] backdrop-blur-3xl transform-gpu border border-white/[0.1] shadow-[0_20px_50px_rgba(0,0,0,0.6)] whitespace-nowrap">
             <div className="absolute left-0 top-[20%] bottom-[20%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-[#d4a832] rounded-r-full" />
             <div className="flex items-center gap-3 pl-1">
               <span className="text-[13px] font-bold text-white tracking-wide">{label}</span>
@@ -1055,7 +1055,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#111827_0%,#06080F_100%)]"></div>
         {/* Static Subtle Color Accents */}
         <div className="absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b from-[var(--color-primary)]/5 to-transparent"></div>
-        <div className="absolute -top-[10%] -right-[10%] w-[50%] h-[50%] rounded-full bg-indigo-500/5 blur-[120px]"></div>
+        <div className="absolute -top-[10%] -right-[10%] w-[50%] h-[50%] rounded-full bg-indigo-500/5 blur-3xl transform-gpu opacity-50"></div>
         {/* Subtle Noise Texture Overlay (Static) */}
         <div className="absolute inset-0 opacity-[0.015] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
       </div>
@@ -1067,7 +1067,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
             className="pointer-events-auto animate-in slide-in-from-top-full fade-in duration-500 w-full sm:w-auto sm:min-w-[320px] sm:max-w-[460px]"
             style={{ animationTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }}
           >
-            <div className={`relative flex items-center gap-3 px-4 py-3.5 backdrop-blur-3xl overflow-hidden rounded-b-2xl border-x border-b shadow-[0_16px_48px_rgba(0,0,0,0.55)] ${
+            <div className={`relative flex items-center gap-3 px-4 py-3.5 backdrop-blur-3xl transform-gpu overflow-hidden rounded-b-2xl border-x border-b shadow-[0_16px_48px_rgba(0,0,0,0.55)] ${
               ['delete', 'error'].includes(toast.type)
                 ? 'bg-[#120a0a]/97 border-red-500/15'
                 : toast.type === 'success'
@@ -1569,7 +1569,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                   )}
                   {!isSidebarOpen && (
                     <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 pointer-events-none opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300 z-[100]">
-                      <div className="relative px-4 py-2.5 rounded-xl bg-[#0a0e1a] backdrop-blur-3xl border border-white/[0.1] shadow-2xl shadow-black/70 whitespace-nowrap">
+                      <div className="relative px-4 py-2.5 rounded-xl bg-[#0a0e1a] backdrop-blur-3xl transform-gpu border border-white/[0.1] shadow-2xl shadow-black/70 whitespace-nowrap">
                         <div className="absolute left-0 top-[20%] bottom-[20%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-[#d4a832] rounded-r-full" />
                         <span className="text-[13px] font-bold text-white pl-1">Kurumsal</span>
                         <div className="absolute right-full top-1/2 -translate-y-1/2 border-[6px] border-transparent border-r-[#0a0e1a]" />
@@ -1745,7 +1745,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
       >
         {/* Render a clone of the item being long-pressed so it visually stays "lifted" in the menu */}
         {contextMenu.booking && (
-          <div className="bg-[#1e293b]/95 backdrop-blur-3xl rounded-2xl overflow-hidden border border-white/10 opacity-60">
+          <div className="bg-[#1e293b]/95 backdrop-blur-3xl transform-gpu rounded-2xl overflow-hidden border border-white/10 opacity-60">
             <MobileBookingItem booking={contextMenu.booking} onClick={() => { }} onContextMenu={() => { }} isToday={false} />
           </div>
         )}
@@ -2040,9 +2040,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               if (todayTransfers.length === 0) return null;
               
               return (
-                <div className="relative group overflow-hidden rounded-[2.5rem] border border-[var(--color-primary)]/20 bg-[#020617]/40 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-700 hover:border-[var(--color-primary)]/40">
+                <div className="relative group overflow-hidden rounded-[2.5rem] border border-[var(--color-primary)]/20 bg-[#020617]/40 backdrop-blur-2xl transform-gpu shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-700 hover:border-[var(--color-primary)]/40">
                   {/* Subtle Background Animation */}
-                  <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[var(--color-primary)]/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-[var(--color-primary)]/10 transition-colors duration-1000"></div>
+                  <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[var(--color-primary)]/5 blur-3xl transform-gpu opacity-50 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-[var(--color-primary)]/10 transition-colors duration-1000"></div>
                   
                   <div className="relative z-10 flex flex-col lg:flex-row items-stretch">
                     {/* Header Sidebar (Left) */}
