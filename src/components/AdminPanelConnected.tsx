@@ -109,7 +109,7 @@ export default function AdminPanelConnected() {
 
     const onUpdateSiteContent = async (content: SiteContent) => {
         await contentActions.updateSiteContent(content);
-        mutateContent();
+        await mutateContent();
     };
 
     const onAddBlogPost = async (post: BlogPost) => {

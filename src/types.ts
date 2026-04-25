@@ -151,8 +151,6 @@ export interface SiteContent {
     notifySms: boolean;
     notifySystem: boolean;
     twoFa: boolean;
-    passwordHistory?: string[];
-    activeSessionToken?: string;
   };
 }
 

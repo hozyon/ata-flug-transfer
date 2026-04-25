@@ -248,13 +248,44 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [editContent, setEditContent] = useState<SiteContent>(siteContent);
   const editContentInitialized = useRef(false);
+  const lastKnownServerContent = useRef<SiteContent>(siteContent);
+
   useEffect(() => {
-    // Only sync editContent once real data has loaded (not the initial defaults)
+    // 1. Initial Load
     if (!editContentInitialized.current && siteContent !== INITIAL_SITE_CONTENT) {
       setEditContent(siteContent);
+      lastKnownServerContent.current = siteContent;
       editContentInitialized.current = true;
+      return;
     }
-  }, [siteContent]);
+
+    // 2. Background SWR Update
+    // If the server data changed and it's DIFFERENT from what we last saw from the server
+    if (JSON.stringify(siteContent) !== JSON.stringify(lastKnownServerContent.current)) {
+      // Check if the user has made ANY local edits compared to our last known server state
+      const isDirty = JSON.stringify(editContent) !== JSON.stringify(lastKnownServerContent.current);
+      
+      if (!isDirty) {
+        // Safe to just update everything
+        setEditContent(siteContent);
+      } else {
+        // User has edits. We only want to merge fields that the user HASN'T touched.
+        // For simplicity in this complex JSON structure, we show a toast or merge top-level if needed.
+        // Here we'll do a shallow merge of top-level keys that haven't changed locally.
+        setEditContent(prev => {
+          const next = { ...prev };
+          (Object.keys(siteContent) as Array<keyof SiteContent>).forEach(key => {
+            if (JSON.stringify(prev[key]) === JSON.stringify(lastKnownServerContent.current[key])) {
+              // User hasn't touched this key, so we can update it from server
+              (next as any)[key] = siteContent[key];
+            }
+          });
+          return next;
+        });
+      }
+      lastKnownServerContent.current = siteContent;
+    }
+  }, [siteContent, editContent]);
   const [_searchTerm, _setSearchTerm] = useState('');
   const [isAddBookingModalOpen, setIsAddBookingModalOpen] = useState(false);
   const [selectedBookingForView, setSelectedBookingForView] = useState<Booking | null>(null);
@@ -277,9 +308,19 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
         JSON.stringify(existing.tags) !== JSON.stringify(p.tags);
     });
     try {
-      for (const p of added) await onAddBlogPost(p);
-      for (const p of updated) await onUpdateBlogPost(p);
-      for (const p of removed) await onDeleteBlogPost(p.id);
+      const results = await Promise.allSettled([
+        ...added.map(p => onAddBlogPost(p)),
+        ...updated.map(p => onUpdateBlogPost(p)),
+        ...removed.map(p => onDeleteBlogPost(p.id))
+      ]);
+      const failures = results.filter(r => r.status === 'rejected');
+      if (failures.length > 0) {
+        const firstError = (failures[0] as PromiseRejectedResult).reason;
+        console.error('Some blog post operations failed:', failures);
+        showToast(`${failures.length} işlem başarısız oldu: ${firstError.message || 'Bilinmeyen hata'}`, 'error');
+      } else if (results.length > 0) {
+        showToast('Blog yazıları başarıyla güncellendi', 'success');
+      }
     } catch (error: any) {
       console.error('Blog post operation failed:', error);
       showToast(error.message || 'Blog yazısı güncellenirken hata oluştu', 'error');
@@ -338,8 +379,18 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
       return existing && existing.status !== r.status;
     });
     try {
-      for (const r of changed) await onUpdateReviewStatus(r.id, r.status);
-      for (const r of removed) await onDeleteReview(r.id);
+      const results = await Promise.allSettled([
+        ...changed.map(r => onUpdateReviewStatus(r.id, r.status)),
+        ...removed.map(r => onDeleteReview(r.id))
+      ]);
+      const failures = results.filter(r => r.status === 'rejected');
+      if (failures.length > 0) {
+        const firstError = (failures[0] as PromiseRejectedResult).reason;
+        console.error('Some review operations failed:', failures);
+        showToast(`${failures.length} işlem başarısız oldu: ${firstError.message || 'Bilinmeyen hata'}`, 'error');
+      } else if (results.length > 0) {
+        showToast('Yorumlar başarıyla güncellendi', 'success');
+      }
     } catch (error: any) {
       console.error('Review operation failed:', error);
       showToast(error.message || 'Yorum güncellenirken hata oluştu', 'error');
@@ -578,29 +629,49 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   const editContentRef = useRef(editContent);
   useEffect(() => { editContentRef.current = editContent; }, [editContent]);
 
+  const isSavingRef = useRef(false);
+  const hasPendingSaveRef = useRef(false);
+
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
       return;
     }
-    setSaveStatus('saving');
-    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
-    saveTimerRef.current = setTimeout(async () => {
-      // Always read the LATEST editContent and siteContent via refs to avoid stale closures
-      const toSave = { ...editContentRef.current, adminAccount: siteContentRef.current.adminAccount };
+
+    const triggerSave = async () => {
+      if (isSavingRef.current) {
+        hasPendingSaveRef.current = true;
+        return;
+      }
+
+      isSavingRef.current = true;
+      hasPendingSaveRef.current = false;
+      setSaveStatus('saving');
+
       try {
+        // Always read the LATEST editContent and siteContent via refs to avoid stale closures
+        const toSave = { ...editContentRef.current, adminAccount: siteContentRef.current.adminAccount };
         await onUpdateSiteContent(toSave);
         setSaveStatus('saved');
-        showToast('Değişiklikler kaydedildi', 'success');
         setTimeout(() => setSaveStatus('idle'), 2000);
       } catch (error: any) {
         setSaveStatus('idle');
         showToast(error.message || 'Kayıt başarısız — internet bağlantınızı kontrol edin', 'error');
+      } finally {
+        isSavingRef.current = false;
+        // If changes happened while we were saving, trigger another save
+        if (hasPendingSaveRef.current) {
+          triggerSave();
+        }
       }
-    }, 300);
+    };
+
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(triggerSave, 500);
+
     return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editContent]); // onUpdateSiteContent is stable (Supabase fn); adding it would not change behavior
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editContent]);
 
   // ── UNDO / REDO ──
   const undoStackRef = useRef<SiteContent[]>([]);
@@ -733,20 +804,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     }
   };
 
-  const hashPassword = async (password: string): Promise<string> => {
-    const data = new TextEncoder().encode(password);
-    const hash = await crypto.subtle.digest('SHA-256', data);
-    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
-  };
-
   const handleUpdatePassword = async (currentPassword: string, newPassword: string): Promise<{ error: string | null }> => {
-    // Check against last 3 passwords
-    const history = siteContent.adminAccount?.passwordHistory || [];
-    const newHash = await hashPassword(newPassword);
-    if (history.includes(newHash)) {
-      return { error: 'Son 3 şifreden birini kullanamazsınız' };
-    }
-
     if (isSupabaseConfigured) {
       // Re-authenticate with current password to verify it and ensure an active session exists
       const email = siteContent.adminAccount?.email || accountForm.email;
@@ -755,13 +813,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) return { error: error.message };
     }
-
-    // Update password history (keep last 3 hashes)
-    const updatedHistory = [...history, newHash].slice(-3);
-    await onUpdateSiteContent({
-      ...editContentRef.current,
-      adminAccount: { ...editContentRef.current.adminAccount!, passwordHistory: updatedHistory },
-    });
 
     return { error: null };
   };
