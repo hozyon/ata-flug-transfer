@@ -134,38 +134,38 @@ const SidebarNavItem: React.FC<SidebarNavItemProps> = ({ id, label, badge = 0, i
     <div className="relative group">
       <button
         onClick={() => onNavigate(id)}
-        className={`w-full rounded-xl flex items-center transition-colors duration-150 relative ${
+        className={`w-full rounded-xl flex items-center transition-all duration-300 relative ${
           isSidebarOpen
-            ? `px-3 py-2.5 gap-3 ${isActive ? 'bg-gradient-to-r from-[var(--color-primary)]/[0.13] via-[var(--color-primary)]/[0.04] to-transparent' : 'hover:bg-white/[0.04]'}`
-            : `justify-center p-2.5 ${isActive ? 'bg-[var(--color-primary)]/[0.15] rounded-xl' : 'hover:bg-white/[0.05]'}`
+            ? `px-3 py-2.5 gap-3 ${isActive ? 'bg-gradient-to-r from-[var(--color-primary)]/[0.15] via-[var(--color-primary)]/[0.05] to-transparent shadow-[inset_1px_0_0_0_rgba(255,255,255,0.05)]' : 'hover:bg-white/[0.06] text-slate-400'}`
+            : `justify-center p-2.5 ${isActive ? 'bg-[var(--color-primary)]/[0.18] shadow-[0_8px_20px_rgba(0,0,0,0.3)]' : 'hover:bg-white/[0.06] text-slate-500'}`
         }`}
       >
         {isActive && isSidebarOpen && (
-          <div className="absolute left-0 top-[18%] bottom-[18%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-amber-500 rounded-r-full shadow-[0_0_14px_rgba(197,160,89,0.65)]" />
+          <div className="absolute left-0 top-[20%] bottom-[20%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-[#d4a832] rounded-r-full shadow-[0_0_15px_rgba(197,160,89,0.7)]" />
         )}
-        <div className={`shrink-0 transition-colors duration-150 ${isActive ? 'text-[var(--color-primary)] drop-shadow-[0_0_8px_rgba(197,160,89,0.5)]' : 'text-slate-500 group-hover:text-slate-300'}`}>
+        <div className={`shrink-0 transition-all duration-300 ${isActive ? 'text-[var(--color-primary)] scale-110 drop-shadow-[0_0_10px_rgba(197,160,89,0.4)]' : 'group-hover:text-slate-200 group-hover:scale-105'}`}>
           {icon}
         </div>
         {isSidebarOpen && (
-          <span className={`font-outfit text-[12.5px] font-[560] whitespace-nowrap truncate tracking-[0.01em] transition-colors ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`}>
+          <span className={`font-outfit text-[12.5px] font-[600] whitespace-nowrap truncate tracking-[0.015em] transition-all duration-300 ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`}>
             {label}
           </span>
         )}
         {badge > 0 && (
-          <span className={`flex items-center justify-center text-[8px] font-black rounded-full bg-red-500 text-white shadow-[0_0_8px_rgba(239,68,68,0.4)] ${isSidebarOpen ? 'ml-auto w-[18px] h-[18px] shrink-0' : 'absolute -top-0.5 -right-0.5 w-[14px] h-[14px]'}`}>
+          <span className={`flex items-center justify-center text-[9px] font-black rounded-lg bg-red-500 text-white shadow-[0_4px_12px_rgba(239,68,68,0.35)] ${isSidebarOpen ? 'ml-auto px-1.5 py-0.5 min-w-[18px] h-[18px] shrink-0' : 'absolute -top-1 -right-1 w-[15px] h-[15px]'}`}>
             {badge > 9 ? '9+' : badge}
           </span>
         )}
       </button>
       {!isSidebarOpen && (
-        <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 pointer-events-none opacity-0 group-hover:opacity-100 translate-x-1 group-hover:translate-x-0 transition-all duration-200 z-[100]">
-          <div className="relative px-3 py-2 rounded-xl bg-[#0a0e1a]/98 backdrop-blur-xl border border-white/[0.08] shadow-2xl shadow-black/70 whitespace-nowrap">
-            <div className="absolute left-0 top-[22%] bottom-[22%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-amber-500 rounded-r-full" />
-            <div className="flex items-center gap-2 pl-1">
-              <span className="text-[12px] font-semibold text-white">{label}</span>
-              {badge > 0 && <span className="px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-400 text-[9px] font-black border border-red-500/20">{badge}</span>}
+        <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 pointer-events-none opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300 z-[100]">
+          <div className="relative px-4 py-2.5 rounded-xl bg-[#0a0e1a] backdrop-blur-3xl border border-white/[0.1] shadow-[0_20px_50px_rgba(0,0,0,0.6)] whitespace-nowrap">
+            <div className="absolute left-0 top-[20%] bottom-[20%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-[#d4a832] rounded-r-full" />
+            <div className="flex items-center gap-3 pl-1">
+              <span className="text-[13px] font-bold text-white tracking-wide">{label}</span>
+              {badge > 0 && <span className="px-2 py-0.5 rounded-md bg-red-500 text-white text-[9px] font-black shadow-lg shadow-red-500/20">{badge}</span>}
             </div>
-            <div className="absolute right-full top-1/2 -translate-y-1/2 border-[5px] border-transparent border-r-[#0a0e1a]" />
+            <div className="absolute right-full top-1/2 -translate-y-1/2 border-[6px] border-transparent border-r-[#0a0e1a]" />
           </div>
         </div>
       )}
@@ -1444,154 +1444,157 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
       }
 
 
-      {/* Sidebar — Premium Luxury Design */}
+      {/* Sidebar — Elite Luxury Design */}
       <aside
-        className={`hidden xl:flex ${isSidebarOpen ? 'w-[260px]' : 'w-[72px]'} transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] relative flex-col z-50 h-screen shrink-0`}
-        style={{ background: 'linear-gradient(180deg,rgba(10,14,26,0.75) 0%,rgba(6,9,18,0.9) 100%)', backdropFilter: 'blur(80px)', WebkitBackdropFilter: 'blur(80px)', borderRight: '1px solid rgba(255,255,255,0.07)', boxShadow: '4px 0 40px rgba(0,0,0,0.5), inset -1px 0 0 rgba(255,255,255,0.04)' }}
+        className={`hidden xl:flex ${isSidebarOpen ? 'w-[280px]' : 'w-[84px]'} transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] relative flex-col z-[100] h-screen shrink-0`}
+        style={{ 
+          background: 'rgba(2, 6, 23, 0.45)', 
+          backdropFilter: 'blur(80px)', 
+          WebkitBackdropFilter: 'blur(80px)', 
+          borderRight: '1px solid rgba(255,255,255,0.06)', 
+          boxShadow: '20px 0 80px -20px rgba(0,0,0,0.5)' 
+        }}
       >
-        {/* Ambient gold top glow */}
-        <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[var(--color-primary)]/[0.06] to-transparent pointer-events-none z-0" />
+        {/* Top Accent Glow */}
+        <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-[var(--color-primary)]/[0.08] via-transparent to-transparent pointer-events-none z-0" />
 
-        {/* ── HEADER ── */}
-        <div className={`h-16 flex items-center shrink-0 border-b border-white/[0.06] relative z-10 overflow-hidden transition-all duration-500 ${isSidebarOpen ? 'px-4 gap-3' : 'justify-center px-0'}`}>
-          <div className="relative shrink-0">
-            <div className="w-9 h-9 rounded-xl overflow-hidden bg-[var(--color-primary)]/10 ring-1 ring-[var(--color-primary)]/35 shadow-[0_0_14px_rgba(197,160,89,0.18)] flex items-center justify-center">
-              <i className="fa-solid fa-shield-halved text-[var(--color-primary)] text-sm"></i>
+        {/* ── BRAND HEADER ── */}
+        <div className={`h-24 flex items-center shrink-0 border-b border-white/[0.04] relative z-10 overflow-hidden transition-all duration-500 ${isSidebarOpen ? 'px-6 gap-4' : 'justify-center px-0'}`}>
+          <div className="relative shrink-0 group/logo">
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[#d4a832] p-[1px] shadow-[0_8px_30px_rgba(197,160,89,0.35)] transition-transform duration-500 group-hover/logo:scale-110">
+              <div className="w-full h-full rounded-[15px] bg-[#020617] flex items-center justify-center">
+                <i className="fa-solid fa-crown text-[var(--color-primary)] text-lg drop-shadow-[0_0_8px_rgba(197,160,89,0.5)]"></i>
+              </div>
             </div>
+            {!isSidebarOpen && (
+              <div className="absolute -bottom-1 -right-1 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[#020617] shadow-lg"></div>
+            )}
           </div>
+          
           {isSidebarOpen && (
-            <div className="flex-1 min-w-0 animate-in fade-in slide-in-from-left-2 duration-300">
-              <p className="font-outfit text-[13.5px] font-[800] text-white tracking-[0.12em] leading-none">ADMIN PANEL</p>
-              <p className="font-outfit text-[8.5px] font-[600] text-[var(--color-primary)]/70 tracking-[0.32em] uppercase mt-0.5">Transfer</p>
+            <div className="flex-1 min-w-0 animate-in fade-in slide-in-from-left-4 duration-500">
+              <div className="flex items-center gap-2">
+                <span className="font-outfit text-[14px] font-[900] text-white tracking-[0.18em] leading-none uppercase">ELITE</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)] shadow-[0_0_8px_rgba(197,160,89,1)]"></span>
+              </div>
+              <p className="font-outfit text-[9px] font-[700] text-slate-500 tracking-[0.4em] uppercase mt-1.5 opacity-80">CONTROL PANEL</p>
             </div>
           )}
+
           {isSidebarOpen && (
-            <div className="flex items-center gap-2 shrink-0 animate-in fade-in duration-300">
-              <span className="text-[8px] font-black px-1.5 py-0.5 rounded-full bg-[var(--color-primary)]/15 text-[var(--color-primary)] border border-[var(--color-primary)]/25 tracking-widest">ADMIN</span>
-              <button onClick={() => setIsSidebarOpen(false)} aria-label="Kenar çubuğunu daralt" className="w-7 h-7 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.06] flex items-center justify-center text-slate-500 hover:text-white transition-all">
-                <i className="fa-solid fa-chevron-left text-[10px]"></i>
-              </button>
-            </div>
+            <button 
+              onClick={() => setIsSidebarOpen(false)} 
+              className="w-8 h-8 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] border border-white/[0.05] flex items-center justify-center text-slate-500 hover:text-white transition-all group/toggle"
+            >
+              <i className="fa-solid fa-indent text-[10px] group-hover:-translate-x-0.5 transition-transform"></i>
+            </button>
           )}
         </div>
 
-        {/* Expand button when collapsed */}
+        {/* ── EXPAND TOGGLE (Collapsed Mode) ── */}
         {!isSidebarOpen && (
-          <button onClick={() => setIsSidebarOpen(true)} aria-label="Kenar çubuğunu genişlet" className="absolute -right-3 top-[72px] w-6 h-6 bg-[var(--color-primary)] rounded-full flex items-center justify-center text-[#06080F] shadow-lg shadow-[var(--color-primary)]/40 text-[10px] hover:brightness-110 transition-all z-[60]">
-            <i className="fa-solid fa-chevron-right text-[9px]"></i>
+          <button 
+            onClick={() => setIsSidebarOpen(true)} 
+            className="absolute -right-3 top-28 w-6 h-12 bg-[var(--color-primary)] hover:bg-[#d4a832] rounded-full flex items-center justify-center text-[#06080F] shadow-[0_0_20px_rgba(197,160,89,0.4)] text-[10px] transition-all z-[60] group/expand"
+          >
+            <i className="fa-solid fa-chevron-right text-[9px] group-hover:translate-x-0.5 transition-transform"></i>
           </button>
         )}
 
-        {/* ── NAV ── */}
-        <nav className="flex-1 flex flex-col py-3 overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] relative z-10">
+        {/* ── NAVIGATION ── */}
+        <nav className="flex-1 flex flex-col py-6 overflow-y-auto scrollbar-hide relative z-10 px-3">
+          <div className="space-y-8">
+            {/* Primary Modules */}
+            <div>
+              <SidebarGroupLabel label="Operasyon" isSidebarOpen={isSidebarOpen} />
+              <div className="space-y-1">
+                <SidebarNavItem id="overview" label="Dashboard" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-grid-2"></i>} />
+                <SidebarNavItem id="bookings" label="Rezervasyonlar" badge={pendingCount} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-calendar-clock"></i>} />
+                <SidebarNavItem id="reviews" label="Yorumlar" badge={pendingReviews} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-star"></i>} />
+              </div>
+            </div>
 
-          <>
-                {/* OPERASYON */}
-                <SidebarGroupLabel label="Operasyon" isSidebarOpen={isSidebarOpen} />
-                <div className="space-y-0.5 px-2">
-                  <SidebarNavItem id="overview" label="Dashboard" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-chart-pie text-[14px]"></i>} />
-                  <SidebarNavItem id="bookings" label="Rezervasyonlar" badge={pendingCount} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-calendar-check text-[14px]"></i>} />
-                  <SidebarNavItem id="reviews" label="Yorumlar" badge={pendingReviews} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-star text-[14px]"></i>} />
-                </div>
+            {/* Content & Design */}
+            <div>
+              <SidebarGroupLabel label="İçerik & Katalog" isSidebarOpen={isSidebarOpen} />
+              <div className="space-y-1">
+                <SidebarNavItem id="blog" label="Blog Yönetimi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-pen-nib"></i>} />
+                <SidebarNavItem id="regions" label="Bölge & Fiyat" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-map-location-dot"></i>} />
+                <SidebarNavItem id="fleet" label="Araçlar" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-car-rear"></i>} />
+              </div>
+            </div>
 
-                <div className={`${isSidebarOpen ? 'mx-4' : 'mx-3'} my-2.5 h-px bg-white/[0.05]`} />
-
-                {/* İÇERİK */}
-                <SidebarGroupLabel label="İçerik & Katalog" isSidebarOpen={isSidebarOpen} />
-                <div className="space-y-0.5 px-2">
-                  <SidebarNavItem id="blog" label="Blog Yönetimi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-newspaper text-[14px]"></i>} />
-                  <SidebarNavItem id="regions" label="Bölge & Fiyat" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-map-location-dot text-[14px]"></i>} />
-                  <SidebarNavItem id="fleet" label="Araçlar" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-car-side text-[14px]"></i>} />
-                </div>
-
-                <div className={`${isSidebarOpen ? 'mx-4' : 'mx-3'} my-2.5 h-px bg-white/[0.05]`} />
-
-                {/* SİTE YÖNETİMİ */}
-                <SidebarGroupLabel label="Site Yönetimi" isSidebarOpen={isSidebarOpen} />
-                <div className="space-y-0.5 px-2 pb-1">
-                  <SidebarNavItem id="hero-images" label="Anasayfa Banner" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-images text-[14px]"></i>} />
-                  <SidebarNavItem id="site-settings" label="Menü Yönetimi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-bars text-[14px]"></i>} />
-                  <SidebarNavItem id="faq" label="S.S.S" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-circle-question text-[14px]"></i>} />
-                  <SidebarNavItem id="business" label="İşletme Bilgileri" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-building text-[14px]"></i>} />
-                  <SidebarNavItem id="seo" label="SEO Yönetimi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-magnifying-glass-chart text-[14px]"></i>} />
-
-                  {/* Kurumsal accordion */}
-                  <div className="relative group">
-                    <button
-                      onClick={() => { if (!isSidebarOpen) setIsSidebarOpen(true); setIsCorporateOpen(!isCorporateOpen); if (!isCorporateOpen) setActiveView('about'); }}
-                      className={`w-full rounded-xl flex items-center transition-colors duration-150 relative ${
-                        isSidebarOpen
-                          ? `px-3 py-2.5 gap-3 ${(activeView === 'about' || activeView === 'visionMission') ? 'bg-gradient-to-r from-[var(--color-primary)]/[0.13] via-[var(--color-primary)]/[0.04] to-transparent' : 'hover:bg-white/[0.04]'}`
-                          : `justify-center p-2.5 ${(activeView === 'about' || activeView === 'visionMission') ? 'bg-[var(--color-primary)]/[0.15]' : 'hover:bg-white/[0.05]'}`
-                      }`}
-                    >
-                      {(activeView === 'about' || activeView === 'visionMission') && isSidebarOpen && (
-                        <div className="absolute left-0 top-[18%] bottom-[18%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-amber-500 rounded-r-full shadow-[0_0_14px_rgba(197,160,89,0.65)]" />
-                      )}
-                      <div className={`shrink-0 transition-colors duration-150 ${(activeView === 'about' || activeView === 'visionMission') ? 'text-[var(--color-primary)] drop-shadow-[0_0_8px_rgba(197,160,89,0.5)]' : 'text-slate-500 group-hover:text-slate-300'}`}>
-                        <i className="fa-solid fa-briefcase text-[14px]"></i>
-                      </div>
-                      {isSidebarOpen && (
-                        <>
-                          <span className={`text-[12px] font-semibold whitespace-nowrap truncate flex-1 text-left tracking-wide transition-colors ${(activeView === 'about' || activeView === 'visionMission') ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`}>Kurumsal</span>
-                          <i className={`fa-solid fa-chevron-down text-[10px] transition-transform duration-300 ${isCorporateOpen ? 'rotate-180 text-[var(--color-primary)]' : 'text-slate-600'}`}></i>
-                        </>
-                      )}
-                    </button>
-                    {isSidebarOpen && isCorporateOpen && (
-                      <div className="mt-0.5 space-y-0.5 pl-9 pr-1 animate-in fade-in slide-in-from-top-1 duration-200">
-                        {[{ id: 'about', label: 'Hakkımızda' }, { id: 'visionMission', label: 'Vizyon & Misyon' }].map(s => (
-                          <button key={s.id} onClick={() => setActiveView(s.id as DashboardView)} className={`w-full text-left py-2 px-3 rounded-lg text-[11px] font-medium tracking-wide transition-colors duration-150 flex items-center gap-2 ${activeView === s.id ? 'text-[var(--color-primary)] bg-[var(--color-primary)]/[0.08]' : 'text-slate-500 hover:text-slate-300 hover:bg-white/[0.03]'}`}>
-                            <span className={`w-1 h-1 rounded-full shrink-0 ${activeView === s.id ? 'bg-[var(--color-primary)] shadow-[0_0_5px_rgba(197,160,89,0.8)]' : 'bg-slate-700'}`}></span>
-                            {s.label}
-                          </button>
-                        ))}
-                      </div>
+            {/* Site Management */}
+            <div>
+              <SidebarGroupLabel label="Site Yönetimi" isSidebarOpen={isSidebarOpen} />
+              <div className="space-y-1">
+                <SidebarNavItem id="hero-images" label="Anasayfa Banner" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-images"></i>} />
+                <SidebarNavItem id="site-settings" label="Menü Yönetimi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-sliders"></i>} />
+                <SidebarNavItem id="faq" label="S.S.S" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-circle-question"></i>} />
+                <SidebarNavItem id="business" label="İşletme Bilgileri" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-briefcase"></i>} />
+                <SidebarNavItem id="seo" label="SEO Yönetimi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-search"></i>} />
+                
+                {/* Corporate Sub-menu */}
+                <div className="relative group">
+                  <button
+                    onClick={() => { if (!isSidebarOpen) setIsSidebarOpen(true); setIsCorporateOpen(!isCorporateOpen); if (!isCorporateOpen) setActiveView('about'); }}
+                    className={`w-full rounded-xl flex items-center transition-all duration-300 relative ${
+                      isSidebarOpen
+                        ? `px-3 py-2.5 gap-3 ${(activeView === 'about' || activeView === 'visionMission') ? 'bg-gradient-to-r from-[var(--color-primary)]/[0.15] via-[var(--color-primary)]/[0.05] to-transparent' : 'hover:bg-white/[0.06]'}`
+                        : `justify-center p-2.5 ${(activeView === 'about' || activeView === 'visionMission') ? 'bg-[var(--color-primary)]/[0.18]' : 'hover:bg-white/[0.06]'}`
+                    }`}
+                  >
+                    {(activeView === 'about' || activeView === 'visionMission') && isSidebarOpen && (
+                      <div className="absolute left-0 top-[20%] bottom-[20%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-[#d4a832] rounded-r-full shadow-[0_0_15px_rgba(197,160,89,0.7)]" />
                     )}
-                    {!isSidebarOpen && (
-                      <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 pointer-events-none opacity-0 group-hover:opacity-100 translate-x-1 group-hover:translate-x-0 transition-all duration-200 z-[100]">
-                        <div className="relative px-3 py-2 rounded-xl bg-[#0a0e1a]/98 backdrop-blur-xl border border-white/[0.08] shadow-2xl shadow-black/70 whitespace-nowrap">
-                          <div className="absolute left-0 top-[22%] bottom-[22%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-amber-500 rounded-r-full" />
-                          <span className="text-[12px] font-semibold text-white pl-1">Kurumsal</span>
-                          <div className="absolute right-full top-1/2 -translate-y-1/2 border-[5px] border-transparent border-r-[#0a0e1a]" />
-                        </div>
-                      </div>
+                    <div className={`shrink-0 transition-all duration-300 ${(activeView === 'about' || activeView === 'visionMission') ? 'text-[var(--color-primary)] drop-shadow-[0_0_8px_rgba(197,160,89,0.5)]' : 'text-slate-500 group-hover:text-slate-300'}`}>
+                      <i className="fa-solid fa-building-columns"></i>
+                    </div>
+                    {isSidebarOpen && (
+                      <>
+                        <span className={`text-[12.5px] font-[600] whitespace-nowrap truncate flex-1 text-left tracking-wide transition-colors ${(activeView === 'about' || activeView === 'visionMission') ? 'text-white' : 'text-slate-400 group-hover:text-slate-200'}`}>Kurumsal</span>
+                        <i className={`fa-solid fa-chevron-down text-[10px] transition-transform duration-300 ${isCorporateOpen ? 'rotate-180 text-[var(--color-primary)]' : 'text-slate-600'}`}></i>
+                      </>
                     )}
-                  </div>
-
-                  <div className={`${isSidebarOpen ? 'mx-2' : 'mx-1'} my-2 h-px bg-white/[0.05]`} />
-                  <SidebarNavItem id="account" label="Hesap Ayarları" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>} />
+                  </button>
+                  {isSidebarOpen && isCorporateOpen && (
+                    <div className="mt-1 space-y-1 pl-9 pr-1 animate-in fade-in slide-in-from-top-2 duration-300">
+                      {[{ id: 'about', label: 'Hakkımızda' }, { id: 'visionMission', label: 'Vizyon & Misyon' }].map(s => (
+                        <button key={s.id} onClick={() => setActiveView(s.id as DashboardView)} className={`w-full text-left py-2 px-3 rounded-lg text-[11px] font-bold tracking-wide transition-all duration-200 flex items-center gap-2 ${activeView === s.id ? 'text-[var(--color-primary)] bg-[var(--color-primary)]/10' : 'text-slate-500 hover:text-slate-300 hover:bg-white/5'}`}>
+                          <span className={`w-1 h-1 rounded-full shrink-0 ${activeView === s.id ? 'bg-[var(--color-primary)] shadow-[0_0_5px_rgba(197,160,89,1)]' : 'bg-slate-700'}`}></span>
+                          {s.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {!isSidebarOpen && (
+                    <div className="absolute left-full top-1/2 -translate-y-1/2 ml-3 pointer-events-none opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300 z-[100]">
+                      <div className="relative px-4 py-2.5 rounded-xl bg-[#0a0e1a] backdrop-blur-3xl border border-white/[0.1] shadow-2xl shadow-black/70 whitespace-nowrap">
+                        <div className="absolute left-0 top-[20%] bottom-[20%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-[#d4a832] rounded-r-full" />
+                        <span className="text-[13px] font-bold text-white pl-1">Kurumsal</span>
+                        <div className="absolute right-full top-1/2 -translate-y-1/2 border-[6px] border-transparent border-r-[#0a0e1a]" />
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </>
+              </div>
+            </div>
+          </div>
         </nav>
 
-        {/* ── FOOTER ── */}
-        <div className="shrink-0 border-t border-white/[0.06] relative z-10">
-          {/* Profile card — expanded only */}
-          {isSidebarOpen && (
-            <div className="px-3 pt-3 pb-1 animate-in fade-in duration-300">
-              <button onClick={() => setActiveView('account')} className="w-full flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:bg-white/[0.05] hover:border-[var(--color-primary)]/25 transition-all group text-left">
-                <div className="w-8 h-8 rounded-xl bg-[var(--color-primary)] ring-1 ring-[var(--color-primary)]/30 flex items-center justify-center shrink-0">
-                  <span className="text-[#0f172a] font-black text-sm">{(accountForm.fullName || 'A').charAt(0).toUpperCase()}</span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-outfit text-[12.5px] font-[650] text-white truncate leading-tight group-hover:text-[var(--color-primary)] transition-colors">{accountForm.fullName || 'Admin'}</p>
-                  <p className="text-[10px] text-slate-600 truncate">{accountForm.email || ''}</p>
-                </div>
-                <i className="fa-solid fa-chevron-right text-[9px] text-slate-700 group-hover:text-[var(--color-primary)] transition-colors shrink-0"></i>
-              </button>
-            </div>
-          )}
-          {/* Action row */}
-          <div className={`flex items-center gap-1 p-2 ${isSidebarOpen ? 'px-3' : 'flex-col px-2'}`}>
-            <a href="/" target="_blank" rel="noopener noreferrer" title="Siteyi Görüntüle" className={`flex items-center gap-2 rounded-lg text-slate-500 hover:text-slate-200 hover:bg-white/[0.05] transition-all group ${isSidebarOpen ? 'flex-1 px-3 py-2' : 'w-full justify-center py-2.5'}`}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/></svg>
-              {isSidebarOpen && <span className="text-[11px] font-semibold">Siteyi Gör</span>}
+        {/* ── SIDEBAR FOOTER ── */}
+        <div className="shrink-0 border-t border-white/[0.04] p-3 space-y-2 relative z-10 bg-gradient-to-t from-white/[0.02] to-transparent">
+          <SidebarNavItem id="account" label="Hesap Ayarları" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-user-gear"></i>} />
+          
+          <div className={`flex items-center gap-1.5 p-1 ${isSidebarOpen ? '' : 'flex-col'}`}>
+            <a href="/" target="_blank" rel="noopener noreferrer" title="Siteyi Görüntüle" className={`flex items-center justify-center gap-2 rounded-xl text-slate-500 hover:text-white hover:bg-white/[0.05] transition-all group ${isSidebarOpen ? 'flex-1 py-2.5 bg-white/[0.02] border border-white/[0.05]' : 'w-10 h-10'}`}>
+              <i className="fa-solid fa-arrow-up-right-from-square text-[11px] group-hover:text-[var(--color-primary)] transition-colors"></i>
+              {isSidebarOpen && <span className="text-[11px] font-bold">Siteyi Gör</span>}
             </a>
-            <button onClick={toggleTheme} title={isDarkTheme ? 'Açık Tema' : 'Koyu Tema'} className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-200 hover:bg-white/[0.05] transition-all shrink-0">
+            <button onClick={toggleTheme} title={isDarkTheme ? 'Açık Tema' : 'Koyu Tema'} className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-[var(--color-primary)] hover:bg-white/[0.05] transition-all shrink-0">
               <i className={`fa-solid ${isDarkTheme ? 'fa-sun' : 'fa-moon'} text-xs`}></i>
             </button>
-            <button onClick={onExitAdmin} title="Çıkış" className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-red-400 hover:bg-red-500/[0.08] transition-all shrink-0">
+            <button onClick={onExitAdmin} title="Çıkış" className="w-10 h-10 rounded-xl flex items-center justify-center text-slate-500 hover:text-rose-400 hover:bg-rose-500/[0.08] transition-all shrink-0">
               <i className="fa-solid fa-arrow-right-from-bracket text-xs"></i>
             </button>
           </div>
@@ -1770,108 +1773,98 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
             </div>
           </div>
         )}
-        <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 relative z-50">
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6 relative z-50">
           <div className="relative z-10">
-            {/* Breadcrumb */}
-            {activeView !== 'overview' && (
-              <div className="flex items-center gap-1.5 mb-2 text-[10px] font-bold uppercase tracking-wider">
-                <button onClick={() => setActiveView('overview')} className="text-slate-500 hover:text-[var(--color-primary)] transition-colors">Panel</button>
-                <i className="fa-solid fa-chevron-right text-[7px] text-slate-600"></i>
-                <span className="text-[var(--color-primary)]">{VIEW_LABELS[activeView]?.label || activeView}</span>
+            {/* Breadcrumb — Ultra Minimal Elite Style */}
+            <div className="flex items-center gap-2 mb-3">
+              <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-white/[0.03] border border-white/[0.05]">
+                <button 
+                  onClick={() => setActiveView('overview')} 
+                  className={`text-[9px] font-black uppercase tracking-[0.1em] transition-colors ${activeView === 'overview' ? 'text-[var(--color-primary)]' : 'text-slate-500 hover:text-white'}`}
+                >
+                  Elite Control
+                </button>
+                {activeView !== 'overview' && (
+                  <>
+                    <i className="fa-solid fa-chevron-right text-[7px] text-slate-700"></i>
+                    <span className="text-[9px] font-black text-[var(--color-primary)] uppercase tracking-[0.1em]">{VIEW_LABELS[activeView]?.label || activeView}</span>
+                  </>
+                )}
               </div>
-            )}
-            {activeView === 'overview' && (
-              <p className="text-slate-400 font-bold text-[10px] mb-1 uppercase tracking-wider">{currentTime.toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'long' })}</p>
-            )}
-            {activeView === 'overview' && (
-              <h1 className={`font-outfit text-[1.875rem] font-[800] tracking-[-0.02em] ${isDarkTheme ? 'text-white' : 'text-slate-900'} leading-[1.15]`}>
-                Dashboard
-              </h1>
-            )}
-            <p className={`text-[0.8125rem] ${activeView === 'overview' ? 'mt-1.5' : ''} ${isDarkTheme ? 'text-slate-400' : 'text-slate-500'} max-w-lg leading-relaxed`}>
-              {activeView === 'overview'
-                ? <>{greeting.emoji} {greeting.text}, <span className="font-semibold text-[var(--color-primary)]">Admin</span> — Tüm operasyonları buradan yönetebilirsiniz.</>
-                : (VIEW_LABELS[activeView]?.description || 'Operasyonel veriler ve site kontrol merkezi.')}
-            </p>
-          </div>
-          <div className="flex space-x-2 relative z-10 items-center">
-
-
-            {/* Undo/Redo */}
-            <button onClick={handleUndo} className="w-9 h-9 rounded-lg bg-white/5 text-slate-500 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center" title="Geri Al (⌘Z)">
-              <i className="fa-solid fa-rotate-left text-xs"></i>
-            </button>
-            <button onClick={handleRedo} className="w-9 h-9 rounded-lg bg-white/5 text-slate-500 hover:text-white hover:bg-white/10 transition-all flex items-center justify-center" title="Yeniden Yap (⌘⇧Z)">
-              <i className="fa-solid fa-rotate-right text-xs"></i>
-            </button>
-
-            {/* Command Palette Trigger */}
-            <button
-              onClick={() => setIsCommandPaletteOpen(true)}
-              className="hidden md:flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
-            >
-              <i className="fa-solid fa-search text-slate-400 text-xs"></i>
-              <span className="text-[11px] text-slate-500 hidden md:inline">Ara veya git...</span>
-              <kbd className="hidden md:inline text-[9px] font-mono font-bold text-slate-600 bg-white/5 px-1.5 py-0.5 rounded border border-white/10">⌘K</kbd>
-            </button>
-
-            {/* Auto-save Status Indicator */}
-            <div className="flex items-center gap-2">
-              {saveStatus === 'saving' && (
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 animate-pulse">
-                  <i className="fa-solid fa-circle-notch fa-spin text-[var(--color-primary)] text-xs"></i>
-                  <span className="text-[11px] font-bold text-slate-400">Kaydediliyor...</span>
-                </div>
-              )}
-              {saveStatus === 'saved' && (
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 animate-in fade-in duration-300">
-                  <i className="fa-solid fa-check text-emerald-400 text-xs"></i>
-                  <span className="text-[11px] font-bold text-emerald-400">Kaydedildi</span>
-                </div>
-              )}
-              {saveStatus === 'idle' && activeView !== 'overview' && (
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg">
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
-                  <span className="text-[10px] font-bold text-slate-500">Otomatik Kayıt</span>
+              {activeView === 'overview' && (
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-emerald-500/5 border border-emerald-500/10">
+                  <div className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></div>
+                  <span className="text-[9px] font-black text-emerald-500/80 uppercase tracking-[0.1em]">Canlı Sistem</span>
                 </div>
               )}
             </div>
-            {/* User Profile Dropdown */}
-            <div className="relative group z-50">
-              <button className="flex items-center gap-2 pl-2 md:pl-4 border-l border-white/10 outline-none">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--color-primary)] to-amber-600 p-[2px] shadow-lg shadow-black/20 group-hover:shadow-[var(--color-primary)]/30 transition-shadow">
-                  <div className="w-full h-full rounded-full bg-[var(--color-primary)] flex items-center justify-center border-2 border-[var(--color-darker)] relative">
-                    <span className="text-[#0f172a] font-black text-base">{(accountForm.fullName || 'A').charAt(0).toUpperCase()}</span>
-                    <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors rounded-full"></div>
+
+            <div className="flex flex-col">
+              <h1 className={`font-outfit text-[2.25rem] font-[900] tracking-[-0.03em] ${isDarkTheme ? 'text-white' : 'text-slate-900'} leading-none`}>
+                {activeView === 'overview' ? 'Dashboard' : (VIEW_LABELS[activeView]?.label || activeView)}
+              </h1>
+              <p className={`text-[13px] mt-3 ${isDarkTheme ? 'text-slate-400' : 'text-slate-500'} max-w-lg leading-relaxed font-medium opacity-80`}>
+                {activeView === 'overview'
+                  ? <>{greeting.emoji} {greeting.text}, <span className="text-[var(--color-primary)] font-bold">Yönetici</span>. Bugün için her şey yolunda görünüyor.</>
+                  : (VIEW_LABELS[activeView]?.description || 'Operasyonel veriler ve kontrol merkezi.')}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 relative z-10 self-end md:self-center">
+            {/* Action Group */}
+            <div className="flex items-center gap-2 p-1 rounded-2xl bg-white/[0.03] border border-white/[0.05] backdrop-blur-md">
+              <button onClick={handleUndo} className="w-9 h-9 rounded-xl text-slate-500 hover:text-white hover:bg-white/5 transition-all flex items-center justify-center group" title="Geri Al (⌘Z)">
+                <i className="fa-solid fa-rotate-left text-xs group-active:-rotate-45 transition-transform"></i>
+              </button>
+              <button onClick={handleRedo} className="w-9 h-9 rounded-xl text-slate-500 hover:text-white hover:bg-white/5 transition-all flex items-center justify-center group" title="Yeniden Yap (⌘⇧Z)">
+                <i className="fa-solid fa-rotate-right text-xs group-active:rotate-45 transition-transform"></i>
+              </button>
+              
+              <div className="w-px h-6 bg-white/[0.08] mx-1"></div>
+
+              <button
+                onClick={() => setIsCommandPaletteOpen(true)}
+                className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 transition-all border border-transparent hover:border-white/10 group"
+              >
+                <i className="fa-solid fa-magnifying-glass text-slate-400 text-xs group-hover:text-[var(--color-primary)] transition-colors"></i>
+                <span className="text-[11px] font-bold text-slate-400 group-hover:text-slate-200 transition-colors">Komut Ara</span>
+                <kbd className="text-[9px] font-black text-slate-600 bg-black/20 px-1.5 py-0.5 rounded border border-white/5">⌘K</kbd>
+              </button>
+            </div>
+
+            {/* Auto-save & Profile */}
+            <div className="flex items-center gap-4 pl-2">
+              <div className="flex flex-col items-end">
+                {saveStatus === 'saving' ? (
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/5 border border-amber-500/10">
+                    <i className="fa-solid fa-circle-notch fa-spin text-amber-500 text-[10px]"></i>
+                    <span className="text-[10px] font-black text-amber-500/80 uppercase tracking-widest">Saving</span>
                   </div>
+                ) : saveStatus === 'saved' ? (
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/5 border border-emerald-500/10">
+                    <i className="fa-solid fa-check text-emerald-500 text-[10px]"></i>
+                    <span className="text-[10px] font-black text-emerald-500/80 uppercase tracking-widest">Synced</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.05]">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/40"></div>
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Auto-Save</span>
+                  </div>
+                )}
+              </div>
+
+              <button 
+                onClick={() => setActiveView('account')}
+                className="relative group p-0.5 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[#d4a832] shadow-[0_8px_25px_rgba(197,160,89,0.25)] hover:scale-105 transition-all duration-500"
+              >
+                <div className="w-11 h-11 rounded-[14px] bg-[#020617] flex items-center justify-center border-2 border-[#020617] overflow-hidden relative">
+                  <span className="text-[var(--color-primary)] font-black text-base drop-shadow-[0_0_8px_rgba(197,160,89,0.5)]">
+                    {(accountForm.fullName || 'A').charAt(0).toUpperCase()}
+                  </span>
+                  <div className="absolute inset-0 bg-white/0 group-hover:bg-white/5 transition-colors"></div>
                 </div>
               </button>
-              {/* Dropdown Menu */}
-              <div className="absolute right-0 top-full mt-3 w-48 opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300 transform origin-top-right">
-                <div className="bg-[var(--color-dark)]/95 backdrop-blur-3xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden py-1.5 flex flex-col">
-                  {/* Pointer arrow */}
-                  <div className="absolute -top-1.5 right-4 w-3 h-3 bg-[var(--color-dark)] border-t border-l border-white/10 rotate-45"></div>
-
-                  <div className="px-4 py-3 border-b border-white/5 bg-white/[0.02]">
-                    <p className="text-white text-xs font-bold truncate">{accountForm.fullName || 'Admin'}</p>
-                    <p className="text-slate-400 text-[10px] truncate">{accountForm.email || ''}</p>
-                  </div>
-                  <div className="p-1.5">
-                    <button
-                      onClick={() => setActiveView('account')}
-                      className="w-full text-left px-3 py-2 text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors flex items-center gap-2"
-                    >
-                      <i className="fa-solid fa-user-gear text-[var(--color-primary)] w-3"></i> Hesap Ayarları
-                    </button>
-                    <button
-                      onClick={onExitAdmin}
-                      className="w-full text-left px-3 py-2 text-xs font-medium text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors flex items-center gap-2 mt-0.5"
-                    >
-                      <i className="fa-solid fa-arrow-right-from-bracket w-3"></i> Güvenli Çıkış
-                    </button>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </header>
@@ -2037,61 +2030,96 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               </button>
             </div>
 
-            {/* Bugünün Transferleri */}
+            {/* ── TODAY'S TRANSFERS: ELITE LIVE TRACKER ── */}
             {(() => {
               const today = new Date().toISOString().split('T')[0];
               const todayTransfers = bookings
                 .filter(b => b.date === today && b.status !== 'Deleted' && b.status !== 'Cancelled')
                 .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+              
               if (todayTransfers.length === 0) return null;
+              
               return (
-                <div className="rounded-2xl border border-[var(--color-primary)]/20 bg-[var(--color-primary)]/[0.04] overflow-hidden">
-                  <div className="flex items-center justify-between px-5 py-3 border-b border-[var(--color-primary)]/10">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-2 h-2 rounded-full bg-[var(--color-primary)] animate-pulse shadow-[0_0_8px_rgba(197,160,89,0.6)]"></div>
-                      <span className="text-sm font-black text-white tracking-tight">Bugünün Transferleri</span>
-                      <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-[var(--color-primary)] text-[#06080F]">{todayTransfers.length}</span>
-                    </div>
-                    <button onClick={() => setActiveView('bookings')} className="text-[11px] font-semibold text-[var(--color-primary)]/70 hover:text-[var(--color-primary)] transition-colors flex items-center gap-1">
-                      Tümü <i className="fa-solid fa-arrow-right text-[9px]"></i>
-                    </button>
-                  </div>
-                  <div className="px-4 py-3 flex gap-3 overflow-x-auto scrollbar-hide">
-                    {todayTransfers.map(b => {
-                      const statusColor = b.status === 'Confirmed' ? 'text-blue-400 bg-blue-500/10 border-blue-500/20'
-                        : b.status === 'Completed' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
-                        : 'text-amber-400 bg-amber-500/10 border-amber-500/20';
-                      const statusLabel = b.status === 'Confirmed' ? 'Onaylı' : b.status === 'Completed' ? 'Tamamlandı' : 'Beklemede';
-                      return (
-                        <div
-                          key={b.id}
-                          onClick={() => setSelectedBookingForView(b)}
-                          className="shrink-0 w-[220px] p-3.5 rounded-xl bg-white/[0.04] border border-white/[0.07] hover:border-[var(--color-primary)]/30 hover:bg-[var(--color-primary)]/[0.06] transition-all cursor-pointer group"
-                        >
-                          <div className="flex items-center justify-between mb-2.5">
-                            <span className="text-[13px] font-black text-white font-mono tabular-nums">{b.time || '--:--'}</span>
-                            <span className={`text-[9px] font-black px-2 py-0.5 rounded-full border ${statusColor}`}>{statusLabel}</span>
-                          </div>
-                          <p className="text-[12px] font-bold text-white truncate mb-1 group-hover:text-[var(--color-primary)] transition-colors">{b.customerName.replace(/[\n\r]+/g, ' ').trim()}</p>
-                          <div className="flex items-center gap-1 text-[10px] text-slate-500">
-                            <i className="fa-solid fa-location-dot text-[8px] text-[var(--color-primary)]/60"></i>
-                            <span className="truncate">{b.pickup.split(',')[0]}</span>
-                            <i className="fa-solid fa-arrow-right text-[7px] shrink-0"></i>
-                            <span className="truncate">{b.destination.split(',')[0]}</span>
-                          </div>
-                          {b.flightNumber && (
-                            <div className="mt-1.5 flex items-center gap-1 text-[10px] text-sky-400">
-                              <i className="fa-solid fa-plane text-[8px]"></i>
-                              <span>{b.flightNumber}</span>
-                            </div>
-                          )}
-                          <div className="mt-2 pt-2 border-t border-white/[0.06] flex items-center justify-between">
-                            <span className="text-[10px] text-slate-500">{b.passengers} kişi</span>
-                            <span className="text-[11px] font-black text-[var(--color-primary)]">{siteContent.currency?.symbol || '€'}{b.totalPrice}</span>
-                          </div>
+                <div className="relative group overflow-hidden rounded-[2.5rem] border border-[var(--color-primary)]/20 bg-[#020617]/40 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] transition-all duration-700 hover:border-[var(--color-primary)]/40">
+                  {/* Subtle Background Animation */}
+                  <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[var(--color-primary)]/5 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none group-hover:bg-[var(--color-primary)]/10 transition-colors duration-1000"></div>
+                  
+                  <div className="relative z-10 flex flex-col lg:flex-row items-stretch">
+                    {/* Header Sidebar (Left) */}
+                    <div className="lg:w-64 p-8 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-white/[0.06] bg-white/[0.02]">
+                      <div>
+                        <div className="flex items-center gap-3 mb-6">
+                          <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_12px_rgba(16,185,129,0.8)]"></div>
+                          <span className="text-[11px] font-[900] text-white tracking-[0.2em] uppercase">Canlı Takip</span>
                         </div>
-                      );
-                    })}
+                        <h3 className="text-2xl font-[900] text-white tracking-tight leading-tight">Bugünün<br/>Transferleri</h3>
+                        <p className="text-slate-500 text-[13px] mt-4 font-medium leading-relaxed">Operasyonu buradan anlık olarak yönetin.</p>
+                      </div>
+                      
+                      <div className="mt-8 flex items-baseline gap-2">
+                        <span className="text-4xl font-[900] text-[var(--color-primary)] tracking-tighter tabular-nums">{todayTransfers.length}</span>
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Planlı Araç</span>
+                      </div>
+                    </div>
+
+                    {/* Transfers Horizontal Scroll (Right) */}
+                    <div className="flex-1 p-6 flex gap-5 overflow-x-auto admin-scrollbar pb-8 pt-4">
+                      {todayTransfers.map(b => {
+                        const statusColor = b.status === 'Confirmed' ? 'text-blue-400 bg-blue-500/10 border-blue-500/20'
+                          : b.status === 'Completed' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
+                          : 'text-amber-400 bg-amber-500/10 border-amber-500/20';
+                        const statusLabel = b.status === 'Confirmed' ? 'Onaylı' : b.status === 'Completed' ? 'Tamamlandı' : 'Beklemede';
+                        
+                        return (
+                          <div
+                            key={b.id}
+                            onClick={() => setSelectedBookingForView(b)}
+                            className="shrink-0 w-[280px] p-5 rounded-[2rem] bg-white/[0.03] border border-white/[0.06] hover:border-[var(--color-primary)]/40 hover:bg-white/[0.06] transition-all duration-500 cursor-pointer group/card shadow-[0_10px_30px_rgba(0,0,0,0.1)] hover:shadow-[0_15px_40px_rgba(0,0,0,0.2)]"
+                          >
+                            <div className="flex items-center justify-between mb-4">
+                              <div className="flex items-center gap-2">
+                                <i className="fa-solid fa-clock text-[var(--color-primary)] text-[10px] opacity-70"></i>
+                                <span className="text-[15px] font-[900] text-white font-mono tabular-nums tracking-tighter">{b.time || '--:--'}</span>
+                              </div>
+                              <span className={`text-[9px] font-[800] px-2.5 py-1 rounded-lg border tracking-wider uppercase ${statusColor}`}>{statusLabel}</span>
+                            </div>
+
+                            <div className="space-y-4">
+                              <div>
+                                <p className="text-[14px] font-[800] text-white truncate group-hover/card:text-[var(--color-primary)] transition-colors duration-300">{b.customerName.replace(/[\n\r]+/g, ' ').trim()}</p>
+                                <div className="flex items-center gap-2 mt-2">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary)]/40"></div>
+                                  <span className="text-[11px] font-bold text-slate-400 truncate">{b.pickup.split(',')[0]}</span>
+                                </div>
+                                <div className="flex items-center gap-2 mt-1">
+                                  <div className="w-1.5 h-1.5 rounded-full bg-slate-700"></div>
+                                  <span className="text-[11px] font-bold text-slate-500 truncate">{b.destination.split(',')[0]}</span>
+                                </div>
+                              </div>
+
+                              <div className="pt-4 border-t border-white/[0.04] flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                  <div className="flex -space-x-2">
+                                    {[...Array(Math.min(b.passengers, 3))].map((_, i) => (
+                                      <div key={i} className="w-5 h-5 rounded-full bg-slate-800 border border-[#020617] flex items-center justify-center">
+                                        <i className="fa-solid fa-user text-[7px] text-slate-500"></i>
+                                      </div>
+                                    ))}
+                                    {b.passengers > 3 && (
+                                      <div className="w-5 h-5 rounded-full bg-slate-800 border border-[#020617] flex items-center justify-center text-[7px] font-black text-slate-400">
+                                        +{b.passengers - 3}
+                                      </div>
+                                    )}
+                                  </div>
+                                  <span className="text-[10px] font-bold text-slate-500">{b.passengers} Yolcu</span>
+                                </div>
+                                <span className="text-[13px] font-[900] text-white tracking-tighter">{siteContent.currency?.symbol || '€'}{b.totalPrice}</span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               );
