@@ -188,14 +188,14 @@ const SidebarGroupLabel: React.FC<SidebarGroupLabelProps> = ({ label, isSidebarO
 const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAddBooking, siteContent, onUpdateSiteContent, onExitAdmin, onDeleteBooking, blogPosts: blogPostsProp, onAddBlogPost, onUpdateBlogPost, onDeleteBlogPost, onClearAllBlogPosts, userReviews: userReviewsProp, onUpdateReviewStatus, onDeleteReview }) => {
   // Theme Toggle
   const [isDarkTheme, setIsDarkTheme] = useState(() => {
-    const saved = localStorage.getItem('ata_admin_theme');
+    const saved = localStorage.getItem('site_admin_theme');
     return saved ? saved === 'dark' : true;
   });
 
   const toggleTheme = () => {
     setIsDarkTheme(prev => {
       const next = !prev;
-      localStorage.setItem('ata_admin_theme', next ? 'dark' : 'light');
+      localStorage.setItem('site_admin_theme', next ? 'dark' : 'light');
       return next;
     });
   };
@@ -1455,13 +1455,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
         {/* ── HEADER ── */}
         <div className={`h-16 flex items-center shrink-0 border-b border-white/[0.06] relative z-10 overflow-hidden transition-all duration-500 ${isSidebarOpen ? 'px-4 gap-3' : 'justify-center px-0'}`}>
           <div className="relative shrink-0">
-            <div className="w-9 h-9 rounded-xl overflow-hidden bg-[var(--color-primary)]/10 ring-1 ring-[var(--color-primary)]/35 shadow-[0_0_14px_rgba(197,160,89,0.18)]">
-              <img src="/logo.png" alt="Logo" className="w-full h-full object-contain p-1" />
+            <div className="w-9 h-9 rounded-xl overflow-hidden bg-[var(--color-primary)]/10 ring-1 ring-[var(--color-primary)]/35 shadow-[0_0_14px_rgba(197,160,89,0.18)] flex items-center justify-center">
+              <i className="fa-solid fa-shield-halved text-[var(--color-primary)] text-sm"></i>
             </div>
           </div>
           {isSidebarOpen && (
             <div className="flex-1 min-w-0 animate-in fade-in slide-in-from-left-2 duration-300">
-              <p className="font-outfit text-[13.5px] font-[800] text-white tracking-[0.12em] leading-none">ATA FLUG</p>
+              <p className="font-outfit text-[13.5px] font-[800] text-white tracking-[0.12em] leading-none">ADMIN PANEL</p>
               <p className="font-outfit text-[8.5px] font-[600] text-[var(--color-primary)]/70 tracking-[0.32em] uppercase mt-0.5">Transfer</p>
             </div>
           )}

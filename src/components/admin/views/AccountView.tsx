@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { AdminAccountForm } from '../../../types';
 
-const AI_LS_KEY = 'ata_ai_api_key';
+const AI_LS_KEY = 'site_ai_api_key';
 
 
 interface AccountViewProps {

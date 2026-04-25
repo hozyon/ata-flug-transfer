@@ -85,7 +85,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                 handleLoginSuccess();
             }, 800);
         } else {
-            if (email === 'ataflugtransfer@gmail.com' && password === 'Trak1ng-16') {
+            if (email === 'admin@yönetim.com' && password === 'admin123') {
                 setLoginStage('success');
                 setTimeout(() => {
                     setIsLoading(false);
@@ -193,11 +193,11 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                     </div>
                     <div className="flex items-center gap-3">
                         <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#c5a059] to-amber-700 flex items-center justify-center shadow-lg shadow-[#c5a059]/20">
-                            <img src="/logo.png" alt="Logo" className="h-7 w-auto object-contain brightness-0 invert" />
+                            <i className="fa-solid fa-shield-halved text-white text-xl"></i>
                         </div>
                         <div>
-                            <p className="text-white font-black text-[13px] tracking-wide">ATA FLUG TRANSFER</p>
-                            <p className="text-[#c5a059]/60 text-[10px] font-bold tracking-[0.2em] uppercase">Yönetim Paneli</p>
+                            <p className="text-white font-black text-[13px] tracking-wide">SİSTEM YÖNETİMİ</p>
+                            <p className="text-[#c5a059]/60 text-[10px] font-bold tracking-[0.2em] uppercase">Admin Paneli</p>
                         </div>
                     </div>
                 </div>
@@ -291,7 +291,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                 </div>
 
                 <div className="relative flex items-center justify-between">
-                    <p className="text-slate-800 text-[10px]">© {new Date().getFullYear()} Ata Flug Transfer</p>
+                    <p className="text-slate-800 text-[10px]">© {new Date().getFullYear()} Yönetim Paneli</p>
                     {!isSupabaseConfigured && (
                         <span className="text-amber-600/60 text-[10px] flex items-center gap-1">
                             <i className="fa-solid fa-triangle-exclamation text-[8px]" aria-hidden="true"></i> Dev modu

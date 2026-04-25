@@ -337,7 +337,7 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({ edit
                                     className={INPUT_CLS}
                                     value={biz.name || ''}
                                     onChange={e => setBiz({ name: e.target.value })}
-                                    placeholder="Ata Flug Transfer"
+                                    placeholder="Şirket Adı"
                                 />
                                 {biz.name?.trim() && (
                                     <div className="absolute right-3 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />

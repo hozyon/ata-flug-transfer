@@ -71,7 +71,7 @@ export default function AdminPanelConnected() {
         featuredImage: row.featured_image || '',
         category: row.category || '',
         tags: row.tags || [],
-        author: row.author || 'Ata Flug Transfer',
+        author: row.author || 'Sistem Yöneticisi',
         publishedAt: row.published_at,
         updatedAt: row.updated_at,
         seoTitle: row.seo_title || '',

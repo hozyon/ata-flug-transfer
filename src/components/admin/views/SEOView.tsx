@@ -164,7 +164,8 @@ export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent, _
                             <CharCounter value={seo.siteTitle} max={60} />
                         </div>
                         <input type="text" value={seo.siteTitle} onChange={e => updateSeo({ siteTitle: e.target.value })}
-                            placeholder="Ata Flug Transfer | Antalya VIP Havalimanı Transfer" className={fieldClass} />
+                            placeholder="VIP Havalimanı Transfer" className={fieldClass} />
+
                         <p className={helpClass}>Google arama sonuçlarında görünen ana başlık. 50-60 karakter ideal.</p>
                     </div>
 
@@ -174,8 +175,8 @@ export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent, _
                             <label className={labelClass}>Başlık Şablonu (Alt Sayfalar)</label>
                         </div>
                         <input type="text" value={seo.titleTemplate} onChange={e => updateSeo({ titleTemplate: e.target.value })}
-                            placeholder="%s | Ata Flug Transfer" className={fieldClass} />
-                        <p className={helpClass}>%s yerine sayfa adı gelir. Örn: "Blog | Ata Flug Transfer"</p>
+                            placeholder="%s | Şirket İsmi" className={fieldClass} />
+                        <p className={helpClass}>%s yerine sayfa adı gelir. Örn: "Blog | Şirket İsmi"</p>
                     </div>
 
                     {/* Canonical URL */}
@@ -183,7 +184,8 @@ export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent, _
                         <label className={labelClass}>Canonical URL (Alan Adı)</label>
                         <input type="url" value={seo.canonicalUrl} onChange={e => updateSeo({ canonicalUrl: e.target.value })}
                             onBlur={e => validateUrl('canonical', e.target.value)}
-                            placeholder="https://ataflugtransfer.com" className={`${fieldClass} ${urlErrors.canonical ? 'border-red-500 focus:border-red-500' : ''}`} />
+                            placeholder="https://siteadi.com" className={`${fieldClass} ${urlErrors.canonical ? 'border-red-500 focus:border-red-500' : ''}`} />
+
                         {urlErrors.canonical && <p className="text-[10px] text-red-400 mt-1">{urlErrors.canonical}</p>}
                         <p className={helpClass}>Sitenizin ana adresi. https ile başlamalı.</p>
                     </div>
@@ -221,7 +223,7 @@ export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent, _
                     <div>
                         <label className={labelClass}>Twitter / X Hesabı</label>
                         <input type="text" value={seo.twitterHandle} onChange={e => updateSeo({ twitterHandle: e.target.value })}
-                            placeholder="@ataflugtransfer" className={fieldClass} />
+                            placeholder="@kullaniciadi" className={fieldClass} />
                         <p className={helpClass}>Twitter Card meta etiketleri için.</p>
                     </div>
                 </div>
@@ -238,7 +240,8 @@ export const SEOView: React.FC<SEOViewProps> = ({ editContent, setEditContent, _
                         <label className={labelClass}>Varsayılan OG Görseli (URL)</label>
                         <input type="url" value={seo.ogImage} onChange={e => updateSeo({ ogImage: e.target.value })}
                             onBlur={e => validateUrl('ogImage', e.target.value)}
-                            placeholder="https://ataflugtransfer.com/og-image.jpg" className={`${fieldClass} ${urlErrors.ogImage ? 'border-red-500 focus:border-red-500' : ''}`} />
+                            placeholder="https://siteadi.com/og-image.jpg" className={`${fieldClass} ${urlErrors.ogImage ? 'border-red-500 focus:border-red-500' : ''}`} />
+
                         {urlErrors.ogImage && <p className="text-[10px] text-red-400 mt-1">{urlErrors.ogImage}</p>}
                         <p className={helpClass}>Facebook, Twitter, WhatsApp paylaşımlarında görünür. 1200×630px önerilen boyut.</p>
                     </div>

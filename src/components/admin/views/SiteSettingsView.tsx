@@ -27,7 +27,7 @@ export const SiteSettingsView: React.FC<SiteSettingsViewProps> = ({
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `ata-backup-${new Date().toISOString().slice(0, 10)}.json`;
+        a.download = `site-backup-${new Date().toISOString().slice(0, 10)}.json`;
         a.click();
         URL.revokeObjectURL(url);
     };

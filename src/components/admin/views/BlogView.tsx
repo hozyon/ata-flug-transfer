@@ -3,7 +3,7 @@ import DOMPurify from 'dompurify';
 import { EmptyState } from '../EmptyState';
 import type { BlogPost } from '../../../types';
 
-const BLOG_DRAFT_KEY = 'ata_blog_draft_v1';
+const BLOG_DRAFT_KEY = 'site_blog_draft_v1';
 const BLOG_PER_PAGE = 10;
 
 interface BlogViewProps {
@@ -93,7 +93,7 @@ function calcSeoScore(post: BlogPost): { score: number; checks: { label: string;
 }
 
 // ── AI Writing Assistant ───────────────────────────────────────────────────────
-const AI_LS_KEY = 'ata_ai_api_key';
+const AI_LS_KEY = 'site_ai_api_key';
 
 const TONES = ['Profesyonel', 'Samimi', 'Bilgilendirici', 'Heyecanlı', 'Güven verici'];
 const AI_MODES = [
@@ -111,7 +111,7 @@ const ARTICLE_TYPES = [
 ];
 
 function buildImprovePrompt(content: string, title: string): string {
-  return `Sen SEO, AEO ve GEO konusunda uzman bir Türkçe içerik editörüsün. "Ata Flug Transfer" şirketi için aşağıdaki blog yazısını profesyonel düzeyde geliştir.
+  return `Sen SEO, AEO ve GEO konusunda uzman bir Türkçe içerik editörüsün. Şirket için aşağıdaki blog yazısını profesyonel düzeyde geliştir.
 
 MEVCUT BAŞLIK: ${title}
 
@@ -124,7 +124,7 @@ Yapılacaklar:
 - Eksik H2/H3 başlıklar ekle
 - Eğer yoksa SSS bölümü ekle (AEO)
 - Daha spesifik coğrafi bilgiler ekle (GEO)
-- Antalya Havalimanı, Ata Flug Transfer gibi entiteleri doğal kullan
+- Bölgesel anahtar kelimeleri ve şirket ismini doğal kullan
 - İçeriği minimum 800 kelimeye tamamla
 
 Çıktıyı **yalnızca** JSON formatında döndür:
@@ -132,14 +132,14 @@ Yapılacaklar:
 }
 
 function buildFaqPrompt(title: string, region: string): string {
-  return `Sen AEO (Answer Engine Optimization) uzmanısın. "Ata Flug Transfer" şirketi için "${title}" konusunda, ${region || 'Antalya'} bölgesine yönelik sesli arama ve AI motorlarına uyumlu bir SSS bölümü oluştur.
+  return `Sen AEO (Answer Engine Optimization) uzmanısın. Şirket için "${title}" konusunda, ${region || 'Antalya'} bölgesine yönelik sesli arama ve AI motorlarına uyumlu bir SSS bölümü oluştur.
 
 Kurallar:
 - Tam olarak 7 soru-cevap çifti yaz
 - Her soru gerçek kullanıcı dilinde, doğal ifadeyle
 - Her cevap 2-4 cümle, direkt ve net
 - Fiyat, süre, hizmet kalitesi, güvenlik, rezervasyon konularını kapsasın
-- Ata Flug Transfer markasını doğal kullan
+- Şirket markasını doğal kullan
 
 Çıktı formatı (sadece JSON):
 {"faq": "## Sıkça Sorulan Sorular\\n\\n**Soru 1?**\\nCevap...\\n\\n**Soru 2?**\\nCevap..."}`;
@@ -184,7 +184,7 @@ async function callClaudeAPI(apiKey: string, prompt: string): Promise<string> {
   return data.content?.[0]?.text || '';
 }
 
-function buildPrompt(topic: string, keyword: string, region: string, tone: string, articleType: string, businessName = 'Ata Flug Transfer'): string {
+function buildPrompt(topic: string, keyword: string, region: string, tone: string, articleType: string, businessName = 'Şirket'): string {
   return `Sen SEO, AEO (Answer Engine Optimization) ve GEO (Generative Engine Optimization) konularında uzman, Türkçe içerik üreten bir blog yazarısın.
 
 ${businessName} — Antalya Havalimanı'ndan (AYT) lüks VIP transfer hizmeti veren bir firma için aşağıdaki yazıyı hazırla.
@@ -210,7 +210,7 @@ YAZI TÜRÜ: ${articleType}
 - Featured snippet için "Nedir, Nasıl, Ne kadar" tarzı sorular kullan
 
 ─── GEO (Generative Engine Optimization) ───
-- Antalya Havalimanı (IATA: AYT), ${region || 'Antalya'}, Türkiye gibi coğrafi entiteleri kullan
+- Bölgesel anahtar kelimeleri doğal kullan
 - Özgün ve doğrulanabilir veriler ekle (km mesafesi, yaklaşık süre vb.)
 - ${businessName} markasını doğal biçimde 3–5 kez geçir
 - Yapılandırılmış ve alıntılanabilir bilgiler sun
@@ -239,7 +239,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
   const [newBlogPost, setNewBlogPost] = useState<BlogPost>({
     id: '', title: '', slug: '', excerpt: '', content: '',
     category: 'Destinasyon', featuredImage: '',
-    isPublished: false, tags: [], author: 'Ata Flug Transfer',
+    isPublished: false, tags: [], author: 'Yönetici',
     seoTitle: '', seoDescription: '', viewCount: 0,
   });
   const [newCategoryName, setNewCategoryName] = useState('');
@@ -328,7 +328,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
       id: '', title: '', slug: '', excerpt: '', content: '',
       category: blogCategories[0] || 'Destinasyon',
       featuredImage: 'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?auto=format&fit=crop&q=80&w=800',
-      isPublished: false, tags: [], author: 'Ata Flug Transfer',
+      isPublished: false, tags: [], author: 'Yönetici',
       seoTitle: '', seoDescription: '', viewCount: 0,
     };
     setNewBlogPost(defaultPost);
@@ -404,7 +404,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
           publishedAt: now,
           updatedAt: now,
           tags: newBlogPost.tags || [],
-          author: newBlogPost.author || 'Ata Flug Transfer',
+          author: newBlogPost.author || 'Yönetici',
           seoTitle: newBlogPost.seoTitle || newBlogPost.title,
           seoDescription: newBlogPost.seoDescription || newBlogPost.excerpt,
           viewCount: 0,
@@ -1443,7 +1443,7 @@ export const BlogView: React.FC<BlogViewProps> = ({
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-3">Google SERP Önizlemesi</p>
                     <div className="bg-white p-4 rounded-lg">
                       <p className="text-blue-700 text-[15px] font-medium truncate">{newBlogPost.seoTitle || newBlogPost.title || 'Sayfa Başlığı'}</p>
-                      <p className="text-green-700 text-[12px] mt-0.5">ataflugtransfer.com › blog › {newBlogPost.slug || 'yazi-url'}</p>
+                      <p className="text-green-700 text-[12px] mt-0.5">siteadi.com › blog › {newBlogPost.slug || 'yazi-url'}</p>
                       <p className="text-slate-600 text-[13px] mt-1 leading-relaxed line-clamp-2">{newBlogPost.seoDescription || newBlogPost.excerpt || 'Meta açıklama burada görünecek...'}</p>
                     </div>
                   </div>
