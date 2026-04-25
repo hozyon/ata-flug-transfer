@@ -16,10 +16,11 @@ interface RegionsViewProps {
     showToast: (msg: string, type: 'success' | 'delete') => void;
     moveItem: <T>(list: T[], index: number, direction: 'up' | 'down') => T[];
     isDarkTheme: boolean;
+    confirmAction: (options: { title: string; description: string; onConfirm: () => void; type?: 'danger' | 'warning' | 'info' }) => void;
 }
 
 export const RegionsView: React.FC<RegionsViewProps> = ({
-    bookings, editContent, setEditContent, showToast, moveItem
+    bookings, editContent, setEditContent, showToast, moveItem, confirmAction
 }) => {
     const [regionSearch, setRegionSearch] = useState('');
     const [quickSearch, setQuickSearch] = useState('');
@@ -79,11 +80,16 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
 
     const handleBulkRemove = () => {
         if (selectedForRemove.length === 0) return;
-        if (confirm(`Seçili ${selectedForRemove.length} bölgeyi aktif listeden çıkarmak istediğinize emin misiniz?`)) {
-            setEditContent({ ...editContent, regions: regions.filter(r => !selectedForRemove.includes(r.name)) });
-            setSelectedFromPool(prev => prev.filter(name => !selectedForRemove.includes(name)));
-            showToast(`${selectedForRemove.length} bölge kaldırıldı`, 'delete');
-        }
+        confirmAction({
+            title: 'Bölgeleri Kaldır',
+            description: `Seçili ${selectedForRemove.length} bölgeyi aktif listeden çıkarmak istediğinize emin misiniz?`,
+            type: 'danger',
+            onConfirm: () => {
+                setEditContent({ ...editContent, regions: regions.filter(r => !selectedForRemove.includes(r.name)) });
+                setSelectedFromPool(prev => prev.filter(name => !selectedForRemove.includes(name)));
+                showToast(`${selectedForRemove.length} bölge kaldırıldı`, 'delete');
+            }
+        });
     };
 
     const handleSingleAddOpen = () => {

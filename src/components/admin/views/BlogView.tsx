@@ -19,6 +19,7 @@ interface BlogViewProps {
   setSelectedBlogs: Dispatch<SetStateAction<string[]>>;
   showToast: (message: string, type?: 'success' | 'error' | 'delete') => void;
   clearAllBlogPosts: () => Promise<void>;
+  confirmAction: (options: { title: string; description: string; onConfirm: () => void; type?: 'danger' | 'warning' | 'info' }) => void;
 }
 
 // ── Markdown → HTML renderer ────────────────────────────────────────────────
@@ -227,8 +228,10 @@ YAZI TÜRÜ: ${articleType}
 
 export const BlogView: React.FC<BlogViewProps> = ({
   blogPosts, setBlogPosts, blogTab, setBlogTab, blogCategories, setBlogCategories,
-  blogSearchTerm, setBlogSearchTerm, selectedBlogs, setSelectedBlogs, showToast, clearAllBlogPosts
+  blogSearchTerm, setBlogSearchTerm, selectedBlogs, setSelectedBlogs,
+  showToast, clearAllBlogPosts, confirmAction
 }) => {
+
   const [editingBlogPost, setEditingBlogPost] = useState<BlogPost | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -761,7 +764,18 @@ export const BlogView: React.FC<BlogViewProps> = ({
           {selectedBlogs.length > 0 && (
             <div className="flex items-center gap-2 animate-in fade-in duration-200">
               <span className="text-xs text-slate-400 font-medium">{selectedBlogs.length} seçili</span>
-              <button onClick={() => { if (confirm(`${selectedBlogs.length} yazıyı silmek istediğinize emin misiniz?`)) { setBlogPosts(blogPosts.filter(p => !selectedBlogs.includes(p.id))); setSelectedBlogs([]); showToast(`${selectedBlogs.length} yazı silindi`, 'delete'); } }}
+              <button onClick={() => {
+                confirmAction({
+                  title: 'Seçili Yazıları Sil',
+                  description: `${selectedBlogs.length} yazıyı silmek istediğinize emin misiniz?`,
+                  type: 'danger',
+                  onConfirm: () => {
+                    setBlogPosts(blogPosts.filter(p => !selectedBlogs.includes(p.id)));
+                    setSelectedBlogs([]);
+                    showToast(`${selectedBlogs.length} yazı silindi`, 'delete');
+                  }
+                });
+              }}
                 className="px-3 py-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 text-xs font-bold transition-all">
                 <i className="fa-solid fa-trash mr-1.5"></i>Sil
               </button>
@@ -782,10 +796,17 @@ export const BlogView: React.FC<BlogViewProps> = ({
             {blogPosts.length > 0 && (
               <button
                 onClick={async () => {
-                  if (!window.confirm(`Tüm ${blogPosts.length} blog yazısı silinecek. Bu işlem geri alınamaz. Emin misiniz?`)) return;
-                  await clearAllBlogPosts();
-                  showToast(`Tüm blog yazıları silindi`, 'delete');
+                  confirmAction({
+                    title: 'Tüm Blog Yazılarını Sil',
+                    description: `Tüm ${blogPosts.length} blog yazısı KALICI olarak silinecek. Bu işlem geri alınamaz. Emin misiniz?`,
+                    type: 'danger',
+                    onConfirm: async () => {
+                      await clearAllBlogPosts();
+                      showToast('Tüm yazılar silindi', 'delete');
+                    }
+                  });
                 }}
+
                 className="px-4 py-2.5 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-400 rounded-xl font-bold text-xs transition-all flex items-center gap-2 shrink-0">
                 <i className="fa-solid fa-trash-can text-[10px]"></i> Tümünü Sil
               </button>
@@ -878,7 +899,17 @@ export const BlogView: React.FC<BlogViewProps> = ({
                               <i className="fa-solid fa-rocket text-[10px]"></i>
                             </button>
                           )}
-                          <button onClick={() => { if (confirm('Bu yazıyı silmek istediğinize emin misiniz?')) { setBlogPosts(blogPosts.filter(p => p.id !== post.id)); showToast('Silindi', 'delete'); } }}
+                          <button onClick={() => {
+                            confirmAction({
+                              title: 'Yazıyı Sil',
+                              description: `"${post.title}" başlıklı yazıyı silmek istediğinize emin misiniz?`,
+                              type: 'danger',
+                              onConfirm: () => {
+                                setBlogPosts(blogPosts.filter(p => p.id !== post.id));
+                                showToast('Silindi', 'delete');
+                              }
+                            });
+                          }}
                             className="w-7 h-7 rounded-lg bg-white/5 text-slate-500 hover:bg-red-500/20 hover:text-red-400 flex items-center justify-center transition-all">
                             <i className="fa-solid fa-trash text-[10px]"></i>
                           </button>

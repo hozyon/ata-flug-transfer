@@ -96,7 +96,7 @@ export async function clearAllBlogPosts() {
     const { error } = await supabase
         .from('blog_posts')
         .delete()
-        .neq('id', '00000000-0000-0000-0000-000000000000')
+        .not('id', 'is', null)
 
     if (error) {
         console.error('Failed to clear blog posts:', error)

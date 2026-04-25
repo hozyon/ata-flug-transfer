@@ -40,7 +40,10 @@ function mapRowToBlogPost(row: Record<string, unknown>): BlogPost {
 
 export const fetchSiteContent = cache(async function (): Promise<SiteContent> {
     const client = getServerClient();
-    if (!client) return INITIAL_SITE_CONTENT;
+    if (!client) {
+        console.warn('getServerClient returned null in fetchSiteContent. Using INITIAL_SITE_CONTENT.');
+        return INITIAL_SITE_CONTENT;
+    }
 
     const { data, error } = await client
         .from('site_content')
@@ -48,7 +51,16 @@ export const fetchSiteContent = cache(async function (): Promise<SiteContent> {
         .eq('id', 1)
         .single();
 
-    if (error || !data?.content) return INITIAL_SITE_CONTENT;
+    if (error) {
+        console.error('Error fetching site content from Supabase:', error);
+        return INITIAL_SITE_CONTENT;
+    }
+    
+    if (!data?.content) {
+        console.warn('No content found in site_content table. Using INITIAL_SITE_CONTENT.');
+        return INITIAL_SITE_CONTENT;
+    }
+
     return mergeContent(data.content as SiteContent);
 });
 
@@ -61,7 +73,12 @@ export const fetchBlogPosts = cache(async function (): Promise<BlogPost[]> {
         .select('*')
         .order('created_at', { ascending: false });
 
-    if (error || !data) return [];
+    if (error) {
+        console.error('Error fetching blog posts from Supabase:', error);
+        return [];
+    }
+    
+    if (!data) return [];
     return data.map((row: Record<string, unknown>) => mapRowToBlogPost(row));
 });
 
@@ -76,7 +93,14 @@ export const fetchPublishedBlogPost = cache(async function (slug: string): Promi
         .eq('is_published', true)
         .single();
 
-    if (error || !data) return null;
+    if (error) {
+        if (error.code !== 'PGRST116') { // PGRST116 is "no rows returned", which is expected if not found
+            console.error(`Error fetching blog post with slug "${slug}":`, error);
+        }
+        return null;
+    }
+    
+    if (!data) return null;
     return mapRowToBlogPost(data as Record<string, unknown>);
 });
 
@@ -90,7 +114,12 @@ export const fetchReviews = cache(async function (): Promise<UserReview[]> {
         .eq('status', 'approved')
         .order('created_at', { ascending: false });
 
-    if (error || !data) return [];
+    if (error) {
+        console.error('Error fetching reviews from Supabase:', error);
+        return [];
+    }
+
+    if (!data) return [];
 
     return data.map((row: Record<string, unknown>) => ({
         id: row.id as string,

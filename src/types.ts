@@ -156,14 +156,26 @@ export interface SiteContent {
   };
 }
 
+export interface AdminAccountForm {
+  fullName: string;
+  email: string;
+  phone: string;
+  currentPassword?: string;
+  newPassword?: string;
+  confirmPassword?: string;
+  notifyEmail: boolean;
+  notifySms: boolean;
+  notifySystem: boolean;
+  twoFa: boolean;
+}
 export interface Region {
   id: string;
   name: string;
   desc: string;
   image: string;
-  icon: string;
-  price?: number;
-  isActive?: boolean;
+  icon?: string;
+  price: number;
+  distance?: number;
 }
 
 // Blog Post Interface

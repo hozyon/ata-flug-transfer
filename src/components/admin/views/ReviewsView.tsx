@@ -21,6 +21,8 @@ interface ReviewsViewProps {
     setEditableReviewsTab: Dispatch<SetStateAction<'pending' | 'approved' | 'rejected' | 'deleted'>>;
     selectedReviews: string[];
     setSelectedReviews: Dispatch<SetStateAction<string[]>>;
+    showToast: (message: string, type: 'success' | 'error' | 'delete' | 'info') => void;
+    confirmAction: (options: { title: string; description: string; onConfirm: () => void; type?: 'danger' | 'warning' | 'info' }) => void;
 }
 
 const TAB_META: Record<string, { label: string; icon: string; emptyIcon: string; emptyTitle: string; emptySub: string }> = {
@@ -33,7 +35,8 @@ const TAB_META: Record<string, { label: string; icon: string; emptyIcon: string;
 export const ReviewsView: React.FC<ReviewsViewProps> = ({
     userReviews, setUserReviews, siteReviews,
     editableReviewsTab, setEditableReviewsTab,
-    selectedReviews, setSelectedReviews
+    selectedReviews, setSelectedReviews,
+    showToast, confirmAction
 }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -429,13 +432,33 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
                                                             </button>
                                                         )}
                                                         {editableReviewsTab !== 'deleted' && r.source !== 'site' && (
-                                                            <button onClick={() => { if (confirm('Silmek istediğinize emin misiniz?')) setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'deleted' } : item)); }} title="Sil"
+                                                            <button onClick={() => {
+                                                                confirmAction({
+                                                                    title: 'Yorumu Sil',
+                                                                    description: 'Yorum çöp kutusuna taşınacak. Emin misiniz?',
+                                                                    type: 'danger',
+                                                                    onConfirm: () => {
+                                                                        setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'deleted' } : item));
+                                                                        showToast('Yorum çöpe taşındı', 'delete');
+                                                                    }
+                                                                });
+                                                            }} title="Sil"
                                                                 className="w-7 h-7 rounded-lg bg-white/5 text-slate-500 hover:bg-red-500/20 hover:text-red-400 flex items-center justify-center transition-all">
                                                                 <i className="fa-solid fa-trash text-[10px]"></i>
                                                             </button>
                                                         )}
                                                         {editableReviewsTab === 'deleted' && (
-                                                            <button onClick={() => { if (confirm('KALICI olarak silinecek!')) setUserReviews(userReviews.filter(u => u.id !== r.id)); }} title="Kalıcı Sil"
+                                                            <button onClick={() => {
+                                                                confirmAction({
+                                                                    title: 'Kalıcı Olarak Sil',
+                                                                    description: 'Bu yorum KALICI olarak silinecek. Bu işlem geri alınamaz!',
+                                                                    type: 'danger',
+                                                                    onConfirm: () => {
+                                                                        setUserReviews(userReviews.filter(u => u.id !== r.id));
+                                                                        showToast('Yorum kalıcı olarak silindi', 'delete');
+                                                                    }
+                                                                });
+                                                            }} title="Kalıcı Sil"
                                                                 className="w-7 h-7 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white flex items-center justify-center transition-all">
                                                                 <i className="fa-solid fa-fire text-[10px]"></i>
                                                             </button>

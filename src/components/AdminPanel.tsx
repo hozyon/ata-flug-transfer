@@ -7,6 +7,7 @@ import { Sparkline } from './admin/Sparkline';
 import { AnimatedNumber } from './admin/AnimatedNumber';
 import { ContextMenu } from './admin/ContextMenu';
 import { MobileBookingItem } from './admin/MobileBookingItem';
+import { AdminConfirmModal } from './admin/AdminConfirmModal';
 
 import { haptic } from '../utils/haptic';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
@@ -225,6 +226,24 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     window.location.hash = `#/admin/${activeView}`;
   }, [activeView]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [confirmModal, setConfirmModal] = useState<{ isOpen: boolean; title: string; description: string; onConfirm: () => void; type: 'danger' | 'warning' | 'info' }>({
+    isOpen: false,
+    title: '',
+    description: '',
+    onConfirm: () => { },
+    type: 'info'
+  });
+
+  const confirmAction = (options: { title: string; description: string; onConfirm: () => void; type?: 'danger' | 'warning' | 'info' }) => {
+    setConfirmModal({
+      isOpen: true,
+      title: options.title,
+      description: options.description,
+      onConfirm: options.onConfirm,
+      type: options.type || 'info'
+    });
+  };
+
   const [isCorporateOpen, setIsCorporateOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [editContent, setEditContent] = useState<SiteContent>(siteContent);
@@ -257,9 +276,14 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
         existing.seoDescription !== p.seoDescription || existing.scheduledAt !== p.scheduledAt ||
         JSON.stringify(existing.tags) !== JSON.stringify(p.tags);
     });
-    for (const p of added) await onAddBlogPost(p);
-    for (const p of updated) await onUpdateBlogPost(p);
-    for (const p of removed) await onDeleteBlogPost(p.id);
+    try {
+      for (const p of added) await onAddBlogPost(p);
+      for (const p of updated) await onUpdateBlogPost(p);
+      for (const p of removed) await onDeleteBlogPost(p.id);
+    } catch (error: any) {
+      console.error('Blog post operation failed:', error);
+      showToast(error.message || 'Blog yazısı güncellenirken hata oluştu', 'error');
+    }
   };
   const [_editingBlogPost, _setEditingBlogPost] = useState<BlogPost | null>(null);
   const [_isAddBlogModalOpen, setIsAddBlogModalOpen] = useState(false);
@@ -313,8 +337,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
       const existing = userReviewsProp.find(e => e.id === r.id);
       return existing && existing.status !== r.status;
     });
-    for (const r of changed) await onUpdateReviewStatus(r.id, r.status);
-    for (const r of removed) await onDeleteReview(r.id);
+    try {
+      for (const r of changed) await onUpdateReviewStatus(r.id, r.status);
+      for (const r of removed) await onDeleteReview(r.id);
+    } catch (error: any) {
+      console.error('Review operation failed:', error);
+      showToast(error.message || 'Yorum güncellenirken hata oluştu', 'error');
+    }
   };
   const [siteReviews, _setSiteReviews] = useState<never[]>([]);
   const [editableReviewsTab, setEditableReviewsTab] = useState<'pending' | 'approved' | 'rejected' | 'deleted'>('pending');
@@ -564,9 +593,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
         setSaveStatus('saved');
         showToast('Değişiklikler kaydedildi', 'success');
         setTimeout(() => setSaveStatus('idle'), 2000);
-      } catch {
+      } catch (error: any) {
         setSaveStatus('idle');
-        showToast('Kayıt başarısız — internet bağlantınızı kontrol edin', 'error');
+        showToast(error.message || 'Kayıt başarısız — internet bağlantınızı kontrol edin', 'error');
       }
     }, 300);
     return () => { if (saveTimerRef.current) clearTimeout(saveTimerRef.current); };
@@ -1409,9 +1438,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 {/* OPERASYON */}
                 <SidebarGroupLabel label="Operasyon" isSidebarOpen={isSidebarOpen} />
                 <div className="space-y-0.5 px-2">
-                  <SidebarNavItem id="overview" label="Dashboard" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>} />
-                  <SidebarNavItem id="bookings" label="Rezervasyonlar" badge={pendingCount} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>} />
-                  <SidebarNavItem id="reviews" label="Yorumlar" badge={pendingReviews} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>} />
+                  <SidebarNavItem id="overview" label="Dashboard" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-chart-pie text-[14px]"></i>} />
+                  <SidebarNavItem id="bookings" label="Rezervasyonlar" badge={pendingCount} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-calendar-check text-[14px]"></i>} />
+                  <SidebarNavItem id="reviews" label="Yorumlar" badge={pendingReviews} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-star text-[14px]"></i>} />
                 </div>
 
                 <div className={`${isSidebarOpen ? 'mx-4' : 'mx-3'} my-2.5 h-px bg-white/[0.05]`} />
@@ -1419,9 +1448,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 {/* İÇERİK */}
                 <SidebarGroupLabel label="İçerik & Katalog" isSidebarOpen={isSidebarOpen} />
                 <div className="space-y-0.5 px-2">
-                  <SidebarNavItem id="blog" label="Blog Yönetimi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>} />
-                  <SidebarNavItem id="regions" label="Bölge & Fiyat" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>} />
-                  <SidebarNavItem id="fleet" label="Araçlar" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><path d="M9 17h6"/><circle cx="17" cy="17" r="2"/></svg>} />
+                  <SidebarNavItem id="blog" label="Blog Yönetimi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-newspaper text-[14px]"></i>} />
+                  <SidebarNavItem id="regions" label="Bölge & Fiyat" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-map-location-dot text-[14px]"></i>} />
+                  <SidebarNavItem id="fleet" label="Araçlar" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-car-side text-[14px]"></i>} />
                 </div>
 
                 <div className={`${isSidebarOpen ? 'mx-4' : 'mx-3'} my-2.5 h-px bg-white/[0.05]`} />
@@ -1429,11 +1458,11 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 {/* SİTE YÖNETİMİ */}
                 <SidebarGroupLabel label="Site Yönetimi" isSidebarOpen={isSidebarOpen} />
                 <div className="space-y-0.5 px-2 pb-1">
-                  <SidebarNavItem id="hero-images" label="Anasayfa Banner" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>} />
-                  <SidebarNavItem id="site-settings" label="Menü Yönetimi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>} />
-                  <SidebarNavItem id="faq" label="S.S.S" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>} />
-                  <SidebarNavItem id="business" label="İşletme Bilgileri" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>} />
-                  <SidebarNavItem id="seo" label="SEO Yönetimi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6"/><path d="M8 11h6"/></svg>} />
+                  <SidebarNavItem id="hero-images" label="Anasayfa Banner" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-images text-[14px]"></i>} />
+                  <SidebarNavItem id="site-settings" label="Menü Yönetimi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-bars text-[14px]"></i>} />
+                  <SidebarNavItem id="faq" label="S.S.S" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-circle-question text-[14px]"></i>} />
+                  <SidebarNavItem id="business" label="İşletme Bilgileri" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-building text-[14px]"></i>} />
+                  <SidebarNavItem id="seo" label="SEO Yönetimi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-magnifying-glass-chart text-[14px]"></i>} />
 
                   {/* Kurumsal accordion */}
                   <div className="relative group">
@@ -1449,7 +1478,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                         <div className="absolute left-0 top-[18%] bottom-[18%] w-[3px] bg-gradient-to-b from-[var(--color-primary)] to-amber-500 rounded-r-full shadow-[0_0_14px_rgba(197,160,89,0.65)]" />
                       )}
                       <div className={`shrink-0 transition-colors duration-150 ${(activeView === 'about' || activeView === 'visionMission') ? 'text-[var(--color-primary)] drop-shadow-[0_0_8px_rgba(197,160,89,0.5)]' : 'text-slate-500 group-hover:text-slate-300'}`}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>
+                        <i className="fa-solid fa-briefcase text-[14px]"></i>
                       </div>
                       {isSidebarOpen && (
                         <>
@@ -2580,6 +2609,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
         <AdminViewErrorBoundary activeView={activeView}>
         <Suspense fallback={<div className="flex items-center justify-center p-20"><i className="fa-solid fa-circle-notch fa-spin text-3xl text-[var(--color-primary)]"></i></div>}>
+          <div key={activeView} className="animate-in fade-in slide-in-from-right-4 duration-500">
           {
             activeView === 'bookings' && (
               <BookingsView
@@ -2587,6 +2617,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 onUpdateStatus={onUpdateStatus}
                 onDeleteBooking={onDeleteBooking}
                 setSelectedBookingForView={setSelectedBookingForView}
+                showToast={showToast}
+                confirmAction={confirmAction}
               />
             )
           }
@@ -2598,6 +2630,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 setEditContent={setEditContent}
                 handleMoveMenu={handleMoveMenu}
                 moveItem={moveItem}
+                confirmAction={confirmAction}
               />
             )
           }
@@ -2608,10 +2641,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 bookings={bookings}
                 editContent={editContent}
                 setEditContent={setEditContent}
-
                 showToast={showToast}
                 moveItem={moveItem}
                 isDarkTheme={isDarkTheme}
+                confirmAction={confirmAction}
               />
             )
           }
@@ -2624,11 +2657,10 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 setVehicleForm={(f) => { setVehicleForm(f); setVehicleTab('info'); }}
                 setIsVehicleModalOpen={setIsVehicleModalOpen}
                 moveItem={moveItem}
+                confirmAction={confirmAction}
               />
             )
           }
-
-
 
           {
             activeView === 'faq' && (
@@ -2640,16 +2672,17 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 highlightedFaqId={highlightedFaqId}
                 setHighlightedFaqId={setHighlightedFaqId}
                 moveItem={moveItem}
+                confirmAction={confirmAction}
               />
             )
           }
-
 
           {
             activeView === 'business' && (
               <BusinessSettingsView
                 editContent={editContent}
                 setEditContent={setEditContent}
+                confirmAction={confirmAction}
               />
             )
           }
@@ -2744,6 +2777,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               />
             )
           }
+          </div>
         </Suspense>
         </AdminViewErrorBoundary>
       </main >
@@ -3153,6 +3187,15 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
           </div>
         )
       }
+      {/* ── CONFIRM MODAL ── */}
+      <AdminConfirmModal
+        isOpen={confirmModal.isOpen}
+        title={confirmModal.title}
+        description={confirmModal.description}
+        type={confirmModal.type}
+        onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+        onConfirm={confirmModal.onConfirm}
+      />
     </div >
 
   );

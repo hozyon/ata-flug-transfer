@@ -20,17 +20,17 @@ const fetcher = async (table: string) => {
         .select('*')
         .order(table === 'site_content' ? 'id' : 'created_at', { ascending: table === 'site_content' });
     if (error) throw error;
-    return data;
+    return data as any[];
 };
 
 export default function AdminPanelConnected() {
     const router = useRouter();
 
     // Fetch data using SWR
-    const { data: bookingsRaw, mutate: mutateBookings } = useSWR('bookings', fetcher);
-    const { data: contentRaw, mutate: mutateContent } = useSWR('site_content', fetcher);
-    const { data: blogRaw, mutate: mutateBlog } = useSWR('blog_posts', fetcher);
-    const { data: reviewsRaw, mutate: mutateReviews } = useSWR('reviews', fetcher);
+    const { data: bookingsRaw, mutate: mutateBookings } = useSWR<any[]>('bookings', fetcher);
+    const { data: contentRaw, mutate: mutateContent } = useSWR<any[]>('site_content', fetcher);
+    const { data: blogRaw, mutate: mutateBlog } = useSWR<any[]>('blog_posts', fetcher);
+    const { data: reviewsRaw, mutate: mutateReviews } = useSWR<any[]>('reviews', fetcher);
 
     const { setIsAdmin } = useAppStore();
 

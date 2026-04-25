@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { AdminAccountForm } from '../../../types';
 
 const AI_LS_KEY = 'ata_ai_api_key';
 
 
 interface AccountViewProps {
-    accountForm: any;
-    setAccountForm: (form: any) => void;
+    accountForm: AdminAccountForm;
+    setAccountForm: (form: AdminAccountForm) => void;
     accountTab: 'profile' | 'users';
     setAccountTab: (tab: 'profile' | 'users') => void;
-showToast: (message: string, type: 'success' | 'error' | 'info' | 'delete' | 'warning') => void;
+    showToast: (message: string, type: 'success' | 'error' | 'info' | 'delete' | 'warning') => void;
     onExitAdmin: () => void;
-    onSaveAccount: (form?: any) => void;
+    onSaveAccount: (form?: AdminAccountForm) => void;
     onUpdatePassword: (currentPassword: string, newPassword: string) => Promise<{ error: string | null }>;
     systemUsers: any[];
     setIsAddUserModalOpen: (isOpen: boolean) => void;

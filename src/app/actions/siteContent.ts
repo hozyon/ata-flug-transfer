@@ -13,7 +13,7 @@ export async function updateSiteContent(newContent: SiteContent) {
 
     const { error } = await supabase
         .from('site_content')
-        .upsert({ id: 1, content: newContent as any })
+        .upsert({ id: 1, content: newContent as unknown as Record<string, unknown> })
 
     if (error) {
         console.error('Failed to update site content:', error)

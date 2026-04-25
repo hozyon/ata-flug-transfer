@@ -1,9 +1,10 @@
 import React from 'react';
 import { RichTextEditor } from '../RichTextEditor';
+import { SiteContent } from '../../../types';
 
 interface AboutViewProps {
-    editContent: any;
-    setEditContent: (content: any) => void;
+    editContent: SiteContent;
+    setEditContent: (content: SiteContent) => void;
 }
 
 export const AboutView: React.FC<AboutViewProps> = ({ editContent, setEditContent }) => {
