@@ -14,13 +14,10 @@ interface SiteReview {
 
 interface ReviewsViewProps {
     userReviews: Review[];
-    setUserReviews: Dispatch<SetStateAction<Review[]>>;
+    setUserReviews: (reviews: Review[] | ((prev: Review[]) => Review[])) => void;
     siteReviews: SiteReview[];
     editableReviewsTab: 'pending' | 'approved' | 'rejected' | 'deleted';
     setEditableReviewsTab: Dispatch<SetStateAction<'pending' | 'approved' | 'rejected' | 'deleted'>>;
-    selectedReviews: string[];
-    setSelectedReviews: Dispatch<SetStateAction<string[]>>;
-    confirmAction: (options: { title: string; description: string; onConfirm: () => void; type?: 'danger' | 'warning' | 'info' }) => void;
 }
 
 const TAB_META: Record<string, { label: string; icon: string; emptyIcon: string; emptyTitle: string; emptySub: string; color: string; bg: string; border: string }> = {
@@ -32,9 +29,7 @@ const TAB_META: Record<string, { label: string; icon: string; emptyIcon: string;
 
 export const ReviewsView: React.FC<ReviewsViewProps> = ({
     userReviews, setUserReviews, siteReviews,
-    editableReviewsTab, setEditableReviewsTab,
-    selectedReviews, setSelectedReviews,
-    confirmAction
+    editableReviewsTab, setEditableReviewsTab
 }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -67,23 +62,6 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
         return list;
     }, [userReviews, siteReviews, editableReviewsTab, searchTerm]);
 
-    const handleBulkAction = (action: 'approved' | 'rejected' | 'deleted' | 'pending' | 'permanentDelete') => {
-        if (action === 'permanentDelete') {
-            confirmAction({
-                title: 'Yorumları Kalıcı Sil',
-                description: `Seçili ${selectedReviews.length} yorumu kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`,
-                type: 'danger',
-                onConfirm: () => {
-                    setUserReviews(userReviews.filter(r => !selectedReviews.includes(r.id)));
-                    setSelectedReviews([]);
-                }
-            });
-        } else {
-            setUserReviews(userReviews.map(r => selectedReviews.includes(r.id) ? { ...r, status: action as any } : r));
-            setSelectedReviews([]);
-        }
-    };
-
     return (
         <div className="animate-in fade-in slide-in-from-right-4 duration-700 space-y-8">
             <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-6 bg-[#020617]/40 backdrop-blur-3xl p-8 rounded-[2.5rem] border border-white/[0.05] shadow-2xl">
@@ -98,7 +76,7 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
                 </div>
                 <div className="flex items-center gap-2 overflow-x-auto pb-1 xl:pb-0 scrollbar-hide">
                     {(['pending', 'approved', 'rejected', 'deleted'] as const).map(status => (
-                        <button key={status} onClick={() => { setEditableReviewsTab(status); setSelectedReviews([]); }}
+                        <button key={status} onClick={() => { setEditableReviewsTab(status); }}
                             className={`px-5 py-3 rounded-2xl text-[11px] font-[800] transition-all duration-300 whitespace-nowrap flex items-center gap-3 border shadow-sm ${editableReviewsTab === status ? 'bg-[var(--color-primary)] border-[var(--color-primary)] text-[#06080F] shadow-[0_8px_20px_rgba(197,160,89,0.3)]' : 'bg-white/[0.03] border-white/[0.06] text-slate-400 hover:text-white hover:bg-white/[0.08]'}`}>
                             <i className={`fa-solid ${TAB_META[status].icon} text-[10px]`}></i>
                             {TAB_META[status].label}
@@ -114,15 +92,7 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
                         <i className="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 text-xs transition-colors group-focus-within:text-[var(--color-primary)]"></i>
                         <input type="text" placeholder="Müşteri adı veya yorum içeriği ile akıllı arama..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-12 pr-5 py-4 bg-white/[0.02] border border-white/[0.06] rounded-2xl text-[13px] text-white focus:border-[var(--color-primary)]/40 outline-none transition-all font-semibold" />
                     </div>
-                    <div className="flex items-center gap-4 w-full lg:w-auto">
-                        {selectedReviews.length > 0 && (
-                            <div className="flex items-center gap-2 p-1.5 bg-white/5 rounded-2xl border border-white/10 animate-in zoom-in-95">
-                                <span className="text-[10px] font-black text-slate-500 px-3 uppercase">{selectedReviews.length} SEÇİLİ</span>
-                                {editableReviewsTab === 'pending' && <button onClick={() => handleBulkAction('approved')} className="px-3 py-2 rounded-xl bg-emerald-500 text-[#06080F] text-[9px] font-black uppercase tracking-widest transition-all">ONAYLA</button>}
-                            </div>
-                        )}
-                        <MobileViewToggle viewMode={viewMode} onToggle={toggleViewMode} />
-                    </div>
+                    <MobileViewToggle viewMode={viewMode} onToggle={toggleViewMode} />
                 </div>
             </div>
 

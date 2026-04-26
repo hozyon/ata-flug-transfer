@@ -94,7 +94,6 @@ interface AdminPanelProps {
   onAddBlogPost: (post: BlogPost) => Promise<void>;
   onUpdateBlogPost: (post: BlogPost) => Promise<void>;
   onDeleteBlogPost: (id: string) => Promise<void>;
-  onClearAllBlogPosts: () => Promise<void>;
   userReviews: UserReview[];
   onUpdateReviewStatus: (id: string, status: UserReview['status']) => Promise<void>;
   onDeleteReview: (id: string) => Promise<void>;
@@ -181,7 +180,7 @@ const SidebarGroupLabel: React.FC<SidebarGroupLabelProps> = ({ label, isSidebarO
   </div>
 ) : <div className="pt-2.5" />;
 
-const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAddBooking, siteContent, onUpdateSiteContent, onExitAdmin, onDeleteBooking, blogPosts: blogPostsProp, onAddBlogPost, onUpdateBlogPost, onDeleteBlogPost, onClearAllBlogPosts, userReviews: userReviewsProp, onUpdateReviewStatus, onDeleteReview }) => {
+const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAddBooking, siteContent, onUpdateSiteContent, onExitAdmin, onDeleteBooking, blogPosts: blogPostsProp, onAddBlogPost, onUpdateBlogPost, onDeleteBlogPost, userReviews: userReviewsProp, onUpdateReviewStatus, onDeleteReview }) => {
   // Theme Toggle
   const [isDarkTheme, setIsDarkTheme] = useState(() => {
     const saved = localStorage.getItem('site_admin_theme');
@@ -335,7 +334,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   });
   const [_showBlogPreview, _setShowBlogPreview] = useState(false);
   const [blogTab, setBlogTab] = useState<'published' | 'draft'>('published');
-  const [selectedBlogs, setSelectedBlogs] = useState<string[]>([]);
   const [blogSearchTerm, setBlogSearchTerm] = useState('');
   const [blogCategories, setBlogCategories] = useState<string[]>([
     'Havalimanı Transfer',
@@ -362,7 +360,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     setEditContent({ ...editContent, hero: { ...editContent.hero, backgrounds: newBackgrounds } });
   };
 
-  useEffect(() => { setSelectedBlogs([]); }, [blogTab]);
   useEffect(() => { setSelectedHeroImages([]); }, [heroBackgrounds.length]);
 
   // Review States — Supabase-backed via props
@@ -394,9 +391,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   };
   const [siteReviews, _setSiteReviews] = useState<never[]>([]);
   const [editableReviewsTab, setEditableReviewsTab] = useState<'pending' | 'approved' | 'rejected' | 'deleted'>('pending');
-  const [selectedReviews, setSelectedReviews] = useState<string[]>([]);
 
-  useEffect(() => { setSelectedReviews([]); }, [editableReviewsTab]);
 
   // Vehicle Drawer State
   const VEHICLE_FEATURES = ['Ücretsiz Wifi', 'Klima', 'Deri Koltuk', 'Buzdolabı', 'TV Ünitesi', 'Araç İçi İkram', 'USB Şarj', 'Özel Şoför', 'TÜRSAB Sigorta'];
@@ -406,7 +401,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   });
   const [vehicleTab, setVehicleTab] = useState<'info' | 'features' | 'media'>('info');
 
-  const [highlightedFaqId, setHighlightedFaqId] = useState<string | null>(null);
   const [faqFilter, setFaqFilter] = useState<'all' | 'answered' | 'unanswered'>('all');
 
   // Drag & Drop State
@@ -601,17 +595,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     return newList;
   };
 
-  const handleMoveMenu = (index: number, direction: 'up' | 'down') => {
-    setEditContent({ ...editContent, navbar: moveItem(editContent.navbar, index, direction) });
-  };
-
-  const _handleMoveSubMenu = (menuIndex: number, subIndex: number, direction: 'up' | 'down') => {
-    const nav = [...editContent.navbar];
-    if (nav[menuIndex].subMenus) {
-      nav[menuIndex].subMenus = moveItem(nav[menuIndex].subMenus!, subIndex, direction);
-      setEditContent({ ...editContent, navbar: nav });
-    }
-  };
 
   // Auto-save
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
@@ -791,14 +774,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     siteContent.adminAccount?.twoFa,
   ]);
 
-  const handleSaveAccount = async (form = accountForm) => {
-    const { currentPassword: _currentPassword, newPassword: _newPassword, confirmPassword: _confirmPassword, ...toSave } = form;
-    try {
-      await onUpdateSiteContent({ ...editContentRef.current, adminAccount: toSave });
-    } catch {
-      showToast('Hesap kaydedilemedi — internet bağlantınızı kontrol edin', 'error');
-    }
-  };
 
   const handleUpdatePassword = async (currentPassword: string, newPassword: string): Promise<{ error: string | null }> => {
     if (isSupabaseConfigured) {
@@ -2626,8 +2601,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               <SiteSettingsView
                 editContent={editContent}
                 setEditContent={setEditContent}
-                handleMoveMenu={handleMoveMenu}
-                moveItem={moveItem}
                 _confirmAction={confirmAction}
               />
             )
@@ -2636,12 +2609,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
           {
             activeView === 'regions' && (
               <RegionsView
-                bookings={bookings}
                 editContent={editContent}
                 setEditContent={setEditContent}
                 showToast={showToast}
-                moveItem={moveItem}
-                isDarkTheme={isDarkTheme}
                 confirmAction={confirmAction}
               />
             )
@@ -2667,28 +2637,20 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 setEditContent={setEditContent}
                 faqFilter={faqFilter}
                 setFaqFilter={setFaqFilter}
-                highlightedFaqId={highlightedFaqId}
-                setHighlightedFaqId={setHighlightedFaqId}
-                moveItem={moveItem}
-                _confirmAction={confirmAction}
+                confirmAction={confirmAction}
               />
             )
-          }
-
-          {
+          }          {
             activeView === 'business' && (
               <BusinessSettingsView
                 editContent={editContent}
                 setEditContent={setEditContent}
                 accountForm={accountForm}
                 setAccountForm={setAccountForm}
-                onSaveAccount={handleSaveAccount}
                 onUpdatePassword={handleUpdatePassword}
                 onExitAdmin={onExitAdmin}
                 showToast={showToast}
-                _confirmAction={confirmAction}
-              />
-            )
+              />            )
           }
           {
             activeView === 'about' && (
@@ -2718,18 +2680,13 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 blogTab={blogTab}
                 setBlogTab={setBlogTab}
                 blogCategories={blogCategories}
-                setBlogCategories={setBlogCategories}
                 blogSearchTerm={blogSearchTerm}
                 setBlogSearchTerm={setBlogSearchTerm}
-                selectedBlogs={selectedBlogs}
-                setSelectedBlogs={setSelectedBlogs}
                 showToast={showToast}
-                clearAllBlogPosts={onClearAllBlogPosts}
                 confirmAction={confirmAction}
               />
             )
           }
-
           {/* Reviews View */}
           {
             activeView === 'reviews' && (
@@ -2739,14 +2696,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 siteReviews={siteReviews}
                 editableReviewsTab={editableReviewsTab}
                 setEditableReviewsTab={setEditableReviewsTab}
-                selectedReviews={selectedReviews}
-                setSelectedReviews={setSelectedReviews}
-                showToast={showToast}
-                confirmAction={confirmAction}
               />
             )
-          }
-          {
+          }          {
             activeView === 'hero-images' && (
               <HeroImagesView
                 heroBackgrounds={heroBackgrounds}

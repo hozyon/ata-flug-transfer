@@ -127,10 +127,6 @@ export default function AdminPanelConnected() {
         mutateBlog();
     };
 
-    const onClearAllBlogPosts = async () => {
-        await blogActions.clearAllBlogPosts();
-        mutateBlog();
-    };
 
     const onUpdateReviewStatus = async (id: string, status: UserReview['status']) => {
         await reviewActions.updateReviewStatus(id, status);
@@ -155,7 +151,6 @@ export default function AdminPanelConnected() {
             onAddBlogPost={onAddBlogPost}
             onUpdateBlogPost={onUpdateBlogPost}
             onDeleteBlogPost={onDeleteBlogPost}
-            onClearAllBlogPosts={onClearAllBlogPosts}
             userReviews={userReviews}
             onUpdateReviewStatus={onUpdateReviewStatus}
             onDeleteReview={onDeleteReview}
