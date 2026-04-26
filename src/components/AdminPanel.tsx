@@ -328,72 +328,124 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
   const commandItems = useMemo(() => Object.entries(VIEW_LABELS).map(([id, v]) => ({ id, label: v.label, description: v.description, icon: v.icon })), []);
   const handleCommandSelect = (item: any) => { setActiveView(item.id); setIsCommandPaletteOpen(false); };
 
-  const [accountForm, setAccountForm] = useState<AdminAccountForm>({ fullName: siteContent.adminAccount?.fullName || '', email: siteContent.adminAccount?.email || '', phone: siteContent.adminAccount?.phone || '', currentPassword: '', newPassword: '', confirmPassword: '', notifyEmail: true, notifySms: false, notifySystem: true, twoFa: false });
+  const [accountForm, setAccountForm] = useState<AdminAccountForm>({ 
+    fullName: siteContent.adminAccount?.fullName || '', 
+    email: siteContent.adminAccount?.email || '', 
+    phone: siteContent.adminAccount?.phone || '', 
+    currentPassword: '', 
+    newPassword: '', 
+    confirmPassword: '', 
+    notifyEmail: siteContent.adminAccount?.notifyEmail ?? true, 
+    notifySms: siteContent.adminAccount?.notifySms ?? false, 
+    notifySystem: siteContent.adminAccount?.notifySystem ?? true, 
+    twoFa: siteContent.adminAccount?.twoFa ?? false 
+  });
+
+  // Sync accountForm changes to editContent to trigger auto-save
+  useEffect(() => {
+    const updatedAccount = {
+      fullName: accountForm.fullName,
+      email: accountForm.email,
+      phone: accountForm.phone,
+      notifyEmail: accountForm.notifyEmail,
+      notifySms: accountForm.notifySms,
+      notifySystem: accountForm.notifySystem,
+      twoFa: accountForm.twoFa
+    };
+    
+    if (JSON.stringify(updatedAccount) !== JSON.stringify(editContent.adminAccount)) {
+      setEditContent(prev => ({ ...prev, adminAccount: updatedAccount }));
+    }
+  }, [accountForm, editContent.adminAccount]);
 
   const handleUpdatePassword = async () => ({ error: null });
 
   const [isPageTransitioning, setIsPageTransitioning] = useState(false);
-  useEffect(() => { setIsPageTransitioning(true); const t = setTimeout(() => setIsPageTransitioning(false), 300); return () => clearTimeout(t); }, [activeView]);
+  useEffect(() => { 
+    setIsPageTransitioning(true); 
+    const t = setTimeout(() => setIsPageTransitioning(false), 400); 
+    return () => clearTimeout(t); 
+  }, [activeView]);
 
   const getGreeting = () => {
     const h = currentTime.getHours();
-    if (h < 6) return { text: 'İyi Geceler', emoji: '🌙' };
-    if (h < 12) return { text: 'Günaydın', emoji: '☀️' };
+    if (h < 6) return { text: 'Huzurlu Geceler', emoji: '🌙' };
+    if (h < 12) return { text: 'Keyifli Sabahlar', emoji: '☀️' };
     if (h < 18) return { text: 'İyi Günler', emoji: '🌤️' };
-    return { text: 'İyi Akşamlar', emoji: '🌆' };
+    return { text: 'Huzurlu Akşamlar', emoji: '🌆' };
   };
   const greeting = getGreeting();
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 text-slate-900 selection:bg-[var(--color-primary)] selection:text-white font-outfit">
-      {/* Sidebar */}
-      <aside className={`hidden xl:flex ${isSidebarOpen ? 'w-72' : 'w-20'} flex-col bg-white border-r border-slate-100 transition-all duration-500 shadow-[20px_0_60px_-20px_rgba(0,0,0,0.02)] z-50`}>
-        <div className={`h-24 flex items-center border-b border-slate-50 ${isSidebarOpen ? 'px-8 gap-4' : 'justify-center'}`}>
-          <div className="w-10 h-10 rounded-2xl bg-[var(--color-primary)] flex items-center justify-center text-white shadow-lg shadow-gold/20 shrink-0">
-            <i className="fa-solid fa-crown text-lg"></i>
+    <div className="flex h-screen overflow-hidden bg-[#F8FAFC] text-slate-900 selection:bg-[var(--color-primary)] selection:text-white font-outfit">
+      {/* Sidebar — Advanced Elite UI */}
+      <aside className={`hidden xl:flex ${isSidebarOpen ? 'w-[280px]' : 'w-[88px]'} flex-col bg-white border-r border-slate-100 transition-all duration-700 ease-[cubic-bezier(0.2,1,0.3,1)] shadow-[20px_0_60px_-20px_rgba(0,0,0,0.03)] z-50 relative overflow-hidden`}>
+        {/* Sidebar Background Ornament */}
+        <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-slate-50/50 to-transparent pointer-events-none -z-10" />
+        
+        <div className={`h-24 flex items-center shrink-0 border-b border-slate-50 relative overflow-hidden transition-all duration-500 ${isSidebarOpen ? 'px-8 gap-4' : 'justify-center'}`}>
+          <div className="relative group/logo">
+            <div className="w-11 h-11 rounded-[18px] bg-slate-900 flex items-center justify-center text-white shadow-2xl shadow-slate-200 transition-transform duration-500 group-hover/logo:scale-110 active:scale-90 cursor-pointer">
+              <i className="fa-solid fa-crown text-lg text-gold"></i>
+            </div>
+            {!isSidebarOpen && (
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white animate-pulse shadow-sm"></div>
+            )}
           </div>
           {isSidebarOpen && (
-            <div className="animate-in fade-in slide-in-from-left-4 duration-500">
-              <p className="font-black text-slate-900 tracking-tighter text-lg uppercase">Elite Admin</p>
-              <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-none">Management</p>
+            <div className="animate-in fade-in slide-in-from-left-4 duration-700 delay-150">
+              <p className="font-black text-slate-900 tracking-tight text-[15px] uppercase">ELITE PANEL</p>
+              <p className="text-[9px] text-slate-400 font-bold uppercase tracking-[0.3em] leading-none mt-1">Management</p>
             </div>
           )}
         </div>
 
-        <nav className="flex-1 py-6 px-4 space-y-8 overflow-y-auto scrollbar-hide">
+        <nav className="flex-1 py-8 px-4 space-y-9 overflow-y-auto scrollbar-hide relative z-10">
           <div>
             <SidebarGroupLabel label="Operasyon" isSidebarOpen={isSidebarOpen} />
-            <div className="space-y-1">
+            <div className="space-y-1.5 mt-2">
               <SidebarNavItem id="overview" label="Dashboard" icon={<i className="fa-solid fa-grid-2"></i>} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={v => setActiveView(v as DashboardView)} />
               <SidebarNavItem id="bookings" label="Rezervasyonlar" badge={stats.pending} icon={<i className="fa-solid fa-calendar-clock"></i>} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={v => setActiveView(v as DashboardView)} />
               <SidebarNavItem id="reviews" label="Yorumlar" icon={<i className="fa-solid fa-star"></i>} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={v => setActiveView(v as DashboardView)} />
             </div>
           </div>
           <div>
-            <SidebarGroupLabel label="İçerik" isSidebarOpen={isSidebarOpen} />
-            <div className="space-y-1">
+            <SidebarGroupLabel label="İçerik & Katalog" isSidebarOpen={isSidebarOpen} />
+            <div className="space-y-1.5 mt-2">
               <SidebarNavItem id="blog" label="Blog Yönetimi" icon={<i className="fa-solid fa-pen-nib"></i>} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={v => setActiveView(v as DashboardView)} />
               <SidebarNavItem id="regions" label="Bölge & Fiyat" icon={<i className="fa-solid fa-map-location-dot"></i>} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={v => setActiveView(v as DashboardView)} />
-              <SidebarNavItem id="fleet" label="Araçlar" icon={<i className="fa-solid fa-car-rear"></i>} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={v => setActiveView(v as DashboardView)} />
+              <SidebarNavItem id="fleet" label="Araç Filosu" icon={<i className="fa-solid fa-car-rear"></i>} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={v => setActiveView(v as DashboardView)} />
             </div>
           </div>
           <div>
-            <SidebarGroupLabel label="Site" isSidebarOpen={isSidebarOpen} />
-            <div className="space-y-1">
-              <SidebarNavItem id="hero-images" label="Bannerlar" icon={<i className="fa-solid fa-images"></i>} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={v => setActiveView(v as DashboardView)} />
-              <SidebarNavItem id="site-settings" label="Menü Ayarları" icon={<i className="fa-solid fa-sliders"></i>} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={v => setActiveView(v as DashboardView)} />
+            <SidebarGroupLabel label="Site Ayarları" isSidebarOpen={isSidebarOpen} />
+            <div className="space-y-1.5 mt-2">
+              <SidebarNavItem id="hero-images" label="Banner Yönetimi" icon={<i className="fa-solid fa-images"></i>} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={v => setActiveView(v as DashboardView)} />
+              <SidebarNavItem id="site-settings" label="Menü Kontrolü" icon={<i className="fa-solid fa-sliders"></i>} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={v => setActiveView(v as DashboardView)} />
               <SidebarNavItem id="faq" label="S.S.S" icon={<i className="fa-solid fa-circle-question"></i>} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={v => setActiveView(v as DashboardView)} />
             </div>
           </div>
         </nav>
 
-        <div className="p-4 border-t border-slate-100 bg-slate-50/50">
-          <SidebarNavItem id="business" label="İşletme Ayarları" icon={<i className="fa-solid fa-briefcase"></i>} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={v => setActiveView(v as DashboardView)} />
-          <button onClick={onExitAdmin} className={`mt-2 w-full flex items-center ${isSidebarOpen ? 'px-4 py-2.5 gap-3.5' : 'justify-center p-2.5'} text-rose-500 hover:bg-rose-50 rounded-xl transition-all font-bold text-sm`}>
-            <i className="fa-solid fa-arrow-right-from-bracket"></i>
-            {isSidebarOpen && <span>Güvenli Çıkış</span>}
+        <div className="p-4 border-t border-slate-100 bg-slate-50/40 relative z-20">
+          <SidebarNavItem id="business" label="Hesap Ayarları" icon={<i className="fa-solid fa-user-gear"></i>} activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={v => setActiveView(v as DashboardView)} />
+          <button 
+            onClick={onExitAdmin} 
+            className={`group mt-3 w-full flex items-center ${isSidebarOpen ? 'px-4 py-3 gap-3.5' : 'justify-center p-3'} text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-2xl transition-all duration-300 font-bold text-sm relative overflow-hidden`}
+          >
+            <div className="absolute inset-0 bg-rose-50/0 group-hover:bg-rose-50/100 transition-colors duration-300"></div>
+            <i className="fa-solid fa-arrow-right-from-bracket relative z-10 group-hover:rotate-12 transition-transform"></i>
+            {isSidebarOpen && <span className="relative z-10 tracking-tight">Güvenli Çıkış</span>}
           </button>
         </div>
+
+        {/* Sidebar Toggle — Apple Desktop Style */}
+        <button 
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="absolute -right-3 top-28 w-6 h-12 bg-white border border-slate-100 hover:border-slate-200 rounded-full flex items-center justify-center text-slate-300 hover:text-slate-600 transition-all shadow-md group/toggle z-[60]"
+        >
+          <i className={`fa-solid ${isSidebarOpen ? 'fa-chevron-left' : 'fa-chevron-right'} text-[9px] transition-transform duration-500 group-hover/toggle:scale-125`}></i>
+        </button>
       </aside>
 
       {/* Main Content */}

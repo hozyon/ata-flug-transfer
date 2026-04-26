@@ -10,17 +10,6 @@ interface AdminLoginProps {
     onLogin?: () => void;
 }
 
-const LOGIN_SLOGANS = [
-    { title: "Yönetim", highlight: "Kontrol Merkezi", desc: "Operasyonel süreçlerinizi anlık takip edin, rezervasyonları yönetin ve işinizi büyütün." },
-    { title: "Kusursuz", highlight: "Müşteri Deneyimi", desc: "Her transferi unutulmaz bir yolculuğa dönüştürmek için ihtiyacınız olan tüm araçlar burada." },
-    { title: "Akıllı", highlight: "Filo Yönetimi", desc: "Araçlarınızın durumunu, konumunu ve performansını tek bir ekrandan zahmetsizce izleyin." },
-    { title: "Global", highlight: "Turizm Vizyonu", desc: "Antalya'nın lider transfer markası olarak operasyonlarınızı dünya standartlarında yönetin." },
-    { title: "Veriye Dayalı", highlight: "Büyüme Stratejisi", desc: "Rezervasyon istatistiklerini analiz edin, doğru kararlar alarak cironuzu artırın." },
-    { title: "Profesyonel", highlight: "Transfer Çözümleri", desc: "Karmaşık operasyonları basitleştiren, verimliliği artıran modern yönetim arayüzü." },
-    { title: "Lüks ve", highlight: "Konforun Adresi", desc: "VIP müşterilerinize sunduğunuz ayrıcalıklı hizmeti, yönetim panelinizde de hissedin." },
-    { title: "Maksimum", highlight: "Verimlilik", desc: "Otomatik süreçler ve akıllı bildirimlerle iş yükünü azaltın, hedeflerinize odaklanın." }
-];
-
 const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -30,7 +19,6 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
     const [loginStage, setLoginStage] = useState<'idle' | 'authenticating' | 'success' | 'error'>('idle');
     const [errorMessage, setErrorMessage] = useState('');
     const [resetSent, setResetSent] = useState(false);
-    const [_sloganIndex, setSloganIndex] = useState(() => Math.floor(Math.random() * LOGIN_SLOGANS.length));
     const emailRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
 
@@ -44,13 +32,6 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
 
     useEffect(() => {
         setTimeout(() => emailRef.current?.focus(), 600);
-    }, []);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setSloganIndex(prev => (prev + 1) % LOGIN_SLOGANS.length);
-        }, 5000);
-        return () => clearInterval(interval);
     }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -122,14 +103,26 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
     };
 
     return (
-        <div className="h-screen h-[100dvh] flex bg-[#020617] overflow-hidden">
+        <div className="h-screen h-[100dvh] flex bg-slate-50 overflow-hidden font-outfit text-slate-900 selection:bg-[var(--color-primary)] selection:text-white">
             <style>{`
-                @keyframes slideInText {
-                    0% { opacity: 0; transform: translateY(24px); }
+                @keyframes fadeUp {
+                    0% { opacity: 0; transform: translateY(16px); }
                     100% { opacity: 1; transform: translateY(0); }
                 }
+                @keyframes blobMove1 {
+                    0%   { transform: translate(0px, 0px) scale(1); }
+                    33%  { transform: translate(30px, -50px) scale(1.1); }
+                    66%  { transform: translate(-20px, 20px) scale(0.9); }
+                    100% { transform: translate(0px, 0px) scale(1); }
+                }
+                @keyframes blobMove2 {
+                    0%   { transform: translate(0px, 0px) scale(1); }
+                    33%  { transform: translate(-30px, 50px) scale(1.1); }
+                    66%  { transform: translate(20px, -20px) scale(0.9); }
+                    100% { transform: translate(0px, 0px) scale(1); }
+                }
                 @keyframes successPulse {
-                    0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+                    0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.2); }
                     50% { box-shadow: 0 0 0 20px rgba(16, 185, 129, 0); }
                 }
                 @keyframes errorShake {
@@ -137,150 +130,112 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                     20%, 60% { transform: translateX(-6px); }
                     40%, 80% { transform: translateX(6px); }
                 }
-                @keyframes fadeUp {
-                    0% { opacity: 0; transform: translateY(16px); }
-                    100% { opacity: 1; transform: translateY(0); }
-                }
-                @keyframes blobMove1 {
-                    0%   { transform: translate(0px, 0px) scale(1); }
-                    20%  { transform: translate(80px, -100px) scale(1.2); }
-                    40%  { transform: translate(160px, -40px) scale(0.85); }
-                    60%  { transform: translate(100px, 80px) scale(1.1); }
-                    80%  { transform: translate(-40px, 60px) scale(0.9); }
-                    100% { transform: translate(0px, 0px) scale(1); }
-                }
-                @keyframes blobMove2 {
-                    0%   { transform: translate(0px, 0px) scale(1); }
-                    25%  { transform: translate(-100px, 80px) scale(1.15); }
-                    50%  { transform: translate(-60px, -90px) scale(0.8); }
-                    75%  { transform: translate(70px, -50px) scale(1.1); }
-                    100% { transform: translate(0px, 0px) scale(1); }
-                }
-                @keyframes blobMove3 {
-                    0%   { transform: translate(0px, 0px) scale(1); }
-                    30%  { transform: translate(60px, 100px) scale(1.25); }
-                    60%  { transform: translate(-80px, 60px) scale(0.85); }
-                    100% { transform: translate(0px, 0px) scale(1); }
-                }
-                @keyframes blobMove4 {
-                    0%   { transform: translate(0px, 0px) scale(1); }
-                    35%  { transform: translate(-90px, -70px) scale(1.2); }
-                    70%  { transform: translate(50px, 90px) scale(0.9); }
-                    100% { transform: translate(0px, 0px) scale(1); }
-                }
             `}</style>
 
             {/* ── LEFT: Login Panel ── */}
-            <div className="relative w-full lg:w-[460px] xl:w-[500px] shrink-0 flex flex-col justify-between px-8 sm:px-12 py-10 z-10 overflow-hidden">
-                <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(197,160,89,0.06) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(197,160,89,0.04) 0%, transparent 50%)' }} />
-                    <div className="absolute inset-0 opacity-[0.015]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.15) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.15) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-                    <div className="hidden lg:block absolute right-0 top-[10%] bottom-[10%] w-px bg-gradient-to-b from-transparent via-[#c5a059]/20 to-transparent" />
+            <div className="relative w-full lg:w-[480px] xl:w-[540px] shrink-0 flex flex-col justify-between px-8 sm:px-16 py-12 z-10 bg-white shadow-[20px_0_60px_-20px_rgba(0,0,0,0.05)] border-r border-slate-100 overflow-hidden">
+                <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    <div className="absolute -top-[20%] -left-[20%] w-[60%] h-[60%] rounded-full bg-[var(--color-primary)] opacity-[0.03] blur-[100px] transform-gpu"></div>
                 </div>
 
                 <div className="relative animate-in fade-in slide-in-from-bottom-3 duration-700">
-                    <div className="mb-5">
+                    <div className="mb-8">
                         <Link
                             href="/"
-                            className="inline-flex items-center gap-2 text-[11px] font-semibold transition-colors duration-200"
-                            style={{ color: 'rgba(197,160,89,0.45)', fontFamily: "'Outfit', sans-serif", letterSpacing: '0.04em' }}
-                            onMouseEnter={e => (e.currentTarget.style.color = 'rgba(197,160,89,0.8)')}
-                            onMouseLeave={e => (e.currentTarget.style.color = 'rgba(197,160,89,0.45)')}
+                            className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors duration-300"
                         >
-                            <i className="fa-solid fa-arrow-left text-[9px]" aria-hidden="true" />
-                            Ana Sayfaya Dön
+                            <i className="fa-solid fa-arrow-left" aria-hidden="true" />
+                            Siteye Dön
                         </Link>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#c5a059] to-amber-700 flex items-center justify-center shadow-lg shadow-[#c5a059]/20">
-                            <i className="fa-solid fa-shield-halved text-white text-xl"></i>
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-[var(--color-primary)] flex items-center justify-center shadow-lg shadow-amber-100">
+                            <i className="fa-solid fa-crown text-white text-xl"></i>
                         </div>
                         <div>
-                            <p className="text-white font-black text-[13px] tracking-wide">SİSTEM YÖNETİMİ</p>
-                            <p className="text-[#c5a059]/60 text-[10px] font-bold tracking-[0.2em] uppercase">Admin Paneli</p>
+                            <p className="text-slate-900 font-black text-[16px] tracking-tight leading-none">ELITE MANAGEMENT</p>
+                            <p className="text-slate-400 text-[10px] font-black tracking-[0.2em] uppercase mt-1">Kontrol Paneli</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="relative w-full max-w-[360px] mx-auto">
+                <div className="relative w-full max-w-[360px] mx-auto my-auto">
                     {loginStage === 'success' ? (
                         <div className="text-center py-12 animate-in fade-in zoom-in duration-500">
-                            <div className="w-20 h-20 mx-auto rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-5" style={{ animation: 'successPulse 1.5s ease infinite' }}>
-                                <i className="fa-solid fa-check text-emerald-400 text-3xl" aria-hidden="true"></i>
+                            <div className="w-20 h-20 mx-auto rounded-[2rem] bg-emerald-50 border border-emerald-100 flex items-center justify-center mb-6" style={{ animation: 'successPulse 1.5s ease infinite' }}>
+                                <i className="fa-solid fa-check text-emerald-500 text-3xl" aria-hidden="true"></i>
                             </div>
-                            <h3 className="text-white font-black text-xl mb-2 tracking-wide">Hoş Geldiniz</h3>
-                            <p className="text-slate-500 text-sm">Panele yönlendiriliyorsunuz...</p>
+                            <h3 className="text-slate-900 font-black text-2xl mb-2 tracking-tight">Hoş Geldiniz</h3>
+                            <p className="text-slate-500 font-medium">Güvenli alana yönlendiriliyorsunuz...</p>
                         </div>
                     ) : (
                         <>
-                            <div className="mb-8" style={{ animation: 'fadeUp 0.6s ease both' }}>
-                                <h1 className="text-[28px] font-black text-white mb-2 tracking-tight">Güvenli Giriş</h1>
-                                <p className="text-slate-500 text-[13px]">Yetkili personel erişimi</p>
+                            <div className="mb-10" style={{ animation: 'fadeUp 0.6s ease both' }}>
+                                <h1 className="text-[32px] font-black text-slate-900 mb-3 tracking-tight leading-none">Güvenli Giriş</h1>
+                                <p className="text-slate-500 font-medium leading-relaxed">Sistem yönetimi için yetkili erişim bilgilerini giriniz.</p>
                             </div>
 
                             {resetSent && (
-                                <div className="mb-5 flex items-center gap-3 px-4 py-3 rounded-xl bg-emerald-500/8 border border-emerald-500/20 animate-in fade-in duration-300">
-                                    <i className="fa-solid fa-envelope-circle-check text-emerald-400 shrink-0" aria-hidden="true"></i>
-                                    <p className="text-emerald-400 text-[12px]">Sıfırlama bağlantısı e-postanıza gönderildi.</p>
+                                <div className="mb-6 flex items-center gap-3 px-4 py-3.5 rounded-2xl bg-emerald-50 border border-emerald-100 animate-in fade-in duration-300 shadow-sm">
+                                    <i className="fa-solid fa-envelope-circle-check text-emerald-500 shrink-0 text-lg" aria-hidden="true"></i>
+                                    <p className="text-emerald-700 text-[13px] font-bold">Sıfırlama bağlantısı e-postanıza gönderildi.</p>
                                 </div>
                             )}
                             {errorMessage && (
-                                <div className="mb-5 flex items-start gap-3 px-4 py-3 rounded-xl bg-red-500/8 border border-red-500/20 animate-in fade-in duration-300"
+                                <div className="mb-6 flex items-start gap-3 px-4 py-3.5 rounded-2xl bg-rose-50 border border-rose-100 animate-in fade-in duration-300 shadow-sm"
                                     style={loginStage === 'error' ? { animation: 'errorShake 0.5s ease-out' } : undefined}>
-                                    <i className="fa-solid fa-circle-exclamation text-red-400 text-sm mt-0.5 shrink-0" aria-hidden="true"></i>
-                                    <p className="text-red-400 text-[12px] leading-relaxed">{errorMessage}</p>
+                                    <i className="fa-solid fa-circle-exclamation text-rose-500 mt-0.5 shrink-0 text-base" aria-hidden="true"></i>
+                                    <p className="text-rose-700 text-[13px] font-bold leading-relaxed">{errorMessage}</p>
                                 </div>
                             )}
 
-                            <form onSubmit={handleSubmit} className="space-y-4" style={{ animation: 'fadeUp 0.6s ease 0.1s both' }}>
+                            <form onSubmit={handleSubmit} className="space-y-6" style={{ animation: 'fadeUp 0.6s ease 0.1s both' }}>
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-slate-600 uppercase tracking-[0.15em]">E-posta</label>
-                                    <div className={`relative rounded-xl border transition-all duration-200 ${isFocused === 'email' ? 'border-[#c5a059]/40 bg-[#c5a059]/[0.04] shadow-[0_0_20px_rgba(197,160,89,0.08)]' : 'border-white/[0.07] bg-white/[0.02] hover:border-white/[0.12]'}`}>
-                                        <i className={`fa-solid fa-at absolute left-4 top-1/2 -translate-y-1/2 text-xs transition-colors ${isFocused === 'email' ? 'text-[#c5a059]' : 'text-slate-700'}`}></i>
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">E-posta Adresi</label>
+                                    <div className={`relative rounded-2xl border transition-all duration-300 overflow-hidden ${isFocused === 'email' ? 'border-[var(--color-primary)]/40 bg-white shadow-[0_4px_20px_rgba(197,160,89,0.08)]' : 'border-slate-200 bg-slate-50 hover:bg-white'}`}>
+                                        <i className={`fa-solid fa-at absolute left-5 top-1/2 -translate-y-1/2 text-sm transition-colors ${isFocused === 'email' ? 'text-[var(--color-primary)]' : 'text-slate-400'}`}></i>
                                         <input ref={emailRef} type="email" value={email}
                                             onChange={e => setEmail(e.target.value)}
                                             onFocus={() => setIsFocused('email')} onBlur={() => setIsFocused(null)}
-                                            className="w-full bg-transparent pl-10 pr-4 py-3.5 text-[13px] text-white placeholder-slate-700 outline-none"
-                                            placeholder="mail@örnek.com" autoComplete="email" required />
+                                            className="w-full bg-transparent pl-12 pr-5 py-4 text-sm font-bold text-slate-900 placeholder-slate-400 outline-none"
+                                            placeholder="admin@ataflug.com" autoComplete="email" required />
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <div className="flex justify-between items-center">
-                                        <label className="text-[10px] font-black text-slate-600 uppercase tracking-[0.15em]">Şifre</label>
+                                    <div className="flex justify-between items-center ml-1 pr-1">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Şifre</label>
                                         <button type="button" onClick={handleForgotPassword}
-                                            className="text-[10px] text-[#c5a059]/50 hover:text-[#c5a059] font-bold transition-colors">
-                                            Şifremi Unuttum?
+                                            className="text-[10px] text-slate-400 hover:text-slate-900 font-bold transition-colors uppercase tracking-wider">
+                                            Şifremi Unuttum
                                         </button>
                                     </div>
-                                    <div className={`relative rounded-xl border transition-all duration-200 ${isFocused === 'password' ? 'border-[#c5a059]/40 bg-[#c5a059]/[0.04] shadow-[0_0_20px_rgba(197,160,89,0.08)]' : 'border-white/[0.07] bg-white/[0.02] hover:border-white/[0.12]'}`}>
-                                        <i className={`fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-xs transition-colors ${isFocused === 'password' ? 'text-[#c5a059]' : 'text-slate-700'}`}></i>
+                                    <div className={`relative rounded-2xl border transition-all duration-300 overflow-hidden ${isFocused === 'password' ? 'border-[var(--color-primary)]/40 bg-white shadow-[0_4px_20px_rgba(197,160,89,0.08)]' : 'border-slate-200 bg-slate-50 hover:bg-white'}`}>
+                                        <i className={`fa-solid fa-lock absolute left-5 top-1/2 -translate-y-1/2 text-sm transition-colors ${isFocused === 'password' ? 'text-[var(--color-primary)]' : 'text-slate-400'}`}></i>
                                         <input type={showPassword ? 'text' : 'password'} value={password}
                                             onChange={e => setPassword(e.target.value)}
                                             onFocus={() => setIsFocused('password')} onBlur={() => setIsFocused(null)}
-                                            className="w-full bg-transparent pl-10 pr-12 py-3.5 text-[13px] text-white placeholder-slate-700 outline-none"
+                                            className="w-full bg-transparent pl-12 pr-12 py-4 text-sm font-bold text-slate-900 placeholder-slate-400 outline-none"
                                             placeholder="••••••••••" autoComplete="current-password" required />
                                         <button type="button" onClick={() => setShowPassword(!showPassword)}
-                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-700 hover:text-slate-400 transition-colors">
-                                            <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'} text-xs`}></i>
+                                            className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-900 transition-colors">
+                                            <i className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'} text-sm`}></i>
                                         </button>
                                     </div>
                                 </div>
 
                                 <button type="submit" disabled={isLoading || !email || !password}
-                                    className="group relative w-full h-[50px] rounded-xl overflow-hidden transition-all duration-300 hover:-translate-y-0.5 active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 mt-2">
-                                    <div className="absolute inset-0 bg-gradient-to-r from-[#c5a059] via-amber-500 to-[#c5a059] bg-[length:200%_100%] transition-all duration-500 group-hover:bg-[position:100%_0]" style={{ backgroundPosition: '0% 0%' }} />
-                                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-amber-600 to-amber-500" />
-                                    <div className="relative h-full flex items-center justify-center gap-2.5">
+                                    className="relative w-full py-4 rounded-2xl overflow-hidden transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed bg-slate-900 hover:bg-black shadow-xl shadow-slate-200 mt-4 group">
+                                    <div className="relative flex items-center justify-center gap-3">
                                         {loginStage === 'authenticating' ? (
                                             <>
-                                                <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin"></div>
-                                                <span className="font-black text-white text-[13px] tracking-widest uppercase">Doğrulanıyor</span>
+                                                <i className="fa-solid fa-circle-notch fa-spin text-white"></i>
+                                                <span className="font-black text-white text-[11px] tracking-[0.2em] uppercase">Doğrulanıyor</span>
                                             </>
                                         ) : (
                                             <>
-                                                <span className="font-black text-white text-[13px] tracking-widest uppercase">Giriş Yap</span>
-                                                <i className="fa-solid fa-arrow-right text-white/70 text-xs transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true"></i>
+                                                <span className="font-black text-white text-[11px] tracking-[0.2em] uppercase">Sisteme Giriş Yap</span>
+                                                <i className="fa-solid fa-arrow-right text-white/50 text-xs transition-transform duration-300 group-hover:translate-x-1" aria-hidden="true"></i>
                                             </>
                                         )}
                                     </div>
@@ -290,65 +245,60 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                     )}
                 </div>
 
-                <div className="relative flex items-center justify-between">
-                    <p className="text-slate-800 text-[10px]">© {new Date().getFullYear()} Yönetim Paneli</p>
+                <div className="relative flex items-center justify-between mt-auto pt-8">
+                    <p className="text-slate-400 font-bold text-[10px] tracking-widest uppercase">© {new Date().getFullYear()} ATA FLUG TRANSFER</p>
                     {!isSupabaseConfigured && (
-                        <span className="text-amber-600/60 text-[10px] flex items-center gap-1">
-                            <i className="fa-solid fa-triangle-exclamation text-[8px]" aria-hidden="true"></i> Dev modu
+                        <span className="px-2 py-1 rounded-md bg-amber-50 border border-amber-100 text-amber-600 font-black text-[9px] uppercase tracking-widest flex items-center gap-1.5 shadow-sm">
+                            <i className="fa-solid fa-flask text-[10px]" aria-hidden="true"></i> LOKAL MOD
                         </span>
                     )}
                 </div>
             </div>
 
             {/* ── RIGHT: Animated Visual Panel ── */}
-            <div className="hidden lg:flex flex-1 relative overflow-hidden items-center justify-center bg-[#050010]">
-                <div className="absolute w-[420px] h-[420px] rounded-full blur-[120px]"
-                    style={{ background: '#7c3aed', opacity: 0.45, top: '0%', left: '5%', animation: 'blobMove1 9s ease-in-out infinite' }} />
-                <div className="absolute w-[380px] h-[380px] rounded-full blur-[110px]"
-                    style={{ background: '#2563eb', opacity: 0.40, bottom: '5%', right: '0%', animation: 'blobMove2 11s ease-in-out infinite' }} />
-                <div className="absolute w-[320px] h-[320px] rounded-full blur-[100px]"
-                    style={{ background: '#a855f7', opacity: 0.35, top: '45%', left: '40%', animation: 'blobMove3 8s ease-in-out infinite' }} />
-                <div className="absolute w-[280px] h-[280px] rounded-full blur-[90px]"
-                    style={{ background: '#1d4ed8', opacity: 0.35, top: '15%', right: '10%', animation: 'blobMove4 13s ease-in-out infinite' }} />
-                <div className="absolute w-[240px] h-[240px] rounded-full blur-[80px]"
-                    style={{ background: '#6d28d9', opacity: 0.30, bottom: '20%', left: '15%', animation: 'blobMove2 7s ease-in-out infinite reverse' }} />
+            <div className="hidden lg:flex flex-1 relative overflow-hidden items-center justify-center bg-white">
+                {/* Soft Abstract Background Elements */}
+                <div className="absolute inset-0 pointer-events-none">
+                    <div className="absolute w-[800px] h-[800px] rounded-full blur-[100px]"
+                        style={{ background: 'var(--color-primary)', opacity: 0.05, top: '-20%', right: '-10%', animation: 'blobMove1 20s ease-in-out infinite alternate' }} />
+                    <div className="absolute w-[600px] h-[600px] rounded-full blur-[80px]"
+                        style={{ background: '#3b82f6', opacity: 0.03, bottom: '-10%', left: '10%', animation: 'blobMove2 15s ease-in-out infinite alternate' }} />
+                    
+                    {/* Subtle grid pattern */}
+                    <div className="absolute inset-0 opacity-[0.4]" style={{ backgroundImage: 'linear-gradient(#f1f5f9 1px, transparent 1px), linear-gradient(90deg, #f1f5f9 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+                    <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent" />
+                </div>
 
-                <div className="absolute inset-0 opacity-[0.03]"
-                    style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")', backgroundSize: '200px 200px' }} />
-
-                <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, transparent 40%, rgba(5,0,16,0.7) 100%)' }} />
-
-                <div className="relative z-10 px-12 xl:px-16 max-w-lg">
-                    <div className="mb-3" style={{ animation: 'fadeUp 0.8s ease 0.3s both' }}>
-                        <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-black text-white/50 uppercase tracking-[0.2em]">
-                            <span className="w-1.5 h-1.5 rounded-full bg-violet-400 shadow-[0_0_8px_#a78bfa]"></span>
-                            Yönetim Merkezi
-                        </span>
+                <div className="relative z-10 px-16 max-w-2xl text-center">
+                    <div className="w-24 h-24 mx-auto bg-slate-50 border border-slate-100 rounded-3xl flex items-center justify-center shadow-sm mb-10" style={{ animation: 'fadeUp 0.8s ease 0.2s both' }}>
+                        <i className="fa-solid fa-chart-line text-[var(--color-primary)] text-4xl opacity-80"></i>
                     </div>
-                    <h2 className="text-4xl xl:text-5xl font-black text-white leading-[1.1] mb-5 tracking-tight"
-                        style={{ animation: 'fadeUp 0.8s ease 0.4s both' }}>
-                        Kusursuz Hizmet,<br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-blue-400 to-violet-400">
-                            Akıllı Yönetim
+
+                    <h2 className="text-4xl xl:text-5xl font-black text-slate-900 leading-[1.1] mb-6 tracking-tighter"
+                        style={{ animation: 'fadeUp 0.8s ease 0.3s both' }}>
+                        Modern, Hızlı ve <br/>
+                        <span className="text-[var(--color-primary)]">
+                            Güvenilir Yönetim
                         </span>
                     </h2>
-                    <p className="text-white/30 text-[14px] leading-relaxed mb-10"
-                        style={{ animation: 'fadeUp 0.8s ease 0.5s both' }}>
-                        Tüm transfer operasyonlarınızı tek ekrandan yönetin.
+                    
+                    <p className="text-slate-500 font-medium text-[15px] leading-relaxed mb-12 max-w-lg mx-auto"
+                        style={{ animation: 'fadeUp 0.8s ease 0.4s both' }}>
+                        Rezervasyonlarınızı, filonuzu ve tüm dijital varlıklarınızı kusursuz bir deneyimle tek ekrandan kontrol edin.
                     </p>
-                    <div className="flex items-center gap-6" style={{ animation: 'fadeUp 0.8s ease 0.6s both' }}>
+
+                    <div className="flex items-center justify-center gap-8" style={{ animation: 'fadeUp 0.8s ease 0.5s both' }}>
                         {[
-                            { value: '7/24', label: 'Erişim' },
-                            { value: '256-bit', label: 'Şifreleme' },
-                            { value: '99.9%', label: 'Uptime' },
+                            { icon: 'fa-bolt', label: 'Yüksek Performans' },
+                            { icon: 'fa-shield-halved', label: 'Güvenli Altyapı' },
+                            { icon: 'fa-mobile-screen', label: 'Mobil Uyumlu' },
                         ].map((stat, i) => (
-                            <React.Fragment key={stat.label}>
-                                <div>
-                                    <p className="text-white font-black text-base leading-none">{stat.value}</p>
-                                    <p className="text-white/25 text-[10px] font-bold uppercase tracking-wider mt-1">{stat.label}</p>
+                            <div key={i} className="flex flex-col items-center gap-3">
+                                <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 shadow-sm">
+                                    <i className={`fa-solid ${stat.icon} text-lg`}></i>
                                 </div>
-                                {i < 2 && <div className="w-px h-6 bg-white/10" />}
-                            </React.Fragment>
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{stat.label}</span>
+                            </div>
                         ))}
                     </div>
                 </div>
