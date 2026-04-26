@@ -1427,7 +1427,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 <SidebarNavItem id="hero-images" label="Anasayfa Banner" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-images"></i>} />
                 <SidebarNavItem id="site-settings" label="Menü Yönetimi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-sliders"></i>} />
                 <SidebarNavItem id="faq" label="S.S.S" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-circle-question"></i>} />
-                <SidebarNavItem id="business" label="İşletme Bilgileri" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-briefcase"></i>} />
                 
                 {/* Corporate Sub-menu */}
                 <div className="relative group">

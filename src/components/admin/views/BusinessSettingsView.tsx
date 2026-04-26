@@ -73,19 +73,22 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({
                     </div>
                     <div>
                         <div className="flex items-center gap-2 mb-1.5"><h2 className="text-2xl font-[900] text-white tracking-tight">İşletme Ayarları</h2><span className="px-2 py-0.5 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black text-[var(--color-primary)] uppercase tracking-widest">Global Control</span></div>
-                        <p className="text-[13px] text-slate-400 font-medium">Şirket profili, güvenlik ve site kimliği ayarları</p>
+                        <p className="text-[13px] text-slate-400 font-medium">Şirket profili, sosyal medya, güvenlik ve marka ayarları</p>
                     </div>
                 </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 <div className="lg:col-span-8 space-y-8">
+                    {/* Şirket Kimliği & Sosyal Medya */}
                     <div className="bg-[#020617]/40 border border-white/[0.06] rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-3xl p-8">
                         <div className="flex items-center gap-4 mb-8">
-                            <div className="w-11 h-11 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center font-[900] text-[var(--color-primary)] shadow-inner"><i className="fa-solid fa-signature text-lg"></i></div>
-                            <h3 className="text-lg font-[800] text-white tracking-tight">Şirket Kimliği</h3>
+                            <div className="w-11 h-11 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center text-[var(--color-primary)] shadow-inner font-black">
+                                <i className="fa-solid fa-signature text-lg"></i>
+                            </div>
+                            <h3 className="text-lg font-[800] text-white tracking-tight">Şirket Kimliği & Sosyal Medya</h3>
                         </div>
-                        <div className="space-y-6">
+                        <div className="space-y-8">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                 <div><label className={LABEL_CLS}>İşletme Adı</label><input className={INPUT_CLS} value={biz.name || ''} onChange={e => setBiz({ name: e.target.value })} placeholder="Şirket Tam Adı" /></div>
                                 <div><label className={LABEL_CLS}>Resmi Telefon</label><input className={`${INPUT_CLS} ${biz.phone && !isValidPhone(biz.phone) ? 'border-red-500/40' : ''}`} value={biz.phone || ''} onChange={e => setBiz({ phone: e.target.value })} placeholder="+90 5XX XXX XX XX" type="tel" /></div>
@@ -94,13 +97,28 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({
                                 <div><label className={LABEL_CLS}>E-posta Adresi</label><input className={`${INPUT_CLS} ${biz.email && !isValidEmail(biz.email) ? 'border-red-500/40' : ''}`} value={biz.email || ''} onChange={e => setBiz({ email: e.target.value })} placeholder="info@sirketadi.com" type="email" /></div>
                                 <div><label className={LABEL_CLS}>WhatsApp Destek</label><input className={INPUT_CLS} value={biz.whatsapp || ''} onChange={e => setBiz({ whatsapp: e.target.value })} placeholder="905XXXXXXXXX" /></div>
                             </div>
+                            <div className="h-px bg-white/5 my-2" />
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                                <div><label className={LABEL_CLS}>Instagram URL</label><input className={INPUT_CLS} value={biz.instagram || ''} onChange={e => setBiz({ instagram: e.target.value })} placeholder="instagram.com/kullanici" /></div>
+                                <div><label className={LABEL_CLS}>Facebook URL</label><input className={INPUT_CLS} value={biz.facebook || ''} onChange={e => setBiz({ facebook: e.target.value })} placeholder="facebook.com/sayfa" /></div>
+                                <div><label className={LABEL_CLS}>Telegram URL</label><input className={INPUT_CLS} value={biz.telegram || ''} onChange={e => setBiz({ telegram: e.target.value })} placeholder="t.me/kanal" /></div>
+                            </div>
+                            <div>
+                                <label className={LABEL_CLS}>Adres</label>
+                                <textarea className={`${INPUT_CLS} min-h-[80px] resize-none`} value={biz.address || ''} onChange={e => setBiz({ address: e.target.value })} placeholder="Şirket adresi..." />
+                            </div>
+                            <div>
+                                <label className={LABEL_CLS}>Google Harita (Embed URL)</label>
+                                <input className={INPUT_CLS} value={biz.mapEmbedUrl || ''} onChange={e => setBiz({ mapEmbedUrl: e.target.value })} placeholder="https://www.google.com/maps/embed?..." />
+                            </div>
                         </div>
                     </div>
 
+                    {/* Hesap & Güvenlik */}
                     <div className="bg-[#020617]/40 border border-white/[0.06] rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-3xl p-8">
                         <div className="flex items-center justify-between mb-8">
                             <div className="flex items-center gap-4">
-                                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-500/20 to-transparent border border-blue-500/20 flex items-center justify-center font-[900] text-blue-400 shadow-inner"><i className="fa-solid fa-user-gear text-lg"></i></div>
+                                <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-blue-500/20 to-transparent border border-blue-500/20 flex items-center justify-center text-blue-400 shadow-inner font-black"><i className="fa-solid fa-user-gear text-lg"></i></div>
                                 <h3 className="text-lg font-[800] text-white tracking-tight">Hesap ve Güvenlik</h3>
                             </div>
                             <button onClick={onExitAdmin} className="px-4 py-2 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 hover:bg-rose-500 hover:text-white text-[10px] font-black transition-all">OTURUMU KAPAT</button>
@@ -135,14 +153,15 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({
                 </div>
 
                 <div className="lg:col-span-4 space-y-8">
+                    {/* Görsel Marka */}
                     <div className="bg-[#020617]/40 border border-white/[0.06] rounded-[2.5rem] overflow-hidden p-8 backdrop-blur-3xl">
                         <div className="flex items-center gap-4 mb-8">
-                            <div className="w-11 h-11 rounded-2xl bg-indigo-500/15 border border-indigo-500/20 flex items-center justify-center font-[900] text-indigo-400"><i className="fa-solid fa-palette text-lg"></i></div>
+                            <div className="w-11 h-11 rounded-2xl bg-indigo-500/15 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-black"><i className="fa-solid fa-palette text-lg"></i></div>
                             <h3 className="text-lg font-[800] text-white tracking-tight">Görsel Marka</h3>
                         </div>
                         <div className="space-y-6">
                             <div onDragOver={e => { e.preventDefault(); setLogoDragOver(true); }} onDragLeave={() => setLogoDragOver(false)} onDrop={e => { e.preventDefault(); setLogoDragOver(false); const f = e.dataTransfer.files?.[0]; if (f) readFile(f, url => setBiz({ logo: url })); }}
-                                className={`relative h-40 rounded-[2rem] border-2 border-dashed flex flex-col items-center justify-center gap-3 transition-all ${logoDragOver ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10' : 'border-white/5 bg-white/[0.02] hover:border-white/10'}`}>
+                                className={`relative h-40 rounded-[2rem] border-2 border-dashed flex flex-col items-center justify-center gap-3 transition-all ${logoDragOver ? 'border-[var(--color-primary)] bg-[var(--color-primary)]/10' : 'border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10'}`}>
                                 <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={e => { const f = e.target.files?.[0]; if (f) readFile(f, url => setBiz({ logo: url })); }} />
                                 {biz.logo ? <img src={biz.logo} alt="Logo" className="max-w-[80%] max-h-[80%] object-contain" /> : <div className="text-center"><i className="fa-solid fa-cloud-arrow-up text-slate-700 text-3xl mb-2"></i><p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Logo Yükle</p></div>}
                             </div>
@@ -155,9 +174,11 @@ export const BusinessSettingsView: React.FC<BusinessSettingsViewProps> = ({
                             </div>
                         </div>
                     </div>
+
+                    {/* AI Asistan */}
                     <div className="bg-violet-600/[0.08] border border-violet-500/20 rounded-[2.5rem] p-8 backdrop-blur-3xl">
                         <div className="flex items-center gap-4 mb-6">
-                            <div className="w-11 h-11 rounded-2xl bg-violet-500/20 flex items-center justify-center text-violet-400"><i className="fa-solid fa-robot text-lg"></i></div>
+                            <div className="w-11 h-11 rounded-2xl bg-violet-500/20 flex items-center justify-center text-violet-400 font-black"><i className="fa-solid fa-robot text-lg"></i></div>
                             <h3 className="text-lg font-[800] text-white tracking-tight">AI Asistan</h3>
                         </div>
                         <div className="relative group/ai">

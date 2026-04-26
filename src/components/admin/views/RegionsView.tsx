@@ -70,8 +70,8 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button onClick={() => setShowQuickAdd(!showQuickAdd)} className={`px-5 py-3 rounded-2xl text-[11px] font-[800] uppercase tracking-widest transition-all border ${showQuickAdd ? 'bg-blue-500 text-white' : 'bg-white/5 text-slate-400'}`}>Hızlı Ekle</button>
-                    <button onClick={() => { setEditingRegion(null); setIsAddRegionModalOpen(true); }} className="px-5 py-3 bg-[var(--color-primary)] text-[#06080F] rounded-2xl font-[900] text-[11px] uppercase tracking-widest shadow-lg transition-all active:scale-95">Yeni Bölge</button>
+                    <button onClick={() => setShowQuickAdd(!showQuickAdd)} className={`px-5 py-3 rounded-2xl text-[11px] font-[800] uppercase tracking-widest transition-all border ${showQuickAdd ? 'bg-blue-500 text-white' : 'bg-white/5 text-slate-400'}`}>Hızlı Seçim</button>
+                    <button onClick={() => { setEditingRegion(null); setIsAddRegionModalOpen(true); }} className="px-5 py-3 bg-[var(--color-primary)] text-[#06080F] rounded-2xl font-[900] text-[11px] uppercase tracking-widest shadow-lg transition-all active:scale-95">Bölge Ekle</button>
                 </div>
             </div>
 
@@ -140,7 +140,36 @@ export const RegionsView: React.FC<RegionsViewProps> = ({
                         <div className="flex-1 overflow-y-auto p-8 space-y-6">
                             <div><label className={LABEL_CLS}>BÖLGE ADI</label><input className={INPUT_CLS} value={newRegion.name} onChange={e => setNewRegion({ ...newRegion, name: e.target.value })} /></div>
                             <div><label className={LABEL_CLS}>FİYAT ({editContent.currency?.symbol || '€'})</label><input type="number" className={INPUT_CLS} value={newRegion.price || ''} onChange={e => setNewRegion({ ...newRegion, price: parseInt(e.target.value) || 0 })} /></div>
-                            <div><label className={LABEL_CLS}>GÖRSEL URL</label><input className={INPUT_CLS} value={newRegion.image} onChange={e => setNewRegion({ ...newRegion, image: e.target.value })} /></div>
+                            <div>
+                                <label className={LABEL_CLS}>GÖRSEL</label>
+                                <div className="space-y-4">
+                                    <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/10 bg-black/40 group/img">
+                                        {newRegion.image ? (
+                                            <>
+                                                <img src={newRegion.image} className="w-full h-full object-cover" alt="Bölge" />
+                                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                                    <button onClick={() => setNewRegion({ ...newRegion, image: '' })} className="w-10 h-10 rounded-xl bg-rose-500 text-white flex items-center justify-center shadow-lg active:scale-90"><i className="fa-solid fa-trash-can"></i></button>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-slate-700">
+                                                <i className="fa-solid fa-image text-4xl"></i>
+                                                <p className="text-[10px] font-bold">Görsel seçilmedi</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="flex gap-3">
+                                        <label className="flex-1 flex items-center justify-center gap-2 py-3 bg-white/5 hover:bg-white/10 text-white rounded-xl text-[11px] font-black uppercase tracking-widest cursor-pointer transition-all border border-white/5 active:scale-95">
+                                            <i className="fa-solid fa-cloud-arrow-up"></i> GÖRSEL YÜKLE
+                                            <input type="file" accept="image/*" className="hidden" onChange={e => {
+                                                const f = e.target.files?.[0];
+                                                if (f) { const r = new FileReader(); r.onload = ev => setNewRegion({ ...newRegion, image: ev.target?.result as string }); r.readAsDataURL(f); }
+                                            }} />
+                                        </label>
+                                        <input className="flex-[2] bg-white/[0.03] border border-white/[0.08] rounded-xl px-4 py-3 text-[11px] text-slate-400 focus:text-white outline-none" value={newRegion.image?.startsWith('data:') ? 'Dosyadan yüklendi' : newRegion.image} onChange={e => setNewRegion({ ...newRegion, image: e.target.value })} placeholder="Veya görsel URL girin..." />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div className="p-8 border-t border-white/[0.05] flex gap-4"><button onClick={handleSave} className="flex-1 py-4 bg-[var(--color-primary)] text-[#06080F] rounded-2xl font-black text-xs tracking-widest uppercase">KAYDET</button></div>
                     </div>
