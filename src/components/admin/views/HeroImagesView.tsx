@@ -6,7 +6,7 @@ interface HeroImagesViewProps {
     updateHeroBackgrounds: (newBackgrounds: string[]) => void;
     selectedHeroImages: number[];
     setSelectedHeroImages: Dispatch<SetStateAction<number[]>>;
-    _confirmAction: (options: { title: string; description: string; onConfirm: () => void; type?: 'danger' | 'warning' | 'info' }) => void;
+    _confirmAction?: (options: { title: string; description: string; onConfirm: () => void; type?: 'danger' | 'warning' | 'info' }) => void;
 }
 
 export const HeroImagesView: React.FC<HeroImagesViewProps> = ({
@@ -29,25 +29,25 @@ export const HeroImagesView: React.FC<HeroImagesViewProps> = ({
     );
 
     return (
-        <div className="animate-in fade-in slide-in-from-right-4 duration-700 space-y-8">
-            {/* Header / Stats — Elite Style */}
-            <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-6 bg-[#020617]/40 backdrop-blur-3xl p-8 rounded-[2.5rem] border border-white/[0.05] shadow-2xl">
+        <div className="animate-in fade-in slide-in-from-right-4 duration-700 space-y-6">
+            {/* Header */}
+            <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-6 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-[0_8px_30px_rgba(0,0,0,0.02)]">
                 <div className="flex items-center gap-6">
-                    <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-indigo-500/20 to-transparent border border-indigo-500/20 flex items-center justify-center shadow-inner group transition-transform duration-500 hover:scale-105">
-                        <i className="fa-solid fa-images text-indigo-400 text-2xl group-hover:drop-shadow-[0_0_8px_rgba(99,102,241,0.6)]"></i>
+                    <div className="w-16 h-16 rounded-3xl bg-indigo-50 border border-indigo-100 flex items-center justify-center group transition-transform duration-500 hover:scale-105 shadow-sm shadow-indigo-100/50">
+                        <i className="fa-solid fa-images text-indigo-600 text-2xl"></i>
                     </div>
                     <div>
                         <div className="flex items-center gap-2 mb-1.5">
-                            <h2 className="text-2xl font-[900] text-white tracking-tight">Banner Yönetimi</h2>
-                            <span className="px-2 py-0.5 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black text-slate-500 uppercase tracking-widest">Slider</span>
+                            <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none">Banner Yönetimi</h2>
+                            <span className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-[10px] font-black text-slate-400 uppercase tracking-widest">Slider</span>
                         </div>
-                        <p className="text-[13px] text-slate-400 font-medium">Anasayfa arka plan görselleri ({heroBackgrounds.length}/5)</p>
+                        <p className="text-[13px] text-slate-500 font-medium">Anasayfa görselleri (<span className="text-slate-900 font-bold">{heroBackgrounds.length}/5</span>)</p>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-3">
                     {heroBackgrounds.length < 5 && (
-                        <label className="px-5 py-3 bg-[var(--color-primary)] hover:bg-amber-600 text-[#06080F] rounded-2xl font-[900] text-[11px] uppercase tracking-widest shadow-lg shadow-amber-500/20 transition-all flex items-center gap-2.5 cursor-pointer shrink-0 active:scale-95">
+                        <label className="px-8 py-3.5 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-slate-200 hover:bg-slate-800 transition-all flex items-center gap-2.5 cursor-pointer shrink-0 active:scale-95">
                             <i className="fa-solid fa-plus text-[10px]"></i> Görsel Ekle
                             <input type="file" accept="image/*" className="hidden" onChange={e => {
                                 const file = e.target.files?.[0];
@@ -58,113 +58,111 @@ export const HeroImagesView: React.FC<HeroImagesViewProps> = ({
                 </div>
             </div>
 
-            {/* Main Content Area */}
-            <div className="bg-[#020617]/40 border border-white/[0.06] rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-3xl">
-                {/* Toolbar */}
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-8 py-5 bg-white/[0.02] border-b border-white/[0.04]">
-                    <div className="flex items-center gap-4">
+            {/* Content Card */}
+            <div className="bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden shadow-sm">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-8 py-6 bg-slate-50/50 border-b border-slate-100">
+                    <div className="flex items-center gap-5">
                         <div className="flex items-center gap-2">
-                            <i className="fa-solid fa-layer-group text-slate-500 text-xs"></i>
-                            <span className="text-[11px] font-[900] text-slate-400 uppercase tracking-[0.2em]">Mevcut Slaytlar</span>
+                            <i className="fa-solid fa-layer-group text-slate-400 text-xs"></i>
+                            <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">Mevcut Slaytlar</span>
                         </div>
                         {selectedHeroImages.length > 0 && (
-                            <div className="h-4 w-px bg-white/10"></div>
-                        )}
-                        {selectedHeroImages.length > 0 && (
-                            <div className="flex items-center gap-3 animate-in fade-in slide-in-from-left-2 duration-300">
-                                <span className="text-[11px] text-[var(--color-primary)] font-bold">{selectedHeroImages.length} Seçili</span>
+                            <div className="flex items-center gap-4 animate-in fade-in slide-in-from-left-2">
+                                <div className="w-px h-4 bg-slate-200"></div>
+                                <span className="text-[11px] text-indigo-600 font-black uppercase tracking-widest">{selectedHeroImages.length} SEÇİLDİ</span>
                                 <button 
                                     onClick={() => {
-                                        _confirmAction({
-                                            title: 'Görselleri Sil',
-                                            description: `${selectedHeroImages.length} adet görseli kaldırmak istediğinize emin misiniz?`,
-                                            type: 'danger',
-                                            onConfirm: () => {
-                                                updateHeroBackgrounds(heroBackgrounds.filter((_, idx) => !selectedHeroImages.includes(idx)));
-                                                setSelectedHeroImages([]);
-                                            }
-                                        });
+                                        if (_confirmAction) {
+                                            _confirmAction({
+                                                title: 'Görselleri Sil',
+                                                description: `${selectedHeroImages.length} adet görseli kaldırmak istediğinize emin misiniz?`,
+                                                type: 'danger',
+                                                onConfirm: () => {
+                                                    updateHeroBackgrounds(heroBackgrounds.filter((_, idx) => !selectedHeroImages.includes(idx)));
+                                                    setSelectedHeroImages([]);
+                                                }
+                                            });
+                                        }
                                     }}
-                                    className="px-3 py-1.5 rounded-lg bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white text-[10px] font-black transition-all"
+                                    className="px-4 py-1.5 rounded-lg bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-600 hover:text-white text-[10px] font-black transition-all uppercase tracking-widest"
                                 >
-                                    <i className="fa-solid fa-trash mr-1.5"></i>SİL
+                                    Seçilenleri Sil
                                 </button>
                             </div>
                         )}
                     </div>
-
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-white rounded-xl border border-slate-100 shadow-sm">
                         <i className="fa-solid fa-circle-info text-blue-500/50 text-[10px]"></i>
-                        <span className="text-[10px] text-slate-600 font-bold uppercase tracking-wider">Sıralamak için sürükleyin</span>
+                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Sürükleyerek Sıralayın</span>
                     </div>
                 </div>
 
                 {heroBackgrounds.length === 0 ? (
                     <div className="p-20 text-center">
-                        <div className="w-20 h-20 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-6">
-                            <i className="fa-regular fa-image text-3xl text-slate-700"></i>
+                        <div className="w-20 h-20 rounded-3xl bg-slate-50 border border-slate-100 flex items-center justify-center mx-auto mb-6">
+                            <i className="fa-regular fa-image text-3xl text-slate-300"></i>
                         </div>
-                        <h3 className="text-white font-[800] text-lg mb-1">Henüz görsel eklenmedi</h3>
-                        <p className="text-slate-500 text-sm max-w-xs mx-auto">Sitenizin anasayfasında görünecek slider görsellerini yukarıdan ekleyebilirsiniz.</p>
+                        <h3 className="text-slate-900 font-black text-lg mb-2">Henüz görsel eklenmedi</h3>
+                        <p className="text-slate-500 text-sm max-w-xs mx-auto font-medium leading-relaxed">Slider alanında görünecek yüksek kaliteli görselleri yukarıdaki butondan ekleyebilirsiniz.</p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto scrollbar-hide">
-                        <table className="w-full text-left border-collapse">
+                        <table className="w-full text-left">
                             <thead>
-                                <tr className="border-b border-white/[0.04]">
+                                <tr className="bg-slate-50/30 border-b border-slate-100">
                                     <th className="w-16 px-8 py-5">
                                         <input type="checkbox" checked={allSelected} onChange={() => { if (allSelected) setSelectedHeroImages([]); else setSelectedHeroImages(heroBackgrounds.map((_, i) => i)); }}
-                                            className="w-4 h-4 rounded-lg border-white/20 bg-white/5 accent-[#c5a059] cursor-pointer" />
+                                            className="w-4 h-4 rounded-lg border-slate-200 bg-white accent-gold cursor-pointer" />
                                     </th>
                                     <th className="w-12 px-2 py-5"></th>
-                                    <th className="px-6 py-5 text-[10px] font-[900] text-slate-500 uppercase tracking-[0.2em]">Sıra</th>
-                                    <th className="px-6 py-5 text-[10px] font-[900] text-slate-500 uppercase tracking-[0.2em]">Önizleme</th>
-                                    <th className="px-6 py-5 text-[10px] font-[900] text-slate-500 uppercase tracking-[0.2em]">Dosya Bilgisi</th>
-                                    <th className="px-8 py-5 text-[10px] font-[900] text-slate-500 uppercase tracking-[0.2em] text-right">İşlemler</th>
+                                    <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Sıralama</th>
+                                    <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Önizleme</th>
+                                    <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Kaynak</th>
+                                    <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">İşlemler</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-white/[0.03]">
+                            <tbody className="divide-y divide-slate-50">
                                 {heroBackgrounds.map((img, idx) => {
                                     const isSelected = selectedHeroImages.includes(idx);
                                     return (
                                         <tr key={idx} {...getDragProps(idx)}
-                                            className={`group transition-all duration-300 cursor-grab active:cursor-grabbing ${isSelected ? 'bg-[var(--color-primary)]/5' : 'hover:bg-white/[0.03]'} ${getRowClassName(idx)}`}>
+                                            className={`group transition-all duration-300 cursor-grab active:cursor-grabbing ${isSelected ? 'bg-gold/5' : 'hover:bg-slate-50'} ${getRowClassName(idx)}`}>
                                             <td className="px-8 py-6">
                                                 <input type="checkbox" checked={isSelected}
                                                     onChange={e => { if (e.target.checked) setSelectedHeroImages([...selectedHeroImages, idx]); else setSelectedHeroImages(selectedHeroImages.filter(id => id !== idx)); }}
-                                                    className="w-4 h-4 rounded-lg border-white/20 bg-white/5 accent-[#c5a059] cursor-pointer" />
+                                                    className="w-4 h-4 rounded-lg border-slate-200 bg-white accent-gold cursor-pointer" />
                                             </td>
                                             <td className="px-2 py-6">
-                                                <i className="fa-solid fa-grip-vertical text-slate-800 group-hover:text-slate-600 transition-colors"></i>
+                                                <i className="fa-solid fa-grip-vertical text-slate-200 group-hover:text-slate-400 transition-colors"></i>
                                             </td>
                                             <td className="px-6 py-6">
-                                                <div className="w-10 h-10 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center font-mono font-black text-slate-500 group-hover:text-[var(--color-primary)] transition-colors">
+                                                <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center font-mono font-black text-slate-400 group-hover:text-gold group-hover:border-gold/30 transition-all">
                                                     {String(idx + 1).padStart(2, '0')}
                                                 </div>
                                             </td>
                                             <td className="px-6 py-6">
-                                                <div className="w-40 h-24 rounded-[1.5rem] overflow-hidden border border-white/10 bg-black/20 shadow-xl group-hover:scale-[1.02] transition-all duration-500">
+                                                <div className="w-48 h-28 rounded-[1.5rem] overflow-hidden border border-slate-100 bg-slate-50 shadow-sm group-hover:shadow-xl transition-all duration-500">
                                                     <img src={img} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={`Slide ${idx + 1}`} />
                                                 </div>
                                             </td>
                                             <td className="px-6 py-6">
                                                 <div>
-                                                    <p className="font-[800] text-white text-[14px] group-hover:text-[var(--color-primary)] transition-colors duration-300">Görsel {idx + 1}</p>
-                                                    <p className="text-[10px] text-slate-600 font-bold uppercase tracking-wider mt-1">{img.startsWith('data:') ? 'YÜKLENEN DOSYA' : 'HARİCİ BAĞLANTI'}</p>
-                                                    {idx === 0 && <span className="inline-flex items-center gap-1.5 mt-2 px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[9px] font-black uppercase tracking-widest">Açılış Görseli</span>}
+                                                    <p className="font-bold text-slate-900 group-hover:text-gold transition-colors duration-300">Görsel Katmanı {idx + 1}</p>
+                                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-1.5">{img.startsWith('data:') ? 'YÜKLENEN DOSYA' : 'HARİCİ URL'}</p>
+                                                    {idx === 0 && <span className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 text-[9px] font-black uppercase tracking-widest">VİTRİN GÖRSELİ</span>}
                                                 </div>
                                             </td>
                                             <td className="px-8 py-6">
                                                 <div className="flex items-center justify-end gap-2.5 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
                                                     <button onClick={() => updateHeroBackgrounds(moveItem(heroBackgrounds, idx, 'up'))} disabled={idx === 0}
-                                                        className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.08] text-slate-500 hover:text-white hover:bg-white/[0.08] disabled:opacity-0 flex items-center justify-center transition-all">
+                                                        className="w-9 h-9 rounded-xl bg-slate-50 text-slate-400 hover:text-slate-900 hover:shadow-sm disabled:opacity-0 flex items-center justify-center transition-all">
                                                         <i className="fa-solid fa-arrow-up text-xs"></i>
                                                     </button>
                                                     <button onClick={() => updateHeroBackgrounds(moveItem(heroBackgrounds, idx, 'down'))} disabled={idx === heroBackgrounds.length - 1}
-                                                        className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/[0.08] text-slate-500 hover:text-white hover:bg-white/[0.08] disabled:opacity-0 flex items-center justify-center transition-all">
+                                                        className="w-9 h-9 rounded-xl bg-slate-50 text-slate-400 hover:text-slate-900 hover:shadow-sm disabled:opacity-0 flex items-center justify-center transition-all">
                                                         <i className="fa-solid fa-arrow-down text-xs"></i>
                                                     </button>
-                                                    <label className="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-500 hover:text-white transition-all cursor-pointer flex items-center justify-center active:scale-90">
+                                                    <label className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 hover:bg-blue-600 hover:text-white transition-all cursor-pointer flex items-center justify-center active:scale-90 shadow-sm">
                                                         <i className="fa-solid fa-pen text-xs"></i>
                                                         <input type="file" accept="image/*" className="hidden" onChange={e => {
                                                             const file = e.target.files?.[0];
@@ -172,16 +170,18 @@ export const HeroImagesView: React.FC<HeroImagesViewProps> = ({
                                                         }} />
                                                     </label>
                                                     <button onClick={() => { 
-                                                        _confirmAction({
-                                                            title: 'Görseli Sil',
-                                                            description: 'Bu görseli kaldırmak istediğinize emin misiniz?',
-                                                            type: 'danger',
-                                                            onConfirm: () => {
-                                                                const n = [...heroBackgrounds]; n.splice(idx, 1); updateHeroBackgrounds(n); setSelectedHeroImages(selectedHeroImages.filter(id => id !== idx));
-                                                            }
-                                                        });
+                                                        if (_confirmAction) {
+                                                            _confirmAction({
+                                                                title: 'Görseli Sil',
+                                                                description: 'Bu görseli kaldırmak istediğinize emin misiniz?',
+                                                                type: 'danger',
+                                                                onConfirm: () => {
+                                                                    const n = [...heroBackgrounds]; n.splice(idx, 1); updateHeroBackgrounds(n); setSelectedHeroImages(selectedHeroImages.filter(id => id !== idx));
+                                                                }
+                                                            });
+                                                        }
                                                     }}
-                                                        className="w-9 h-9 rounded-xl bg-rose-500/10 text-rose-400 border border-rose-500/20 hover:bg-rose-500 hover:text-white transition-all flex items-center justify-center active:scale-90">
+                                                        className="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-600 hover:text-white transition-all flex items-center justify-center active:scale-90 shadow-sm">
                                                         <i className="fa-solid fa-trash-can text-xs"></i>
                                                     </button>
                                                 </div>
@@ -195,12 +195,14 @@ export const HeroImagesView: React.FC<HeroImagesViewProps> = ({
                 )}
             </div>
             
-            {/* Legend / Info */}
-            <div className="flex items-center gap-3 px-8 py-5 bg-[#020617]/20 border border-white/[0.04] rounded-[2rem]">
-                <div className="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400 shadow-inner">
-                    <i className="fa-solid fa-circle-info text-xs"></i>
+            <div className="flex items-center gap-4 px-8 py-5 bg-blue-50 rounded-[2rem] border border-blue-100">
+                <div className="w-10 h-10 rounded-2xl bg-white flex items-center justify-center text-blue-600 shadow-sm">
+                    <i className="fa-solid fa-circle-info"></i>
                 </div>
-                <p className="text-[11px] text-slate-500 font-bold tracking-wide">Tavsiye edilen çözünürlük: <span className="text-slate-400">1920 × 1080 piksel</span>. Dosya boyutu maksimum <span className="text-slate-400">2MB</span> olmalıdır.</p>
+                <div>
+                    <p className="text-[11px] text-blue-900 font-black uppercase tracking-widest">Sistem Notu</p>
+                    <p className="text-[12px] text-blue-700 font-medium">En iyi görüntü için 1920x1080 piksel çözünürlüğünde ve 2MB altındaki görselleri tercih edin.</p>
+                </div>
             </div>
         </div>
     );

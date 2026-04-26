@@ -5,13 +5,13 @@ import { SiteContent } from '../../../types';
 interface VisionMissionViewProps {
     editContent: SiteContent;
     setEditContent: (content: SiteContent) => void;
-    _confirmAction: (options: { title: string; description: string; onConfirm: () => void; type?: 'danger' | 'warning' | 'info' }) => void;
+    _confirmAction?: (options: { title: string; description: string; onConfirm: () => void; type?: 'danger' | 'warning' | 'info' }) => void;
 }
 
 export const VisionMissionView: React.FC<VisionMissionViewProps> = ({ editContent, setEditContent }) => {
     const vm = editContent.visionMission || {};
-    const LABEL_CLS = 'block text-[11px] font-[800] font-outfit uppercase tracking-[0.15em] text-slate-500 mb-2.5 ml-1';
-    const INPUT_CLS = 'bg-white/[0.03] border border-white/[0.08] rounded-2xl px-5 py-3.5 text-sm text-white placeholder-slate-600 focus:border-[var(--color-primary)]/50 focus:bg-white/[0.05] outline-none transition-all w-full font-semibold';
+    const LABEL_CLS = 'block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2.5 ml-1';
+    const INPUT_CLS = 'bg-slate-50 border border-slate-100 rounded-2xl px-5 py-3.5 text-sm text-slate-900 font-bold placeholder-slate-300 focus:bg-white focus:border-gold/40 focus:ring-4 focus:ring-gold/5 outline-none transition-all w-full';
 
     const update = (path: string, value: unknown) => {
         const parts = path.split('.');
@@ -23,31 +23,31 @@ export const VisionMissionView: React.FC<VisionMissionViewProps> = ({ editConten
     };
 
     return (
-        <div className="animate-in fade-in slide-in-from-right-4 duration-700 space-y-8 pb-10">
-            {/* Header / Stats — Elite Style */}
-            <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-6 bg-[#020617]/40 backdrop-blur-3xl p-8 rounded-[2.5rem] border border-white/[0.05] shadow-2xl">
+        <div className="animate-in fade-in slide-in-from-right-4 duration-700 space-y-6 pb-10">
+            {/* Header */}
+            <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-6 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-[0_8px_30px_rgba(0,0,0,0.02)]">
                 <div className="flex items-center gap-6">
-                    <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-blue-500/20 to-transparent border border-blue-500/20 flex items-center justify-center shadow-inner group transition-transform duration-500 hover:scale-105">
-                        <i className="fa-solid fa-eye text-blue-400 text-2xl group-hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.6)]"></i>
+                    <div className="w-16 h-16 rounded-3xl bg-indigo-50 border border-indigo-100 flex items-center justify-center group transition-transform duration-500 hover:scale-105 shadow-sm shadow-indigo-100/50">
+                        <i className="fa-solid fa-eye text-indigo-600 text-2xl"></i>
                     </div>
                     <div>
                         <div className="flex items-center gap-2 mb-1.5">
-                            <h2 className="text-2xl font-[900] text-white tracking-tight">Vizyon & Misyon</h2>
-                            <span className="px-2 py-0.5 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black text-slate-500 uppercase tracking-widest">Philosophy</span>
+                            <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none">Vizyon & Misyon</h2>
+                            <span className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-[10px] font-black text-slate-400 uppercase tracking-widest">Philosophy</span>
                         </div>
-                        <p className="text-[13px] text-slate-400 font-medium">Şirket değerlerini ve gelecek vizyonunu yönetin</p>
+                        <p className="text-[13px] text-slate-500 font-medium">Şirket değerlerini ve gelecek vizyonunu yönetin</p>
                     </div>
                 </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Vision Card */}
-                <div className="bg-[#020617]/40 border border-white/[0.06] rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-3xl p-8">
+                <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 shadow-sm">
                     <div className="flex items-center gap-4 mb-8">
-                        <div className="w-11 h-11 rounded-2xl bg-blue-500/15 border border-blue-500/20 flex items-center justify-center font-[900] text-blue-400 shadow-inner">
+                        <div className="w-11 h-11 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shadow-sm font-black">
                             <i className="fa-solid fa-eye text-lg"></i>
                         </div>
-                        <h3 className="text-lg font-[800] text-white tracking-tight">Vizyonumuz</h3>
+                        <h3 className="text-lg font-black text-slate-900 tracking-tight leading-none">Vizyonumuz</h3>
                     </div>
                     <div className="space-y-6">
                         <div>
@@ -56,18 +56,20 @@ export const VisionMissionView: React.FC<VisionMissionViewProps> = ({ editConten
                         </div>
                         <div>
                             <label className={LABEL_CLS}>AÇIKLAMA</label>
-                            <RichTextEditor value={vm.vision?.desc || ''} onChange={v => update('vision.desc', v)} placeholder="Vizyon metni..." minRows={6} compact />
+                            <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-100/50 overflow-hidden">
+                                <RichTextEditor value={vm.vision?.desc || ''} onChange={v => update('vision.desc', v)} placeholder="Vizyon metni..." minRows={8} compact />
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Mission Card */}
-                <div className="bg-[#020617]/40 border border-white/[0.06] rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-3xl p-8">
+                <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 shadow-sm">
                     <div className="flex items-center gap-4 mb-8">
-                        <div className="w-11 h-11 rounded-2xl bg-violet-500/15 border border-violet-500/20 flex items-center justify-center font-[900] text-violet-400 shadow-inner">
+                        <div className="w-11 h-11 rounded-2xl bg-violet-50 border border-violet-100 flex items-center justify-center text-violet-600 shadow-sm font-black">
                             <i className="fa-solid fa-bullseye text-lg"></i>
                         </div>
-                        <h3 className="text-lg font-[800] text-white tracking-tight">Misyonumuz</h3>
+                        <h3 className="text-lg font-black text-slate-900 tracking-tight leading-none">Misyonumuz</h3>
                     </div>
                     <div className="space-y-6">
                         <div>
@@ -76,47 +78,49 @@ export const VisionMissionView: React.FC<VisionMissionViewProps> = ({ editConten
                         </div>
                         <div>
                             <label className={LABEL_CLS}>AÇIKLAMA</label>
-                            <RichTextEditor value={vm.mission?.desc || ''} onChange={v => update('mission.desc', v)} placeholder="Misyon metni..." minRows={6} compact />
+                            <div className="bg-white rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-100/50 overflow-hidden">
+                                <RichTextEditor value={vm.mission?.desc || ''} onChange={v => update('mission.desc', v)} placeholder="Misyon metni..." minRows={8} compact />
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* Values Table */}
-            <div className="bg-[#020617]/40 border border-white/[0.06] rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-3xl">
-                <div className="px-8 py-6 border-b border-white/[0.05] flex items-center gap-4">
-                    <div className="w-11 h-11 rounded-2xl bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center font-[900] text-emerald-400 shadow-inner">
+            <div className="bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden shadow-sm">
+                <div className="px-8 py-6 border-b border-slate-50 flex items-center gap-4 bg-slate-50/30">
+                    <div className="w-11 h-11 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shadow-sm font-black">
                         <i className="fa-solid fa-gem text-lg"></i>
                     </div>
                     <div>
-                        <h3 className="text-lg font-[800] text-white tracking-tight">Kurumsal Değerler</h3>
-                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Hizmet İlkelerimiz</p>
+                        <h3 className="text-lg font-black text-slate-900 tracking-tight leading-none">Hizmet İlkelerimiz</h3>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">KURUMSAL DEĞERLER</p>
                     </div>
                 </div>
                 <div className="overflow-x-auto scrollbar-hide">
                     <table className="w-full text-left">
                         <thead>
-                            <tr className="bg-white/[0.02] border-b border-white/[0.04]">
-                                <th className="px-8 py-5 text-[10px] font-[900] text-slate-500 uppercase tracking-[0.2em]">İkon / Başlık</th>
-                                <th className="px-6 py-5 text-[10px] font-[900] text-slate-500 uppercase tracking-[0.2em]">İlke Açıklaması</th>
+                            <tr className="bg-slate-50/50 border-b border-slate-100">
+                                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest w-1/3">İkon / Başlık</th>
+                                <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">İlke Açıklaması</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/[0.03]">
+                        <tbody className="divide-y divide-slate-50">
                             {vm.values?.items?.map((item: any, idx: number) => (
-                                <tr key={idx} className="group hover:bg-white/[0.03] transition-all duration-300">
-                                    <td className="px-8 py-6">
-                                        <div className="flex items-center gap-5">
-                                            <div className="flex flex-col items-center gap-2 shrink-0">
-                                                <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center text-emerald-400 shadow-inner group-hover:text-[var(--color-primary)] group-hover:border-[var(--color-primary)]/30 transition-all duration-500">
-                                                    <i className={`fa-solid ${item.icon} text-lg`}></i>
+                                <tr key={idx} className="group hover:bg-slate-50 transition-all duration-300">
+                                    <td className="px-8 py-8">
+                                        <div className="flex items-center gap-6">
+                                            <div className="flex flex-col items-center gap-3 shrink-0">
+                                                <div className="w-14 h-14 rounded-2xl bg-white border border-slate-100 shadow-sm flex items-center justify-center text-gold group-hover:scale-110 transition-all duration-500">
+                                                    <i className={`fa-solid ${item.icon} text-xl`}></i>
                                                 </div>
-                                                <input className="w-20 bg-transparent text-center text-[9px] text-slate-700 font-mono focus:text-white outline-none" value={item.icon} onChange={e => { const n = [...vm.values.items]; n[idx].icon = e.target.value; update('values.items', n); }} />
+                                                <input className="w-20 bg-slate-50 border border-slate-100 rounded-lg text-center text-[9px] text-slate-400 font-mono py-1 focus:bg-white focus:text-gold outline-none" value={item.icon} onChange={e => { const n = [...vm.values.items]; n[idx].icon = e.target.value; update('values.items', n); }} />
                                             </div>
-                                            <input className="bg-transparent text-[15px] font-[800] text-white outline-none focus:text-[var(--color-primary)] transition-colors w-full" value={item.title} onChange={e => { const n = [...vm.values.items]; n[idx].title = e.target.value; update('values.items', n); }} />
+                                            <input className="bg-transparent text-[16px] font-black text-slate-900 outline-none focus:text-gold transition-colors w-full" value={item.title} onChange={e => { const n = [...vm.values.items]; n[idx].title = e.target.value; update('values.items', n); }} />
                                         </div>
                                     </td>
-                                    <td className="px-6 py-6">
-                                        <textarea className="w-full bg-transparent text-[13px] font-medium text-slate-400 outline-none focus:text-slate-200 transition-colors resize-none leading-relaxed" rows={2} value={item.desc} onChange={e => { const n = [...vm.values.items]; n[idx].desc = e.target.value; update('values.items', n); }} />
+                                    <td className="px-8 py-8">
+                                        <textarea className="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-[13px] font-medium text-slate-500 outline-none focus:bg-white focus:text-slate-900 transition-colors resize-none leading-relaxed shadow-inner" rows={3} value={item.desc} onChange={e => { const n = [...vm.values.items]; n[idx].desc = e.target.value; update('values.items', n); }} />
                                     </td>
                                 </tr>
                             ))}
