@@ -8,8 +8,11 @@ interface VisionMissionViewProps {
     _confirmAction: (options: { title: string; description: string; onConfirm: () => void; type?: 'danger' | 'warning' | 'info' }) => void;
 }
 
-export const VisionMissionView: React.FC<VisionMissionViewProps> = ({ editContent, setEditContent, _confirmAction }) => {
+export const VisionMissionView: React.FC<VisionMissionViewProps> = ({ editContent, setEditContent }) => {
     const vm = editContent.visionMission || {};
+    const LABEL_CLS = 'block text-[11px] font-[800] font-outfit uppercase tracking-[0.15em] text-slate-500 mb-2.5 ml-1';
+    const INPUT_CLS = 'bg-white/[0.03] border border-white/[0.08] rounded-2xl px-5 py-3.5 text-sm text-white placeholder-slate-600 focus:border-[var(--color-primary)]/50 focus:bg-white/[0.05] outline-none transition-all w-full font-semibold';
+
     const update = (path: string, value: unknown) => {
         const parts = path.split('.');
         const newVm = JSON.parse(JSON.stringify(vm));
@@ -20,209 +23,105 @@ export const VisionMissionView: React.FC<VisionMissionViewProps> = ({ editConten
     };
 
     return (
-        <div className="animate-in slide-in-from-right-8 duration-500 space-y-5">
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {[
-                    { label: 'Vizyon', value: vm.vision?.title ? '✓' : '—', icon: 'fa-eye', iconBg: 'bg-blue-500', gradient: 'from-blue-500/15 to-indigo-600/5', border: 'border-blue-500/15' },
-                    { label: 'Misyon', value: vm.mission?.title ? '✓' : '—', icon: 'fa-bullseye', iconBg: 'bg-violet-500', gradient: 'from-violet-500/15 to-purple-600/5', border: 'border-violet-500/15' },
-                    { label: 'Değerler', value: vm.values?.items?.length || 0, icon: 'fa-gem', iconBg: 'bg-emerald-500', gradient: 'from-emerald-500/15 to-green-600/5', border: 'border-emerald-500/15' },
-                    { label: 'Banner', value: vm.hero?.bannerImage ? '✓' : '—', icon: 'fa-panorama', iconBg: 'bg-[var(--color-primary)]', gradient: 'from-[var(--color-primary)]/15 to-amber-600/5', border: 'border-[var(--color-primary)]/15' },
-                ].map((s, i) => (
-                    <div key={i} className={`p-4 rounded-2xl bg-gradient-to-br ${s.gradient} border ${s.border}`}>
-                        <div className="flex items-start justify-between">
-                            <div>
-                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">{s.label}</p>
-                                <p className="text-2xl font-black text-white mt-1">{s.value}</p>
-                            </div>
-                            <div className={`w-10 h-10 rounded-xl ${s.iconBg} flex items-center justify-center shadow-lg`}>
-                                <i className={`fa-solid ${s.icon} text-white text-sm`}></i>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-            {/* Hero Banner */}
-            <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
-                <div className="px-6 py-4 border-b border-white/[0.04] flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-[var(--color-primary)] flex items-center justify-center shadow-lg">
-                        <i className="fa-solid fa-panorama text-white text-sm"></i>
+        <div className="animate-in fade-in slide-in-from-right-4 duration-700 space-y-8 pb-10">
+            {/* Header / Stats — Elite Style */}
+            <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-6 bg-[#020617]/40 backdrop-blur-3xl p-8 rounded-[2.5rem] border border-white/[0.05] shadow-2xl">
+                <div className="flex items-center gap-6">
+                    <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-blue-500/20 to-transparent border border-blue-500/20 flex items-center justify-center shadow-inner group transition-transform duration-500 hover:scale-105">
+                        <i className="fa-solid fa-eye text-blue-400 text-2xl group-hover:drop-shadow-[0_0_8px_rgba(59,130,246,0.6)]"></i>
                     </div>
                     <div>
-                        <h3 className="text-sm font-bold text-white">Hero Banner Görseli</h3>
-                        <p className="text-[10px] text-slate-500">1920×1080px önerilir</p>
+                        <div className="flex items-center gap-2 mb-1.5">
+                            <h2 className="text-2xl font-[900] text-white tracking-tight">Vizyon & Misyon</h2>
+                            <span className="px-2 py-0.5 rounded-lg bg-white/5 border border-white/10 text-[10px] font-black text-slate-500 uppercase tracking-widest">Philosophy</span>
+                        </div>
+                        <p className="text-[13px] text-slate-400 font-medium">Şirket değerlerini ve gelecek vizyonunu yönetin</p>
                     </div>
                 </div>
-                <div className="p-6">
-                    <div className="flex flex-col md:flex-row gap-5">
-                        {vm.hero?.bannerImage ? (
-                            <div className="w-full md:w-64 h-36 rounded-xl overflow-hidden border border-white/10 shrink-0 relative group">
-                                <img src={vm.hero.bannerImage} className="w-full h-full object-cover" alt="Banner" />
-                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3 backdrop-blur-sm">
-                                    <label className="w-9 h-9 rounded-lg bg-white/10 hover:bg-[var(--color-primary)] text-white flex items-center justify-center cursor-pointer transition-all">
-                                        <i className="fa-solid fa-pen text-xs"></i>
-                                        <input type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) { const r = new FileReader(); r.onload = ev => update('hero.bannerImage', ev.target?.result); r.readAsDataURL(f); } }} />
-                                    </label>
-                                    <button onClick={() => update('hero.bannerImage', '')} className="w-9 h-9 rounded-lg bg-white/10 hover:bg-red-500 text-white flex items-center justify-center transition-all">
-                                        <i className="fa-solid fa-trash text-xs"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="w-full md:w-64 h-36 rounded-xl border-2 border-dashed border-white/10 hover:border-[var(--color-primary)]/40 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all shrink-0"
-                                onClick={() => document.getElementById('vision-banner-upload')?.click()}>
-                                <input id="vision-banner-upload" type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) { const r = new FileReader(); r.onload = ev => update('hero.bannerImage', ev.target?.result); r.readAsDataURL(f); } }} />
-                                <i className="fa-solid fa-cloud-arrow-up text-xl text-slate-600"></i>
-                                <p className="text-xs font-bold text-slate-500">Sürükle veya tıkla</p>
-                            </div>
-                        )}
-                        <div className="flex-1 flex flex-col justify-center space-y-3">
-                            <div className="flex items-center gap-4 text-[10px] font-bold text-slate-600 uppercase before:flex-1 before:h-px before:bg-white/[0.04] after:flex-1 after:h-px after:bg-white/[0.04]">veya URL</div>
-                            <div className="relative">
-                                <i className="fa-solid fa-link absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 text-xs"></i>
-                                <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl pl-9 pr-4 py-3 text-sm text-white focus:border-[var(--color-primary)]/50 outline-none transition-all"
-                                    value={vm.hero?.bannerImage || ''} onChange={e => update('hero.bannerImage', e.target.value)} placeholder="https://..." />
-                            </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                {/* Vision Card */}
+                <div className="bg-[#020617]/40 border border-white/[0.06] rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-3xl p-8">
+                    <div className="flex items-center gap-4 mb-8">
+                        <div className="w-11 h-11 rounded-2xl bg-blue-500/15 border border-blue-500/20 flex items-center justify-center font-[900] text-blue-400 shadow-inner">
+                            <i className="fa-solid fa-eye text-lg"></i>
+                        </div>
+                        <h3 className="text-lg font-[800] text-white tracking-tight">Vizyonumuz</h3>
+                    </div>
+                    <div className="space-y-6">
+                        <div>
+                            <label className={LABEL_CLS}>VİZYON BAŞLIĞI</label>
+                            <input className={INPUT_CLS} value={vm.vision?.title || ''} onChange={e => update('vision.title', e.target.value)} placeholder="Gelecek Vizyonumuz" />
+                        </div>
+                        <div>
+                            <label className={LABEL_CLS}>AÇIKLAMA</label>
+                            <RichTextEditor value={vm.vision?.desc || ''} onChange={v => update('vision.desc', v)} placeholder="Vizyon metni..." minRows={6} compact />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Mission Card */}
+                <div className="bg-[#020617]/40 border border-white/[0.06] rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-3xl p-8">
+                    <div className="flex items-center gap-4 mb-8">
+                        <div className="w-11 h-11 rounded-2xl bg-violet-500/15 border border-violet-500/20 flex items-center justify-center font-[900] text-violet-400 shadow-inner">
+                            <i className="fa-solid fa-bullseye text-lg"></i>
+                        </div>
+                        <h3 className="text-lg font-[800] text-white tracking-tight">Misyonumuz</h3>
+                    </div>
+                    <div className="space-y-6">
+                        <div>
+                            <label className={LABEL_CLS}>MİSYON BAŞLIĞI</label>
+                            <input className={INPUT_CLS} value={vm.mission?.title || ''} onChange={e => update('mission.title', e.target.value)} placeholder="Kurumsal Misyonumuz" />
+                        </div>
+                        <div>
+                            <label className={LABEL_CLS}>AÇIKLAMA</label>
+                            <RichTextEditor value={vm.mission?.desc || ''} onChange={v => update('mission.desc', v)} placeholder="Misyon metni..." minRows={6} compact />
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Vision & Mission Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {/* Vision */}
-                <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
-                    <div className="px-6 py-4 border-b border-white/[0.04] flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-blue-500 flex items-center justify-center shadow-lg"><i className="fa-solid fa-eye text-white text-sm"></i></div>
-                        <h3 className="text-sm font-bold text-white">Vizyonumuz</h3>
+            {/* Values Table */}
+            <div className="bg-[#020617]/40 border border-white/[0.06] rounded-[2.5rem] overflow-hidden shadow-2xl backdrop-blur-3xl">
+                <div className="px-8 py-6 border-b border-white/[0.05] flex items-center gap-4">
+                    <div className="w-11 h-11 rounded-2xl bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center font-[900] text-emerald-400 shadow-inner">
+                        <i className="fa-solid fa-gem text-lg"></i>
                     </div>
-                    <div className="p-6 space-y-4">
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i className="fa-solid fa-heading text-[8px] text-blue-400"></i> Başlık</label>
-                            <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500/50 outline-none transition-all"
-                                value={vm.vision?.title || ''} onChange={e => update('vision.title', e.target.value)} />
-                        </div>
-                        <RichTextEditor
-                            label={<><i className="fa-solid fa-align-left text-[8px] text-blue-400"></i> Açıklama</>}
-                            value={vm.vision?.desc || ''}
-                            onChange={v => update('vision.desc', v)}
-                            placeholder="Vizyon açıklaması..."
-                            minRows={4}
-                            compact
-                        />
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i className="fa-solid fa-list text-[8px] text-blue-400"></i> Maddeler</label>
-                            <div className="space-y-2">
-                                {vm.vision?.items?.map((item: string, idx: number) => (
-                                    <div key={idx} className="flex items-center gap-2">
-                                        <div className="w-6 h-6 rounded-md bg-blue-500/10 flex items-center justify-center shrink-0"><span className="text-[9px] font-bold text-blue-400">{idx + 1}</span></div>
-                                        <input className="flex-1 bg-white/5 border border-white/[0.06] rounded-xl px-3 py-2.5 text-sm text-white focus:border-blue-500/50 outline-none transition-all"
-                                            value={item} onChange={e => { const n = [...vm.vision.items]; n[idx] = e.target.value; update('vision.items', n); }} />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Mission */}
-                <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
-                    <div className="px-6 py-4 border-b border-white/[0.04] flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-violet-500 flex items-center justify-center shadow-lg"><i className="fa-solid fa-bullseye text-white text-sm"></i></div>
-                        <h3 className="text-sm font-bold text-white">Misyonumuz</h3>
-                    </div>
-                    <div className="p-6 space-y-4">
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i className="fa-solid fa-heading text-[8px] text-violet-400"></i> Başlık</label>
-                            <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:border-violet-500/50 outline-none transition-all"
-                                value={vm.mission?.title || ''} onChange={e => update('mission.title', e.target.value)} />
-                        </div>
-                        <RichTextEditor
-                            label={<><i className="fa-solid fa-align-left text-[8px] text-violet-400"></i> Açıklama</>}
-                            value={vm.mission?.desc || ''}
-                            onChange={v => update('mission.desc', v)}
-                            placeholder="Misyon açıklaması..."
-                            minRows={4}
-                            compact
-                        />
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i className="fa-solid fa-list text-[8px] text-violet-400"></i> Maddeler</label>
-                            <div className="space-y-2">
-                                {vm.mission?.items?.map((item: string, idx: number) => (
-                                    <div key={idx} className="flex items-center gap-2">
-                                        <div className="w-6 h-6 rounded-md bg-violet-500/10 flex items-center justify-center shrink-0"><span className="text-[9px] font-bold text-violet-400">{idx + 1}</span></div>
-                                        <input className="flex-1 bg-white/5 border border-white/[0.06] rounded-xl px-3 py-2.5 text-sm text-white focus:border-violet-500/50 outline-none transition-all"
-                                            value={item} onChange={e => { const n = [...vm.mission.items]; n[idx] = e.target.value; update('mission.items', n); }} />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Values */}
-            <div className="bg-white/[0.03] border border-white/[0.06] rounded-2xl overflow-hidden">
-                <div className="px-6 py-4 border-b border-white/[0.04] flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-emerald-500 flex items-center justify-center shadow-lg"><i className="fa-solid fa-gem text-white text-sm"></i></div>
                     <div>
-                        <h3 className="text-sm font-bold text-white">Hizmet İlkeleri (Değerler)</h3>
-                        <p className="text-[10px] text-slate-500">{vm.values?.items?.length || 0} ilke tanımlı</p>
+                        <h3 className="text-lg font-[800] text-white tracking-tight">Kurumsal Değerler</h3>
+                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Hizmet İlkelerimiz</p>
                     </div>
                 </div>
-                <div className="p-6 space-y-5">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i className="fa-solid fa-heading text-[8px] text-emerald-400"></i> Ana Başlık</label>
-                            <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:border-emerald-500/50 outline-none transition-all"
-                                value={vm.values?.title || ''} onChange={e => update('values.title', e.target.value)} />
-                        </div>
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5"><i className="fa-solid fa-align-left text-[8px] text-emerald-400"></i> Alt Açıklama</label>
-                            <input className="w-full bg-white/5 border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-white focus:border-emerald-500/50 outline-none transition-all"
-                                value={vm.values?.desc || ''} onChange={e => update('values.desc', e.target.value)} />
-                        </div>
-                    </div>
-
-                    <div className="overflow-x-auto scrollbar-hide">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-t border-b border-white/[0.04] bg-white/[0.02]">
-                                    <th className="text-left px-3 py-3 w-12"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">#</span></th>
-                                    <th className="text-center px-3 py-3 w-16"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">İkon</span></th>
-                                    <th className="text-left px-3 py-3"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Başlık</span></th>
-                                    <th className="text-left px-3 py-3"><span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Açıklama</span></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {vm.values?.items?.map((item: { icon: string; title: string; desc: string }, idx: number) => (
-                                    <tr key={idx} className="border-b border-white/[0.03] hover:bg-white/[0.03] transition-all">
-                                        <td className="px-3 py-3.5">
-                                            <div className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center"><span className="text-[10px] font-mono font-bold text-slate-500">{idx + 1}</span></div>
-                                        </td>
-                                        <td className="px-3 py-3.5 text-center">
-                                            <div className="inline-flex flex-col items-center gap-1">
-                                                <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
-                                                    <i className={`fa-solid ${item.icon} text-emerald-400 text-sm`}></i>
+                <div className="overflow-x-auto scrollbar-hide">
+                    <table className="w-full text-left">
+                        <thead>
+                            <tr className="bg-white/[0.02] border-b border-white/[0.04]">
+                                <th className="px-8 py-5 text-[10px] font-[900] text-slate-500 uppercase tracking-[0.2em]">İkon / Başlık</th>
+                                <th className="px-6 py-5 text-[10px] font-[900] text-slate-500 uppercase tracking-[0.2em]">İlke Açıklaması</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-white/[0.03]">
+                            {vm.values?.items?.map((item: any, idx: number) => (
+                                <tr key={idx} className="group hover:bg-white/[0.03] transition-all duration-300">
+                                    <td className="px-8 py-6">
+                                        <div className="flex items-center gap-5">
+                                            <div className="flex flex-col items-center gap-2 shrink-0">
+                                                <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/[0.08] flex items-center justify-center text-emerald-400 shadow-inner group-hover:text-[var(--color-primary)] group-hover:border-[var(--color-primary)]/30 transition-all duration-500">
+                                                    <i className={`fa-solid ${item.icon} text-lg`}></i>
                                                 </div>
-                                                <input className="w-20 bg-transparent text-center text-[9px] text-slate-500 outline-none focus:text-white font-mono" value={item.icon}
-                                                    onChange={e => { const n = [...vm.values.items]; n[idx] = { ...n[idx], icon: e.target.value }; update('values.items', n); }} />
+                                                <input className="w-20 bg-transparent text-center text-[9px] text-slate-700 font-mono focus:text-white outline-none" value={item.icon} onChange={e => { const n = [...vm.values.items]; n[idx].icon = e.target.value; update('values.items', n); }} />
                                             </div>
-                                        </td>
-                                        <td className="px-3 py-3.5">
-                                            <input className="w-full bg-transparent text-[13px] font-bold text-white outline-none focus:text-[var(--color-primary)] transition-colors" value={item.title}
-                                                onChange={e => { const n = [...vm.values.items]; n[idx] = { ...n[idx], title: e.target.value }; update('values.items', n); }} />
-                                        </td>
-                                        <td className="px-3 py-3.5">
-                                            <textarea className="w-full bg-transparent text-[12px] text-slate-400 outline-none focus:text-white resize-none transition-colors" rows={2} value={item.desc}
-                                                onChange={e => { const n = [...vm.values.items]; n[idx] = { ...n[idx], desc: e.target.value }; update('values.items', n); }} />
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                                            <input className="bg-transparent text-[15px] font-[800] text-white outline-none focus:text-[var(--color-primary)] transition-colors w-full" value={item.title} onChange={e => { const n = [...vm.values.items]; n[idx].title = e.target.value; update('values.items', n); }} />
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-6">
+                                        <textarea className="w-full bg-transparent text-[13px] font-medium text-slate-400 outline-none focus:text-slate-200 transition-colors resize-none leading-relaxed" rows={2} value={item.desc} onChange={e => { const n = [...vm.values.items]; n[idx].desc = e.target.value; update('values.items', n); }} />
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

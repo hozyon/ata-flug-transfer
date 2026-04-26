@@ -24,13 +24,11 @@ const RegionsView = lazy(() => import('./admin/views/RegionsView').then(m => ({ 
 const FAQView = lazy(() => import('./admin/views/FAQView').then(m => ({ default: m.FAQView })));
 const BusinessSettingsView = lazy(() => import('./admin/views/BusinessSettingsView').then(m => ({ default: m.BusinessSettingsView })));
 const FleetView = lazy(() => import('./admin/views/FleetView').then(m => ({ default: m.FleetView })));
-const AccountView = lazy(() => import('./admin/views/AccountView').then(m => ({ default: m.AccountView })));
 const AboutView = lazy(() => import('./admin/views/AboutView').then(m => ({ default: m.AboutView })));
 const VisionMissionView = lazy(() => import('./admin/views/VisionMissionView').then(m => ({ default: m.VisionMissionView })));
 const BlogView = lazy(() => import('./admin/views/BlogView').then(m => ({ default: m.BlogView })));
 const ReviewsView = lazy(() => import('./admin/views/ReviewsView').then(m => ({ default: m.ReviewsView })));
 const HeroImagesView = lazy(() => import('./admin/views/HeroImagesView').then(m => ({ default: m.HeroImagesView })));
-const SEOView = lazy(() => import('./admin/views/SEOView').then(m => ({ default: m.SEOView })));
 
 import { INITIAL_SITE_CONTENT } from '../constants';
 
@@ -45,11 +43,9 @@ const VIEW_LABELS: Record<string, { label: string; icon: string; description: st
   'regions':       { label: 'BÖLGE & FİYAT',       icon: 'fa-map-location-dot',        description: 'Transfer bölgeleri ve fiyatları' },
   'fleet':         { label: 'ARAÇLAR',             icon: 'fa-car-side',                description: 'Araç filosu' },
   'faq':           { label: 'S.S.S',               icon: 'fa-circle-question',         description: 'Sıkça sorulan sorular' },
-  'business':      { label: 'İŞLETME BİLGİLERİ',  icon: 'fa-building',                description: 'İşletme bilgileri' },
+  'business':      { label: 'İŞLETME AYARLARI',   icon: 'fa-briefcase',               description: 'İşletme bilgileri, profil ve güvenlik ayarları' },
   'about':         { label: 'HAKKIMIZDA',          icon: 'fa-info-circle',             description: 'Hakkımızda sayfası içeriği' },
   'visionMission': { label: 'VİZYON & MİSYON',    icon: 'fa-bullseye',                description: 'Vizyon ve misyon sayfası' },
-  'account':       { label: 'HESAP AYARLARI',      icon: 'fa-user',                    description: 'Profil ve güvenlik tercihlerinizi merkezden yönetin.' },
-  'seo':           { label: 'SEO YÖNETİMİ',        icon: 'fa-magnifying-glass-chart',  description: 'Arama motoru optimizasyonu ayarları' },
 };
 
 // ─── Error Boundary for lazy-loaded admin views ───────────────────────────────
@@ -104,7 +100,7 @@ interface AdminPanelProps {
   onDeleteReview: (id: string) => Promise<void>;
 }
 
-type DashboardView = 'overview' | 'bookings' | 'site-settings' | 'hero-images' | 'regions' | 'fleet' | 'blog' | 'reviews' | 'faq' | 'business' | 'about' | 'visionMission' | 'account' | 'seo';
+type DashboardView = 'overview' | 'bookings' | 'site-settings' | 'hero-images' | 'regions' | 'fleet' | 'blog' | 'reviews' | 'faq' | 'business' | 'about' | 'visionMission';
 
 const COUNTRY_NAMES: Record<string, string> = {
   '🇩🇪': 'Almanya', '🇹🇷': 'Türkiye', '🇬🇧': 'İngiltere', '🇺🇸': 'ABD', '🇷🇺': 'Rusya',
@@ -817,79 +813,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
     return { error: null };
   };
 
-  // ── USER MANAGEMENT STATE ──
-  const [accountTab, setAccountTab] = useState<'profile' | 'users'>('profile');
-  const [systemUsers, setSystemUsers] = useState([
-    { id: 'usr-admin', name: siteContent.adminAccount?.fullName || INITIAL_SITE_CONTENT.adminAccount!.fullName, email: siteContent.adminAccount?.email || INITIAL_SITE_CONTENT.adminAccount!.email, role: 'Sistem Yöneticisi', isDeletable: false, lastLogin: 'Şu an aktif', status: 'Aktif' },
-  ]);
-  useEffect(() => {
-    setSystemUsers(prev => prev.map(u => u.id === 'usr-admin' ? {
-      ...u,
-      name: siteContent.adminAccount?.fullName || INITIAL_SITE_CONTENT.adminAccount!.fullName,
-      email: siteContent.adminAccount?.email || INITIAL_SITE_CONTENT.adminAccount!.email,
-    } : u));
-  }, [siteContent.adminAccount?.fullName, siteContent.adminAccount?.email]);
-  const [_isAddUserModalOpen, setIsAddUserModalOpen] = useState(false);
-  const [editingUserId, setEditingUserId] = useState<string | null>(null);
-  const [newUserForm, setNewUserForm] = useState({ name: '', email: '', role: 'Editör', password: '', confirmPassword: '' });
-
-  const handleDeleteUser = (id: string, isDeletable: boolean) => {
-    if (!isDeletable) {
-      showToast('Sistem yöneticisi (Admin) silinemez!', 'warning');
-      return;
-    }
-    setSystemUsers(systemUsers.filter(u => u.id !== id));
-    showToast('Kullanıcı başarıyla silindi', 'success');
-  };
-
-  const _handleSaveUser = () => {
-    if (!newUserForm.name || !newUserForm.email) {
-      showToast('Lütfen Ad Soyad ve E-posta alanlarını doldurun', 'warning');
-      return;
-    }
-
-    // Add password matching validation
-    if (newUserForm.password && newUserForm.password !== newUserForm.confirmPassword) {
-      showToast('Şifreler eşleşmiyor', 'warning');
-      return;
-    }
-
-    if (editingUserId) {
-      // Update existing user
-      setSystemUsers(systemUsers.map(u => {
-        if (u.id === editingUserId) {
-          return { ...u, name: newUserForm.name, email: newUserForm.email, role: newUserForm.role };
-        }
-        return u;
-      }));
-      showToast('Kullanıcı bilgileri güncellendi', 'success');
-      if (newUserForm.password) {
-        showToast('Kullanıcı şifresi başarıyla değiştirildi', 'success');
-      }
-    } else {
-      // Create new user
-      if (!newUserForm.password) {
-        showToast('Lütfen yeni kullanıcı için bir şifre belirleyin', 'warning');
-        return;
-      }
-      const newUser = {
-        id: `usr-${Date.now()}`,
-        name: newUserForm.name,
-        email: newUserForm.email,
-        role: newUserForm.role,
-        isDeletable: true,
-        lastLogin: 'Hiç girmedi',
-        status: 'Aktif'
-      };
-      setSystemUsers([...systemUsers, newUser]);
-      showToast('Yeni kullanıcı eklendi', 'success');
-    }
-
-    setIsAddUserModalOpen(false);
-    setEditingUserId(null);
-    setNewUserForm({ name: '', email: '', role: 'Editör', password: '', confirmPassword: '' });
-  };
-
   // ── SKELETON LOADING ──
   const [isPageTransitioning, setIsPageTransitioning] = useState(false);
   const prevViewRef = useRef(activeView);
@@ -1446,11 +1369,9 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
       {/* Sidebar — Elite Luxury Design */}
       <aside
-        className={`hidden xl:flex ${isSidebarOpen ? 'w-[280px]' : 'w-[84px]'} transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] relative flex-col z-[100] h-screen shrink-0`}
+        className={`hidden xl:flex ${isSidebarOpen ? 'w-[280px]' : 'w-[84px]'} transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] relative flex-col z-[100] h-screen shrink-0 backdrop-blur-2xl transform-gpu`}
         style={{ 
           background: 'rgba(2, 6, 23, 0.45)', 
-          backdropFilter: 'blur(80px)', 
-          WebkitBackdropFilter: 'blur(80px)', 
           borderRight: '1px solid rgba(255,255,255,0.06)', 
           boxShadow: '20px 0 80px -20px rgba(0,0,0,0.5)' 
         }}
@@ -1532,7 +1453,6 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
                 <SidebarNavItem id="site-settings" label="Menü Yönetimi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-sliders"></i>} />
                 <SidebarNavItem id="faq" label="S.S.S" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-circle-question"></i>} />
                 <SidebarNavItem id="business" label="İşletme Bilgileri" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-briefcase"></i>} />
-                <SidebarNavItem id="seo" label="SEO Yönetimi" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-search"></i>} />
                 
                 {/* Corporate Sub-menu */}
                 <div className="relative group">
@@ -1584,7 +1504,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
 
         {/* ── SIDEBAR FOOTER ── */}
         <div className="shrink-0 border-t border-white/[0.04] p-3 space-y-2 relative z-10 bg-gradient-to-t from-white/[0.02] to-transparent">
-          <SidebarNavItem id="account" label="Hesap Ayarları" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-user-gear"></i>} />
+          <SidebarNavItem id="business" label="İşletme Ayarları" activeView={activeView} isSidebarOpen={isSidebarOpen} onNavigate={(v) => setActiveView(v as DashboardView)} icon={<i className="fa-solid fa-briefcase"></i>} />
           
           <div className={`flex items-center gap-1.5 p-1 ${isSidebarOpen ? '' : 'flex-col'}`}>
             <a href="/" target="_blank" rel="noopener noreferrer" title="Siteyi Görüntüle" className={`flex items-center justify-center gap-2 rounded-xl text-slate-500 hover:text-white hover:bg-white/[0.05] transition-all group ${isSidebarOpen ? 'flex-1 py-2.5 bg-white/[0.02] border border-white/[0.05]' : 'w-10 h-10'}`}>
@@ -1700,8 +1620,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               <p className="text-[9px] font-black text-slate-600 uppercase tracking-[0.15em] px-1 mb-2">Sistem</p>
               <div className="flex gap-2">
                 {[
-                  { id: 'business', label: 'İşletme', icon: 'fa-building' },
-                  { id: 'account', label: 'Hesap', icon: 'fa-user-gear' },
+                  { id: 'business', label: 'İşletme Ayarları', icon: 'fa-briefcase' },
                 ].map(item => (
                   <button key={item.id} onClick={() => { setActiveView(item.id as DashboardView); setIsMobileMenuOpen(false); }}
                     className={`flex-1 flex items-center gap-2.5 py-3 px-3.5 rounded-2xl transition-all active:scale-[0.97] ${activeView === item.id ? 'bg-[var(--color-primary)]/10 ring-1 ring-[var(--color-primary)]/20' : 'bg-white/[0.03]'}`}>
@@ -1855,7 +1774,7 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               </div>
 
               <button 
-                onClick={() => setActiveView('account')}
+                onClick={() => setActiveView('business')}
                 className="relative group p-0.5 rounded-2xl bg-gradient-to-br from-[var(--color-primary)] to-[#d4a832] shadow-[0_8px_25px_rgba(197,160,89,0.25)] hover:scale-105 transition-all duration-500"
               >
                 <div className="w-11 h-11 rounded-[14px] bg-[#020617] flex items-center justify-center border-2 border-[#020617] overflow-hidden relative">
@@ -2761,31 +2680,16 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               <BusinessSettingsView
                 editContent={editContent}
                 setEditContent={setEditContent}
+                accountForm={accountForm}
+                setAccountForm={setAccountForm}
+                onSaveAccount={handleSaveAccount}
+                onUpdatePassword={handleUpdatePassword}
+                onExitAdmin={onExitAdmin}
+                showToast={showToast}
                 _confirmAction={confirmAction}
               />
             )
           }
-
-          {
-            activeView === 'account' && (
-              <AccountView
-                accountForm={accountForm}
-                setAccountForm={setAccountForm}
-                accountTab={accountTab}
-                setAccountTab={setAccountTab}
-                showToast={showToast}
-                onExitAdmin={onExitAdmin}
-                onSaveAccount={handleSaveAccount}
-                onUpdatePassword={handleUpdatePassword}
-                systemUsers={systemUsers}
-                setIsAddUserModalOpen={setIsAddUserModalOpen}
-                setEditingUserId={setEditingUserId}
-                setNewUserForm={setNewUserForm}
-                handleDeleteUser={handleDeleteUser}
-              />
-            )
-          }
-
           {
             activeView === 'about' && (
               <AboutView
@@ -2853,18 +2757,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
               />
             )
           }
-          {
-            activeView === 'seo' && (
-              <SEOView
-                editContent={editContent}
-                setEditContent={updateContent}
-                _confirmAction={confirmAction}
-              />
-            )
-          }
           </div>
-        </Suspense>
-        </AdminViewErrorBoundary>
+          </Suspense>        </AdminViewErrorBoundary>
       </main >
 
       {/* Vehicle Drawer */}
@@ -3149,8 +3043,8 @@ const AdminPanel: React.FC<AdminPanelProps> = ({ bookings, onUpdateStatus, onAdd
           <div className="fixed inset-0 z-[200] flex items-start justify-center pt-[15vh]" onClick={() => setIsCommandPaletteOpen(false)}>
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
             <div
-              className="relative rounded-2xl border border-white/[0.12] shadow-2xl shadow-black/30 w-full max-w-lg overflow-hidden"
-              style={{ background: 'rgba(15, 23, 42, 0.05)', backdropFilter: 'blur(80px)', WebkitBackdropFilter: 'blur(80px)' }}
+              className="relative rounded-2xl border border-white/[0.12] shadow-2xl shadow-black/30 w-full max-w-lg overflow-hidden backdrop-blur-2xl transform-gpu"
+              style={{ background: 'rgba(15, 23, 42, 0.95)' }}
               onClick={e => e.stopPropagation()}
             >
               {/* Search Input */}
