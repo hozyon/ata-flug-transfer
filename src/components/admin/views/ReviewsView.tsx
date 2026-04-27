@@ -21,10 +21,10 @@ interface ReviewsViewProps {
 }
 
 const TAB_META: Record<string, { label: string; icon: string; emptyIcon: string; emptyTitle: string; emptySub: string; color: string; bg: string; border: string }> = {
-    pending: { label: 'Bekleyen', icon: 'fa-clock', emptyIcon: 'fa-check-circle', emptyTitle: 'Tümü Temiz', emptySub: 'İncelenecek yeni yorum yok.', color: 'text-amber-600', bg: 'bg-amber-50/50', border: 'border-amber-100' },
-    approved: { label: 'Yayında', icon: 'fa-circle-check', emptyIcon: 'fa-comments', emptyTitle: 'Yorum Yok', emptySub: 'Henüz onaylanmış bir yorum bulunmuyor.', color: 'text-emerald-600', bg: 'bg-emerald-50/50', border: 'border-emerald-100' },
-    rejected: { label: 'Gizlenen', icon: 'fa-circle-xmark', emptyIcon: 'fa-ban', emptyTitle: 'Kategori Boş', emptySub: 'Reddedilmiş yorum bulunmuyor.', color: 'text-rose-600', bg: 'bg-rose-50/50', border: 'border-rose-100' },
-    deleted: { label: 'Çöp Kutusu', icon: 'fa-trash-can', emptyIcon: 'fa-trash-can', emptyTitle: 'Çöp Kutusu Boş', emptySub: 'Silinen yorumlar burada tutulur.', color: 'text-slate-400', bg: 'bg-slate-50/50', border: 'border-slate-200' },
+    pending: { label: 'Bekleyen', icon: 'fa-clock', emptyIcon: 'fa-check-circle', emptyTitle: 'Bekleyen yorum yok', emptySub: 'Tüm yorumlar incelendi ✓', color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-100' },
+    approved: { label: 'Onaylanan', icon: 'fa-circle-check', emptyIcon: 'fa-comments', emptyTitle: 'Onaylanan yorum yok', emptySub: 'Bekleyen yorumları onaylayarak başlayın', color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+    rejected: { label: 'Reddedilen', icon: 'fa-circle-xmark', emptyIcon: 'fa-ban', emptyTitle: 'Reddedilen yorum yok', emptySub: 'Bu kategoride yorum yok', color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-100' },
+    deleted: { label: 'Çöp', icon: 'fa-trash-can', emptyIcon: 'fa-trash-can', emptyTitle: 'Çöp kutusu boş', emptySub: 'Silinen yorumlar burada görünür', color: 'text-slate-400', bg: 'bg-slate-50', border: 'border-slate-200' },
 };
 
 export const ReviewsView: React.FC<ReviewsViewProps> = ({
@@ -32,6 +32,7 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
     editableReviewsTab, setEditableReviewsTab
 }) => {
     const [searchTerm, setSearchTerm] = useState('');
+    const [expandedId, setExpandedId] = useState<string | null>(null);
     const { viewMode, toggleViewMode } = useViewMode();
 
     const counts = useMemo(() => ({
@@ -43,14 +44,14 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
 
     const avgRating = useMemo(() => {
         const all = [...userReviews.filter(r => r.status === 'approved'), ...siteReviews];
-        return all.length > 0 ? (all.reduce((s, r) => s + r.rating, 0) / all.length).toFixed(1) : '0.0';
+        return all.length > 0 ? (all.reduce((s, r) => s + r.rating, 0) / all.length).toFixed(1) : '—';
     }, [userReviews, siteReviews]);
 
     const currentReviews = useMemo(() => {
         let list: (Review & { source?: 'user' | 'site' })[] = editableReviewsTab === 'approved'
             ? [
                 ...userReviews.filter(r => r.status === 'approved').map(r => ({ ...r, source: 'user' as const })),
-                ...siteReviews.map(r => ({ ...r, source: 'site' as const, status: 'approved' as const, id: `site-${r.name}`, createdAt: undefined }))
+                ...siteReviews.map(r => ({ ...r, source: 'site' as const, status: 'approved' as const, id: `site-${r.name}`, createdAt: undefined as string | undefined }))
             ]
             : userReviews.filter(r => r.status === editableReviewsTab).map(r => ({ ...r, source: 'user' as const }));
 
@@ -62,67 +63,86 @@ export const ReviewsView: React.FC<ReviewsViewProps> = ({
     }, [userReviews, siteReviews, editableReviewsTab, searchTerm]);
 
     return (
-        <div className="space-y-10 animate-in fade-in slide-in-from-right-8 duration-1000 ease-out">
-            <div className="admin-glass-panel rounded-[3rem] p-8 flex flex-col xl:flex-row xl:items-center justify-between gap-8 shadow-sm">
+        <div className="animate-in fade-in slide-in-from-right-4 duration-700 space-y-6">
+            <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-6 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-[0_8px_30px_rgba(0,0,0,0.02)]">
                 <div className="flex items-center gap-6">
-                    <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 shadow-sm transition-transform hover:scale-105 duration-500"><i className="fa-solid fa-star text-xl"></i></div>
-                    <div><h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none">Müşteri Deneyimleri</h2><p className="text-[11px] text-slate-400 font-black uppercase tracking-[0.25em] mt-2">MEMNUNİYET ORTALAMASI: <span className="text-gold">{avgRating} / 5.0</span></p></div>
+                    <div className="w-16 h-16 rounded-3xl bg-amber-50 border border-amber-100 flex items-center justify-center group transition-transform duration-500 hover:scale-105 shadow-sm shadow-amber-100/50">
+                        <i className="fa-solid fa-star text-amber-500 text-2xl"></i>
+                    </div>
+                    <div>
+                        <div className="flex items-center gap-2 mb-1.5">
+                            <h2 className="text-2xl font-black text-slate-900 tracking-tight leading-none">Müşteri Yorumları</h2>
+                            <span className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-[10px] font-black text-slate-400 uppercase tracking-widest">Reviews</span>
+                        </div>
+                        <p className="text-[13px] text-slate-500 font-medium">Genel puan ortalaması: <span className="text-gold font-black tabular-nums">{avgRating} / 5.0</span></p>
+                    </div>
                 </div>
-                <div className="flex items-center gap-2 overflow-x-auto pb-1 xl:pb-0 scrollbar-hide p-1.5 bg-white/40 backdrop-blur-xl border border-white rounded-[2rem] shadow-sm">
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 xl:pb-0 scrollbar-hide p-1.5 bg-slate-50 rounded-2xl border border-slate-100">
                     {(['pending', 'approved', 'rejected', 'deleted'] as const).map(status => (
-                        <button key={status} onClick={() => setEditableReviewsTab(status)}
-                            className={`px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-500 whitespace-nowrap flex items-center gap-3 ${editableReviewsTab === status ? 'bg-slate-900 text-white shadow-xl scale-105' : 'text-slate-400 hover:text-slate-900'}`}>
+                        <button key={status} onClick={() => { setEditableReviewsTab(status); }}
+                            className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-3 border shadow-sm ${editableReviewsTab === status ? 'bg-white text-slate-900 border-slate-100' : 'bg-transparent border-transparent text-slate-400 hover:text-slate-600'}`}>
+                            <i className={`fa-solid ${TAB_META[status].icon} text-[10px]`}></i>
                             {TAB_META[status].label}
-                            <span className={`flex items-center justify-center min-w-[22px] h-5 px-1.5 rounded-lg text-[9px] font-black ${editableReviewsTab === status ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-500'}`}>{counts[status]}</span>
+                            <span className={`flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-lg text-[9px] font-black ${editableReviewsTab === status ? 'bg-gold/10 text-gold' : 'bg-slate-100 text-slate-400'}`}>{counts[status]}</span>
                         </button>
                     ))}
                 </div>
             </div>
 
-            <div className="flex flex-col lg:flex-row gap-6 items-center">
-                <div className="relative flex-1 w-full group">
-                    <i className="fa-solid fa-magnifying-glass absolute left-7 top-1/2 -translate-y-1/2 text-slate-300 text-sm transition-colors group-focus-within:text-gold"></i>
-                    <input type="text" placeholder="Müşteri veya içerik ara..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-16 pr-8 py-5 bg-white/40 backdrop-blur-xl border border-white rounded-[2.5rem] text-[15px] font-bold text-slate-900 placeholder-slate-300 shadow-sm focus:bg-white focus:shadow-xl transition-all duration-500 outline-none" />
+            <div className="bg-white border border-slate-100 rounded-[2.5rem] p-5 shadow-sm">
+                <div className="flex flex-col lg:flex-row gap-5 items-center">
+                    <div className="relative flex-1 w-full group">
+                        <i className="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 text-xs transition-colors group-focus-within:text-gold"></i>
+                        <input type="text" placeholder="Müşteri veya yorum içeriği ile ara..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-12 pr-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-[13px] text-slate-900 font-bold focus:bg-white focus:border-gold/40 outline-none transition-all placeholder:text-slate-300" />
+                    </div>
+                    <MobileViewToggle viewMode={viewMode} onToggle={toggleViewMode} />
                 </div>
-                <MobileViewToggle viewMode={viewMode} onToggle={toggleViewMode} />
             </div>
 
             {currentReviews.length === 0 ? (
-                <div className="admin-glass-panel rounded-[4rem] p-32 text-center shadow-sm"><EmptyState icon={TAB_META[editableReviewsTab].emptyIcon} title={TAB_META[editableReviewsTab].emptyTitle} description={searchTerm ? `"${searchTerm}" aramasına uygun kayıt mevcut değil.` : TAB_META[editableReviewsTab].emptySub} /></div>
-            ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                    {currentReviews.map((r, idx) => (
+                <div className="bg-white border border-slate-100 rounded-[2.5rem] p-20 text-center shadow-sm"><EmptyState icon={TAB_META[editableReviewsTab].emptyIcon} title={TAB_META[editableReviewsTab].emptyTitle} description={searchTerm ? `"${searchTerm}" aramasına uygun yorum bulunamadı.` : TAB_META[editableReviewsTab].emptySub} /></div>
+            ) : viewMode === 'card' ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    {currentReviews.map(r => (
                         <SwipeableCard key={r.id} actions={[{ icon: 'fa-check', label: 'Onayla', color: 'bg-emerald-500', onClick: () => setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'approved' } : item)) }]}>
-                            <div className="admin-glass-panel rounded-[3.5rem] p-8 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.06)] hover:-translate-y-2 transition-all duration-1000 cursor-pointer group relative overflow-hidden animate-in fade-in slide-in-from-bottom-4 shadow-sm" style={{ animationDelay: `${idx * 80}ms` }}>
-                                <div className="flex items-start justify-between mb-8">
-                                    <div className="flex items-center gap-5">
-                                        <div className={`w-14 h-14 rounded-[1.5rem] flex items-center justify-center font-black text-lg shadow-2xl transition-transform duration-700 group-hover:rotate-6 ${r.rating >= 4 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-amber-50 text-amber-600 border border-amber-100'}`}>{r.name.charAt(0).toUpperCase()}</div>
+                            <div onClick={() => setExpandedId(expandedId === r.id ? null : r.id)} className="group p-6 bg-white border border-slate-100 rounded-[2.5rem] hover:border-gold/40 hover:shadow-xl transition-all duration-500 cursor-pointer relative overflow-hidden shadow-sm">
+                                <div className="flex items-start justify-between mb-5">
+                                    <div className="flex items-center gap-4">
+                                        <div className={`w-11 h-11 rounded-2xl flex items-center justify-center font-black shadow-sm text-base ${r.rating >= 4 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-amber-50 text-amber-600 border border-amber-100'}`}>{r.name.charAt(0).toUpperCase()}</div>
                                         <div>
-                                            <h4 className="text-[17px] font-black text-slate-900 group-hover:text-gold transition-colors truncate tracking-tight leading-none">{r.name}</h4>
-                                            <p className="text-[10px] text-slate-400 font-black uppercase tracking-widest mt-2">{r.country}</p>
+                                            <p className="font-black text-slate-900 text-[15px] truncate max-w-[140px] group-hover:text-gold transition-colors duration-300">{r.name}</p>
+                                            <div className="flex items-center gap-2 mt-0.5"><span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{r.country}</span></div>
                                         </div>
                                     </div>
-                                    <div className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-1.5 shadow-inner">
-                                        <i className="fa-solid fa-star text-gold text-[10px]"></i>
-                                        <span className="text-[14px] font-black text-slate-900 tabular-nums">{r.rating}.0</span>
+                                    <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-50 border border-slate-100">
+                                        <i className="fa-solid fa-star text-[10px] text-gold"></i>
+                                        <span className="text-[13px] font-black text-slate-900 tabular-nums">{r.rating}.0</span>
                                     </div>
                                 </div>
-                                <div className="relative">
-                                    <i className="fa-solid fa-quote-left absolute -top-4 -left-2 text-slate-100 text-4xl -z-10 group-hover:text-gold/10 transition-colors"></i>
-                                    <p className="text-[14px] leading-[1.7] text-slate-600 font-medium italic">"{r.text}"</p>
+                                <p className={`text-[13px] leading-relaxed text-slate-600 font-medium ${expandedId === r.id ? '' : 'line-clamp-3'}`}>"{r.text}"</p>
+                                <div className="flex items-center justify-between mt-6 pt-5 border-t border-slate-50">
+                                    <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.15em]">{r.createdAt ? new Date(r.createdAt).toLocaleDateString('tr-TR') : 'SİSTEM KAYDI'}</p>
+                                    <span className={`px-2.5 py-1 rounded-lg text-[8px] font-black border tracking-widest uppercase ${TAB_META[r.status].bg} ${TAB_META[r.status].color} ${TAB_META[r.status].border}`}>{TAB_META[r.status].label}</span>
                                 </div>
-                                <div className="mt-10 pt-6 border-t border-white/40 flex items-center justify-between">
-                                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">{r.createdAt ? new Date(r.createdAt).toLocaleDateString('tr-TR') : 'SİSTEM KAYDI'}</span>
-                                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
-                                        <button onClick={() => setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'approved' } : item))} className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-500 hover:text-white transition-all shadow-sm flex items-center justify-center active:scale-90"><i className="fa-solid fa-check text-xs"></i></button>
-                                        <button onClick={() => setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'rejected' } : item))} className="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-600 hover:text-white transition-all shadow-sm flex items-center justify-center active:scale-90"><i className="fa-solid fa-trash-can text-xs"></i></button>
-                                    </div>
-                                </div>
-                                {/* Subtle background star */}
-                                <i className="fa-solid fa-star absolute bottom-[-40px] left-[-30px] text-[150px] text-slate-900/5 rotate-[-15deg] pointer-events-none group-hover:text-gold/5 transition-colors" />
                             </div>
                         </SwipeableCard>
                     ))}
+                </div>
+            ) : (
+                <div className="bg-white border border-slate-100 rounded-[2.5rem] overflow-hidden shadow-sm">
+                    <table className="w-full text-left">
+                        <thead><tr className="bg-slate-50/50 border-b border-slate-100"><th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Müşteri</th><th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Yorum</th><th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Puan</th><th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">İşlemler</th></tr></thead>
+                        <tbody className="divide-y divide-slate-50">
+                            {currentReviews.map(r => (
+                                <tr key={r.id} onClick={() => setExpandedId(expandedId === r.id ? null : r.id)} className="group hover:bg-slate-50 transition-all duration-300 cursor-pointer">
+                                    <td className="px-8 py-5"><div className="flex items-center gap-4"><div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black shadow-sm text-sm ${r.rating >= 4 ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-amber-50 text-amber-600 border border-amber-100'}`}>{r.name.charAt(0).toUpperCase()}</div><p className="text-[14px] font-bold text-slate-900 group-hover:text-gold transition-colors">{r.name}</p></div></td>
+                                    <td className="px-6 py-5"><p className="text-[12px] text-slate-500 font-medium line-clamp-1 max-w-[300px]">"{r.text}"</p></td>
+                                    <td className="px-6 py-5 text-center"><div className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-100"><i className="fa-solid fa-star text-[9px] text-gold"></i><span className="text-[11px] font-black text-slate-900">{r.rating}</span></div></td>
+                                    <td className="px-8 py-5 text-right" onClick={e => e.stopPropagation()}><div className="flex items-center justify-end gap-2.5 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0"><button onClick={() => setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'approved' } : item))} className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 hover:bg-emerald-600 hover:text-white flex items-center justify-center shadow-sm transition-all"><i className="fa-solid fa-check text-xs"></i></button><button onClick={() => setUserReviews(userReviews.map(item => item.id === r.id ? { ...item, status: 'deleted' } : item))} className="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-600 hover:text-white flex items-center justify-center shadow-sm transition-all"><i className="fa-solid fa-trash-can text-xs"></i></button></div></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
             )}
         </div>
